@@ -4,6 +4,37 @@ import { cn } from "cn"
 
 import { Button } from "@workspace/ui/components/button"
 
+/*
+ * AlertDialog — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/alert-dialog
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o AlertDialog do Base UI: modal, com `role="alertdialog"`,
+ *   foco preso, resto da página inerte e Esc para fechar, devolvendo o foco ao
+ *   gatilho. Diferente do Dialog, clicar fora NÃO fecha: a pessoa precisa
+ *   responder. `AlertDialogTrigger` recebe o elemento pela prop `render`.
+ * - Foco inicial: o do Base UI, no primeiro controle do popup. Como o
+ *   `AlertDialogCancel` vem antes do `AlertDialogAction` no rodapé, o foco
+ *   começa no Cancelar e a ação destrutiva nunca é a padrão (padrão do shadcn).
+ * - Nome e descrição: o Base UI liga o `AlertDialogTitle` e o
+ *   `AlertDialogDescription` ao popup. O título diz a ação ("Excluir chat?").
+ * - `AlertDialogAction` é um `Button` comum (aceita `variant="destructive"`);
+ *   `AlertDialogCancel` é um `AlertDialogPrimitive.Close` renderizado como
+ *   `Button` (padrão `outline`). Não há textos fixos: o idioma é o de quem usa.
+ * - `AlertDialogMedia`: `bg-muted` cheio. Para o tom destrutivo, passe só
+ *   `className="text-destructive"` (o `bg-destructive/10` do registro, com
+ *   opacidade, ficou de fora).
+ * - Véu de fundo: `bg-black/30` com desfoque, a única cor com opacidade aqui
+ *   (exceção aceita para véus; não é texto, não tem contraste a cumprir).
+ * - Contorno do popup: `ring-border` cheio, no lugar de `ring-foreground/5` e
+ *   `dark:ring-foreground/10` do registro. A sombra continua.
+ * - Raio do Card (`min(--radius-4xl, 24px)`), recuo de 24px e posição lógica
+ *   (`start-1/2`, `rtl:translate-x-1/2`), para funcionar em RTL. O conteúdo vai
+ *   para um portal no `body`: num diálogo RTL isolado, passe `dir` e `lang` ao
+ *   `AlertDialogContent`.
+ * - Anel de foco: o popup não tem anel (`outline-none`); os botões usam o anel
+ *   sólido deles.
+ */
+
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
@@ -50,7 +81,7 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          "group/alert-dialog-content fixed top-1/2 start-1/2 z-50 grid w-full -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 gap-6 rounded-[min(var(--radius-4xl),24px)] bg-popover p-6 text-popover-foreground shadow-xl ring-1 ring-foreground/5 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-md dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "group/alert-dialog-content fixed top-1/2 start-1/2 z-50 grid w-full -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 gap-6 rounded-[min(var(--radius-4xl),24px)] bg-popover p-6 text-popover-foreground shadow-xl ring-1 ring-border duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}

@@ -1,0 +1,173 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as TooltipStories from "./tooltip.stories";
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+Um balão que mostra informação sobre um elemento quando ele recebe o foco do teclado ou o mouse passa por cima.
+
+<Canvas of={TooltipStories.Demo} />
+
+## Instalação
+
+O Tooltip usa o `@base-ui/react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add tooltip" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/tooltip.tsx`.
+
+### TooltipProvider
+
+O CLI avisa para colocar o `TooltipProvider` na raiz do app. Ele **não é obrigatório**: todas as stories desta página, exceto **Provedor**, rodam sem ele, e cada tooltip usa o próprio atraso. O que o provedor faz é compartilhar `delay`, `closeDelay` e `timeout` entre todos os tooltips filhos: depois que um abre, o vizinho abre na hora (se o anterior fechou há menos de `timeout` ms, 400 por padrão). Numa barra de ferramentas, isso evita esperar o atraso a cada botão. Por isso a recomendação é um único provedor na raiz, e o `delay` padrão do nosso provedor é `0`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { TooltipProvider } from "@workspace/ui/components/tooltip"
+
+export function App({ children }) {
+  return <TooltipProvider>{children}</TooltipProvider>
+}`}
+/>
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
+
+<Tooltip>
+  <TooltipTrigger render={<Button variant="outline" />}>
+    Passe o mouse
+  </TooltipTrigger>
+  <TooltipContent>
+    <p>Adicionar à biblioteca</p>
+  </TooltipContent>
+</Tooltip>`}
+/>
+
+## Composição
+
+Monte um `Tooltip` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Tooltip
+├── TooltipTrigger
+└── TooltipContent`}
+/>
+
+## Acessibilidade
+
+- **O tooltip nunca é o único nome:** o Base UI não liga o tooltip ao gatilho por `aria-describedby` nem dá `role` ao balão (o teste da **Demo** conferiu que a descrição acessível do gatilho fica vazia). Para um leitor de tela, o tooltip é só visual. Todo gatilho precisa do próprio nome: um botão com texto já tem; um botão só com ícone leva `aria-label` (ou um texto `sr-only`) além do tooltip, como em **Com atalho de teclado** e **Provedor**. Também não ponha no tooltip informação essencial ou um controle.
+- **Abre pelo foco do teclado:** o tooltip abre com o mouse (hover) e quando o gatilho recebe o foco, com Tab, e Esc fecha. O teste de toda story chega ao gatilho só com Tab, espera o tooltip aparecer e roda o axe com ele aberto. Na **Demo**, o teste também confere o hover, o fechamento ao tirar o mouse e o Esc.
+- **Contraste:** o fundo é `foreground` e o texto é `background`, sem opacidade: 19,7:1 no claro e 19,0:1 no escuro (4,5:1 é o mínimo). A seta usa a mesma cor do fundo. Dentro do tooltip, o `Kbd` troca para `text-background` sobre um fundo translúcido, e o axe o confere nas stories.
+- **Gatilho:** recebe o elemento pela prop `render`, como `render={<Button variant="outline" />}`, sem `div` envolvendo. Use um elemento que já recebe foco (botão ou link). Num elemento que não recebe foco, o tooltip não abre pelo teclado.
+- **Botão desabilitado:** ele não recebe o mouse nem, por padrão, o foco. Embrulhe-o num `span` como gatilho e dê `focusableWhenDisabled` ao botão: ele fica com `aria-disabled`, recebe o foco por Tab (o foco sobe até o `span`, que abre o tooltip) e o mouse passa a atingir o `span`. Veja **Botão desabilitado**.
+- **Foco visível:** o botão usa o anel sólido `ring-ring` com afastamento de 2px. O balão não recebe foco.
+- **Toque:** quem usa toque não tem hover. Não dependa do tooltip em telas sensíveis ao toque.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`: a classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** o tooltip fechado não existe para o axe. Por isso cada story tem um `play` que abre o tooltip por teclado e espera a animação de entrada terminar; o axe roda depois, com o tooltip aberto, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Tooltip>
+  <TooltipTrigger
+    render={
+      <Button variant="outline" size="icon" aria-label="Excluir fatura" />
+    }
+  >
+    <Trash2Icon aria-hidden="true" />
+  </TooltipTrigger>
+  <TooltipContent>Excluir fatura</TooltipContent>
+</Tooltip>`}
+/>
+
+## Provedor
+
+Vários tooltips sob um `TooltipProvider` com `delay`: o primeiro espera o atraso, e os vizinhos abrem na hora. Os botões só com ícone têm `aria-label`; o tooltip repete o nome para quem enxerga.
+
+<Canvas of={TooltipStories.Provedor} />
+
+## Lado
+
+Use `side` para mudar a posição do tooltip.
+
+<Canvas of={TooltipStories.Lado} />
+
+## Com atalho de teclado
+
+O `Kbd` dentro do `TooltipContent` troca de cor sozinho. O botão só com ícone leva `aria-label`.
+
+<Canvas of={TooltipStories.ComAtalhoDeTeclado} />
+
+## Botão desabilitado
+
+Mostre um tooltip num botão desabilitado embrulhando-o num `span`, e dê `focusableWhenDisabled` ao botão para o teclado alcançá-lo (veja **Acessibilidade**).
+
+<Canvas of={TooltipStories.BotaoDesabilitado} />
+
+## RTL
+
+O balão e a seta têm posições lógicas (`inline-start`, `inline-end`), então o tooltip segue a direção do `<html>`. Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um tooltip isolado, como no exemplo, passe `dir` e `lang` ao próprio `TooltipContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={TooltipStories.Rtl} />
+
+## Referência da API
+
+O `Tooltip` é construído sobre o [Tooltip do Base UI](https://base-ui.com/react/components/tooltip#api-reference): `Tooltip` e `TooltipTrigger` repassam as props do Base UI (por exemplo `open`, `defaultOpen`, `onOpenChange` e `disabled` no `Tooltip`, e `render`, `delay` e `closeDelay` no gatilho).
+
+### TooltipProvider
+
+Compartilha os atrasos entre os tooltips filhos. Aceita as props do Provider do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>delay</code></td><td><code>number</code> (ms)</td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>closeDelay</code></td><td><code>number</code> (ms)</td><td>—</td></tr>
+    <tr><td><code>timeout</code></td><td><code>number</code> (ms)</td><td><code>{'400'}</code></td></tr>
+  </tbody>
+</table>
+
+### TooltipContent
+
+O balão, com o portal, o posicionador e a seta. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"top"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>TooltipProvider</code></td><td>nenhum (só o contexto)</td><td><code>tooltip-provider</code></td></tr>
+    <tr><td><code>Tooltip</code></td><td>nenhum (só o contexto)</td><td><code>tooltip</code></td></tr>
+    <tr><td><code>TooltipTrigger</code></td><td><code>{'<button>'}</code></td><td><code>tooltip-trigger</code></td></tr>
+    <tr><td><code>TooltipContent</code></td><td><code>{'<div>'}</code> em um portal no <code>body</code></td><td><code>tooltip-content</code></td></tr>
+  </tbody>
+</table>

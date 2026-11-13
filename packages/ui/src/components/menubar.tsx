@@ -22,6 +22,44 @@ import {
 } from "@workspace/ui/components/dropdown-menu"
 import { CheckIcon } from "lucide-react"
 
+/*
+ * Menubar — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/menubar
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Menubar e o Menu do Base UI, e reaproveita as peças do
+ *   `DropdownMenu` (que não se edita aqui). A barra é `role="menubar"` e cada
+ *   gatilho um `menuitem` com `aria-haspopup`/`aria-expanded`. Teclado: Tab
+ *   entra na barra, ←/→ (invertidos em RTL) trocam de menu, ↓/Enter abrem, ↑/↓
+ *   percorrem os itens, Home/End vão ao primeiro/último, → abre um submenu, Esc
+ *   fecha e devolve o foco ao gatilho. Escolher uma ação é com `<button>`
+ *   (item de menu), nunca `<a>` para ação.
+ * - Nome acessível: o texto do gatilho ("Arquivo") e o dos itens. Um item só
+ *   com ícone precisa de `aria-label`; os ícones decorativos levam
+ *   `aria-hidden="true"`. O atalho (`MenubarShortcut`) é texto visual: se
+ *   ele importar para o leitor de tela, ponha `aria-keyshortcuts` no item.
+ * - Foco do gatilho: o registro usava `outline-hidden` e só `hover`/
+ *   `aria-expanded`, sem indicador de foco por teclado. Agora o gatilho usa o
+ *   anel sólido (`focus-visible:ring-3 ring-ring ring-offset-2
+ *   ring-offset-background`), como o Button.
+ * - Itens destacam com `focus:bg-accent focus:text-accent-foreground` (15,6:1
+ *   no claro e 14,2:1 no escuro), sem anel, como no `DropdownMenu`.
+ * - Item destrutivo em foco: o texto `destructive` sobre `accent` dava 4,3:1
+ *   no claro, abaixo de 4,5:1; em foco o texto e o ícone vão a
+ *   `destructive-hover` (5,8:1 no claro e 7,7:1 no escuro) e o fundo é
+ *   `accent` cheio, no lugar de `destructive/10` e `destructive/20`.
+ * - Cores com opacidade do registro trocadas por papéis cheios: contorno
+ *   `ring-foreground/5` (e `dark:ring-foreground/10`) por `ring-border` e
+ *   separador `bg-border/50` por `bg-border`. Sombra mantida.
+ * - Escala do estilo rhea: barra `h-8` e `rounded-2xl`, itens `rounded-xl`.
+ *   Paddings, margens e posições lógicos (`ps`/`pe`, `ms`, `start`), e a seta
+ *   do submenu gira em RTL. Os menus vão para um portal no `body`: em RTL
+ *   isolado, passe `dir` (e `lang`) ao `MenubarContent` e ao
+ *   `MenubarSubContent`.
+ * - O estado de itens de marcar e de escolher é do Base UI: `checked`/
+ *   `defaultChecked` e `value`/`defaultValue` (o indicador ganha
+ *   `aria-hidden`; o estado vai por `aria-checked`).
+ */
+
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (
     <MenubarPrimitive
@@ -59,7 +97,7 @@ function MenubarTrigger({
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
       className={cn(
-        "flex items-center rounded-2xl px-1.5 py-[2px] text-sm font-medium outline-hidden select-none hover:bg-muted aria-expanded:bg-muted",
+        "flex items-center rounded-2xl px-1.5 py-[2px] text-sm font-medium outline-hidden select-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-expanded:bg-muted",
         className
       )}
       {...props}
@@ -80,7 +118,10 @@ function MenubarContent({
       align={align}
       alignOffset={alignOffset}
       sideOffset={sideOffset}
-      className={cn("min-w-36 rounded-2xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/5 duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95", className )}
+      className={cn(
+        "min-w-36 rounded-2xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-border duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:ring-border data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+        className
+      )}
       {...props}
     />
   )
@@ -98,7 +139,7 @@ function MenubarItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "group/menubar-item min-h-7 gap-2 rounded-xl px-2 py-1.5 text-sm focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:ps-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 data-[variant=destructive]:*:[svg]:text-destructive!",
+        "group/menubar-item min-h-7 gap-2 rounded-xl px-2 py-1.5 text-sm focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:ps-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-accent data-[variant=destructive]:focus:text-destructive-hover dark:data-[variant=destructive]:focus:bg-accent data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 data-[variant=destructive]:*:[svg]:text-destructive! data-[variant=destructive]:focus:*:[svg]:text-destructive-hover!",
         className
       )}
       {...props}
@@ -120,7 +161,7 @@ function MenubarCheckboxItem({
       data-slot="menubar-checkbox-item"
       data-inset={inset}
       className={cn(
-        "relative flex min-h-7 cursor-default items-center gap-2 rounded-xl py-1.5 pe-1.5 ps-7 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "relative flex min-h-7 cursor-default items-center gap-2 rounded-xl py-1.5 ps-7 pe-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
       checked={checked}
@@ -128,8 +169,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute start-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon
-          />
+          <CheckIcon aria-hidden="true" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -156,15 +196,14 @@ function MenubarRadioItem({
       data-slot="menubar-radio-item"
       data-inset={inset}
       className={cn(
-        "relative flex min-h-7 cursor-default items-center gap-2 rounded-xl py-1.5 pe-1.5 ps-7 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex min-h-7 cursor-default items-center gap-2 rounded-xl py-1.5 ps-7 pe-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
       <span className="pointer-events-none absolute start-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.RadioItemIndicator>
-          <CheckIcon
-          />
+          <CheckIcon aria-hidden="true" />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}
@@ -199,7 +238,7 @@ function MenubarSeparator({
   return (
     <DropdownMenuSeparator
       data-slot="menubar-separator"
-      className={cn("-mx-1 my-1 h-px bg-border/50", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   )
@@ -254,7 +293,10 @@ function MenubarSubContent({
   return (
     <DropdownMenuSubContent
       data-slot="menubar-sub-content"
-      className={cn("min-w-32 rounded-2xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/5 duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+      className={cn(
+        "min-w-32 rounded-2xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-border duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:ring-border data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+        className
+      )}
       {...props}
     />
   )

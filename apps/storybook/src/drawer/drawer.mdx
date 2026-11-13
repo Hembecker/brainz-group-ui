@@ -1,0 +1,339 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as DrawerStories from "./drawer.stories";
+
+<Meta of={DrawerStories} />
+
+# Drawer
+
+Uma gaveta que desliza da borda da tela. Serve para ações e formulários curtos, sobretudo no celular.
+
+<Canvas of={DrawerStories.Demo} />
+
+O exemplo principal do shadcn troca entre uma gaveta de baixo (celular) e uma lateral (desktop) com o hook `useIsMobile`. Como as stories desta página são JSX literal, que não chama hooks, o exemplo é uma gaveta de baixo, o `swipeDirection` padrão. Os lados têm a própria seção, **Posição**.
+
+O Drawer deste registro usa o [Drawer do Base UI](https://base-ui.com/react/components/drawer), não o vaul.
+
+## Instalação
+
+O Drawer usa o `@base-ui/react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add drawer" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/drawer.tsx`.
+
+No iOS Safari, o véu da gaveta é posicionado de forma absoluta e precisa de um `body` posicionado para cobrir a tela depois que a página rola. Acrescente aos estilos globais do seu app (veja os [detalhes na documentação do Base UI](https://base-ui.com/react/overview/quick-start#ios-26-safari)):
+
+<Source
+  language="css"
+  dark
+  code={`body {
+  position: relative;
+}`}
+/>
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@workspace/ui/components/drawer"
+
+<Drawer>
+  <DrawerTrigger render={<Button variant="outline" />}>Abrir</DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Tem certeza?</DrawerTitle>
+      <DrawerDescription>Esta ação não pode ser desfeita.</DrawerDescription>
+    </DrawerHeader>
+    <div className="p-4">{/* Conteúdo aqui */}</div>
+    <DrawerFooter>
+      <Button>Enviar</Button>
+      <DrawerClose render={<Button variant="outline" />}>Cancelar</DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>`}
+/>
+
+## Composição
+
+Monte um `Drawer` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Drawer
+├── DrawerTrigger
+└── DrawerContent
+    ├── DrawerHeader
+    │   ├── DrawerTitle
+    │   └── DrawerDescription
+    └── DrawerFooter`}
+/>
+
+O `DrawerContent` já compõe o portal, o véu, a área de exibição e o popup do Base UI. Para controlar cada peça, o pacote também exporta `DrawerPortal`, `DrawerOverlay` e `DrawerSwipeHandle`.
+
+## Acessibilidade
+
+- **Nome e descrição:** o popup tem `role="dialog"` e o Base UI o liga ao `DrawerTitle` (`aria-labelledby`) e ao `DrawerDescription` (`aria-describedby`). Toda gaveta precisa de título, e ele diz a ação ou o assunto ("Escolha um horário de entrega"), não só "Atenção". Uma gaveta sem texto visível precisa de `aria-label` no `DrawerContent`.
+- **Foco preso e devolvido (modal):** com a gaveta modal aberta, o foco vai para dentro dela e o Tab não sai dali, porque o resto da página fica inerte. Esc fecha, e o foco volta para o gatilho. O teste da story **Demo** confere isso (Tab oito vezes, Esc e o foco no gatilho).
+- **Gatilho e fechamento:** `DrawerTrigger` e `DrawerClose` recebem o elemento pela prop `render`, como `render={<Button variant="outline" />}`, sem `div` envolvendo. Os dois são `<button>`, porque abrir e fechar são ações. Uma gaveta aninhada precisa de botões de fechar com nomes distintos ("Fechar gaveta aninhada"), para quem usa leitor de tela saber qual fecha.
+- **Gesto não é o único jeito:** arrastar para fechar é um atalho para o toque. Quem usa teclado ou leitor de tela fecha com Esc ou com o `DrawerClose`, então ofereça sempre um botão de fechar visível. A alça de arrasto (`showSwipeHandle`) é decorativa e tem `aria-hidden`.
+- **Não modal:** com `modal={false}`, a página de trás continua interativa e o foco não fica preso. Use `modal="trap-focus"` para prender só o foco. Combine `modal={false}` com `disablePointerDismissal` para a gaveta não fechar num clique fora; Esc e o `DrawerClose` continuam fechando.
+- **Véu de fundo:** o `DrawerOverlay` escurece a página (`bg-black/30` com desfoque), a única cor com opacidade do componente. Ele não carrega texto, então não tem contraste a cumprir: quem destaca a gaveta é o fundo `popover`, com o texto `popover-foreground` (19,7:1 no claro e 16,7:1 no escuro).
+- **Formulários:** os campos têm rótulo persistente (`Label` com `htmlFor`), e a descrição e o erro ficam ligados ao campo por `aria-describedby` e `aria-errormessage`.
+- **Rolagem:** uma região que rola dentro da gaveta precisa ser alcançável pelo teclado. Se ela já contém controles focáveis, como os botões de opção da **Demo**, o teclado rola sozinho. Se tem só texto, dê a ela `tabIndex={0}`, `role="region"` e um nome (`aria-labelledby` com o `id` do `DrawerTitle`), e o anel `focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset`.
+- **Movimento:** a gaveta anima por 450ms. Quem pede menos movimento no sistema (`prefers-reduced-motion`) deve ter as animações do seu app reduzidas; confira isso no seu produto.
+- **Testes:** a gaveta fechada não existe para o axe. Por isso cada story tem um `play` que abre a gaveta e espera o deslize e o véu terminarem; o axe roda depois, com a gaveta aberta, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Drawer>
+  <DrawerTrigger render={<Button variant="outline" />}>
+    Excluir fatura
+  </DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Excluir a fatura 0042?</DrawerTitle>
+      <DrawerDescription>
+        A fatura sai da sua lista e não dá para recuperá-la.
+      </DrawerDescription>
+    </DrawerHeader>
+    <DrawerFooter>
+      <Button variant="destructive">Excluir fatura</Button>
+      <DrawerClose render={<Button variant="outline" />}>Cancelar</DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>`}
+/>
+
+## Tamanhos personalizados
+
+Uma gaveta vertical se ajusta ao conteúdo e é limitada a `calc(100dvh - 6rem)`. Uma gaveta lateral ocupa `75%` da largura da tela, ou `24rem` em telas maiores.
+
+Para mudar a altura de uma gaveta vertical, use `h-*` e `max-h-*` no `DrawerContent`.
+
+<Source language="tsx" dark code={`<DrawerContent className="h-[50vh]">`} />
+
+Para mudar a largura de uma gaveta lateral, use `w-*` e `max-w-*` no `DrawerContent`.
+
+<Source language="tsx" dark code={`<DrawerContent className="w-96">`} />
+
+Quando o mesmo componente aparece em várias direções, restrinja a mudança a um eixo com as variantes `data-[swipe-axis=*]`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<DrawerContent className="data-[swipe-axis=y]:max-h-[50vh] data-[swipe-axis=x]:w-96">`}
+/>
+
+Para uma região rolável, faça do contêiner de rolagem um item flex. Evite `h-full`, que não resolve dentro de uma gaveta que se ajusta ao conteúdo.
+
+<Source
+  language="tsx"
+  dark
+  code={`<DrawerContent>
+  <DrawerHeader>...</DrawerHeader>
+  <div className="flex-1 overflow-y-auto p-4">{/* Conteúdo rolável */}</div>
+  <DrawerFooter>...</DrawerFooter>
+</DrawerContent>`}
+/>
+
+## Estilo
+
+A gaveta expõe variáveis CSS para personalizar o estilo. Defina as de tamanho no `DrawerContent`, e a do véu em `[data-slot=drawer-overlay]` no seu CSS.
+
+<table>
+  <thead>
+    <tr><th>Variável</th><th>Padrão</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>--drawer-inset</code></td><td><code>{'0px'}</code></td><td>Afasta a gaveta das bordas da tela.</td></tr>
+    <tr><td><code>--drawer-bleed-background</code></td><td><code>{'var(--color-popover)'}</code></td><td>Preenche o vão atrás da gaveta quando o arrasto passa do limite.</td></tr>
+    <tr><td><code>--drawer-overlay-min-opacity</code></td><td><code>{'0'}</code></td><td>Opacidade mínima do véu. Com pontos de ancoragem, o padrão é <code>{'0.5'}</code>.</td></tr>
+  </tbody>
+</table>
+
+A gaveta também define atributos de dados, que você usa em variantes como `data-[swipe-direction=down]:` no `DrawerContent`, ou `group-data-[swipe-axis=y]/drawer-popup:` nos descendentes.
+
+<table>
+  <thead>
+    <tr><th>Atributo</th><th>Valores</th><th>Presente quando</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>data-swipe-direction</code></td><td><code>up</code>, <code>right</code>, <code>down</code>, <code>left</code></td><td>Sempre.</td></tr>
+    <tr><td><code>data-swipe-axis</code></td><td><code>x</code>, <code>y</code></td><td>Sempre.</td></tr>
+    <tr><td><code>data-snap-points</code></td><td>presente</td><td>A gaveta tem pontos de ancoragem.</td></tr>
+    <tr><td><code>data-expanded</code></td><td>presente</td><td>A gaveta está no ponto de ancoragem máximo.</td></tr>
+    <tr><td><code>data-swiping</code></td><td>presente</td><td>Um arrasto está em andamento.</td></tr>
+    <tr><td><code>data-nested-drawer-open</code></td><td>presente</td><td>Há uma gaveta aninhada aberta por cima.</td></tr>
+  </tbody>
+</table>
+
+## Posição
+
+Use a prop `swipeDirection` para escolher o lado da gaveta. As opções são `up`, `right`, `down` e `left`.
+
+`left` e `right` são lados físicos: a gaveta fica na borda esquerda ou direita da tela também em RTL, porque o gesto de fechar é físico. O teste da story confere a posição nos três modos.
+
+<Canvas of={DrawerStories.Posicao} />
+
+## Alça de arrasto
+
+Use `showSwipeHandle` no `Drawer` para mostrar uma alça de arrasto. Ela é decorativa (`aria-hidden`).
+
+<Canvas of={DrawerStories.AlcaDeArrasto} />
+
+## Aninhadas
+
+Abra gavetas de dentro de outra. As gavetas de baixo continuam montadas e se empilham atrás da gaveta da frente.
+
+<Canvas of={DrawerStories.Aninhadas} />
+
+## Não modal
+
+Use `modal={false}` para permitir a interação com o resto da página enquanto a gaveta está aberta. Combine com `disablePointerDismissal` para impedir que um clique fora feche a gaveta. Use `modal="trap-focus"` para prender o foco dentro da gaveta sem restringir a rolagem nem o ponteiro.
+
+<Canvas of={DrawerStories.NaoModal} />
+
+## Pontos de ancoragem
+
+Use `snapPoints` para ancorar a gaveta em alturas predefinidas. Números entre `0` e `1` são frações da altura da tela; números maiores que `1` são pixels; textos aceitam as unidades `px` e `rem`. Os pontos valem para gavetas verticais.
+
+Acompanhe o ponto ativo com as props controladas `snapPoint` e `onSnapPointChange`. No ponto máximo, a gaveta recebe `data-expanded`, que você estiliza com a variante `data-expanded:`.
+
+<Canvas of={DrawerStories.PontosDeAncoragem} />
+
+## Responsivo
+
+Combine `Dialog` e `Drawer` para um diálogo responsivo: um `Dialog` no desktop e um `Drawer` no celular. Esta é a única story com um componente auxiliar (`PerfilResponsivo`), porque ela precisa do hook `useIsMobile`. O teste roda numa tela larga e abre o ramo do `Dialog`.
+
+<Canvas of={DrawerStories.Responsivo} />
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
+
+function PerfilResponsivo() {
+  const isMobile = useIsMobile()
+  const [open, setOpen] = React.useState(false)
+  const formulario = (
+    <form className="grid items-start gap-6 p-4 md:p-0">
+      <div className="grid gap-3">
+        <Label htmlFor="email">E-mail</Label>
+        <Input type="email" id="email" defaultValue="maria@exemplo.com.br" />
+      </div>
+      <div className="grid gap-3">
+        <Label htmlFor="usuario">Usuário</Label>
+        <Input id="usuario" defaultValue="@mariasouza" />
+      </div>
+      <Button type="submit">Salvar alterações</Button>
+    </form>
+  )
+
+  if (!isMobile) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger render={<Button variant="outline" />}>
+          Editar perfil
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Editar perfil</DialogTitle>
+            <DialogDescription>
+              Faça as alterações no seu perfil aqui.
+            </DialogDescription>
+          </DialogHeader>
+          {formulario}
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger render={<Button variant="outline" />}>
+        Editar perfil
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Editar perfil</DrawerTitle>
+          <DrawerDescription>
+            Faça as alterações no seu perfil aqui.
+          </DrawerDescription>
+        </DrawerHeader>
+        {formulario}
+      </DrawerContent>
+    </Drawer>
+  )
+}`}
+/>
+
+## Referência da API
+
+O `Drawer` é construído sobre o [Drawer do Base UI](https://base-ui.com/react/components/drawer#api-reference): `DrawerTrigger`, `DrawerPortal`, `DrawerClose`, `DrawerOverlay`, `DrawerTitle` e `DrawerDescription` repassam as props do Base UI (por exemplo `render` no gatilho e no `DrawerClose`). O `DrawerContent` aceita as props do Popup do Base UI (por exemplo `initialFocus`).
+
+### Drawer
+
+A raiz. Aceita as props do Drawer do Base UI, com estas em destaque:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>swipeDirection</code></td><td><code>{'"up" | "right" | "down" | "left"'}</code></td><td><code>{'"down"'}</code></td></tr>
+    <tr><td><code>modal</code></td><td><code>{'boolean | "trap-focus"'}</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>showSwipeHandle</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>snapPoints</code></td><td><code>{'(number | string)[]'}</code></td><td>—</td></tr>
+    <tr><td><code>snapPoint</code> / <code>onSnapPointChange</code></td><td>controlado</td><td>—</td></tr>
+    <tr><td><code>disablePointerDismissal</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>open</code> / <code>defaultOpen</code> / <code>onOpenChange</code></td><td>controlado ou não</td><td>—</td></tr>
+  </tbody>
+</table>
+
+### DrawerContent
+
+O popup, com o portal, o véu e a área de exibição. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>initialFocus</code></td><td><code>{'boolean | RefObject | function'}</code></td><td>primeiro controle</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Drawer</code></td><td>nenhum (só o contexto)</td><td><code>drawer</code></td></tr>
+    <tr><td><code>DrawerTrigger</code></td><td><code>{'<button>'}</code></td><td><code>drawer-trigger</code></td></tr>
+    <tr><td><code>DrawerPortal</code></td><td>portal no <code>body</code></td><td><code>drawer-portal</code></td></tr>
+    <tr><td><code>DrawerOverlay</code></td><td><code>{'<div>'}</code></td><td><code>drawer-overlay</code></td></tr>
+    <tr><td><code>DrawerContent</code></td><td><code>{'<div role="dialog">'}</code> (popup, dentro da área de exibição <code>drawer-viewport</code>)</td><td><code>drawer-popup</code> e <code>drawer-content</code></td></tr>
+    <tr><td><code>DrawerSwipeHandle</code></td><td><code>{'<div aria-hidden="true">'}</code></td><td><code>drawer-swipe-handle</code></td></tr>
+    <tr><td><code>DrawerClose</code></td><td><code>{'<button>'}</code></td><td><code>drawer-close</code></td></tr>
+    <tr><td><code>DrawerHeader</code></td><td><code>{'<div>'}</code></td><td><code>drawer-header</code></td></tr>
+    <tr><td><code>DrawerFooter</code></td><td><code>{'<div>'}</code></td><td><code>drawer-footer</code></td></tr>
+    <tr><td><code>DrawerTitle</code></td><td><code>{'<h2>'}</code></td><td><code>drawer-title</code></td></tr>
+    <tr><td><code>DrawerDescription</code></td><td><code>{'<p>'}</code></td><td><code>drawer-description</code></td></tr>
+  </tbody>
+</table>

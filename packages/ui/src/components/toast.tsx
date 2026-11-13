@@ -7,6 +7,38 @@ import { cn } from "cn"
 import { Button } from "@workspace/ui/components/button"
 import { XIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
+/*
+ * Toast — estrutura e API do shadcn/ui (versão Base UI; o Sonner não foi
+ * instalado):
+ * https://ui.shadcn.com/docs/components/base/toast
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Toast do Base UI. `toast` é o gerenciador global
+ *   (`toast.add`, `toast.close`, `toast.update`, `toast.promise`); o
+ *   `<Toaster />` vai uma vez na raiz do app. Quem precisar de um gerenciador
+ *   próprio usa `createToastManager()` e passa `toastManager` ao `Toaster`.
+ * - Região viva: o `ToastViewport` é `role="region"` com `aria-live="polite"`
+ *   e fica sempre montado, mesmo sem avisos; só o texto dele muda. O rótulo
+ *   "Notificações" é fixo, em português (como o "Carregando" do Spinner); dá
+ *   para trocar passando `aria-label` ao `ToastViewport`.
+ * - Erro crítico: `priority: "high"` troca o `role` do aviso para
+ *   `alertdialog` e o anuncia como `role="alert"` (assertivo). Use só para
+ *   erro que o usuário precisa ver já; os demais são educados (`polite`).
+ * - Teclado: F6 leva o foco ao viewport, Tab percorre os avisos e seus
+ *   botões, Esc fecha o aviso focado e o foco volta ao elemento anterior.
+ * - Tempo: cada aviso some depois de 5000 ms (`timeout` do Base UI). Passar o
+ *   mouse, focar um aviso ou tirar o foco da janela pausa a contagem, e ela
+ *   recomeça depois. Mude por aviso (`toast.add({ timeout })`) ou para todos
+ *   (`<Toaster timeout />`); `timeout: 0` mantém o aviso até ser fechado.
+ *   Avisos com ação, ou de leitura demorada, devem usar tempo maior ou 0. O
+ *   `loading` do `toast.promise` não expira.
+ * - Botão de fechar: o nome "Fechar aviso" é fixo, em português; o ícone é
+ *   `aria-hidden`. Para outro idioma, passe `aria-label` ao `ToastClose`.
+ * - Nome acessível: o aviso é `role="dialog"` nomeado pelo título. Todo aviso
+ *   deve ter `title`; sem ele, o `ToastList` dá o nome genérico "Aviso".
+ * - Cores: o aviso usa `popover` com `border` cheio (sem opacidade). O
+ *   anel de foco é o sólido do sistema, com afastamento de 2px.
+ */
+
 const toast = ToastPrimitive.createToastManager()
 
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
@@ -21,6 +53,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
   return (
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
+      aria-label="Notificações"
       className={cn(
         "pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-sm outline-none sm:end-4 sm:start-auto sm:mx-0 sm:w-full",
         className
@@ -117,7 +150,7 @@ function ToastClose({
   return (
     <ToastPrimitive.Close
       data-slot="toast-close"
-      aria-label="Close toast"
+      aria-label="Fechar aviso"
       render={render}
       className={cn(
         "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
@@ -183,7 +216,11 @@ function ToastList() {
   const { toasts } = ToastPrimitive.useToastManager()
 
   return toasts.map((toastItem) => (
-    <Toast key={toastItem.id} toast={toastItem}>
+    <Toast
+      key={toastItem.id}
+      toast={toastItem}
+      aria-label={toastItem.title ? undefined : "Aviso"}
+    >
       <ToastContent>
         <ToastIcon type={toastItem.type} />
         <div className="flex min-w-0 flex-1 flex-col gap-1">

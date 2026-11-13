@@ -1,0 +1,170 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as NavigationMenuStories from "./navigation-menu.stories";
+
+<Meta of={NavigationMenuStories} />
+
+# Navigation Menu
+
+Uma coleção de links para navegar pelo site, com painéis que abrem a partir de um gatilho.
+
+<Canvas of={NavigationMenuStories.Demo} />
+
+## Instalação
+
+O NavigationMenu usa o `@base-ui/react`, o `lucide-react`, o `class-variance-authority` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add navigation-menu" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/navigation-menu.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@workspace/ui/components/navigation-menu"
+
+<NavigationMenu aria-label="Principal">
+  <NavigationMenuList>
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>Item um</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <NavigationMenuLink render={<a href="/pagina" />}>Link</NavigationMenuLink>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+  </NavigationMenuList>
+</NavigationMenu>`}
+/>
+
+## Composição
+
+Monte um `NavigationMenu` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`NavigationMenu
+├── NavigationMenuList
+│   ├── NavigationMenuItem
+│   │   ├── NavigationMenuTrigger
+│   │   └── NavigationMenuContent
+│   │       ├── NavigationMenuLink
+│   │       └── NavigationMenuLink
+│   └── NavigationMenuItem
+│       └── NavigationMenuLink
+└── NavigationMenuIndicator`}
+/>
+
+## Acessibilidade
+
+- **Navegação e nome:** a raiz é um `<nav>`. Dê um `aria-label` a ele ("Principal"), e um nome diferente a cada `<nav>` da página, para o leitor de tela distinguir os pontos de referência.
+- **Link é `<a>`, gatilho é `<button>`:** o `NavigationMenuLink` é um `<a>` e leva a outra página; o `NavigationMenuTrigger` é um `<button>` e só abre um painel. Um item que navega nunca é gatilho, e um gatilho nunca recebe `href`. Para o link do seu roteador, use a prop `render`, sem `div` envolvendo.
+- **Teclado:** Tab entra no menu e sai dele. **Enter** abre o painel do gatilho; as setas **Esquerda** e **Direita** andam pelos gatilhos e links da barra (em RTL as duas se invertem, porque seguem a direção da página); com o painel aberto, **Tab** vai para o primeiro link dele e **Baixo** anda entre os links do painel; **Esc** fecha o painel e devolve o foco ao gatilho. O teste da story **Demo** confere Tab, as setas, Enter, Esc e a entrada no painel usando só o teclado, nos três modos.
+- **Mouse:** o painel também abre ao passar o mouse sobre o gatilho. Nada depende disso: tudo o que o mouse faz, o teclado faz.
+- **Nome acessível:** cada gatilho tem o texto como nome ("Primeiros passos"), e o ícone de seta é `aria-hidden`. Ícones dentro de links (como na seção **Com ícone**) levam `aria-hidden="true"`, e o texto do link é o nome. O nome de cada link diz o destino, não "clique aqui".
+- **Foco visível:** o gatilho e os links da barra usam o anel sólido (`ring-ring`, com afastamento de 2px pela cor do fundo). Dentro do painel, o link usa o mesmo anel sólido, desenhado por dentro (`ring-inset`), para não ser cortado pela borda do painel. O destaque `muted` sozinho não bastaria: sobre o `popover`, ele dá só cerca de 1,1:1 no claro e 1,2:1 no escuro, abaixo dos 3:1 de um indicador de foco.
+- **Estado:** o gatilho com o painel aberto e o link da página atual (`data-active`) usam o fundo `muted` cheio, sem opacidade. Use a prop `active` no link da página atual: ela aplica `data-active` e `aria-current="page"`, porque a cor sozinha não basta.
+- **Painel e RTL:** o painel vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral não. Veja **RTL**.
+- **Testes:** o menu fechado não existe para o axe. Por isso o `play` abre um painel pelo teclado, espera a animação de entrada terminar, e o axe roda com o painel aberto, no claro, no escuro e em RTL. O Base UI põe quatro guardas de foco (`<span aria-hidden tabindex="0">`) em volta do painel aberto, que o axe aponta como `aria-hidden-focus`; eles são da biblioteca e não dá para mudá-los daqui, então só esses elementos ficam de fora da análise (`a11y.context.exclude`), e a regra segue ligada para o resto.
+
+<Source
+  language="tsx"
+  dark
+  code={`<NavigationMenuLink render={<a href="/docs" />} active>
+  Documentação
+</NavigationMenuLink>`}
+/>
+
+## Componente de link
+
+Use a prop `render` para compor o seu componente de link, como o `Link` do Next.js ou do React Router. Para que um link da barra tenha a aparência de um gatilho, use `navigationMenuTriggerStyle()`.
+
+<Canvas of={NavigationMenuStories.ComponenteDeLink} />
+
+<Source
+  language="tsx"
+  dark
+  code={`import Link from "next/link"
+
+import {
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from "@workspace/ui/components/navigation-menu"
+
+<NavigationMenuItem>
+  <NavigationMenuLink
+    render={<Link href="/docs" />}
+    className={navigationMenuTriggerStyle()}
+  >
+    Documentação
+  </NavigationMenuLink>
+</NavigationMenuItem>`}
+/>
+
+## RTL
+
+Os recuos e as posições são lógicos (`ps`, `pe`, `ms`, `me`), então o menu segue a direção da página. As setas Esquerda e Direita também se invertem.
+
+Como o painel vai para um portal no `body`, um `dir` posto num ancestral não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um menu isolado, como no exemplo, passe `dir="rtl"` ao `NavigationMenu` e `dir` e `lang` a cada `NavigationMenuContent`, com `align="end"` na raiz. Para ver a página inteira em RTL, use o seletor **Direção** da barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={NavigationMenuStories.Rtl} />
+
+## Referência da API
+
+O `NavigationMenu` é construído sobre o [NavigationMenu do Base UI](https://base-ui.com/react/components/navigation-menu#api-reference): `NavigationMenuList`, `NavigationMenuItem`, `NavigationMenuTrigger`, `NavigationMenuContent` e `NavigationMenuLink` repassam as props do Base UI (por exemplo `render` e `closeOnClick` no link, e `value`, `defaultValue` e `onValueChange` na raiz).
+
+### NavigationMenu
+
+A raiz (`<nav>`), que já monta o portal e o posicionador do painel.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### NavigationMenuLink
+
+O link (`<a>`). Aceita `render` para trocar o elemento.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>ReactElement</code></td><td><code>{'<a>'}</code></td></tr>
+    <tr><td><code>active</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>NavigationMenu</code></td><td><code>{'<nav>'}</code></td><td><code>navigation-menu</code></td></tr>
+    <tr><td><code>NavigationMenuList</code></td><td><code>{'<ul>'}</code></td><td><code>navigation-menu-list</code></td></tr>
+    <tr><td><code>NavigationMenuItem</code></td><td><code>{'<li>'}</code></td><td><code>navigation-menu-item</code></td></tr>
+    <tr><td><code>NavigationMenuTrigger</code></td><td><code>{'<button>'}</code></td><td><code>navigation-menu-trigger</code></td></tr>
+    <tr><td><code>NavigationMenuContent</code></td><td><code>{'<div>'}</code></td><td><code>navigation-menu-content</code></td></tr>
+    <tr><td><code>NavigationMenuLink</code></td><td><code>{'<a>'}</code></td><td><code>navigation-menu-link</code></td></tr>
+    <tr><td><code>NavigationMenuIndicator</code></td><td><code>{'<span>'}</code></td><td><code>navigation-menu-indicator</code></td></tr>
+  </tbody>
+</table>

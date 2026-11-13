@@ -1,0 +1,247 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CommandStories from "./command.stories";
+
+<Meta of={CommandStories} />
+
+# Command
+
+Um menu de comandos para busca e ações rápidas.
+
+<Canvas of={CommandStories.Demo} />
+
+## Sobre
+
+O `Command` usa o [`cmdk`](https://github.com/dip/cmdk), de Dip, e não um primitivo do Base UI. Ele junta um campo de busca e uma lista que filtra enquanto a pessoa digita; o `CommandDialog` põe o mesmo comando dentro de um Dialog.
+
+## Instalação
+
+O Command usa o `cmdk` (já instalado em `packages/ui`), o `lucide-react` e o `cn`, além do Dialog e do Input Group.
+
+<Source language="bash" dark code="npx shadcn add command" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/command.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@workspace/ui/components/command"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<Command className="max-w-sm rounded-lg border" label="Buscar comandos">
+  <CommandInput placeholder="Digite um comando ou pesquise..." />
+  <CommandList>
+    <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+    <CommandGroup heading="Sugestões">
+      <CommandItem>Calendário</CommandItem>
+      <CommandItem>Pesquisar emoji</CommandItem>
+      <CommandItem>Calculadora</CommandItem>
+    </CommandGroup>
+    <CommandSeparator />
+    <CommandGroup heading="Configurações">
+      <CommandItem>Perfil</CommandItem>
+      <CommandItem>Cobrança</CommandItem>
+      <CommandItem>Configurações</CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>`}
+/>
+
+## Composição
+
+Monte um `Command` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Command
+├── CommandInput
+└── CommandList
+    ├── CommandEmpty
+    ├── CommandGroup
+    │   ├── CommandItem
+    │   └── CommandItem
+    ├── CommandSeparator
+    └── CommandGroup
+        ├── CommandItem
+        └── CommandItem`}
+/>
+
+## Acessibilidade
+
+- **Nome do campo de busca:** o campo (`role="combobox"`) precisa de um nome, e o placeholder nunca é o rótulo. Passe `label` ao `Command`: o cmdk o liga ao campo por um `<label>` invisível (`aria-labelledby`). Um `aria-label` no `CommandInput` **não** funciona, porque o cmdk põe o `aria-labelledby` depois das props e ele vence; sem `label`, o campo fica sem nome. O nome é específico ("Buscar comandos", "Buscar página da conta"). No `CommandDialog`, passe também `title` e `description` específicos.
+- **Lista nomeada:** a lista (`role="listbox"`) tem o nome padrão "Resultados" (o cmdk usa "Suggestions", em inglês). Para outro nome ou idioma, passe `label` ao `CommandList`.
+- **Lista vazia anunciada:** o `Command` mantém sempre montada uma região `role="status"` (`aria-live="polite"`, só para leitor de tela) fora da lista, e o `CommandEmpty` põe o texto nela quando nada combina. O texto visível ("Nenhum resultado encontrado.") fica dentro da lista com `aria-hidden`, para não ser lido duas vezes. Escreva uma mensagem que diga o que aconteceu. O teste da story **Demo** digita um termo sem resultado e confere que a mesma região recebe o texto.
+- **Teclado e foco:** o foco fica no campo de busca; ↑ e ↓ movem o destaque (`aria-activedescendant`), Home e End vão ao primeiro e ao último, Enter escolhe o item destacado. O cmdk destaca o primeiro item sozinho. No `CommandDialog` o foco vai para o campo ao abrir, fica preso no diálogo, Esc fecha e o foco volta ao gatilho (veja o Dialog).
+- **Destaque do item, sem anel:** o item destacado (`data-[selected=true]`) usa `bg-accent` com `text-accent-foreground` (15,6:1 no claro e 14,2:1 no escuro). O destaque é um fundo, e o foco real fica no campo, então não há anel no item. O atalho (`CommandShortcut`) é `muted-foreground` (6,6:1 sobre o `accent` no claro e 6,1:1 no escuro) e vira `accent-foreground` no item destacado. O registro usava `data-selected:`, que casaria com todos os itens (o cmdk escreve `data-selected="false"` nos outros).
+- **Foco do campo:** o campo está num `InputGroup`, que recebe o anel sólido do sistema (`ring-3 ring-ring ring-offset-2 ring-offset-background`) quando o campo está em foco.
+- **Item desabilitado:** `disabled` deixa o item fora da navegação (`aria-disabled`) e com `opacity-50`. O texto desabilitado está isento da regra de contraste.
+- **Ícones decorativos:** a lupa do campo e os ícones dos itens levam `aria-hidden="true"`; o texto do item dá o nome.
+- **Separador:** o separador é só visual (`role="presentation"`), porque o `role="separator"` do cmdk não é um filho permitido de um `listbox` e o axe o reprova. Ele some enquanto há busca, como no cmdk.
+- **Testes:** um diálogo fechado não existe para o axe. As stories em `CommandDialog` têm um `play` que abre o diálogo, espera a animação, o foco no campo e o primeiro item destacado; o axe roda depois, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Command label="Buscar fatura">
+  <CommandInput placeholder="Digite o número da fatura..." />
+  <CommandList>
+    <CommandEmpty>Nenhuma fatura encontrada.</CommandEmpty>
+    <CommandGroup heading="Faturas">
+      <CommandItem>Fatura 0042</CommandItem>
+      <CommandItem>Fatura 0043</CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>`}
+/>
+
+## Básico
+
+Um menu de comandos simples num diálogo. O `CommandDialog` recebe `open` e `onOpenChange`, então o estado fica com você.
+
+<Canvas of={CommandStories.Basico} />
+
+## Atalhos
+
+Use `CommandShortcut` para mostrar o atalho de cada comando. Ele é texto visual: ligar o atalho ao teclado é com você.
+
+<Canvas of={CommandStories.Atalhos} />
+
+## Grupos
+
+Um menu de comandos com grupos, ícones e separadores.
+
+<Canvas of={CommandStories.Grupos} />
+
+## Rolagem
+
+Uma lista longa rola dentro do diálogo (a lista tem `max-h-72`), e o campo de busca continua à vista. O foco fica no campo e as setas rolam a lista até o item destacado.
+
+<Canvas of={CommandStories.Rolagem} />
+
+## RTL
+
+Os recuos e as margens são lógicos (`ps`, `pe`, `ms`), então o menu segue a direção. Passe `dir="rtl"` ao `Command` e ao `CommandInput`; o `CommandInput` precisa do próprio `dir` porque o campo é um `<input>`. Num `CommandDialog`, o conteúdo vai para um portal no `body`: coloque `dir` e `lang` no `<html>`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={CommandStories.Rtl} />
+
+## Referência da API
+
+Veja a documentação do [cmdk](https://github.com/dip/cmdk) para o comportamento do filtro e das props do `Command`. `Command`, `CommandInput`, `CommandList`, `CommandGroup` e `CommandItem` repassam as props do cmdk.
+
+### Command
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>label</code></td><td><code>string</code></td><td>— (obrigatória na prática: é o nome do campo)</td></tr>
+    <tr><td><code>shouldFilter</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>filter</code></td><td><code>{'(value: string, search: string, keywords?: string[]) => number'}</code></td><td>filtro padrão do cmdk</td></tr>
+    <tr><td><code>value</code> / <code>onValueChange</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>loop</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CommandDialog
+
+Um `Dialog` com o `Command` dentro. Aceita as props do `Dialog` (`open`, `onOpenChange`, `defaultOpen`…).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>title</code></td><td><code>string</code></td><td><code>{'"Paleta de comandos"'}</code></td></tr>
+    <tr><td><code>description</code></td><td><code>string</code></td><td><code>{'"Procure um comando para executar..."'}</code></td></tr>
+    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CommandList
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>label</code></td><td><code>string</code></td><td><code>{'"Resultados"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CommandGroup
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>heading</code></td><td><code>ReactNode</code></td><td>—</td></tr>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CommandItem
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>o texto do item</td></tr>
+    <tr><td><code>keywords</code></td><td><code>string[]</code></td><td>—</td></tr>
+    <tr><td><code>onSelect</code></td><td><code>{'(value: string) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### CommandSeparator
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>alwaysRender</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Command</code></td><td><code>{'<div>'}</code></td><td><code>command</code></td></tr>
+    <tr><td>região de status (dentro do <code>Command</code>)</td><td><code>{'<div role="status">'}</code></td><td><code>command-status</code></td></tr>
+    <tr><td><code>CommandDialog</code></td><td>o <code>Dialog</code>, com o <code>DialogContent</code></td><td><code>dialog</code>, <code>dialog-content</code></td></tr>
+    <tr><td><code>CommandInput</code></td><td><code>{'<input role="combobox">'}</code> num <code>InputGroup</code></td><td><code>command-input</code> (o invólucro é <code>command-input-wrapper</code>)</td></tr>
+    <tr><td><code>CommandList</code></td><td><code>{'<div role="listbox">'}</code></td><td><code>command-list</code></td></tr>
+    <tr><td><code>CommandEmpty</code></td><td><code>{'<div aria-hidden="true">'}</code></td><td><code>command-empty</code></td></tr>
+    <tr><td><code>CommandGroup</code></td><td><code>{'<div role="presentation">'}</code> com <code>{'<div role="group">'}</code></td><td><code>command-group</code></td></tr>
+    <tr><td><code>CommandItem</code></td><td><code>{'<div role="option">'}</code></td><td><code>command-item</code></td></tr>
+    <tr><td><code>CommandShortcut</code></td><td><code>{'<span>'}</code></td><td><code>command-shortcut</code></td></tr>
+    <tr><td><code>CommandSeparator</code></td><td><code>{'<div role="presentation">'}</code></td><td><code>command-separator</code></td></tr>
+  </tbody>
+</table>

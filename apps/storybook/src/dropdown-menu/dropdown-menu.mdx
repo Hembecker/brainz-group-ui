@@ -1,0 +1,355 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as DropdownMenuStories from "./dropdown-menu.stories";
+
+<Meta of={DropdownMenuStories} />
+
+# Dropdown Menu
+
+Mostra um menu de ações ou de funções, aberto por um botão.
+
+<Canvas of={DropdownMenuStories.Demo} />
+
+## Instalação
+
+O Dropdown Menu usa o `@base-ui/react`, o `lucide-react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add dropdown-menu" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/dropdown-menu.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Button } from "@workspace/ui/components/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
+
+<DropdownMenu>
+  <DropdownMenuTrigger render={<Button variant="outline" />}>
+    Abrir
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuGroup>
+      <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+      <DropdownMenuItem>Perfil</DropdownMenuItem>
+      <DropdownMenuItem>Cobrança</DropdownMenuItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuGroup>
+      <DropdownMenuItem>Equipe</DropdownMenuItem>
+      <DropdownMenuItem>Assinatura</DropdownMenuItem>
+    </DropdownMenuGroup>
+  </DropdownMenuContent>
+</DropdownMenu>`}
+/>
+
+## Composição
+
+Monte um `DropdownMenu` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`DropdownMenu
+├── DropdownMenuTrigger
+└── DropdownMenuContent
+    ├── DropdownMenuGroup
+    │   ├── DropdownMenuLabel
+    │   ├── DropdownMenuItem
+    │   └── DropdownMenuItem
+    ├── DropdownMenuSeparator
+    ├── DropdownMenuGroup
+    │   ├── DropdownMenuLabel
+    │   ├── DropdownMenuCheckboxItem
+    │   └── DropdownMenuCheckboxItem
+    ├── DropdownMenuSeparator
+    ├── DropdownMenuGroup
+    │   ├── DropdownMenuLabel
+    │   └── DropdownMenuRadioGroup
+    │       ├── DropdownMenuRadioItem
+    │       └── DropdownMenuRadioItem
+    └── DropdownMenuSub
+        ├── DropdownMenuSubTrigger
+        └── DropdownMenuSubContent
+            └── DropdownMenuGroup
+                ├── DropdownMenuLabel
+                ├── DropdownMenuItem
+                └── DropdownMenuItem`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:**
+  - o menu (`role="menu"`) recebe o nome do gatilho, e o submenu, o do `DropdownMenuSubTrigger`. O Base UI faz a ligação sozinho, então o texto do gatilho deve dizer o que o menu faz ("Ações", "Notificações"). Um "Abrir" sozinho, como nos exemplos curtos desta página, só serve quando o contexto ao redor já explica o menu;
+  - um gatilho só com ícone ou avatar precisa de `aria-label` (ou de texto `sr-only`). Se ele mostra um texto, como as iniciais do avatar, o nome precisa começar por esse texto (`aria-label="LR, abrir o menu da conta"`): o axe reprova um nome que não o contém (WCAG 2.5.3). O tooltip nunca é o único nome;
+  - cada item tem o nome do próprio texto. O atalho (`DropdownMenuShortcut`) entra no nome ("Perfil ⇧⌘P"), então, para achar o item por código, use uma expressão que comece pelo texto.
+- **Ícones decorativos:** levam `aria-hidden="true"`, e o texto do item dá o nome.
+- **Foco e destaque:**
+  - o gatilho é um `Button` e usa o anel de foco dele;
+  - os itens não têm anel: o destaque é o fundo `accent` com o texto `accent-foreground` (15,6:1 no claro e 14,2:1 no escuro), aplicado por `focus:`. O menu inteiro é o widget, e o item em destaque é o único com fundo, então o destaque é visível por si só, como no shadcn;
+  - o atalho e o rótulo do grupo usam `muted-foreground` sobre o `popover` (7,4:1 no claro e 7,1:1 no escuro). No item em destaque, o atalho passa para `accent-foreground`;
+  - o item destrutivo usa `text-destructive` sobre o `popover` (4,8:1 no claro e 6,0:1 no escuro). Em destaque, o fundo é o `accent` e o texto passa para `destructive-hover` (5,8:1 no claro e 7,7:1 no escuro): o `destructive` puro sobre o `accent` daria só 4,3:1 no claro. A cor nunca é o único sinal: o item tem texto e, em geral, um ícone.
+- **Gatilho e itens:**
+  - `DropdownMenuTrigger` recebe o elemento pela prop `render`, sem `div` envolvendo, e é um `<button>`;
+  - um item que leva a outra página é navegação: use `render={<a href="…" />}` no item, para ele ser um link;
+  - o menu só tem itens (`menuitem`, `menuitemcheckbox`, `menuitemradio`). Campos de formulário e botões soltos não cabem nele: para isso use um Popover ou um Dialog.
+- **Grupos e rótulos:** todo `DropdownMenuLabel` fica dentro de um `DropdownMenuGroup`, que o Base UI liga ao rótulo (`aria-labelledby`). Fora do grupo, o rótulo não funciona.
+- **Estados:**
+  - `DropdownMenuCheckboxItem` vira `menuitemcheckbox` com `aria-checked`, e `DropdownMenuRadioItem`, `menuitemradio`. O menu continua aberto depois de marcar uma caixa, para mudar várias de uma vez; o item comum fecha o menu;
+  - um item desabilitado (`disabled`) fica com `aria-disabled` e continua alcançável pelas setas: quem usa leitor de tela o encontra e ouve que ele está indisponível. Ele perde só o clique.
+- **Mudanças dinâmicas:** escolher um item não anuncia nada sozinho. Se a ação muda algo na página (um filtro, um tema), mostre o resultado numa região `aria-live="polite"` que fica sempre montada, fora do menu, e mude só o texto dela.
+- **Teclado:**
+  - Enter ou Espaço no gatilho abrem o menu (a seta para baixo também, do Base UI), e o foco vai para o primeiro item;
+  - as setas para cima e para baixo movem o destaque, e Home e End vão ao primeiro e ao último item (a digitação do início do texto também move o destaque, do Base UI);
+  - num item com submenu, a seta do lado do fim abre o submenu (direita em LTR, esquerda em RTL), e a seta oposta o fecha e devolve o foco ao item;
+  - Esc fecha o menu e o foco volta ao gatilho.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` posto num ancestral do gatilho não. O Base UI lê a direção do `DirectionProvider` para abrir os submenus do lado certo e para as setas do teclado. Veja **RTL**.
+- **Testes:**
+  - o menu fechado não existe para o axe. Por isso cada story tem um `play` que abre o menu (e os submenus), espera a animação de entrada terminar, e o axe roda depois, no claro, no escuro e em RTL;
+  - a story **Demo** percorre só o teclado: Enter abre, as setas, Home e End movem o destaque, a seta do lado do fim abre o submenu do lado certo, a oposta o fecha e Esc devolve o foco ao gatilho;
+  - a story **Destrutivo** deixa o item destrutivo em destaque para o axe medir o contraste dele;
+  - falta conferir à mão com um leitor de tela e com o zoom a 200%.
+
+<Source
+  language="tsx"
+  dark
+  code={`<DropdownMenu>
+  <DropdownMenuTrigger
+    render={
+      <Button
+        variant="ghost"
+        size="icon"
+        className="rounded-full"
+        aria-label="LR, abrir o menu da conta"
+      />
+    }
+  >
+    <Avatar>
+      <AvatarFallback>LR</AvatarFallback>
+    </Avatar>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end">
+    <DropdownMenuGroup>
+      <DropdownMenuItem>
+        <BadgeCheckIcon aria-hidden="true" />
+        Conta
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem variant="destructive">
+      <LogOutIcon aria-hidden="true" />
+      Sair da conta
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>`}
+/>
+
+## Básico
+
+Um menu simples, com rótulos e separadores.
+
+<Canvas of={DropdownMenuStories.Basico} />
+
+## Submenu
+
+Use `DropdownMenuSub`, `DropdownMenuSubTrigger` e `DropdownMenuSubContent` para aninhar um submenu. O `DropdownMenuSubContent` vai dentro de um `DropdownMenuPortal`, como no shadcn. Ele abre no lado do fim (`side="inline-end"`), que muda sozinho em RTL.
+
+<Canvas of={DropdownMenuStories.Submenu} />
+
+## Atalhos
+
+Adicione `DropdownMenuShortcut` para mostrar dicas de teclado. Ele é só um texto: não registra o atalho, que fica por conta do seu app.
+
+<Canvas of={DropdownMenuStories.Atalhos} />
+
+## Ícones
+
+Combine ícones e rótulos para uma leitura rápida. O espaçamento e o tamanho (16px) vêm do item, e o ícone leva `aria-hidden="true"`.
+
+<Canvas of={DropdownMenuStories.Icones} />
+
+## Caixas de seleção
+
+Use `DropdownMenuCheckboxItem` para alternâncias (itens que ligam e desligam). A story é não controlada (`defaultChecked`); para controlar, use `checked` e `onCheckedChange`.
+
+<Canvas of={DropdownMenuStories.CaixasDeSelecao} />
+
+## Caixas de seleção com ícones
+
+Adicione ícones aos itens de caixa de seleção.
+
+<Canvas of={DropdownMenuStories.CaixasDeSelecaoComIcones} />
+
+## Grupo de radio
+
+Use `DropdownMenuRadioGroup` e `DropdownMenuRadioItem` para escolhas exclusivas (uma opção entre várias). A story é não controlada (`defaultValue`); para controlar, use `value` e `onValueChange`.
+
+<Canvas of={DropdownMenuStories.GrupoDeRadio} />
+
+## Radio com ícones
+
+Mostre as opções de radio com ícones.
+
+<Canvas of={DropdownMenuStories.RadioComIcones} />
+
+## Destrutivo
+
+Use `variant="destructive"` em um item para ações irreversíveis. Separe-o dos outros por um `DropdownMenuSeparator`. Para uma exclusão sem volta, abra um Alert Dialog de confirmação a partir do item, em vez de excluir direto.
+
+<Canvas of={DropdownMenuStories.Destrutivo} />
+
+## Avatar
+
+Um menu de troca de conta aberto por um avatar. O gatilho tem só o avatar, então o `aria-label` dá o nome (e começa pelas iniciais que aparecem). O exemplo usa o fallback do avatar, sem foto externa.
+
+<Canvas of={DropdownMenuStories.AvatarComMenu} />
+
+## Complexo
+
+Um exemplo mais completo, que combina grupos, ícones, atalhos, caixas de seleção, radios e submenus em vários níveis.
+
+<Canvas of={DropdownMenuStories.Complexo} />
+
+## RTL
+
+O menu segue a direção do `<html>`: os recuos, o indicador de marcado e a seta do submenu são lógicos (`ps`/`pe`, `end-2`, `rtl:rotate-180`), e os submenus abrem no lado do fim, que em RTL é a esquerda.
+
+Duas coisas fazem isso funcionar. O Base UI lê a direção do `DirectionProvider` (o Storybook já tem um, ligado ao seletor **Direção** da barra de ferramentas) para escolher o lado dos submenus e as setas do teclado: num app em RTL, envolva-o em `<DirectionProvider direction="rtl">`. E, como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele: ponha `dir="rtl"` (e o `lang`) no `<html>` ou, para um menu isolado como o do exemplo, passe `dir` e `lang` ao `DropdownMenuContent` e a cada `DropdownMenuSubContent`. Em RTL, `align="end"` alinha o menu à borda do fim do gatilho. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+O teste dessa story abre o menu, desce até o primeiro submenu, abre com a seta para a esquerda e confere que o submenu ficou à esquerda do menu.
+
+<Canvas of={DropdownMenuStories.Rtl} />
+
+## Referência da API
+
+O `DropdownMenu` é construído sobre o [Menu do Base UI](https://base-ui.com/react/components/menu#api-reference). `DropdownMenu` (a raiz, com `open`, `defaultOpen`, `onOpenChange` e `modal`), `DropdownMenuTrigger` (com `render`), `DropdownMenuPortal`, `DropdownMenuGroup`, `DropdownMenuRadioGroup` (com `value`, `defaultValue` e `onValueChange`) e `DropdownMenuSub` repassam as props do Base UI.
+
+### DropdownMenuContent
+
+O popup, com o portal e o posicionamento. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### DropdownMenuSubContent
+
+O popup de um submenu. Aceita as props do `DropdownMenuContent`, com outros padrões.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"inline-end"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'-3'}</code></td></tr>
+  </tbody>
+</table>
+
+### DropdownMenuItem
+
+Um item de ação. Aceita as props do Item do Base UI (por exemplo `disabled`, `onClick`, `closeOnClick` e `render`).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### DropdownMenuCheckboxItem
+
+Um item que liga e desliga. Aceita as props do CheckboxItem do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### DropdownMenuRadioItem
+
+Uma opção do `DropdownMenuRadioGroup`. Aceita as props do RadioItem do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>any</code></td><td>—</td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### DropdownMenuLabel e DropdownMenuSubTrigger
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+`inset` dá ao item o recuo de 28px no começo (`ps-7`), para alinhá-lo com os itens que têm ícone ou indicador. O `DropdownMenuSeparator` aceita as props do Separator do Base UI, e o `DropdownMenuShortcut`, as de um `<span>`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>DropdownMenu</code></td><td>nenhum (só o contexto)</td><td><code>dropdown-menu</code></td></tr>
+    <tr><td><code>DropdownMenuTrigger</code></td><td><code>{'<button>'}</code></td><td><code>dropdown-menu-trigger</code></td></tr>
+    <tr><td><code>DropdownMenuPortal</code></td><td>portal no <code>body</code></td><td><code>dropdown-menu-portal</code></td></tr>
+    <tr><td><code>DropdownMenuContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>dropdown-menu-content</code></td></tr>
+    <tr><td><code>DropdownMenuGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>dropdown-menu-group</code></td></tr>
+    <tr><td><code>DropdownMenuLabel</code></td><td><code>{'<div>'}</code></td><td><code>dropdown-menu-label</code></td></tr>
+    <tr><td><code>DropdownMenuItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>dropdown-menu-item</code></td></tr>
+    <tr><td><code>DropdownMenuCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>dropdown-menu-checkbox-item</code></td></tr>
+    <tr><td><code>DropdownMenuRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>dropdown-menu-radio-group</code></td></tr>
+    <tr><td><code>DropdownMenuRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>dropdown-menu-radio-item</code></td></tr>
+    <tr><td><code>DropdownMenuSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>dropdown-menu-separator</code></td></tr>
+    <tr><td><code>DropdownMenuShortcut</code></td><td><code>{'<span>'}</code></td><td><code>dropdown-menu-shortcut</code></td></tr>
+    <tr><td><code>DropdownMenuSub</code></td><td>nenhum (só o contexto)</td><td><code>dropdown-menu-sub</code></td></tr>
+    <tr><td><code>DropdownMenuSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>dropdown-menu-sub-trigger</code></td></tr>
+    <tr><td><code>DropdownMenuSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>dropdown-menu-sub-content</code></td></tr>
+  </tbody>
+</table>

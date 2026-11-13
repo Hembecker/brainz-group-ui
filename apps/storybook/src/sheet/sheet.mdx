@@ -1,0 +1,161 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SheetStories from "./sheet.stories";
+
+<Meta of={SheetStories} />
+
+# Sheet
+
+Estende o Dialog para mostrar um conteúdo que complementa a tela principal, preso a uma das bordas.
+
+<Canvas of={SheetStories.Demo} />
+
+## Instalação
+
+O Sheet usa o `@base-ui/react`, o `lucide-react` e o `cn`, que já estão no pacote, e o Button.
+
+<Source language="bash" dark code="npx shadcn add sheet" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/sheet.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@workspace/ui/components/sheet"
+
+<Sheet>
+  <SheetTrigger>Abrir</SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Tem certeza?</SheetTitle>
+      <SheetDescription>Esta ação não pode ser desfeita.</SheetDescription>
+    </SheetHeader>
+  </SheetContent>
+</Sheet>`}
+/>
+
+## Composição
+
+Monte um `Sheet` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Sheet
+├── SheetTrigger
+└── SheetContent
+    ├── SheetHeader
+    │   ├── SheetTitle
+    │   └── SheetDescription
+    └── SheetFooter`}
+/>
+
+## Acessibilidade
+
+- **Nome e descrição:** o `SheetContent` tem `role="dialog"` e o Base UI o liga ao `SheetTitle` (`aria-labelledby`) e ao `SheetDescription` (`aria-describedby`). Todo sheet precisa dos dois, e o título diz a ação ou o assunto ("Editar perfil").
+- **Foco preso e devolvido:** com o sheet aberto, o foco vai para dentro dele e o Tab não sai dali, porque o resto da página fica inerte. Esc fecha, e o foco volta para o gatilho. O teste da story **Demo** confere isso (Tab oito vezes, Esc e o foco no gatilho).
+- **Gatilho e fechamento:** `SheetTrigger` e `SheetClose` recebem o elemento pela prop `render`, como `render={<Button variant="outline" />}`, sem `div` envolvendo. Os dois são `<button>`, porque abrir e fechar são ações.
+- **Botão de fechar:** o X do canto tem o nome "Fechar" em texto `sr-only`, e o ícone é `aria-hidden`. O nome é fixo, em português (como o "Carregando" do Spinner). Para outro idioma, use `showCloseButton={false}` e um `SheetClose` com o seu texto, como no rodapé dos exemplos.
+- **Sem botão de fechar:** quem usa teclado fecha com Esc, mas num toque só resta clicar fora. Se o sheet não tem o X, ofereça outro jeito visível de sair, como um botão no rodapé.
+- **Véu de fundo:** o `SheetOverlay` escurece a página (`bg-black/30` com desfoque), a única cor com opacidade do componente. Ele não carrega texto, então não tem contraste a cumprir: quem destaca o sheet é o fundo `popover`, com o texto `popover-foreground`, a sombra e a borda do lado voltado para a página (`border-l` ou `border-r`, físicas).
+- **Formulários:** os campos têm rótulo persistente (`Label` com `htmlFor`), e a descrição e o erro ficam ligados ao campo por `aria-describedby` e `aria-errormessage`. Ponha o `<form>` dentro do `SheetContent` (o botão de enviar fica no portal, fora de um `<form>` que envolva o gatilho).
+- **Rolagem:** uma região que rola dentro do sheet (principalmente em `top` e `bottom`, com `max-h-[50vh]`) precisa de `tabIndex={0}`, para quem usa só o teclado conseguir rolar, e de um nome, com `role="region"` e `aria-labelledby` (o `id` do `SheetTitle`). Como ela recebe foco, também precisa do anel: `focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset`.
+- **Movimento:** a entrada é um deslize curto de 2,5rem com fade, de 200ms. O CSS só usa `transform` e `opacity`.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** o sheet fechado não existe para o axe. Por isso cada story tem um `play` que abre o sheet, espera a transição terminar e, na **Demo** e em **Lados**, confere que ele está colado na borda certa; o axe roda depois, com o sheet aberto, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Sheet>
+  <SheetTrigger render={<Button variant="outline" />}>
+    Filtrar faturas
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Filtrar faturas</SheetTitle>
+      <SheetDescription>
+        Escolha os critérios e aplique para atualizar a lista.
+      </SheetDescription>
+    </SheetHeader>
+    <SheetFooter>
+      <Button>Aplicar filtros</Button>
+      <SheetClose render={<Button variant="outline" />}>Cancelar</SheetClose>
+    </SheetFooter>
+  </SheetContent>
+</Sheet>`}
+/>
+
+## Lado
+
+Use a prop `side` no `SheetContent` para escolher a borda da tela em que o sheet aparece: `top`, `right`, `bottom` ou `left`. O padrão é `right`. Em `top` e `bottom`, limite a altura (`max-h-[50vh]`) e deixe o conteúdo rolar numa região nomeada.
+
+Os lados são **físicos**: `left` é a borda esquerda também em RTL, e este componente não tem `inline-start` nem `inline-end`. Num app que muda de direção, escolha o lado conforme a direção (veja **RTL**).
+
+<Canvas of={SheetStories.Lados} />
+
+## Sem botão de fechar
+
+Use `showCloseButton={false}` no `SheetContent` para esconder o X do canto.
+
+<Canvas of={SheetStories.SemBotaoDeFechar} />
+
+## RTL
+
+O X do canto usa posição lógica (`end`) e fica no fim da linha, que em RTL é a esquerda. A posição e a borda do sheet são físicas: o exemplo usa `side="left"`, como o do shadcn.
+
+Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um sheet isolado, como no exemplo, passe `dir` e `lang` ao próprio `SheetContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+O rótulo do X ("Fechar") é fixo em português: no exemplo em árabe, ele continua em português para o leitor de tela.
+
+<Canvas of={SheetStories.Rtl} />
+
+## Referência da API
+
+O `Sheet` é construído sobre o [Dialog do Base UI](https://base-ui.com/react/components/dialog#api-reference): `Sheet`, `SheetTrigger`, `SheetPortal`, `SheetClose`, `SheetOverlay`, `SheetTitle` e `SheetDescription` repassam as props do Base UI (por exemplo `open`, `defaultOpen`, `onOpenChange` e `modal` no `Sheet`, e `render` no gatilho e no `SheetClose`).
+
+### SheetContent
+
+O popup, com o véu e o portal. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "right" | "bottom" | "left"'}</code></td><td><code>{'"right"'}</code></td></tr>
+    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Sheet</code></td><td>nenhum (só o contexto)</td><td><code>sheet</code></td></tr>
+    <tr><td><code>SheetTrigger</code></td><td><code>{'<button>'}</code></td><td><code>sheet-trigger</code></td></tr>
+    <tr><td><code>SheetPortal</code></td><td>portal no <code>body</code></td><td><code>sheet-portal</code></td></tr>
+    <tr><td><code>SheetOverlay</code></td><td><code>{'<div>'}</code></td><td><code>sheet-overlay</code></td></tr>
+    <tr><td><code>SheetContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>sheet-content</code></td></tr>
+    <tr><td><code>SheetClose</code></td><td><code>{'<button>'}</code></td><td><code>sheet-close</code></td></tr>
+    <tr><td><code>SheetHeader</code></td><td><code>{'<div>'}</code></td><td><code>sheet-header</code></td></tr>
+    <tr><td><code>SheetFooter</code></td><td><code>{'<div>'}</code></td><td><code>sheet-footer</code></td></tr>
+    <tr><td><code>SheetTitle</code></td><td><code>{'<h2>'}</code></td><td><code>sheet-title</code></td></tr>
+    <tr><td><code>SheetDescription</code></td><td><code>{'<p>'}</code></td><td><code>sheet-description</code></td></tr>
+  </tbody>
+</table>

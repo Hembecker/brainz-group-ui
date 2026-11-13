@@ -5,6 +5,45 @@ import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu
 import { cn } from "cn"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
 
+/*
+ * ContextMenu — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/context-menu
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o ContextMenu do Base UI: abre com o botão direito (e com o
+ *   toque longo) sobre o `ContextMenuTrigger`, na posição do ponteiro; as setas,
+ *   Home, End e a digitação movem o destaque, e Esc fecha.
+ * - Abertura pelo teclado: o menu abre com o evento `contextmenu` do navegador, e
+ *   o teclado o dispara com Shift+F10 ou com a tecla de menu (Apps), no elemento
+ *   que tem o foco. O `ContextMenuTrigger` é um `div` e não recebe foco sozinho:
+ *   para quem usa só o teclado, passe `tabIndex={0}` a ele (ou ponha um controle
+ *   focável dentro), com `role="group"` e um nome (`aria-label`). Sem isso o menu
+ *   só abre com o mouse ou com o toque, e quem usa o teclado perde as ações. O
+ *   menu também deve ter as mesmas ações em outro lugar visível (um botão "Mais
+ *   ações", por exemplo), porque o botão direito não é descoberto por todos.
+ * - Anel de foco do gatilho: o padrão (`focus-visible:ring-3 ring-ring ring-offset-2
+ *   ring-offset-background`) só aparece quando o gatilho recebe foco (`tabIndex`).
+ * - Todo `ContextMenuLabel` fica dentro de um `ContextMenuGroup` (o Base UI liga o
+ *   rótulo ao grupo; fora dele não funciona).
+ * - Destaque do item: `focus:bg-accent` com `focus:text-accent-foreground`, sem
+ *   anel. Contrastes medidos: `accent-foreground` sobre `accent` 15,6:1 no claro e
+ *   14,2:1 no escuro; `muted-foreground` (rótulos e atalhos) sobre `popover` 7,4:1
+ *   no claro e 7,1:1 no escuro.
+ * - Item destrutivo: `text-destructive` sobre `popover` (4,8:1 no claro, 6,0:1 no
+ *   escuro). No destaque, o registro usava `bg-destructive/10` (e `/20` no
+ *   escuro) com o texto `text-destructive`: sobre o `accent` o vermelho dá só
+ *   4,3:1 no claro. Aqui o fundo é o `accent` cheio e o texto passa para
+ *   `destructive-hover` (5,8:1 no claro e 7,7:1 no escuro).
+ * - Cores com opacidade trocadas por papéis cheios: o contorno `ring-foreground/5`
+ *   e `dark:ring-foreground/10` virou `ring-border`; o separador `bg-border/50`
+ *   virou `bg-border`. A sombra continua.
+ * - Itens com `min-h-7` e `rounded-xl`, conteúdo com `rounded-2xl` (escala rhea).
+ *   Paddings e posição lógicos (`ps`/`pe`, `ms-auto`, `end-2`, `side="inline-end"`),
+ *   para funcionar em RTL. O Base UI lê a direção do `DirectionProvider` para a
+ *   posição dos submenus e para as setas do teclado.
+ * - O conteúdo vai para um portal no `body`: a classe `dark` e o `dir` do `<html>`
+ *   chegam a ele, mas um `dir` posto num ancestral do gatilho não.
+ */
+
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
 }
@@ -22,7 +61,10 @@ function ContextMenuTrigger({
   return (
     <ContextMenuPrimitive.Trigger
       data-slot="context-menu-trigger"
-      className={cn("select-none", className)}
+      className={cn(
+        "select-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none",
+        className
+      )}
       {...props}
     />
   )
@@ -51,7 +93,7 @@ function ContextMenuContent({
       >
         <ContextMenuPrimitive.Popup
           data-slot="context-menu-content"
-          className={cn("z-50 max-h-(--available-height) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/5 duration-100 outline-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          className={cn("z-50 max-h-(--available-height) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-border duration-100 outline-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
           {...props}
         />
       </ContextMenuPrimitive.Positioner>
@@ -100,7 +142,7 @@ function ContextMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "group/context-menu-item relative flex min-h-7 cursor-default items-center gap-2 rounded-xl px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:ps-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 focus:*:[svg]:text-accent-foreground data-[variant=destructive]:*:[svg]:text-destructive",
+        "group/context-menu-item relative flex min-h-7 cursor-default items-center gap-2 rounded-xl px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:ps-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-accent data-[variant=destructive]:focus:text-destructive-hover data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 focus:*:[svg]:text-accent-foreground data-[variant=destructive]:*:[svg]:text-destructive",
         className
       )}
       {...props}
@@ -229,7 +271,7 @@ function ContextMenuSeparator({
   return (
     <ContextMenuPrimitive.Separator
       data-slot="context-menu-separator"
-      className={cn("-mx-1 my-1 h-px bg-border/50", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   )

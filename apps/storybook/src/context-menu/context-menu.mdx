@@ -1,0 +1,307 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ContextMenuStories from "./context-menu.stories";
+
+<Meta of={ContextMenuStories} />
+
+# Context Menu
+
+Mostra um menu de ações, aberto com o botão direito do mouse (ou com um toque longo) sobre uma área.
+
+<Canvas of={ContextMenuStories.Demo} />
+
+## Instalação
+
+O Context Menu usa o `@base-ui/react`, o `lucide-react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add context-menu" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/context-menu.tsx`.
+
+## Uso
+
+Dê ao gatilho `tabIndex={0}`, `role="group"` e um `aria-label`, e ao conteúdo um `aria-label` (veja **Acessibilidade**: sem isso o menu só abre com o mouse).
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@workspace/ui/components/context-menu"
+
+<ContextMenu>
+  <ContextMenuTrigger
+    tabIndex={0}
+    role="group"
+    aria-label="Área de exemplo, Shift+F10 abre o menu"
+  >
+    Clique com o botão direito aqui
+  </ContextMenuTrigger>
+  <ContextMenuContent aria-label="Ações da página">
+    <ContextMenuItem>Perfil</ContextMenuItem>
+    <ContextMenuItem>Cobrança</ContextMenuItem>
+    <ContextMenuItem>Equipe</ContextMenuItem>
+    <ContextMenuItem>Assinatura</ContextMenuItem>
+  </ContextMenuContent>
+</ContextMenu>`}
+/>
+
+## Composição
+
+Monte um `ContextMenu` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`ContextMenu
+├── ContextMenuTrigger
+└── ContextMenuContent
+    ├── ContextMenuGroup
+    │   ├── ContextMenuLabel
+    │   ├── ContextMenuItem
+    │   └── ContextMenuItem
+    ├── ContextMenuSeparator
+    ├── ContextMenuGroup
+    │   ├── ContextMenuLabel
+    │   ├── ContextMenuCheckboxItem
+    │   └── ContextMenuCheckboxItem
+    ├── ContextMenuSeparator
+    ├── ContextMenuGroup
+    │   ├── ContextMenuLabel
+    │   └── ContextMenuRadioGroup
+    │       ├── ContextMenuRadioItem
+    │       └── ContextMenuRadioItem
+    └── ContextMenuSub
+        ├── ContextMenuSubTrigger
+        └── ContextMenuSubContent
+            └── ContextMenuGroup
+                ├── ContextMenuItem
+                └── ContextMenuItem`}
+/>
+
+## Acessibilidade
+
+- **Abertura pelo teclado (o ponto principal):**
+  - o menu abre com o evento `contextmenu` do navegador. O botão direito o envia, e o teclado também: **Shift+F10** ou a **tecla de menu** (Apps) enviam o `contextmenu` ao elemento que está com o foco;
+  - o `ContextMenuTrigger` é um `div` e não recebe foco sozinho, então, sem ajuda, quem usa só o teclado não alcança o menu. Por isso todos os exemplos têm `tabIndex={0}` no gatilho: o Tab chega nele, e Shift+F10 abre o menu na altura do gatilho;
+  - se o gatilho já contém um controle focável (um link, um botão, uma linha de tabela com `tabIndex`), o `contextmenu` do foco desse controle sobe até o gatilho e abre o menu: nesse caso não precisa do `tabIndex` no gatilho;
+  - o toque longo abre o menu em telas de toque, e o texto do exemplo muda (`pointer-coarse`);
+  - o teste da story **Demo** leva o foco ao gatilho com Tab e abre o menu com um evento `contextmenu` no elemento focado, o que o navegador faz com Shift+F10. O `userEvent` do `storybook/test` é sintético e não gera o `contextmenu` nativo do Shift+F10, então o teste envia o evento; o atalho com a tecla de verdade não foi testado e precisa ser conferido à mão;
+  - o botão direito não é descoberto por todo mundo: ofereça as mesmas ações em outro lugar visível (um botão "Mais ações" com um Dropdown Menu, por exemplo). O menu de contexto é um atalho, não o único caminho.
+- **Nome acessível:**
+  - o gatilho com `tabIndex` precisa de `role="group"` e de um `aria-label` que diga a área e como abrir o menu ("Área de exemplo, Shift+F10 abre o menu"), senão o leitor de tela anuncia um elemento sem nome;
+  - o menu (`role="menu"`) não tem um botão de gatilho de onde herdar o nome: dê um `aria-label` ao `ContextMenuContent`, e o submenu recebe o nome do `ContextMenuSubTrigger`;
+  - cada item tem o nome do próprio texto. O atalho (`ContextMenuShortcut`) entra no nome ("Voltar ⌘["), então, para achar o item por código, use uma expressão que comece pelo texto.
+- **Ícones decorativos:** levam `aria-hidden="true"`, e o texto do item dá o nome.
+- **Foco e destaque:**
+  - o gatilho com foco usa o anel padrão (`focus-visible:ring-3 ring-ring ring-offset-2 ring-offset-background`), que o componente já traz e só aparece quando o gatilho recebe foco;
+  - os itens não têm anel: o destaque é o fundo `accent` com o texto `accent-foreground` (15,6:1 no claro e 14,2:1 no escuro), aplicado por `focus:`;
+  - o atalho e o rótulo do grupo usam `muted-foreground` sobre o `popover` (7,4:1 no claro e 7,1:1 no escuro). No item em destaque, o atalho passa para `accent-foreground`;
+  - o item destrutivo usa `text-destructive` sobre o `popover` (4,8:1 no claro e 6,0:1 no escuro). Em destaque, o fundo é o `accent` e o texto passa para `destructive-hover` (5,8:1 no claro e 7,7:1 no escuro): o `destructive` puro sobre o `accent` daria só 4,3:1 no claro. A cor nunca é o único sinal: o item tem texto e, em geral, um ícone.
+- **Grupos e rótulos:** todo `ContextMenuLabel` fica dentro de um `ContextMenuGroup`, que o Base UI liga ao rótulo. Fora do grupo, o rótulo não funciona.
+- **Estados:**
+  - `ContextMenuCheckboxItem` vira `menuitemcheckbox` com `aria-checked`, e `ContextMenuRadioItem`, `menuitemradio`;
+  - um item desabilitado (`disabled`) fica com `aria-disabled` e continua alcançável pelas setas: quem usa leitor de tela o encontra e ouve que ele está indisponível. O teste da **Demo** passa por ele.
+- **Mudanças dinâmicas:** escolher um item não anuncia nada sozinho. Se a ação muda algo na página, mostre o resultado numa região `aria-live="polite"` que fica sempre montada, fora do menu, e mude só o texto dela.
+- **Teclado, com o menu aberto:**
+  - as setas para cima e para baixo movem o destaque (a primeira seta para baixo entra no menu), e Home e End vão ao primeiro e ao último item;
+  - num item com submenu, a seta do lado do fim abre o submenu (direita em LTR, esquerda em RTL), e a seta oposta o fecha e devolve o foco ao item;
+  - Esc fecha o menu e o foco volta ao gatilho.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` posto num ancestral do gatilho não. O Base UI lê a direção do `DirectionProvider` para abrir os submenus do lado certo e para as setas do teclado. Veja **RTL**.
+- **Testes:**
+  - o menu fechado não existe para o axe. Por isso cada story tem um `play` que abre o menu, espera a animação de entrada terminar, e o axe roda depois, no claro, no escuro e em RTL;
+  - o menu abre perto do ponteiro e, numa tela estreita, pode virar para o outro lado por falta de espaço. Os testes clicam perto da borda do início do gatilho, para o menu e o submenu caberem no lado do fim;
+  - falta conferir à mão com um leitor de tela, com Shift+F10 de verdade e com o zoom a 200%.
+
+## Básico
+
+Um menu de contexto simples, com algumas ações. O item `disabled` continua alcançável pelas setas.
+
+<Canvas of={ContextMenuStories.Basico} />
+
+## Submenu
+
+Use `ContextMenuSub` para aninhar ações secundárias, com `ContextMenuSubTrigger` e `ContextMenuSubContent`. Ele abre no lado do fim (`side="inline-end"`), que muda sozinho em RTL.
+
+<Canvas of={ContextMenuStories.Submenu} />
+
+## Atalhos
+
+Adicione `ContextMenuShortcut` para mostrar dicas de teclado. Ele é só um texto: não registra o atalho, que fica por conta do seu app.
+
+<Canvas of={ContextMenuStories.Atalhos} />
+
+## Grupos
+
+Agrupe as ações relacionadas e separe os grupos com divisores. Use `ContextMenuGroup` com `ContextMenuLabel` para dar nome a cada conjunto, e `ContextMenuSeparator` entre eles.
+
+<Canvas of={ContextMenuStories.Grupos} />
+
+## Ícones
+
+Combine ícones e rótulos para uma leitura rápida. O espaçamento e o tamanho (16px) vêm do item, e o ícone leva `aria-hidden="true"`.
+
+<Canvas of={ContextMenuStories.Icones} />
+
+## Caixas de seleção
+
+Use `ContextMenuCheckboxItem` para alternâncias (itens que ligam e desligam). O menu continua aberto depois de marcar uma caixa. A story é não controlada (`defaultChecked`); para controlar, use `checked` e `onCheckedChange`.
+
+<Canvas of={ContextMenuStories.CaixasDeSelecao} />
+
+## Radio
+
+Use `ContextMenuRadioGroup` e `ContextMenuRadioItem` para escolhas exclusivas (uma opção entre várias). A story é não controlada (`defaultValue`); para controlar, use `value` e `onValueChange`.
+
+<Canvas of={ContextMenuStories.Radio} />
+
+## Destrutivo
+
+Use `variant="destructive"` para dar ao item o estilo de ação destrutiva. Separe-o dos outros por um `ContextMenuSeparator`. Para uma exclusão sem volta, abra um Alert Dialog de confirmação a partir do item, em vez de excluir direto.
+
+<Canvas of={ContextMenuStories.Destrutivo} />
+
+## Lados
+
+Controle a posição do menu com as props `side` e `align` do `ContextMenuContent`: o lado em que ele abre em relação ao ponto do clique. O padrão é `inline-end` (a direita em LTR, a esquerda em RTL). `left` e `right` são físicos e não mudam em RTL; `inline-start` e `inline-end` são lógicos.
+
+<Canvas of={ContextMenuStories.Lados} />
+
+## RTL
+
+O menu segue a direção do `<html>`: os recuos, o indicador de marcado e a seta do submenu são lógicos (`ps`/`pe`, `end-2`, `rtl:rotate-180`), e os submenus abrem no lado do fim, que em RTL é a esquerda. Ícones de direção, como as setas de voltar e avançar, levam `rtl:rotate-180`.
+
+Duas coisas fazem isso funcionar. O Base UI lê a direção do `DirectionProvider` (o Storybook já tem um, ligado ao seletor **Direção** da barra de ferramentas) para escolher o lado dos submenus e as setas do teclado: num app em RTL, envolva-o em `<DirectionProvider direction="rtl">`. E, como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele: ponha `dir="rtl"` (e o `lang`) no `<html>` ou, para um menu isolado como o do exemplo, passe `dir` e `lang` ao `ContextMenuContent` e a cada `ContextMenuSubContent`. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+O teste dessa story abre o menu, desce até o primeiro submenu, abre com a seta para a esquerda e confere que o submenu ficou à esquerda do menu.
+
+<Canvas of={ContextMenuStories.Rtl} />
+
+## Referência da API
+
+O `ContextMenu` é construído sobre o [ContextMenu do Base UI](https://base-ui.com/react/components/context-menu#api-reference). `ContextMenu` (a raiz), `ContextMenuPortal`, `ContextMenuGroup`, `ContextMenuRadioGroup` (com `value`, `defaultValue` e `onValueChange`) e `ContextMenuSub` repassam as props do Base UI.
+
+### ContextMenuTrigger
+
+A área que abre o menu. É um `<div>` que aceita as props de um `<div>` (e `render`), com `select-none` por padrão, para o toque longo não selecionar texto.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>tabIndex</code></td><td><code>number</code></td><td>— (use <code>{'0'}</code> para o teclado alcançar o gatilho)</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### ContextMenuContent
+
+O popup, com o portal e o posicionamento. Aceita as props do Popup do Base UI, como `aria-label`, `dir` e `lang`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"inline-end"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### ContextMenuSubContent
+
+O popup de um submenu. Aceita as props do `ContextMenuContent`, e o `side` padrão é `inline-end`.
+
+### ContextMenuItem
+
+Um item de ação. Aceita as props do Item do Base UI (por exemplo `disabled`, `onClick`, `closeOnClick` e `render`).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### ContextMenuCheckboxItem
+
+Um item que liga e desliga. Aceita as props do CheckboxItem do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### ContextMenuRadioItem
+
+Uma opção do `ContextMenuRadioGroup`. Aceita as props do RadioItem do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>any</code></td><td>—</td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### ContextMenuLabel e ContextMenuSubTrigger
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+`inset` dá ao item o recuo de 28px no começo (`ps-7`), para alinhá-lo com os itens que têm ícone ou indicador. O `ContextMenuSeparator` aceita as props do Separator do Base UI, e o `ContextMenuShortcut`, as de um `<span>`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ContextMenu</code></td><td>nenhum (só o contexto)</td><td><code>context-menu</code></td></tr>
+    <tr><td><code>ContextMenuTrigger</code></td><td><code>{'<div>'}</code></td><td><code>context-menu-trigger</code></td></tr>
+    <tr><td><code>ContextMenuPortal</code></td><td>portal no <code>body</code></td><td><code>context-menu-portal</code></td></tr>
+    <tr><td><code>ContextMenuContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>context-menu-content</code></td></tr>
+    <tr><td><code>ContextMenuGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>context-menu-group</code></td></tr>
+    <tr><td><code>ContextMenuLabel</code></td><td><code>{'<div>'}</code></td><td><code>context-menu-label</code></td></tr>
+    <tr><td><code>ContextMenuItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>context-menu-item</code></td></tr>
+    <tr><td><code>ContextMenuCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>context-menu-checkbox-item</code></td></tr>
+    <tr><td><code>ContextMenuRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>context-menu-radio-group</code></td></tr>
+    <tr><td><code>ContextMenuRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>context-menu-radio-item</code></td></tr>
+    <tr><td><code>ContextMenuSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>context-menu-separator</code></td></tr>
+    <tr><td><code>ContextMenuShortcut</code></td><td><code>{'<span>'}</code></td><td><code>context-menu-shortcut</code></td></tr>
+    <tr><td><code>ContextMenuSub</code></td><td>nenhum (só o contexto)</td><td><code>context-menu-sub</code></td></tr>
+    <tr><td><code>ContextMenuSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>context-menu-sub-trigger</code></td></tr>
+    <tr><td><code>ContextMenuSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>context-menu-sub-content</code></td></tr>
+  </tbody>
+</table>

@@ -128,7 +128,15 @@ const preview: Preview = {
     docs: { source: { transform: renderBodyOnly } },
     // axe runs on every story in `npm run test`. "error" fails the test on any
     // violation: accessibility is a requirement here, not a warning.
-    a11y: { test: "error" },
+    // The only spans left out are Base UI focus guards
+    // (`data-base-ui-focus-guard`): aria-hidden, focusable on purpose, they
+    // redirect the focus as soon as they receive it, and axe flags them as
+    // `aria-hidden-focus` on non-modal popups (Drawer, NavigationMenu…).
+    // Every rule stays on for everything else.
+    a11y: {
+      test: "error",
+      context: { exclude: ["[data-base-ui-focus-guard]"] },
+    },
   },
   // No global autodocs: each component has an MDX page (<nome>.mdx) that
   // follows the section order of its shadcn/ui page.

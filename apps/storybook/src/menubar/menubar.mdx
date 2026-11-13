@@ -1,0 +1,269 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as MenubarStories from "./menubar.stories";
+
+<Meta of={MenubarStories} />
+
+# Menubar
+
+Uma barra de menus, como a de um aplicativo de desktop, com acesso rápido a um conjunto de comandos.
+
+<Canvas of={MenubarStories.Demo} />
+
+## Instalação
+
+O Menubar usa o Menubar e o Menu do Base UI (`@base-ui/react`), o `lucide-react` e o `cn`, que já estão no pacote, e reaproveita as peças do Dropdown Menu.
+
+<Source language="bash" dark code="npx shadcn add menubar" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/menubar.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Menubar,
+  MenubarContent,
+  MenubarGroup,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@workspace/ui/components/menubar"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<Menubar>
+  <MenubarMenu>
+    <MenubarTrigger>Arquivo</MenubarTrigger>
+    <MenubarContent>
+      <MenubarGroup>
+        <MenubarItem>
+          Nova aba <MenubarShortcut>⌘T</MenubarShortcut>
+        </MenubarItem>
+        <MenubarItem>Nova janela</MenubarItem>
+      </MenubarGroup>
+      <MenubarSeparator />
+      <MenubarGroup>
+        <MenubarItem>Compartilhar</MenubarItem>
+        <MenubarItem>Imprimir</MenubarItem>
+      </MenubarGroup>
+    </MenubarContent>
+  </MenubarMenu>
+</Menubar>`}
+/>
+
+## Composição
+
+Monte um `Menubar` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Menubar
+├── MenubarMenu
+│   ├── MenubarTrigger
+│   └── MenubarContent
+│       ├── MenubarGroup
+│       │   ├── MenubarLabel
+│       │   ├── MenubarItem
+│       │   └── MenubarItem
+│       ├── MenubarSeparator
+│       ├── MenubarGroup
+│       │   ├── MenubarLabel
+│       │   ├── MenubarCheckboxItem
+│       │   └── MenubarCheckboxItem
+│       ├── MenubarSeparator
+│       ├── MenubarGroup
+│       │   ├── MenubarLabel
+│       │   └── MenubarRadioGroup
+│       │       ├── MenubarRadioItem
+│       │       └── MenubarRadioItem
+│       └── MenubarSub
+│           ├── MenubarSubTrigger
+│           └── MenubarSubContent
+│               └── MenubarGroup
+│                   ├── MenubarLabel
+│                   ├── MenubarItem
+│                   └── MenubarItem
+└── MenubarMenu
+    ├── MenubarTrigger
+    └── MenubarContent
+        └── MenubarGroup
+            ├── MenubarLabel
+            ├── MenubarItem
+            └── MenubarItem`}
+/>
+
+## Acessibilidade
+
+- **Papéis e nome:** a barra é `role="menubar"` e cada gatilho é um `menuitem` com `aria-haspopup` e `aria-expanded`. O nome do gatilho é o texto dele ("Arquivo"), e o dos itens também. Um item só com ícone precisa de `aria-label`; um menu sem texto visível não serve.
+- **Teclado:** Tab entra na barra e sai dela (uma parada só); as setas ← e → trocam de menu (invertidas em RTL); ↓ ou Enter abrem o menu; ↑ e ↓ percorrem os itens; Home e End vão ao primeiro e ao último; → abre um submenu e ← o fecha (invertidas em RTL); Esc fecha o menu e devolve o foco ao gatilho. O teste da story **Demo** confere a abertura, as setas, Home e Esc com o foco de volta ao gatilho.
+- **Gatilhos e ações:** o gatilho é um `<button>` (abrir é uma ação). Um item que **navega** deve ser um `<a>`, com `render={<a href="…" />}`; um item que **age** é o `MenubarItem` comum.
+- **Foco visível:** o gatilho usa o anel sólido do sistema (`focus-visible:ring-3 ring-ring ring-offset-2 ring-offset-background`), como o Button. O registro do shadcn tirava o contorno (`outline-hidden`) sem substituto; aqui o foco por teclado aparece.
+- **Itens destacados, sem anel:** os itens destacam com `focus:bg-accent focus:text-accent-foreground` (15,6:1 no claro e 14,2:1 no escuro). O destaque é um fundo, não um anel: o Base UI move o foco de verdade para o item, então o destaque é o foco. O atalho (`MenubarShortcut`) passa a `accent-foreground` no item destacado.
+- **Item destrutivo:** o texto `destructive` sobre o destaque `accent` dava 4,3:1 no claro, abaixo de 4,5:1. Em foco, o texto e o ícone passam a `destructive-hover` (5,8:1 no claro e 7,7:1 no escuro). Nunca marque a ação só pela cor: o nome ("Excluir") a diz.
+- **Estado de marcar e escolher:** `MenubarCheckboxItem` e `MenubarRadioItem` expõem `aria-checked`, e o indicador (o V) é decorativo (`aria-hidden`). O estado não vale só pelo ícone.
+- **Ícones decorativos:** levam `aria-hidden="true"`, como na seção **Com ícones**.
+- **Item desabilitado:** `disabled` deixa o item fora das setas e com `opacity-50`. O texto desabilitado está isento da regra de contraste, mas diga por que ele está desabilitado quando não for óbvio.
+- **Portal e RTL:** os menus vão para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a eles, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** um menu fechado não existe para o axe. Por isso cada story tem um `play` que abre um menu, espera a animação terminar e deixa um item destacado; o axe roda depois, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Menubar>
+  <MenubarMenu>
+    <MenubarTrigger>Fatura</MenubarTrigger>
+    <MenubarContent>
+      <MenubarItem>
+        <DownloadIcon aria-hidden="true" />
+        Baixar fatura <MenubarShortcut>⌘D</MenubarShortcut>
+      </MenubarItem>
+      <MenubarSeparator />
+      <MenubarItem variant="destructive">
+        <TrashIcon aria-hidden="true" />
+        Excluir fatura
+      </MenubarItem>
+    </MenubarContent>
+  </MenubarMenu>
+</Menubar>`}
+/>
+
+## Caixa de seleção
+
+Use `MenubarCheckboxItem` para opções que se ligam e desligam. O estado inicial vem de `defaultChecked` (ou `checked` e `onCheckedChange`, para controlar).
+
+<Canvas of={MenubarStories.CaixaDeSelecao} />
+
+## Radio
+
+Use `MenubarRadioGroup` e `MenubarRadioItem` para uma escolha única. O valor inicial vem de `defaultValue` no grupo (ou `value` e `onValueChange`, para controlar).
+
+<Canvas of={MenubarStories.Radio} />
+
+## Submenu
+
+Use `MenubarSub`, `MenubarSubTrigger` e `MenubarSubContent` para menus aninhados. A seta do gatilho do submenu gira em RTL.
+
+<Canvas of={MenubarStories.Submenu} />
+
+## Com ícones
+
+Ponha um ícone antes do texto do item. O ícone é decorativo (`aria-hidden="true"`) e o texto dá o nome. O item `variant="destructive"` pinta o texto e o ícone de vermelho; em foco, a cor muda para `destructive-hover` (veja **Acessibilidade**).
+
+<Canvas of={MenubarStories.ComIcones} />
+
+## RTL
+
+Os recuos, as posições e a seta do submenu são lógicos (`start`, `end`, `ps`, `pe`, `rtl:rotate-180`), então a barra segue a direção. O `Menubar` leva `dir="rtl"` para a barra e, como os menus vão para um portal no `body`, o `MenubarContent` e o `MenubarSubContent` levam `dir="rtl"` e `lang` também, e o `MenubarContent` usa `align="end"` para abrir alinhado ao gatilho. Num app em RTL, coloque `dir` e `lang` no `<html>` e os portais herdam. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={MenubarStories.Rtl} />
+
+## Referência da API
+
+O `Menubar` é construído sobre o [Menubar do Base UI](https://base-ui.com/react/components/menubar#api-reference) e o [Menu do Base UI](https://base-ui.com/react/components/menu#api-reference): `Menubar` repassa as props do Menubar do Base UI (`modal`, `disabled`, `orientation` e `loopFocus`), e as peças `MenubarMenu`, `MenubarTrigger`, `MenubarGroup`, `MenubarPortal`, `MenubarRadioGroup` e `MenubarSub` repassam as do Menu (por exemplo `open`, `defaultOpen` e `onOpenChange`, e `render` no gatilho).
+
+### MenubarContent
+
+O popup do menu, com portal e posição. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'-4'}</code></td></tr>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'8'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### MenubarItem
+
+Um item de ação. Aceita as props do Item do Base UI (`disabled`, `onClick`, `render`…).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### MenubarCheckboxItem e MenubarRadioItem
+
+Itens de marcar e de escolher. `MenubarCheckboxItem` aceita as props do CheckboxItem do Base UI, e `MenubarRadioItem` as do RadioItem.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>checked</code> / <code>defaultChecked</code> (caixa)</td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>onCheckedChange</code> (caixa)</td><td><code>{'(checked: boolean) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>value</code> (radio)</td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### MenubarRadioGroup
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>onValueChange</code></td><td><code>{'(value: string) => void'}</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### MenubarLabel, MenubarSubTrigger
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Menubar</code></td><td><code>{'<div role="menubar">'}</code></td><td><code>menubar</code></td></tr>
+    <tr><td><code>MenubarMenu</code></td><td>nenhum (só o contexto)</td><td><code>menubar-menu</code></td></tr>
+    <tr><td><code>MenubarTrigger</code></td><td><code>{'<button role="menuitem">'}</code></td><td><code>menubar-trigger</code></td></tr>
+    <tr><td><code>MenubarPortal</code></td><td>portal no <code>body</code></td><td><code>menubar-portal</code></td></tr>
+    <tr><td><code>MenubarContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>menubar-content</code></td></tr>
+    <tr><td><code>MenubarGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>menubar-group</code></td></tr>
+    <tr><td><code>MenubarLabel</code></td><td><code>{'<div>'}</code></td><td><code>menubar-label</code></td></tr>
+    <tr><td><code>MenubarItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>menubar-item</code></td></tr>
+    <tr><td><code>MenubarCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>menubar-checkbox-item</code></td></tr>
+    <tr><td><code>MenubarRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>menubar-radio-group</code></td></tr>
+    <tr><td><code>MenubarRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>menubar-radio-item</code></td></tr>
+    <tr><td><code>MenubarSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>menubar-separator</code></td></tr>
+    <tr><td><code>MenubarShortcut</code></td><td><code>{'<span>'}</code></td><td><code>menubar-shortcut</code></td></tr>
+    <tr><td><code>MenubarSub</code></td><td>nenhum (só o contexto)</td><td><code>menubar-sub</code></td></tr>
+    <tr><td><code>MenubarSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>menubar-sub-trigger</code></td></tr>
+    <tr><td><code>MenubarSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>menubar-sub-content</code></td></tr>
+  </tbody>
+</table>

@@ -1,0 +1,150 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as PopoverStories from "./popover.stories";
+
+<Meta of={PopoverStories} />
+
+# Popover
+
+Mostra conteúdo rico num portal, aberto por um botão.
+
+<Canvas of={PopoverStories.Demo} />
+
+## Instalação
+
+O Popover usa o `@base-ui/react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add popover" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/popover.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@workspace/ui/components/popover"
+
+<Popover>
+  <PopoverTrigger render={<Button variant="outline" />}>
+    Abrir popover
+  </PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Título</PopoverTitle>
+      <PopoverDescription>Texto da descrição aqui.</PopoverDescription>
+    </PopoverHeader>
+  </PopoverContent>
+</Popover>`}
+/>
+
+## Composição
+
+Monte um `Popover` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Popover
+├── PopoverTrigger
+└── PopoverContent`}
+/>
+
+Dentro do `PopoverContent`, `PopoverHeader`, `PopoverTitle` e `PopoverDescription` são opcionais, mas o conteúdo precisa de um nome (veja **Acessibilidade**).
+
+## Acessibilidade
+
+- **Nome:** o popup tem `role="dialog"`, então precisa de nome acessível. Use o `PopoverTitle`: o Base UI o liga ao popup por `aria-labelledby`. Se não há título visível, passe `aria-label` ao `PopoverContent`, como na seção **Alinhamento**. O nome diz o assunto ("Dimensões"), não só "Opções". O `PopoverDescription` vira a descrição (`aria-describedby`).
+- **Gatilho:** o `PopoverTrigger` recebe o elemento pela prop `render`, como `render={<Button variant="outline" />}`, sem `div` envolvendo. É um `<button>`, porque abrir é uma ação. Um botão só com ícone precisa de nome (`aria-label` ou texto `sr-only`); o popover nunca é o único nome.
+- **Teclado e foco:** o popover não é modal: a página de trás continua acessível. Enter e Espaço no gatilho abrem; o foco vai para dentro do popup; Esc fecha e o foco volta para o gatilho. O teste da story **Demo** confere o foco dentro, o Esc e o foco de volta no gatilho.
+- **Formulários:** os campos têm rótulo persistente (`Label` ou `FieldLabel` com `htmlFor`), e a descrição e o erro ficam ligados ao campo por `aria-describedby` e `aria-errormessage`.
+- **Conteúdo:** use o popover para conteúdo que o usuário abre e fecha por vontade própria. Para uma informação que precisa de resposta, use o Dialog ou o Alert Dialog, que prendem o foco.
+- **Contorno e contraste:** o fundo `popover` com o texto `popover-foreground` (19,7:1 no claro e 16,7:1 no escuro) e o contorno `ring-border`, cheio, no lugar do `ring-foreground/5` do registro.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** o popover fechado não existe para o axe. Por isso cada story tem um `play` que abre o popover e espera a animação de entrada terminar; o axe roda depois, com o popover aberto, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Popover>
+  <PopoverTrigger render={<Button variant="outline" size="icon" aria-label="Ajuda sobre o plano" />}>
+    <InfoIcon aria-hidden="true" />
+  </PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Sobre o plano</PopoverTitle>
+      <PopoverDescription>O plano renova todo dia 5.</PopoverDescription>
+    </PopoverHeader>
+  </PopoverContent>
+</Popover>`}
+/>
+
+## Básico
+
+Um popover simples, com cabeçalho, título e descrição.
+
+<Canvas of={PopoverStories.Basico} />
+
+## Alinhamento
+
+Use a prop `align` do `PopoverContent` para controlar o alinhamento horizontal: `start`, `center` ou `end`. Aqui o conteúdo é só texto, sem título, então o nome vem do `aria-label`.
+
+<Canvas of={PopoverStories.Alinhamento} />
+
+## Com formulário
+
+Um popover com campos de formulário. Cada campo tem rótulo persistente.
+
+<Canvas of={PopoverStories.ComFormulario} />
+
+## RTL
+
+Os recuos e a animação de entrada usam lados lógicos (`inline-start` e `inline-end`), então o popover segue a direção do `<html>`.
+
+Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um popover isolado, como no exemplo, passe `dir` e `lang` ao próprio `PopoverContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={PopoverStories.Rtl} />
+
+## Referência da API
+
+O `Popover` é construído sobre o [Popover do Base UI](https://base-ui.com/react/components/popover#api-reference): `Popover`, `PopoverTrigger`, `PopoverTitle` e `PopoverDescription` repassam as props do Base UI (por exemplo `open`, `defaultOpen`, `onOpenChange` e `modal` no `Popover`, e `render` no gatilho).
+
+### PopoverContent
+
+O popup, com o portal e o posicionador. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Popover</code></td><td>nenhum (só o contexto)</td><td><code>popover</code></td></tr>
+    <tr><td><code>PopoverTrigger</code></td><td><code>{'<button>'}</code></td><td><code>popover-trigger</code></td></tr>
+    <tr><td><code>PopoverContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>popover-content</code></td></tr>
+    <tr><td><code>PopoverHeader</code></td><td><code>{'<div>'}</code></td><td><code>popover-header</code></td></tr>
+    <tr><td><code>PopoverTitle</code></td><td><code>{'<h2>'}</code></td><td><code>popover-title</code></td></tr>
+    <tr><td><code>PopoverDescription</code></td><td><code>{'<p>'}</code></td><td><code>popover-description</code></td></tr>
+  </tbody>
+</table>

@@ -3,6 +3,31 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { cn } from "cn"
 
+/*
+ * Tooltip — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/tooltip
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Tooltip do Base UI. `TooltipTrigger` recebe o elemento
+ *   pela prop `render` (`render={<Button variant="outline" />}`), sem `div`.
+ * - Abre por foco de teclado e por hover; Esc fecha. O tooltip é só um
+ *   complemento: nunca é o único nome de um controle. Um botão só com ícone
+ *   leva `aria-label` (ou texto `sr-only`) além do tooltip. O Base UI não liga
+ *   o tooltip ao gatilho por `aria-describedby` nem dá `role` ao popup (conferido
+ *   no teste da Demo: a descrição acessível do gatilho fica vazia): para um
+ *   leitor de tela, o tooltip é só visual.
+ * - Contraste: fundo `foreground` com texto `background` (19,7:1 no claro e
+ *   19,0:1 no escuro), sem opacidade; a seta usa a mesma cor do fundo. O
+ *   `Kbd` dentro do tooltip usa `in-data-[slot=tooltip-content]` (é do Kbd).
+ * - `TooltipProvider`: o Base UI funciona sem ele (cada tooltip usa o próprio
+ *   atraso). O provedor só compartilha `delay`, `closeDelay` e `timeout` entre
+ *   tooltips: depois de um aberto, os vizinhos abrem na hora. Por isso o
+ *   shadcn manda pô-lo na raiz do app. Aqui o `delay` padrão é 0.
+ * - Botão desabilitado: ele não recebe o mouse. Embrulhe-o num `span` como
+ *   gatilho e use `focusableWhenDisabled` no botão, para o teclado alcançá-lo.
+ * - O conteúdo vai para um portal no `body`: em RTL isolado, passe `dir` (e
+ *   `lang`) ao `TooltipContent`.
+ */
+
 function TooltipProvider({
   delay = 0,
   ...props
@@ -55,7 +80,7 @@ function TooltipContent({
           {...props}
         >
           {children}
-          <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-start-1 data-[side=inline-end]:translate-x-[1.5px] rtl:data-[side=inline-end]:-translate-x-[1.5px] data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-end-1 data-[side=inline-start]:translate-x-[-1.5px] rtl:data-[side=inline-start]:-translate-x-[-1.5px] data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:translate-x-[-1.5px] rtl:data-[side=left]:-translate-x-[-1.5px] data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:translate-x-[1.5px] rtl:data-[side=right]:-translate-x-[1.5px] data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" />
+          <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:-start-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:translate-x-[1.5px] data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:-end-1 data-[side=inline-start]:top-1/2! data-[side=inline-start]:translate-x-[-1.5px] data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:translate-x-[-1.5px] data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:translate-x-[1.5px] data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5 rtl:data-[side=inline-end]:-translate-x-[1.5px] rtl:data-[side=inline-start]:-translate-x-[-1.5px] rtl:data-[side=left]:-translate-x-[-1.5px] rtl:data-[side=right]:-translate-x-[1.5px]" />
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>

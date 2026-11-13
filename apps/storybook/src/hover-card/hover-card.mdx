@@ -1,0 +1,138 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as HoverCardStories from "./hover-card.stories";
+
+<Meta of={HoverCardStories} />
+
+# Hover Card
+
+Uma pré-visualização, para quem enxerga, do conteúdo que está por trás de um link.
+
+<Canvas of={HoverCardStories.Demo} />
+
+## Instalação
+
+O Hover Card usa o `@base-ui/react` (o PreviewCard) e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add hover-card" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/hover-card.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@workspace/ui/components/hover-card"
+
+<HoverCard>
+  <HoverCardTrigger href="/brainzgroup">@brainzgroup</HoverCardTrigger>
+  <HoverCardContent>
+    Soluções digitais criadas e mantidas pela Brainz Group.
+  </HoverCardContent>
+</HoverCard>`}
+/>
+
+## Composição
+
+Monte um `HoverCard` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`HoverCard
+├── HoverCardTrigger
+└── HoverCardContent`}
+/>
+
+## Acessibilidade
+
+- **Abre pelo foco do teclado:** o gatilho abre o cartão com o mouse (hover) e também quando recebe o foco, com Tab. Esc fecha. O teste de toda story chega ao gatilho só com Tab, espera o cartão aparecer e roda o axe com ele aberto. Na **Demo**, o teste também confere o hover, o fechamento ao tirar o mouse e o Esc.
+- **O cartão é só uma pré-visualização:** ele não recebe o foco, não tem `role` próprio nem é ligado ao gatilho por `aria-describedby`, e some quando o foco ou o mouse saem. Por isso, tudo o que o usuário precisa para agir tem de estar também na página, que é para onde o link leva. Nunca ponha só no cartão uma informação essencial, um botão ou um link.
+- **Gatilho:** o padrão é um `<a>`, porque o cartão antecipa uma navegação. Deve ter `href` e um nome específico ("@brainzgroup", e não "clique aqui"). Para estilizar como botão, passe a classe de `buttonVariants` ao próprio `HoverCardTrigger`, sem `div` envolvendo. Para outro elemento, use a prop `render`.
+- **Foco visível:** o gatilho com `buttonVariants` usa o anel sólido `ring-ring` com afastamento de 2px. O cartão em si não tem anel, porque não recebe foco.
+- **Contraste:** o fundo é `popover`, com o texto `popover-foreground` (19,7:1 no claro e 16,7:1 no escuro) e `text-muted-foreground` no texto secundário (7,4:1 e 7,1:1). O contorno é `ring-border`.
+- **Toque:** quem usa toque não tem hover. Não dependa do cartão em telas sensíveis ao toque.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`: a classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** o cartão fechado não existe para o axe. Por isso cada story tem um `play` que abre o cartão por teclado e espera a animação de entrada terminar; o axe roda depois, com o cartão aberto, no claro, no escuro e em RTL.
+
+## Atrasos do gatilho
+
+Use `delay` e `closeDelay` no gatilho para controlar quando o cartão abre e fecha. Os atrasos são os do hover.
+
+<Canvas of={HoverCardStories.AtrasosDoGatilho} />
+
+## Posicionamento
+
+Use `side` e `align` no `HoverCardContent` para controlar a posição.
+
+<Canvas of={HoverCardStories.Posicionamento} />
+
+## Básico
+
+É o mesmo exemplo do topo da página (a **Demo**): um link `@brainzgroup` com um cartão de perfil.
+
+## Lados
+
+`side` aceita `top`, `bottom`, `left`, `right`, `inline-start` e `inline-end`. Se não houver espaço, o Base UI vira o cartão para o lado oposto.
+
+<Canvas of={HoverCardStories.Lados} />
+
+## RTL
+
+Os recuos e as animações do cartão são lógicos (`inline-start`, `inline-end`), então ele segue a direção do `<html>`. Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um cartão isolado, como no exemplo, passe `dir` e `lang` ao próprio `HoverCardContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={HoverCardStories.Rtl} />
+
+## Referência da API
+
+O `HoverCard` é construído sobre o [PreviewCard do Base UI](https://base-ui.com/react/components/preview-card#api-reference): `HoverCard` e `HoverCardTrigger` repassam as props do Base UI (por exemplo `open`, `defaultOpen` e `onOpenChange` no `HoverCard`, e `href`, `render`, `delay` e `closeDelay` no gatilho).
+
+### HoverCardTrigger
+
+O gatilho. É um `<a>`; aceita as props do Trigger do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>delay</code></td><td><code>number</code> (ms)</td><td><code>{'600'}</code></td></tr>
+    <tr><td><code>closeDelay</code></td><td><code>number</code> (ms)</td><td><code>{'300'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>ReactElement | função</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### HoverCardContent
+
+O cartão, com o portal e o posicionador. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>HoverCard</code></td><td>nenhum (só o contexto)</td><td><code>hover-card</code></td></tr>
+    <tr><td><code>HoverCardTrigger</code></td><td><code>{'<a>'}</code></td><td><code>hover-card-trigger</code></td></tr>
+    <tr><td><code>HoverCardContent</code></td><td><code>{'<div>'}</code> em um portal no <code>body</code></td><td><code>hover-card-content</code></td></tr>
+  </tbody>
+</table>

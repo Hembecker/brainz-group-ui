@@ -1,0 +1,157 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import { Toaster } from "@workspace/ui/components/toast";
+
+import * as ToastStories from "./toast.stories";
+
+<Meta of={ToastStories} />
+
+{/* Um único Toaster para a página: as stories não montam o delas no Docs. */}
+<Toaster />
+
+# Toast
+
+Uma mensagem curta, mostrada por um tempo e depois removida.
+
+<Canvas of={ToastStories.Demo} />
+
+Este Toast usa o Toast do Base UI. O Sonner não foi instalado.
+
+## Instalação
+
+O Toast usa o `@base-ui/react`, o `lucide-react` e o `cn`, que já estão no pacote, e o Button.
+
+<Source language="bash" dark code="npx shadcn add toast" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/toast.tsx`.
+
+Depois, adicione o `Toaster` uma vez, na raiz do app:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Toaster } from "@workspace/ui/components/toast"
+
+export default function App({ children }) {
+  return (
+    <>
+      {children}
+      <Toaster />
+    </>
+  )
+}`}
+/>
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { toast } from "@workspace/ui/components/toast"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`toast.add({
+  title: "Evento criado",
+  description: "Domingo, 3 de dezembro, às 9h00",
+})`}
+/>
+
+## Acessibilidade
+
+- **Região viva sempre montada:** o `ToastViewport` é uma região (`role="region"`) com `aria-live="polite"` e o nome "Notificações". Ele fica montado mesmo sem avisos, e só o conteúdo dele muda, que é o que faz o leitor de tela anunciar o aviso novo. O nome é fixo, em português (como o "Carregando" do Spinner); para outro idioma, passe `aria-label` ao `ToastViewport`.
+- **Erro crítico:** `priority: "high"` faz o aviso ser anunciado de forma assertiva (`role="alert"`) e o torna um `alertdialog`. Use só para erros que o usuário precisa ver na hora; os outros avisos ficam educados (`polite`).
+- **Teclado:** **F6** leva o foco ao viewport, **Tab** percorre os avisos e os botões deles, e **Esc** fecha o aviso focado, devolvendo o foco para onde ele estava. O teste da story **Demo** confere esse caminho (F6, Tab, Esc e o foco de volta no botão).
+- **Tempo:** cada aviso some depois de **5000 ms** (o padrão do Base UI). A contagem é pausada enquanto o mouse está sobre os avisos, enquanto um deles tem o foco e enquanto a janela está sem foco, e recomeça depois. Para mudar, passe `timeout` no aviso (`toast.add({ timeout: 10000 })`) ou em todos (`<Toaster timeout={10000} />`). Com `timeout: 0` o aviso fica até ser fechado. Um aviso com ação, ou com texto longo, deve ter um tempo maior ou nenhum: 5 segundos não bastam para ler e agir. O aviso `loading` do `toast.promise` não expira.
+- **Botão de fechar:** o `ToastClose` é um `<button>` com o nome "Fechar aviso" (`aria-label`), e o ícone é `aria-hidden`. O nome é fixo, em português; para outro idioma, passe `aria-label`. Como o aviso desaparece, a informação importante também precisa estar em outro lugar da página.
+- **Nome:** o aviso é um `dialog` nomeado pelo `title`, e a `description` o descreve. Dê um `title` a todo aviso. Sem ele, o `Toaster` usa o nome genérico "Aviso".
+- **Ação:** `actionProps` rende um `Button`, que deve ter um nome específico ("Desfazer"). O aviso não pode ser o único caminho para a ação.
+- **Foco visível:** o aviso e os botões usam o anel sólido, com afastamento de 2px pela cor do fundo.
+- **Cores:** o aviso é `popover` com `popover-foreground` e contorno `border` cheio, sem opacidade. O ícone de erro usa `destructive`, mas o tipo nunca é só a cor: o ícone muda e o `title` diz o assunto.
+- **Testes:** o aviso só existe depois do clique. Por isso cada story tem um `play` que clica no gatilho, espera o aviso e a animação, e aperta F6 para pausar os timers; o axe roda depois, no claro, no escuro e em RTL.
+
+## Tipos
+
+Use `type` para mostrar um ícone de estado: `success`, `info`, `warning`, `error` e `loading`. Um aviso sem `type` não tem ícone. O exemplo de erro usa `priority: "high"`.
+
+<Canvas of={ToastStories.Tipos} />
+
+## Ação
+
+Passe as props de um botão em `actionProps` para mostrar uma ação.
+
+<Source
+  language="tsx"
+  dark
+  code={`const id = toast.add({
+  title: "Evento criado",
+  actionProps: {
+    children: "Desfazer",
+    onClick() {
+      toast.close(id)
+    },
+  },
+})`}
+/>
+
+## Promise
+
+Use `toast.promise` para atualizar um único aviso enquanto a tarefa passa pelos estados de carregando, sucesso e erro. Dê um `title` a cada estado (como `{ title: "Criando evento…" }`): uma string simples vira só a descrição, e o aviso fica com o nome genérico "Aviso".
+
+<Canvas of={ToastStories.Promessa} />
+
+## Referência da API
+
+O Toast é construído sobre o [Toast do Base UI](https://base-ui.com/react/components/toast#api-reference): as opções do gerenciador (`add`, `close`, `update`, `promise`), o empilhamento e o gesto de arrastar para dispensar vêm de lá.
+
+### toast.add
+
+<table>
+  <thead>
+    <tr><th>Opção</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>title</code></td><td><code>ReactNode</code></td><td>—</td></tr>
+    <tr><td><code>description</code></td><td><code>ReactNode</code></td><td>—</td></tr>
+    <tr><td><code>type</code></td><td><code>{'"success" | "info" | "warning" | "error" | "loading" | string'}</code></td><td>—</td></tr>
+    <tr><td><code>priority</code></td><td><code>{'"low" | "high"'}</code></td><td><code>{'"low"'}</code></td></tr>
+    <tr><td><code>timeout</code></td><td><code>number</code> (ms)</td><td><code>5000</code></td></tr>
+    <tr><td><code>actionProps</code></td><td>props de um botão</td><td>—</td></tr>
+    <tr><td><code>onClose</code></td><td><code>{'() => void'}</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### Toaster
+
+Monta o provedor, o portal, o viewport e a lista de avisos. Aceita as props do Provider do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>toastManager</code></td><td><code>ToastManager</code></td><td><code>toast</code></td></tr>
+    <tr><td><code>timeout</code></td><td><code>number</code> (ms)</td><td><code>5000</code></td></tr>
+    <tr><td><code>limit</code></td><td><code>number</code></td><td><code>3</code></td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Toaster</code></td><td>nenhum (provedor, portal e lista)</td><td>—</td></tr>
+    <tr><td><code>ToastViewport</code></td><td><code>{'<div role="region" aria-live="polite">'}</code></td><td><code>toast-viewport</code></td></tr>
+    <tr><td><code>Toast</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>toast</code></td></tr>
+    <tr><td><code>ToastContent</code></td><td><code>{'<div>'}</code></td><td><code>toast-content</code></td></tr>
+    <tr><td><code>ToastTitle</code></td><td><code>{'<h2>'}</code></td><td><code>toast-title</code></td></tr>
+    <tr><td><code>ToastDescription</code></td><td><code>{'<p>'}</code></td><td><code>toast-description</code></td></tr>
+    <tr><td><code>ToastAction</code></td><td><code>{'<button>'}</code></td><td><code>toast-action</code></td></tr>
+    <tr><td><code>ToastClose</code></td><td><code>{'<button>'}</code></td><td><code>toast-close</code></td></tr>
+  </tbody>
+</table>
