@@ -1,0 +1,162 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CheckboxStories from "./checkbox.stories";
+
+<Meta of={CheckboxStories} />
+
+# Checkbox
+
+Um controle que alterna entre marcado e não marcado.
+
+<Canvas of={CheckboxStories.Demo} />
+
+## Instalação
+
+O Checkbox usa o primitivo do Base UI (`@base-ui/react/checkbox`), o `cn` e o ícone `CheckIcon` do `lucide-react`.
+
+<Source language="bash" dark code="npx shadcn add checkbox" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/checkbox.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Checkbox } from "@workspace/ui/components/checkbox"
+
+<Checkbox />`}
+/>
+
+O `Checkbox` é só a caixa. O rótulo e a descrição vêm do `Field` (veja **Básico** e **Descrição**), e por isso quase todo uso real começa por ele.
+
+## Acessibilidade
+
+- **Nome acessível:** toda caixa precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do `Checkbox`. O nome diz o que a caixa liga ou desliga ("Aceitar os termos e condições", e não "Concordo"). Sem rótulo visível, como numa célula de tabela, use `aria-label` com a ação e o alvo ("Selecionar Sarah Chen"). Quando o `FieldLabel` envolve o `Field` inteiro (o cartão de escolha), a caixa fica dentro do `<label>` e o nome vem do texto dele.
+- **Papel e estado:** o Base UI expõe `role="checkbox"` e `aria-checked`. A tecla Espaço alterna a caixa e o Tab a alcança. A marca de seleção é um ícone decorativo e leva `aria-hidden="true"`.
+- **Contraste da caixa:** o limite do controle precisa de 3:1 contra o fundo (WCAG 1.4.11). A caixa desmarcada é preenchida com `input`, e não com `input/90` como no registro. No claro tem 4,6:1 no branco, 4,2:1 na `muted` e 3,7:1 sobre o `field`; no escuro tem 3,8:1 no fundo e no card e 3,6:1 na `muted`. Marcada, a caixa é `primary` (5,2:1 no branco, 4,2:1 sobre o `field`, 3,8:1 no fundo escuro e 3,4:1 no card escuro) com a marca em `primary-foreground` (5,2:1).
+- **Foco:** o anel é sólido, de 3px, no token `--ring` (3,5:1 no branco; 7,6:1 no fundo escuro), e fica afastado 2px pela cor do fundo, como no Button. Dentro de um `FieldLabel` que envolve o `Field`, o anel aparece no cartão, não na caixa. Não remova o anel.
+- **Alvo de toque:** a caixa tem 16px, mas a área clicável passa disso (12px nas laterais e 8px em cima e embaixo), e o clique no rótulo também alterna a caixa.
+- **Inválido:** marque a caixa com `aria-invalid` (assistiva) e o `Field` com `data-invalid` (visual, que pinta o rótulo de vermelho). A caixa troca a borda para `destructive` (4,8:1 no claro; 6,8:1 no escuro) e, no foco, o anel também passa a `destructive`. Cor sozinha não basta: explique o problema num texto com `id` e ligue-o por `aria-describedby` e `aria-errormessage` (veja **Inválido**).
+- **Desabilitado:** `disabled` tira a caixa da ordem do Tab e apaga o controle em 50%. Adicione `data-disabled` ao `Field` para apagar também o rótulo e diga o motivo numa descrição.
+- **Grupo:** várias caixas relacionadas ficam num `FieldSet` com um `FieldLegend`, que dá o nome ao grupo para o leitor de tela (veja **Grupo**).
+- **Tabela:** a caixa do cabeçalho seleciona todas as linhas e cada linha tem a sua; todas levam `aria-label` com o alvo. Mude o texto da linha selecionada com `data-state="selected"` e anuncie a contagem de selecionadas numa região `aria-live="polite"` sempre montada, trocando só o texto dela.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field orientation="horizontal" data-invalid>
+  <Checkbox
+    id="termos"
+    aria-invalid
+    aria-describedby="termos-erro"
+    aria-errormessage="termos-erro"
+  />
+  <FieldContent>
+    <FieldLabel htmlFor="termos">Aceitar os termos e condições</FieldLabel>
+    <FieldError id="termos-erro">
+      Você precisa aceitar os termos para continuar.
+    </FieldError>
+  </FieldContent>
+</Field>`}
+/>
+
+## Estado marcado
+
+Use `defaultChecked` para uma caixa não controlada, ou `checked` e `onCheckedChange` para controlá-la.
+
+<Source
+  language="tsx"
+  dark
+  code={`import * as React from "react"
+
+export function Exemplo() {
+  const [checked, setChecked] = React.useState(false)
+
+  return (
+    <Field orientation="horizontal">
+      <Checkbox
+        id="exemplo-termos"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <FieldLabel htmlFor="exemplo-termos">
+        Aceitar os termos e condições
+      </FieldLabel>
+    </Field>
+  )
+}`}
+/>
+
+## Inválido
+
+Defina `aria-invalid` na caixa e `data-invalid` no `Field` para mostrar os estilos de inválido. Mostre o motivo num texto e ligue-o à caixa por `aria-errormessage` e `aria-describedby` (veja **Acessibilidade**).
+
+<Canvas of={CheckboxStories.Invalido} />
+
+## Básico
+
+Combine a caixa com `Field` e `FieldLabel` para ter o layout e o rótulo corretos.
+
+<Canvas of={CheckboxStories.Basico} />
+
+## Descrição
+
+Use `FieldContent` e `FieldDescription` para o texto de ajuda. Ligue a descrição à caixa por `aria-describedby`, para que o leitor de tela a leia depois do nome.
+
+<Canvas of={CheckboxStories.Descricao} />
+
+## Desabilitado
+
+Use a prop `disabled` para impedir a interação e adicione o atributo `data-disabled` ao `Field` para os estilos de desabilitado.
+
+<Canvas of={CheckboxStories.Desabilitado} />
+
+## Grupo
+
+Use vários campos para criar uma lista de caixas. O `FieldSet` com o `FieldLegend` dá o nome ao grupo.
+
+<Canvas of={CheckboxStories.Grupo} />
+
+## Tabela
+
+Uma caixa em cada linha para selecionar linhas de uma tabela, e outra no cabeçalho para selecionar todas. Como não há rótulo visível, cada caixa leva um `aria-label` com o alvo. O exemplo é estático, com a primeira linha marcada por `defaultChecked`; para sincronizar a caixa do cabeçalho com as linhas, controle o estado como no exemplo de **Estado marcado**, com `checked` e `onCheckedChange` em cada caixa.
+
+<Canvas of={CheckboxStories.Tabela} />
+
+## RTL
+
+O `Checkbox` usa posicionamento lógico, então funciona em RTL sem nenhuma prop: a caixa vai para a direita do texto. Coloque `dir="rtl"` e o `lang` num ancestral (o exemplo usa um `div` porque esta página é LTR). Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={CheckboxStories.Rtl} />
+
+## Referência da API
+
+Veja a documentação do [Checkbox no Base UI](https://base-ui.com/react/components/checkbox#api-reference) para a lista completa. O `Checkbox` aceita as props do `Checkbox.Root` do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>indeterminate</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: obrigatório quando não há rótulo visível</td><td>—</td></tr>
+    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O botão recebe `data-slot="checkbox"` e o ícone, `data-slot="checkbox-indicator"`. O `Checkbox` não tem variantes nem tamanhos: tem 16px (`size-4`) e `rounded-[5px]`.
+
+<Canvas of={CheckboxStories.Playground} />

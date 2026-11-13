@@ -1,0 +1,129 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SwitchStories from "./switch.stories";
+
+<Meta of={SwitchStories} />
+
+# Switch
+
+Um controle que alterna entre ligado e desligado.
+
+<Canvas of={SwitchStories.Demo} />
+
+## Instalação
+
+O Switch usa o primitivo de switch do Base UI (`@base-ui/react/switch`) e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add switch" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/switch.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Switch } from "@workspace/ui/components/switch"
+
+<Switch />`}
+/>
+
+O `Switch` é só o controle. O rótulo, a descrição e a mensagem de erro vêm do `Field` (veja **Descrição**) ou de um `Label`, e por isso todo uso real precisa de um deles.
+
+## Acessibilidade
+
+- **Papel e estado:** o Base UI expõe o controle como `role="switch"` com `aria-checked`, e a tecnologia assistiva anuncia "ligado" ou "desligado". Tab chega até ele e Espaço alterna.
+- **Rótulo persistente:** todo switch precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do `Switch`. O nome deve dizer o que muda ("Modo avião"), não o estado. Clicar no rótulo alterna o switch. Um switch sem rótulo visível recebe o nome por `aria-label`.
+- **Descrição ligada ao controle:** o texto de ajuda fica num `FieldDescription` com `id`, e o `Switch` aponta para ele com `aria-describedby` (veja **Descrição**).
+- **Estado inválido:** marque o `Switch` com `aria-invalid` (a assistiva) e o `Field` com `data-invalid` (o visual, que pinta o rótulo de vermelho). O `Switch` troca a borda para `destructive` e o anel de foco também. Cor sozinha não basta: explique o problema num `FieldError` com `id` e ligue-o por `aria-errormessage` e também por `aria-describedby` (veja **Inválido**).
+- **Desabilitado:** `disabled` tira o switch da ordem do Tab e apaga o controle em 50%. Adicione `data-disabled` ao `Field` para apagar o rótulo também, e diga o motivo numa descrição.
+- **Contraste do trilho (3:1 para controles):** o trilho desligado usa o papel `input`, com 4,6:1 no branco e 3,8:1 no fundo e no card escuros. O trilho ligado usa a `primary`, com 5,2:1 no branco, 3,8:1 no fundo escuro e 3,4:1 no card escuro. O polegar tem pelo menos 4,4:1 sobre o trilho nos dois modos. Os números estão no comentário do componente.
+- **Estado além da cor:** o polegar muda de lado ao ligar e, em RTL, muda de sentido. Quem não distingue as cores ainda vê a posição.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. No cartão de escolha, o anel passa para o cartão inteiro. Não remova o anel.
+- **Área de toque:** a área clicável é maior que o desenho (12px nas laterais e 8px em cima e embaixo), o que ajuda no toque.
+- **Mudança dinâmica:** o próprio `aria-checked` já anuncia a troca. Se o efeito do switch aparecer em outro lugar da página (por exemplo, uma mensagem "Modo avião ativado"), mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field orientation="horizontal">
+  <FieldContent>
+    <FieldLabel htmlFor="notificacoes">Notificações</FieldLabel>
+    <FieldDescription id="notificacoes-descricao">
+      Receba um aviso quando o modo foco mudar.
+    </FieldDescription>
+  </FieldContent>
+  <Switch id="notificacoes" aria-describedby="notificacoes-descricao" />
+</Field>`}
+/>
+
+## Descrição
+
+Use `Field`, `FieldContent`, `FieldLabel` e `FieldDescription` para criar um switch com rótulo e descrição. O `FieldLabel` leva `htmlFor`, o `Switch` leva o `id` correspondente, e a descrição leva um `id` que o `Switch` cita em `aria-describedby`.
+
+<Canvas of={SwitchStories.Descricao} />
+
+## Cartão de escolha
+
+Um seletor em formato de cartão, em que o `FieldLabel` envolve o `Field` inteiro, e o cartão todo vira clicável. O título usa `FieldTitle`, e o texto do cartão inteiro entra no nome acessível do switch.
+
+<Canvas of={SwitchStories.CartaoDeEscolha} />
+
+## Desabilitado
+
+Adicione a prop `disabled` ao `Switch` para desabilitá-lo. Adicione o atributo `data-disabled` ao `Field` para estilizar o rótulo.
+
+<Canvas of={SwitchStories.Desabilitado} />
+
+## Inválido
+
+Adicione `aria-invalid` ao `Switch` para marcá-lo como inválido. Adicione `data-invalid` ao `Field` para estilizar. Mostre o motivo num `FieldError` e ligue-o ao controle por `aria-errormessage` e `aria-describedby` (veja **Acessibilidade**).
+
+<Canvas of={SwitchStories.Invalido} />
+
+## Tamanho
+
+Use a prop `size` para mudar o tamanho do switch. O valor aparece em `data-size`.
+
+<Canvas of={SwitchStories.Tamanho} />
+
+## RTL
+
+O polegar anda para o lado certo sozinho: o componente já traz as classes `rtl:` do movimento. Coloque `dir="rtl"` e o `lang` num ancestral: o exemplo usa um `div` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SwitchStories.Rtl} />
+
+## Referência da API
+
+### Switch
+
+O `Switch` envolve o `Switch.Root` do Base UI e repassa todas as props dele. Veja a [referência do Base UI Switch](https://base-ui.com/react/components/switch#api-reference) para a lista completa. As principais:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>checked</code></td><td><code>boolean</code>: estado controlado</td><td>—</td></tr>
+    <tr><td><code>defaultChecked</code></td><td><code>boolean</code>: estado inicial, sem controle</td><td><code>false</code></td></tr>
+    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>readOnly</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>name</code></td><td><code>string</code>: nome do campo no formulário</td><td>—</td></tr>
+    <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há rótulo visível</td><td>—</td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="switch"` e `data-size`, e o polegar recebe `data-slot="switch-thumb"`. O estado fica em `data-checked` ou `data-unchecked`, e `data-disabled` quando desabilitado.
+
+<Canvas of={SwitchStories.Playground} />

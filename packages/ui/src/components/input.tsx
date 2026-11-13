@@ -24,9 +24,9 @@ import { cn } from "cn"
  *   cheios. A borda tem 3,8:1 sobre o `field` no claro e 5,1:1 no escuro. O
  *   estado nunca vale só pela cor: ligue uma mensagem por `aria-describedby` e
  *   `aria-errormessage`.
- * - O texto digitado é sempre `text-foreground`: dentro de um `Field` com
- *   `data-invalid` o texto herdaria o vermelho do erro (3,8:1 sobre o `field`,
- *   abaixo dos 4,5:1 exigidos). Só a borda e a mensagem ficam vermelhas.
+ * - O texto digitado é sempre `text-foreground`. O `Field` inválido já só
+ *   pinta o rótulo e o erro de vermelho; a classe fica como proteção, porque o
+ *   vermelho sobre o `field` teria 3,8:1, abaixo dos 4,5:1 exigidos.
  * - Desabilitado: `disabled:opacity-50` e fora do Tab. Para mostrar um valor
  *   sem edição, use `readOnly`.
  * - Dentro de um InputGroup, o `InputGroupInput` reaproveita este componente.

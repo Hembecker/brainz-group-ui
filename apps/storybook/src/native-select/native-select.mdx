@@ -1,0 +1,197 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as NativeSelectStories from "./native-select.stories";
+
+<Meta of={NativeSelectStories} />
+
+# Native Select
+
+Um elemento `<select>` nativo do HTML, estilizado de forma consistente com o design system.
+
+Para um seletor estilizado, com lista própria, veja o componente `Select`. O `NativeSelect` mantém o comportamento do navegador e do sistema, o que costuma ser melhor no celular.
+
+<Canvas of={NativeSelectStories.Demo} />
+
+## Instalação
+
+O NativeSelect usa um `<select>` nativo, o ícone `ChevronDownIcon` do lucide e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add native-select" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/native-select.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  NativeSelect,
+  NativeSelectOptGroup,
+  NativeSelectOption,
+} from "@workspace/ui/components/native-select"
+
+<NativeSelect>
+  <NativeSelectOption value="">Selecione uma fruta</NativeSelectOption>
+  <NativeSelectOption value="apple">Maçã</NativeSelectOption>
+  <NativeSelectOption value="banana">Banana</NativeSelectOption>
+  <NativeSelectOption value="blueberry">Mirtilo</NativeSelectOption>
+  <NativeSelectOption value="pineapple">Abacaxi</NativeSelectOption>
+</NativeSelect>`}
+/>
+
+## Composição
+
+### Simples
+
+Opções direto dentro do `NativeSelect`, sem `NativeSelectOptGroup`.
+
+<Source
+  language="text"
+  dark
+  code={`NativeSelect
+├── NativeSelectOption
+├── NativeSelectOption
+├── NativeSelectOption
+└── NativeSelectOption`}
+/>
+
+### Com grupos
+
+Use `NativeSelectOptGroup` para organizar as opções em categorias.
+
+<Source
+  language="text"
+  dark
+  code={`NativeSelect
+├── NativeSelectOptGroup
+│   ├── NativeSelectOption
+│   └── NativeSelectOption
+└── NativeSelectOptGroup
+    ├── NativeSelectOption
+    └── NativeSelectOption`}
+/>
+
+## Acessibilidade
+
+- **Rótulo persistente:** todo `NativeSelect` precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id`. O `id` vai no `<select>`, não no wrapper: o `NativeSelect` repassa as props para o `<select>` e só o `className` vai para o `div` em volta. A primeira opção ("Selecione…") é um texto de orientação, não o rótulo.
+- **Descrição ligada ao campo:** o texto de ajuda fica num `FieldDescription` com `id`, e o campo aponta para ele com `aria-describedby`.
+- **Estado inválido:** marque o campo com `aria-invalid` (a assistiva) e o `Field` com `data-invalid` (o visual). O `NativeSelect` já troca a borda e o anel de foco para `destructive`. Cor sozinha não basta: explique o problema num `FieldError` com `id` e ligue-o por `aria-errormessage` e também por `aria-describedby`. Quando o campo voltar a ser válido, remova `aria-invalid`, `aria-errormessage` e `data-invalid`.
+- **Mensagem dinâmica:** o `FieldError` é uma região viva (`aria-live="polite"`) que fica sempre montada: renderize-o sempre, passando o texto como filho, e troque só o texto. O `assertive` (ou `role="alert"`) fica para erros críticos.
+- **Teclado e leitor de tela:** como é um `<select>` nativo, ele já funciona com as setas, o Espaço, o Enter e a digitação da primeira letra, e é lido com o nome, o valor e a posição na lista. Não use `tabIndex` positivo.
+- **Seta decorativa:** o ícone leva `aria-hidden="true"` e `pointer-events-none`, então ele não é lido e o clique chega ao `<select>`.
+- **Grupos:** `NativeSelectOptGroup` usa `label`, que o leitor de tela lê ao entrar no grupo. Dê a cada grupo um nome curto e específico.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. Não remova o anel.
+- **Contraste:** o texto escolhido é sempre `foreground`, inclusive dentro de um `Field` inválido, e a seta é `muted-foreground` (5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo). A borda de erro tem 3,8:1 e 5,1:1. A lista aberta é desenhada pelo navegador, com as cores do sistema.
+- **Desabilitado:** `disabled` tira o campo da ordem do Tab e apaga o campo todo em 50%. Informe o motivo numa descrição.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field data-invalid>
+  <FieldLabel htmlFor="fruta">Fruta</FieldLabel>
+  <NativeSelect
+    id="fruta"
+    aria-invalid="true"
+    aria-describedby="fruta-erro"
+    aria-errormessage="fruta-erro"
+  >
+    <NativeSelectOption value="">Selecione uma fruta</NativeSelectOption>
+    <NativeSelectOption value="apple">Maçã</NativeSelectOption>
+  </NativeSelect>
+  <FieldError id="fruta-erro">Escolha uma fruta da lista.</FieldError>
+</Field>`}
+/>
+
+## Grupos
+
+Use `NativeSelectOptGroup` para organizar as opções em categorias.
+
+<Canvas of={NativeSelectStories.Grupos} />
+
+## Desabilitado
+
+Adicione a prop `disabled` ao `NativeSelect` para desabilitar o seletor. Para estilizar o estado desabilitado do rótulo, adicione o atributo `data-disabled` ao `Field`.
+
+<Canvas of={NativeSelectStories.Desabilitado} />
+
+## Inválido
+
+Use `aria-invalid` para mostrar erros de validação e o atributo `data-invalid` no `Field` para a estilização. Mostre o motivo num `FieldError` e ligue-o ao campo por `aria-errormessage` e `aria-describedby` (veja **Acessibilidade**).
+
+<Canvas of={NativeSelectStories.Invalido} />
+
+## Native Select ou Select
+
+- Use o `NativeSelect` para o comportamento nativo do navegador, melhor desempenho ou listas otimizadas para celular.
+- Use o `Select` para estilização própria, animações ou interações complexas.
+
+## RTL
+
+O `NativeSelect` usa paddings e a posição da seta lógicos (`ps`, `pe`, `end`), então ele funciona em RTL sem nenhuma prop: a seta passa para a esquerda. Coloque `dir="rtl"` e o `lang` num ancestral: o exemplo usa um `div` porque esta página é LTR, e o `dir="rtl"` no próprio `<select>` garante o sentido do texto. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={NativeSelectStories.Rtl} />
+
+## Referência da API
+
+### NativeSelect
+
+O componente principal, que envolve o `<select>` nativo num `div`. Aceita todas as props de um `<select>`, que vão para o `<select>`, exceto `className`, que vai para o wrapper.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>size</code></td><td><code>{'"sm" | "default"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code>: aplicada ao wrapper</td><td>—</td></tr>
+  </tbody>
+</table>
+
+O wrapper recebe `data-slot="native-select-wrapper"`, o `<select>` recebe `data-slot="native-select"` e a seta recebe `data-slot="native-select-icon"`; o `data-size` com o valor resolvido fica no wrapper e no `<select>`. O `size="sm"` tem 28px de altura (`h-7`) e o padrão, 32px (`h-8`), ambos com `rounded-2xl`.
+
+### NativeSelectOption
+
+Uma opção do seletor.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+  </tbody>
+</table>
+
+### NativeSelectOptGroup
+
+Agrupa opções relacionadas.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>label</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+  </tbody>
+</table>
+
+<Source
+  language="tsx"
+  dark
+  code={`<NativeSelectOptGroup label="Frutas">
+  <NativeSelectOption value="apple">Maçã</NativeSelectOption>
+  <NativeSelectOption value="banana">Banana</NativeSelectOption>
+</NativeSelectOptGroup>`}
+/>
+
+<Canvas of={NativeSelectStories.Playground} />

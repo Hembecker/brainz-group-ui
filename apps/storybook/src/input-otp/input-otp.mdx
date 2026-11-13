@@ -1,0 +1,242 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as InputOTPStories from "./input-otp.stories";
+
+<Meta of={InputOTPStories} />
+
+# Input OTP
+
+Um componente acessível de senha de uso único, com suporte a copiar e colar.
+
+<Canvas of={InputOTPStories.Demo} />
+
+## Instalação
+
+O InputOTP usa o pacote `input-otp` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add input-otp" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/input-otp.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@workspace/ui/components/input-otp"
+
+<InputOTP id="codigo" maxLength={6}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0} />
+    <InputOTPSlot index={1} />
+    <InputOTPSlot index={2} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
+    <InputOTPSlot index={3} />
+    <InputOTPSlot index={4} />
+    <InputOTPSlot index={5} />
+  </InputOTPGroup>
+</InputOTP>`}
+/>
+
+O `InputOTP` não tem rótulo. Use um `Field` com um `FieldLabel htmlFor` ligado ao `id` do `InputOTP`.
+
+## Sobre
+
+O Input OTP é construído sobre o [input-otp](https://github.com/guilhermerodz/input-otp), de Guilherme Rodz. Ele renderiza **um único `<input>` real**, invisível e sobreposto às casas. As casas (`InputOTPSlot`) são só o desenho: o teclado, a colagem, o preenchimento automático do código recebido por SMS e o leitor de tela falam com esse input.
+
+## Composição
+
+Use esta composição para montar um `InputOTP`:
+
+<Source
+  language="text"
+  dark
+  code={`InputOTP
+├── InputOTPGroup
+│   ├── InputOTPSlot
+│   ├── InputOTPSlot
+│   └── InputOTPSlot
+├── InputOTPSeparator
+├── InputOTPGroup
+│   ├── InputOTPSlot
+│   ├── InputOTPSlot
+│   └── InputOTPSlot
+├── InputOTPSeparator
+└── InputOTPGroup
+    ├── InputOTPSlot
+    └── InputOTPSlot`}
+/>
+
+## Acessibilidade
+
+- **Rótulo ligado ao input real:** o nome acessível vem do `<input>` escondido, não das casas. Ponha o `id` no `InputOTP` e ligue um `FieldLabel htmlFor` a ele. O rótulo é sempre visível; não há placeholder. Sem rótulo, o leitor de tela anuncia só "campo de edição".
+- **Atributos vão no `InputOTP`:** `id`, `required`, `disabled`, `aria-describedby`, `aria-errormessage` e `aria-invalid` são repassados ao input real. A descrição (`FieldDescription` com `id`) e o erro (`FieldError` com `id`) se ligam por `aria-describedby`.
+- **Estado inválido:** marque o `InputOTP` com `aria-invalid` (é o que a tecnologia assistiva lê) e o `Field` com `data-invalid`. As casas também levam `aria-invalid`, mas só como gancho de estilo: a borda delas fica `destructive`. Cor sozinha não basta: explique o problema num `FieldError` e ligue-o por `aria-errormessage` e `aria-describedby`.
+- **Contraste das casas:** o registro usava `bg-input/50`, que deixava as casas vazias e as desabilitadas sem contraste. Aqui a casa usa o fundo `field` e a borda `input` (4,6:1 no claro e 3,8:1 no escuro), e o dígito é sempre `foreground`, inclusive dentro de um `Field` inválido.
+- **Foco visível:** a casa **ativa** (a que recebe o próximo dígito) mostra uma borda e um anel sólidos, de 3px, no token `--ring`, afastados 2px pela cor do fundo, como no Input.
+- **Teclado e preenchimento automático:** o input usa `autoComplete="one-time-code"` e `inputMode="numeric"` por padrão, e o teclado numérico abre no celular. Use `pattern` (veja **Padrão**) para aceitar só os caracteres válidos. Setas, Backspace, Tab e colar funcionam como num campo comum.
+- **Separador:** o `InputOTPSeparator` é decorativo (`role="separator"`) e só agrupa os dígitos visualmente.
+- **Mudança dinâmica:** um texto que muda conforme o código é digitado, como "Você digitou…", fica numa região `aria-live="polite"` sempre montada (veja **Controlado**).
+- **Desabilitado:** o `disabled` tira o campo do Tab e apaga o conjunto em 50%.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field data-invalid>
+  <FieldLabel htmlFor="codigo">Código de verificação</FieldLabel>
+  <InputOTP
+    id="codigo"
+    maxLength={6}
+    aria-invalid
+    aria-describedby="codigo-erro"
+    aria-errormessage="codigo-erro"
+  >
+    <InputOTPGroup>
+      <InputOTPSlot index={0} aria-invalid />
+      {/* …as outras casas, também com aria-invalid */}
+    </InputOTPGroup>
+  </InputOTP>
+  <FieldError id="codigo-erro">
+    O código está incorreto ou expirou. Peça um novo código.
+  </FieldError>
+</Field>`}
+/>
+
+## Padrão
+
+Use a prop `pattern` para definir um padrão para o código. As constantes `REGEXP_ONLY_DIGITS`, `REGEXP_ONLY_CHARS` e `REGEXP_ONLY_DIGITS_AND_CHARS` vêm do pacote `input-otp`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
+
+<InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+  ...
+</InputOTP>`}
+/>
+
+<Canvas of={InputOTPStories.Padrao} />
+
+## Separador
+
+Use o `<InputOTPSeparator />` para colocar um separador entre os grupos de casas.
+
+<Canvas of={InputOTPStories.Separador} />
+
+## Desabilitado
+
+Use a prop `disabled` para desabilitar o campo. Para o `Field` apagar o rótulo junto, adicione o atributo `data-disabled` a ele, e diga o motivo numa descrição.
+
+<Canvas of={InputOTPStories.Desabilitado} />
+
+## Controlado
+
+Use as props `value` e `onChange` para controlar o valor. O exemplo precisa de estado, então o código abaixo do exemplo traz o `useState` no topo. O texto que acompanha o valor fica numa região `aria-live="polite"` que está sempre montada, e só o conteúdo dela muda.
+
+<Canvas of={InputOTPStories.Controlado} />
+
+## Inválido
+
+Use `aria-invalid` nas casas para mostrar o estado de erro, e também no `InputOTP` para a tecnologia assistiva. Mostre o motivo num `FieldError` e ligue-o por `aria-errormessage` e `aria-describedby` (veja **Acessibilidade**).
+
+<Canvas of={InputOTPStories.Invalido} />
+
+## Quatro dígitos
+
+Um padrão comum para PINs. Usa `pattern={REGEXP_ONLY_DIGITS}`.
+
+<Canvas of={InputOTPStories.QuatroDigitos} />
+
+## Alfanumérico
+
+Use `REGEXP_ONLY_DIGITS_AND_CHARS` para aceitar letras e números. O `InputOTP` abre o teclado numérico por padrão (`inputMode="numeric"`), que não digita letras: neste caso, passe `inputMode="text"`.
+
+<Canvas of={InputOTPStories.Alfanumerico} />
+
+## Formulário
+
+Um formulário de verificação completo, num `Card`. O `FieldLabel` está ligado ao `id` do `InputOTP`, que leva `required`; o botão "Reenviar código" tem texto, e o ícone dele é decorativo. As casas maiores vêm de classes no `InputOTPGroup` (`*:data-[slot=input-otp-slot]:h-12`).
+
+<Canvas of={InputOTPStories.Formulario} />
+
+## RTL
+
+O InputOTP usa bordas e cantos lógicos (`border-s`/`border-e`, `rounded-s`/`rounded-e`), então o conjunto funciona em RTL. Coloque `dir="rtl"` e o `lang` num ancestral, e o `dir="rtl"` no próprio `InputOTP`; o exemplo usa um `div` porque esta página é LTR. A primeira casa fica no lado direito. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={InputOTPStories.Rtl} />
+
+## Referência da API
+
+Veja a documentação do [input-otp](https://input-otp.rodz.dev) para mais informações. As props abaixo são as do `InputOTP` (o `OTPInput` do pacote) e aceitam também as de um `<input>`.
+
+### InputOTP
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>maxLength</code></td><td><code>number</code> (obrigatória)</td><td>—</td></tr>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>onChange</code></td><td><code>{'(newValue: string) => unknown'}</code></td><td>—</td></tr>
+    <tr><td><code>onComplete</code></td><td><code>{'(...args: any[]) => unknown'}</code>: chamada quando todas as casas são preenchidas</td><td>—</td></tr>
+    <tr><td><code>pattern</code></td><td><code>string</code>: expressão regular dos caracteres aceitos</td><td>—</td></tr>
+    <tr><td><code>textAlign</code></td><td><code>{'"left" | "center" | "right"'}</code></td><td><code>{'"left"'}</code></td></tr>
+    <tr><td><code>pasteTransformer</code></td><td><code>{'(pasted: string) => string'}</code></td><td>—</td></tr>
+    <tr><td><code>pushPasswordManagerStrategy</code></td><td><code>{'"increase-width" | "none"'}</code></td><td><code>{'"increase-width"'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    <tr><td><code>containerClassName</code></td><td><code>string</code>: classes do contêiner que envolve o input e as casas</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code>: classes do input real</td><td>—</td></tr>
+  </tbody>
+</table>
+
+O input recebe `data-slot="input-otp"`.
+
+### InputOTPGroup
+
+Agrupa casas. É um `<div>`; aceita as props de um `div`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### InputOTPSlot
+
+Uma casa do código. Só desenha o caractere, o cursor e o estado ativo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>index</code></td><td><code>number</code> (obrigatória): a posição da casa, a partir de 0</td><td>—</td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code>: só estilo (marque também o <code>InputOTP</code>)</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+A casa recebe `data-slot="input-otp-slot"` e `data-active`.
+
+### InputOTPSeparator
+
+Um separador decorativo entre grupos, com um ícone de traço. É um `<div role="separator">`.

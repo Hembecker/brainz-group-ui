@@ -5,6 +5,43 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
+/*
+ * Select — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/select
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Select do Base UI. O gatilho é um `<button
+ *   role="combobox">` e a lista é um `listbox` num portal: o foco vai para a
+ *   lista ao abrir, as setas, o type-ahead, Home/End e Enter funcionam, e Esc
+ *   fecha e devolve o foco ao gatilho.
+ * - Nome acessível: o gatilho precisa de um rótulo persistente. Ligue um
+ *   `FieldLabel` (ou `Label`) pelo `htmlFor` ao `id` do `SelectTrigger`. O
+ *   placeholder nunca é o rótulo: use um item com `value={null}` e o texto
+ *   "Selecione…" e passe a lista em `items` ao `Select`, para o `SelectValue`
+ *   mostrar o texto do item escolhido (e não o valor).
+ * - Campo preenchido, sem borda, com o papel `field`, como o Input; altura
+ *   `h-8` (`h-7` no `sm`) e `rounded-2xl`, da escala rhea.
+ * - Anel de foco sólido, 3px, no `ring`, afastado 2px pela cor do fundo
+ *   (`ring-offset-background`), como no Button e no Input.
+ * - Inválido (`aria-invalid`): borda `destructive` cheia e o anel de foco passa
+ *   a `destructive`, igual ao Input. O registro usava `ring-destructive/20` e,
+ *   no escuro, `border-destructive/50` e `ring-destructive/40`; foram trocados
+ *   por papéis cheios. Ligue a mensagem por `aria-describedby` e
+ *   `aria-errormessage`: o estado nunca vale só pela cor.
+ * - O texto do gatilho é `text-foreground` (o placeholder continua em
+ *   `muted-foreground`): dentro de um `Field` com `data-invalid` o texto
+ *   herdaria o vermelho do erro, abaixo dos 4,5:1 sobre o `field`.
+ * - Lista: fundo `popover`, contorno `ring-border` cheio, no lugar de
+ *   `ring-foreground/5` e `dark:ring-foreground/10` do registro. A sombra
+ *   continua. Item destacado com `focus:bg-accent`, sem anel.
+ * - A lista vai para um portal no `body`: a classe `dark` e o `dir` do
+ *   `<html>` chegam a ela, mas um `dir` posto num ancestral do gatilho não.
+ *   Num exemplo RTL isolado, passe `dir` (e `lang`) ao `SelectTrigger` e ao
+ *   `SelectContent`.
+ * - Paddings, margens e cantos lógicos (`ps`/`pe`, `end-2`), para funcionar em
+ *   RTL.
+ * - Desabilitado: `disabled:opacity-50` e fora do Tab.
+ */
+
 const Select = SelectPrimitive.Root
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
@@ -40,7 +77,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-fit items-center justify-between gap-1.5 rounded-2xl border border-transparent bg-field px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex w-fit items-center justify-between gap-1.5 rounded-2xl border border-transparent bg-field px-3 py-2 text-sm whitespace-nowrap text-foreground transition-[color,box-shadow] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -82,7 +119,7 @@ function SelectContent({
         <SelectPrimitive.Popup
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
-          className={cn("relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/5 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          className={cn("relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl bg-popover text-popover-foreground shadow-lg ring-1 ring-border duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
           {...props}
         >
           <SelectScrollUpButton />

@@ -1,0 +1,142 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SliderStories from "./slider.stories";
+
+<Meta of={SliderStories} />
+
+# Slider
+
+Um controle em que a pessoa escolhe um valor dentro de um intervalo.
+
+<Canvas of={SliderStories.Demo} />
+
+## Instalação
+
+O Slider usa o primitivo de slider do Base UI (`@base-ui/react/slider`) e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add slider" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/slider.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Slider } from "@workspace/ui/components/slider"
+
+<Slider
+  aria-labelledby="volume"
+  defaultValue={[33]}
+  max={100}
+  step={1}
+/>`}
+/>
+
+O `Slider` é só o controle. O nome vem de um rótulo visível, ligado pelo `aria-labelledby` (veja **Acessibilidade**).
+
+## Acessibilidade
+
+- **Papel e teclado:** cada polegar é um `<input type="range">` do Base UI, com `role="slider"`, `aria-valuenow`, `aria-valuemin` e `aria-valuemax`. Tab chega ao polegar, as setas mudam o valor em um passo (`step`), Page Up e Page Down em passos grandes (`largeStep`), e Home e End vão aos extremos.
+- **Nome acessível no polegar:** o polegar é o que a tecnologia assistiva lê, então é ele que precisa de nome. Use um `Label` visível com `id` e aponte o Slider para ele com `aria-labelledby`: todos os polegares herdam o nome. Um `aria-label` no próprio `Slider` nomeia só o grupo, e o polegar ficaria sem nome. O tooltip nunca é o único nome.
+- **Vários polegares:** com mais de um valor, os polegares compartilham o nome do rótulo e a tecnologia assistiva os distingue só pelo valor (`aria-valuenow`). Num intervalo de dois valores, o Base UI acrescenta ao texto lido "start range" e "end range", em inglês e sem tradução. Para nomes diferentes por polegar e textos em português, o Base UI aceita `getAriaLabel` e `getAriaValueText` no `Slider.Thumb`; este componente ainda não os expõe.
+- **Texto do valor:** quando o número sozinho não diz nada ("75"), um texto mais claro, como "75%", vem do `getAriaValueText` do Base UI, que também depende dessa exposição.
+- **Contraste do trilho (3:1 para controles):** o trilho usa o papel `input`, com 4,6:1 no branco e 3,8:1 no fundo e no card escuros. O preenchimento usa a `primary`, com 5,2:1 no branco, 3,8:1 no fundo escuro e 3,4:1 no card escuro. O polegar é branco com contorno `input` (4,6:1 no branco) e 19,7:1 no fundo escuro. Os números estão no comentário do componente.
+- **Valor além da cor:** o trecho preenchido e o vazio se distinguem só pela cor (1,1:1 entre eles). Quem marca o valor é a posição do polegar, que tem contorno e contraste próprios. Se o valor exato importa, mostre-o em texto, como no exemplo **Controlado**.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O foco de verdade está no `<input>` dentro do polegar, então o estilo usa `has-focus-visible`. Não remova o anel. No hover, o polegar ganha um contorno `primary` de 2px, que o anel de foco cobre.
+- **Desabilitado:** `disabled` tira os polegares da ordem do Tab e apaga o controle em 50%.
+- **Mudança dinâmica:** o valor lido pelo leitor de tela acompanha o polegar. Um texto visual do valor que repete isso fica com `aria-hidden="true"`, para não ser lido duas vezes. Se a mudança alterar outro trecho da página, mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela.
+- **Vertical:** `orientation="vertical"` também troca o eixo do teclado e da leitura (`aria-orientation`). Dê uma altura ao Slider (`h-40`).
+
+## Intervalo
+
+Use um array com dois valores para um slider de intervalo.
+
+<Canvas of={SliderStories.Intervalo} />
+
+## Vários polegares
+
+Use um array com vários valores para ter vários polegares.
+
+<Canvas of={SliderStories.VariosPolegares} />
+
+## Vertical
+
+Use `orientation="vertical"` para um slider vertical. Dê uma altura ao Slider, como `h-40`, e um rótulo a cada um.
+
+<Canvas of={SliderStories.Vertical} />
+
+## Controlado
+
+Use `value` e `onValueChange` para controlar o valor. O texto com o valor atual é só visual e leva `aria-hidden="true"`, porque o polegar já anuncia o valor.
+
+<Canvas of={SliderStories.Controlado} />
+
+<Source
+  language="tsx"
+  dark
+  code={`const [valor, setValor] = React.useState([0.3, 0.7])
+
+<div className="mx-auto grid w-full max-w-xs gap-3">
+  <div className="flex items-center justify-between gap-2">
+    <Label id="temperatura">Temperatura</Label>
+    <span aria-hidden="true" className="text-sm text-muted-foreground">
+      {valor.join(", ")}
+    </span>
+  </div>
+  <Slider
+    aria-labelledby="temperatura"
+    value={valor}
+    onValueChange={(novo) => setValor(novo as number[])}
+    min={0}
+    max={1}
+    step={0.1}
+  />
+</div>`}
+/>
+
+## Desabilitado
+
+Use a prop `disabled` para desabilitar o slider.
+
+<Canvas of={SliderStories.Desabilitado} />
+
+## RTL
+
+O Base UI só inverte o eixo (as setas, o arraste e a posição do polegar) quando recebe a direção pelo `DirectionProvider` (`@workspace/ui/components/direction`): o `dir` num ancestral muda só o CSS. Por isso o exemplo envolve o Slider no provider e também usa `dir="rtl"` e `lang` num `div`, porque esta página é LTR. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SliderStories.Rtl} />
+
+## Referência da API
+
+### Slider
+
+O `Slider` envolve o `Slider.Root` do Base UI, com a trilha, o preenchimento e um polegar para cada valor. Repassa as props do Root. Veja a [referência do Base UI Slider](https://base-ui.com/react/components/slider#api-reference) para a lista completa. As principais:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>defaultValue</code></td><td><code>number | number[]</code>: valores iniciais, sem controle</td><td>—</td></tr>
+    <tr><td><code>value</code></td><td><code>number | number[]</code>: valores controlados</td><td>—</td></tr>
+    <tr><td><code>onValueChange</code></td><td><code>{'(value: number | number[], eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>onValueCommitted</code></td><td><code>{'(value: number | number[], eventDetails) => void'}</code>: ao soltar o polegar</td><td>—</td></tr>
+    <tr><td><code>min</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>100</code></td></tr>
+    <tr><td><code>step</code></td><td><code>number</code></td><td><code>1</code></td></tr>
+    <tr><td><code>largeStep</code></td><td><code>number</code>: passo do Page Up e do Page Down</td><td><code>10</code></td></tr>
+    <tr><td><code>minStepsBetweenValues</code></td><td><code>number</code>: distância mínima entre polegares</td><td><code>0</code></td></tr>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>name</code></td><td><code>string</code>: nome do campo no formulário</td><td>—</td></tr>
+    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do rótulo visível; dá o nome aos polegares</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O Root recebe `data-slot="slider"`, a trilha `data-slot="slider-track"`, o preenchimento `data-slot="slider-range"` e cada polegar `data-slot="slider-thumb"`. O componente fixa `thumbAlignment="edge"`, que mantém o polegar dentro do trilho nas pontas.
+
+<Canvas of={SliderStories.Playground} />

@@ -1,0 +1,316 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as InputGroupStories from "./input-group.stories";
+
+<Meta of={InputGroupStories} />
+
+# Input Group
+
+Adicione ícones, textos, botões e outros conteúdos de apoio dentro de um campo.
+
+<Canvas of={InputGroupStories.Demo} />
+
+## Instalação
+
+O InputGroup usa o `Button`, o `Input` e o `Textarea` do pacote, e o `cva`.
+
+<Source language="bash" dark code="npx shadcn add input-group" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/input-group.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@workspace/ui/components/input-group"
+
+<InputGroup>
+  <InputGroupInput id="busca" placeholder="Buscar..." />
+  <InputGroupAddon>
+    <SearchIcon aria-hidden="true" />
+  </InputGroupAddon>
+</InputGroup>`}
+/>
+
+O `InputGroup` não tem rótulo. Quase todo uso real começa por um `Field` com um `FieldLabel htmlFor` ligado ao `id` do `InputGroupInput`.
+
+## Composição
+
+Use esta composição para montar um `InputGroup`:
+
+<Source
+  language="text"
+  dark
+  code={`InputGroup
+├── InputGroupInput ou InputGroupTextarea
+├── InputGroupAddon
+├── InputGroupButton
+└── InputGroupText`}
+/>
+
+## Acessibilidade
+
+- **O rótulo é do campo, não do grupo:** todo `InputGroupInput` e `InputGroupTextarea` precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` ao `id` do campo. O placeholder desaparece ao digitar e não é um rótulo. O `InputGroup` tem `role="group"` só para agrupar o desenho; não é ele que nomeia o campo.
+- **Texto do addon ligado ao campo:** um texto que explica o campo, como o prefixo `https://`, o `.com.br`, a moeda ou o contador, não é lido junto com o campo por si só. Dê um `id` ao `InputGroupText` e cite-o no `aria-describedby` do campo (veja **Texto**). Um contador que muda enquanto a pessoa digita precisa de uma região `aria-live="polite"` sempre montada, e só o texto dela muda.
+- **Ícones decorativos:** levam `aria-hidden="true"`. O ícone sozinho não nomeia nada.
+- **Botões só com ícone:** levam um nome específico, por `aria-label` ("Copiar link") ou por um `<span className="sr-only">`. O tooltip nunca é o único nome. Um botão que liga e desliga, como "Favoritar", usa `aria-pressed` e mantém o mesmo nome. Quando o resultado de uma ação não aparece para quem usa leitor de tela, como "Link copiado", anuncie-o numa região `role="status"` que fica sempre montada.
+- **Gatilhos de primitivos:** o `Popover` e o `DropdownMenu` recebem o `InputGroupButton` pela prop `render`, sem um `div` em volta, para o próprio botão ser o gatilho. Não ponha um botão dentro de um gatilho. O `PopoverContent` precisa de um `PopoverTitle` (ele dá o nome ao diálogo).
+- **Ordem do foco:** o addon vem depois do campo no DOM, e o `align` o posiciona visualmente. Assim o Tab e o leitor de tela começam pelo campo. Clicar no addon, fora de um botão, foca o `<input>` do grupo.
+- **Foco visível:** o anel fica no **grupo**, não no campo interno: sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Input (`has-[[data-slot=input-group-control]:focus-visible]`). O campo interno não desenha anel nem halo. O grupo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens). Um botão dentro do grupo tem o próprio anel do Button.
+- **Estado inválido:** marque o campo com `aria-invalid` e o `Field` com `data-invalid`. O grupo pinta a borda de `destructive` e, com o foco, o anel também (veja **Inválido**). Cor sozinha não basta: ligue um `FieldError` ao campo por `aria-errormessage` e também por `aria-describedby`.
+- **Desabilitado:** use `disabled` no campo e nos botões do grupo, e `data-disabled="true"` no `InputGroup`, que apaga os addons (`opacity-50`). Só o `disabled` do campo e dos botões tira cada um do Tab; o `data-disabled` é visual.
+- **Movimento e contraste:** o `Spinner` para com `prefers-reduced-motion`; um ícone girando fora dele deve levar `motion-reduce:animate-none`. O texto do addon é `muted-foreground` (5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo), e o `Kbd` ganha um fundo cheio (`bg-background`) que o separa do campo.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field>
+  <FieldLabel htmlFor="usuario">Nome de usuário</FieldLabel>
+  <InputGroup>
+    <InputGroupInput
+      id="usuario"
+      autoComplete="username"
+      aria-describedby="usuario-dominio"
+    />
+    <InputGroupAddon align="inline-end">
+      <InputGroupText id="usuario-dominio">@empresa.com</InputGroupText>
+    </InputGroupAddon>
+  </InputGroup>
+</Field>`}
+/>
+
+## Alinhamento
+
+Use a prop `align` no `InputGroupAddon` para posicionar o addon em relação ao campo.
+
+Para um bom gerenciamento do foco, o `InputGroupAddon` deve ficar sempre depois do `InputGroupInput` ou do `InputGroupTextarea` no DOM. Use a prop `align` para posicioná-lo visualmente.
+
+### inline-start
+
+Use `align="inline-start"` para posicionar o addon no início do campo. É o padrão.
+
+<Canvas of={InputGroupStories.InlineStart} />
+
+### inline-end
+
+Use `align="inline-end"` para posicionar o addon no fim do campo.
+
+<Canvas of={InputGroupStories.InlineEnd} />
+
+### block-start
+
+Use `align="block-start"` para posicionar o addon acima do campo.
+
+<Canvas of={InputGroupStories.BlockStart} />
+
+### block-end
+
+Use `align="block-end"` para posicionar o addon abaixo do campo.
+
+<Canvas of={InputGroupStories.BlockEnd} />
+
+## Ícone
+
+Um ícone no início ou no fim do campo. O ícone é decorativo (`aria-hidden="true"`): quem dá o nome ao campo é o rótulo.
+
+<Canvas of={InputGroupStories.Icone} />
+
+## Texto
+
+Um `InputGroupText` mostra um prefixo, um sufixo ou um contador. Para o leitor de tela ler o texto junto com o campo, dê um `id` a ele e cite-o em `aria-describedby`.
+
+<Canvas of={InputGroupStories.Texto} />
+
+## Botão
+
+Use o `InputGroupButton` para adicionar ações ao campo. Um botão só com ícone leva `aria-label` (ou texto `sr-only`). Para abrir um popover, passe o `InputGroupButton` ao `PopoverTrigger` pela prop `render`; o conteúdo do popover usa um `PopoverTitle`, que nomeia o diálogo.
+
+O exemplo "Favoritar" usa `aria-pressed`, e o "Copiar link" anuncia o resultado numa região `role="status"`. Como esses exemplos precisam de estado, o código abaixo do exemplo traz o `useState` no topo.
+
+<Canvas of={InputGroupStories.Botao} />
+
+## Kbd
+
+Use o `Kbd` para mostrar um atalho de teclado dentro do campo. O `Kbd` fica sobre um fundo cheio (`bg-background`).
+
+<Canvas of={InputGroupStories.TeclaDeAtalho} />
+
+## Dropdown
+
+Combine o `InputGroupButton` com o `DropdownMenu`: o botão é o gatilho, pela prop `render`. Um botão só com ícone leva `aria-label`; o botão com texto ("Buscar em...") já tem nome, e o ícone de seta é decorativo.
+
+<Canvas of={InputGroupStories.MenuSuspenso} />
+
+## Spinner
+
+Mostre um estado de carregamento dentro do campo. O `Spinner` tem `role="status"` e o rótulo "Carregando" por padrão: passe `aria-label` para dizer o que está carregando. Um ícone girando que não seja o `Spinner` é decorativo e leva `aria-hidden="true"` e `motion-reduce:animate-none`.
+
+<Canvas of={InputGroupStories.Carregando} />
+
+## Textarea
+
+O `InputGroupTextarea` troca o `InputGroupInput` quando o campo tem várias linhas. Use os alinhamentos `block-start` e `block-end` para o cabeçalho e o rodapé, e uma borda (`border-t`, `border-b`) para separá-los.
+
+<Canvas of={InputGroupStories.AreaDeTexto} />
+
+## Input personalizado
+
+Adicione o atributo `data-slot="input-group-control"` ao seu controle para o grupo cuidar do foco sozinho: o anel aparece no grupo quando o controle recebe o foco por teclado. O exemplo usa um `<textarea>` nativo com `field-sizing-content`, que cresce com o texto. O shadcn usa o `react-textarea-autosize` aqui, que não é uma dependência deste pacote.
+
+Um controle personalizado precisa de `outline-none`, fundo transparente, texto em `text-foreground` e o próprio rótulo (`id` ligado a um `FieldLabel`).
+
+<Canvas of={InputGroupStories.Personalizado} />
+
+## Inválido
+
+Esta seção não existe na página do shadcn; ela documenta o estado inválido do grupo. Marque o campo com `aria-invalid` e o `Field` com `data-invalid`. O grupo troca a borda para `destructive` e, com o foco, o anel de foco também. O registro usava um anel vermelho translúcido sempre ligado; aqui a borda e o anel são papéis cheios, como no Input.
+
+<Canvas of={InputGroupStories.Invalido} />
+
+## RTL
+
+O InputGroup usa paddings e margens lógicos (`ps`/`pe`, `ms`/`me`) e o `align` é relativo ao início e ao fim, então o início do campo vira o lado direito sem nenhuma prop. Coloque `dir="rtl"` e o `lang` num ancestral; o exemplo usa um `div` porque esta página é LTR. Nas classes dos seus exemplos, use `ms-auto` no lugar de `ml-auto`; um ícone que indica direção (uma seta para a frente, por exemplo) leva `rtl:rotate-180`, mas o glifo de uma tecla, como o Enter do "Executar", não. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={InputGroupStories.Rtl} />
+
+## Referência da API
+
+### InputGroup
+
+O componente principal, que envolve o campo e os addons. É um `<div role="group">` e aceita as props de um `div`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<Source
+  language="tsx"
+  dark
+  code={`<InputGroup>
+  <InputGroupInput />
+  <InputGroupAddon />
+</InputGroup>`}
+/>
+
+### InputGroupAddon
+
+Mostra ícones, textos, botões ou outro conteúdo ao lado do campo. Para a ordem do foco, ele deve ficar depois do campo no DOM; a prop `align` o posiciona. Para um `InputGroupInput`, use `inline-start` ou `inline-end`; para um `InputGroupTextarea`, use `block-start` ou `block-end`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>align</code></td><td><code>{'"inline-start" | "inline-end" | "block-start" | "block-end"'}</code></td><td><code>{'"inline-start"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="input-group-addon"` e `data-align`. Um addon pode ter vários `InputGroupButton` e ícones.
+
+<Source
+  language="tsx"
+  dark
+  code={`<InputGroupAddon align="inline-end">
+  <SearchIcon aria-hidden="true" />
+</InputGroupAddon>
+
+<InputGroupAddon>
+  <InputGroupButton>Botão</InputGroupButton>
+  <InputGroupButton>Botão</InputGroupButton>
+</InputGroupAddon>`}
+/>
+
+### InputGroupButton
+
+Mostra botões dentro do grupo. Aceita as props do `Button` (exceto `size` e `type`, que têm os valores abaixo).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>size</code></td><td><code>{'"xs" | "icon-xs" | "sm" | "icon-sm"'}</code></td><td><code>{'"xs"'}</code></td></tr>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive" | "outline" | "secondary" | "ghost" | "link"'}</code></td><td><code>{'"ghost"'}</code></td></tr>
+    <tr><td><code>type</code></td><td><code>{'"button" | "submit" | "reset"'}</code></td><td><code>{'"button"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<Source
+  language="tsx"
+  dark
+  code={`<InputGroupButton>Botão</InputGroupButton>
+<InputGroupButton size="icon-xs" aria-label="Copiar">
+  <CopyIcon aria-hidden="true" />
+</InputGroupButton>`}
+/>
+
+### InputGroupInput
+
+O substituto do `<Input />` para montar grupos. Já traz os estilos do grupo e usa o `data-slot="input-group-control"` para o foco.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Todas as outras props vão para o `Input`, e as dele para o `<input>`: `id`, `type`, `aria-invalid`, `aria-describedby`, `aria-errormessage`, `disabled`, `readOnly`…
+
+### InputGroupTextarea
+
+O substituto do `<Textarea />` para montar grupos. Também usa o `data-slot="input-group-control"`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Todas as outras props vão para o `Textarea`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<InputGroup>
+  <InputGroupTextarea id="mensagem" placeholder="Digite a mensagem..." />
+  <InputGroupAddon align="block-end">
+    <InputGroupButton>Enviar</InputGroupButton>
+  </InputGroupAddon>
+</InputGroup>`}
+/>
+
+### InputGroupText
+
+Um `<span>` com o estilo de texto do grupo (`muted-foreground`, ícones de 16px). Não aparece na tabela do shadcn, mas faz parte da composição. Aceita as props de um `span`; dê um `id` a ele para citá-lo em `aria-describedby`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>

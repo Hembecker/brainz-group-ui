@@ -2,6 +2,44 @@ import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { cn } from "cn"
 
+/*
+ * Radio Group — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/radio-group
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - `RadioGroup` (`role="radiogroup"`) e `RadioGroupItem` (`role="radio"`)
+ *   sobre o Radio Group do Base UI. Setas movem e marcam a seleção; só o item
+ *   marcado entra no Tab. O grupo precisa de nome: `FieldSet` + `FieldLegend`,
+ *   `aria-labelledby` ou `aria-label`. Cada item precisa de rótulo
+ *   (`FieldLabel htmlFor` ↔ `id`).
+ * - Contraste não textual (mínimo 3:1 contra o fundo): o círculo desmarcado é
+ *   preenchido com `bg-input`, cheio. O registro usava `bg-input/90`. `input`
+ *   no claro (mist 500): 4,6:1 no branco, 4,2:1 na `muted` e 3,7:1 sobre o
+ *   `field`. No escuro (branco a 40%): 3,8:1 no fundo, 3,8:1 no card e 3,6:1
+ *   na `muted`. A borda é transparente: o preenchimento é o limite.
+ * - Marcado: `bg-primary` (600) com o ponto `primary-foreground` (5,2:1). O
+ *   círculo tem 5,2:1 no branco e 4,2:1 sobre o `field` no claro; no escuro
+ *   tem 3,8:1 no fundo e 3,4:1 no card. O ponto é `size-2` e, no escuro,
+ *   `size-2.5`, como no registro.
+ * - Anel de foco sólido, 3px, no `ring` (3,5:1 no branco; 7,6:1 no fundo
+ *   escuro), afastado 2px pela cor do fundo, como no Button. Dentro de um
+ *   `FieldLabel` que envolve o `Field` (cartão de escolha), quem mostra o foco
+ *   é o rótulo.
+ * - Inválido (`aria-invalid`): borda `destructive` cheia (4,8:1 no branco no
+ *   claro; 6,8:1 no fundo no escuro) e, no foco, o anel passa a `destructive`,
+ *   como no Input. O registro usava `ring-3 ring-destructive/20` em repouso e,
+ *   no escuro, `border-destructive/50` e `ring-destructive/40`; o anel
+ *   permanente saiu e as cores viraram o papel cheio. Ligue uma mensagem de
+ *   erro, porque a cor sozinha não basta.
+ * - Desabilitado: `disabled:opacity-50`, fora do Tab (no grupo, `disabled`
+ *   desabilita todos os itens).
+ * - Cartão de escolha (`FieldLabel` do `field.tsx`, que usa `bg-accent` no
+ *   hover e marcado): o círculo desmarcado tem 4,2:1 sobre a `accent` no claro e
+ *   3,6:1 no escuro; marcado (`primary`) tem 4,7:1 no claro e 2,9:1 no
+ *   escuro. PENDÊNCIA: este último fica abaixo de 3:1 (`primary` sobre
+ *   `accent` mist 800); a correção seria no `field.tsx`, não editado aqui.
+ * - Escala do estilo rhea: `size-4` e `rounded-2xl` (círculo). O ponto usa
+ *   `start-1/2` e `rtl:translate-x-1/2`, então fica centrado em RTL.
+ */
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
     <RadioGroupPrimitive
@@ -17,7 +55,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
     <RadioPrimitive.Root
       data-slot="radio-group-item"
       className={cn(
-        "group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-2xl border border-transparent bg-input/90 outline-none group-has-[:focus-visible]/field-label:border-transparent group-has-[:focus-visible]/field-label:ring-0 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
+        "group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-2xl border border-transparent bg-input outline-none group-has-[:focus-visible]/field-label:border-transparent group-has-[:focus-visible]/field-label:ring-0 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
         className
       )}
       {...props}
@@ -26,7 +64,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
         data-slot="radio-group-indicator"
         className="flex size-4 items-center justify-center"
       >
-        <span className="absolute top-1/2 start-1/2 size-2 -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-foreground dark:size-2.5" />
+        <span className="absolute start-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-foreground rtl:translate-x-1/2 dark:size-2.5" />
       </RadioPrimitive.Indicator>
     </RadioPrimitive.Root>
   )

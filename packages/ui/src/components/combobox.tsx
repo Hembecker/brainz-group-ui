@@ -13,6 +13,68 @@ import {
 } from "@workspace/ui/components/input-group"
 import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
 
+/*
+ * Combobox — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/combobox
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Combobox do Base UI: um campo de texto com `role=
+ *   "combobox"` que filtra a lista (`listbox`, num portal) enquanto a pessoa
+ *   digita. O foco fica no campo; as setas movem o destaque (`aria-activedescendant`),
+ *   Enter escolhe e Esc fecha. `ComboboxEmpty` tem `role="status"` e
+ *   `aria-live="polite"` (o Base UI o mantém montado): o "nenhum resultado" é
+ *   anunciado sem tirar o foco. Com a lista aberta o Base UI marca o resto da
+ *   página como `aria-hidden`, inclusive o rótulo: com `aria-describedby` no
+ *   campo, ligue o rótulo também por `aria-labelledby` (veja a MDX).
+ * - Nome acessível: o campo precisa de um rótulo persistente. Ligue um
+ *   `FieldLabel` pelo `htmlFor` ao `id` do `ComboboxInput` (ou do
+ *   `ComboboxChipsInput`, ou do `ComboboxTrigger` no modo popup). O placeholder
+ *   nunca é o rótulo.
+ * - Botões só com ícone ganharam nome fixo, em português (como o "Fechar" do
+ *   Dialog): o gatilho do `ComboboxInput` é "Mostrar opções", o
+ *   `ComboboxClear` é "Limpar seleção" e o `ComboboxChip` remove com "Remover
+ *   <texto do chip>" (o nome junta o "Remover" ao texto do chip por
+ *   `aria-labelledby`, por isso o conteúdo do chip fica num `span`). O
+ *   gatilho e o `ComboboxClear` aceitam `aria-label` para outro idioma; o do
+ *   chip é fixo (use `showRemove={false}` e o seu `ChipRemove`). O gatilho do
+ *   modo popup não leva nome fixo: o nome vem do rótulo.
+ * - A seta, o limpar e o remover do chip têm `tabIndex={-1}`: o campo é a
+ *   parada do teclado (como no combobox editável do WAI-ARIA) e, com a lista
+ *   aberta, o Base UI marca esses botões como `aria-hidden`; focáveis, eles
+ *   reprovariam no axe (`aria-hidden-focus`). Pelo teclado, apague o texto do
+ *   campo para limpar; nos chips, ← no campo vazio foca o último chip e
+ *   Delete o remove.
+ * - Campo preenchido, sem borda, com o papel `field`, como o Input (o
+ *   `ComboboxInput` usa o `InputGroup`); `ComboboxChips` tem a mesma pele e
+ *   altura mínima `h-8`, `rounded-2xl`.
+ * - Anel de foco sólido, 3px, no `ring`, afastado 2px pela cor do fundo
+ *   (`focus-within:` nos chips), como no Input. Nunca o `ring/30`.
+ * - Inválido (`aria-invalid` no campo): borda `destructive` cheia e o anel de
+ *   foco passa a `destructive`, como no Input (nos chips, por
+ *   `has-aria-invalid:`). O registro usava `ring-destructive/20` e, no escuro,
+ *   `border-destructive/50` e `ring-destructive/40`; foram trocados por papéis
+ *   cheios. Ligue a mensagem por `aria-describedby` e `aria-errormessage`. No
+ *   `ComboboxInput` a borda e o anel vêm do `InputGroup` (que não é desta
+ *   revisão e ainda tem `ring-destructive/20`).
+ * - O texto digitado e o placeholder dos chips são `text-foreground` e
+ *   `text-muted-foreground` (5,9:1 e 6,1:1 sobre o `field`): dentro de um
+ *   `Field` com `data-invalid` o texto herdaria o vermelho do erro.
+ * - Chip: `bg-secondary` com `text-secondary-foreground` (7,7:1 no claro e
+ *   9,0:1 no escuro), no lugar de `bg-input dark:bg-input/60` do registro (no
+ *   escuro o `input` é branco a 40%, sem contraste com o texto). O botão de
+ *   remover não tem mais `opacity-50`, que apagava o ícone.
+ * - Lista: fundo `popover`, contorno `ring-border` cheio, no lugar de
+ *   `ring-foreground/5` e `dark:ring-foreground/10`. A sombra continua. No modo
+ *   popup (campo de busca dentro da lista) saiu o `border-input/30` do campo.
+ *   Item destacado com `data-highlighted:bg-accent`, sem anel.
+ * - A lista vai para um portal no `body`: a classe `dark` e o `dir` do
+ *   `<html>` chegam a ela, mas um `dir` posto num ancestral do campo não. Num
+ *   exemplo RTL isolado, passe `dir` (e `lang`) ao `ComboboxContent`.
+ * - Paddings, margens e cantos lógicos (`ps`/`pe`, `ms`, `end-2`), para
+ *   funcionar em RTL.
+ * - `useComboboxAnchor` devolve o `ref` que ancora a lista nos chips
+ *   (`ComboboxContent anchor={…}`).
+ */
+
 const Combobox = ComboboxPrimitive.Root
 
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
@@ -41,6 +103,8 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
     <ComboboxPrimitive.Clear
       data-slot="combobox-clear"
       render={<InputGroupButton variant="ghost" size="icon-xs" />}
+      aria-label="Limpar seleção"
+      tabIndex={-1}
       className={cn(className)}
       {...props}
     >
@@ -72,6 +136,8 @@ function ComboboxInput({
             size="icon-xs"
             variant="ghost"
             render={<ComboboxTrigger />}
+            aria-label="Mostrar opções"
+            tabIndex={-1}
             data-slot="input-group-button"
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
             disabled={disabled}
@@ -110,7 +176,7 @@ function ComboboxContent({
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"
           data-chips={!!anchor}
-          className={cn("group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-2xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/5 duration-100 data-[chips=true]:min-w-(--anchor-width) data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:border-input/30 *:data-[slot=input-group]:bg-field *:data-[slot=input-group]:shadow-none dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          className={cn("group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-2xl bg-popover text-popover-foreground shadow-lg ring-1 ring-border duration-100 data-[chips=true]:min-w-(--anchor-width) data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8  *:data-[slot=input-group]:bg-field *:data-[slot=input-group]:shadow-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
           {...props}
         />
       </ComboboxPrimitive.Positioner>
@@ -221,7 +287,7 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex min-h-8 flex-wrap items-center gap-1 rounded-2xl border border-transparent bg-field bg-clip-padding px-2.5 py-1 text-sm transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-data-[slot=combobox-chip]:px-1 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40",
+        "flex min-h-8 flex-wrap items-center gap-1 rounded-2xl border border-transparent bg-field bg-clip-padding px-2.5 py-1 text-sm transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background has-aria-invalid:border-destructive has-aria-invalid:ring-destructive has-data-[slot=combobox-chip]:px-1",
         className
       )}
       {...props}
@@ -237,20 +303,28 @@ function ComboboxChip({
 }: ComboboxPrimitive.Chip.Props & {
   showRemove?: boolean
 }) {
+  const id = React.useId()
+  const textId = `${id}-text`
+  const removeId = `${id}-remove`
+
   return (
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
       className={cn(
-        "flex h-[calc(--spacing(5.25))] w-fit items-center justify-center gap-1 rounded-2xl bg-input px-1.5 text-xs font-medium whitespace-nowrap text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pe-0.5 dark:bg-input/60",
+        "flex h-[calc(--spacing(5.25))] w-fit items-center justify-center gap-1 rounded-2xl bg-secondary px-1.5 text-xs font-medium whitespace-nowrap text-secondary-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pe-0.5",
         className
       )}
       {...props}
     >
-      {children}
+      <span id={textId}>{children}</span>
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
           render={<Button variant="ghost" size="icon-xs" />}
-          className="-ms-0.5 size-4.5 opacity-50 hover:opacity-100 aria-disabled:pointer-events-none"
+          id={removeId}
+          tabIndex={-1}
+          aria-label="Remover"
+          aria-labelledby={`${removeId} ${textId}`}
+          className="-ms-0.5 size-4.5 aria-disabled:pointer-events-none"
           data-slot="combobox-chip-remove"
         >
           <XIcon className="pointer-events-none" />
@@ -267,7 +341,10 @@ function ComboboxChipsInput({
   return (
     <ComboboxPrimitive.Input
       data-slot="combobox-chip-input"
-      className={cn("min-w-16 flex-1 outline-none", className)}
+      className={cn(
+        "min-w-16 flex-1 text-foreground outline-none placeholder:text-muted-foreground",
+        className
+      )}
       {...props}
     />
   )

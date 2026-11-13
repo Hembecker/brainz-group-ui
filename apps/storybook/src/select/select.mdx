@@ -1,0 +1,235 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SelectStories from "./select.stories";
+
+<Meta of={SelectStories} />
+
+# Select
+
+Mostra uma lista de opções para a pessoa escolher, aberta por um botão.
+
+<Canvas of={SelectStories.Demo} />
+
+## Instalação
+
+O Select usa o primitivo de select do Base UI (`@base-ui/react/select`), o `lucide-react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add select" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/select.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field>
+  <FieldLabel htmlFor="tema">Tema</FieldLabel>
+  <Select
+    items={[
+      { label: "Claro", value: "claro" },
+      { label: "Escuro", value: "escuro" },
+      { label: "Sistema", value: "sistema" },
+    ]}
+  >
+    <SelectTrigger id="tema" className="w-[180px]">
+      <SelectValue placeholder="Selecione um tema" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectItem value="claro">Claro</SelectItem>
+        <SelectItem value="escuro">Escuro</SelectItem>
+        <SelectItem value="sistema">Sistema</SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+</Field>`}
+/>
+
+Passe a lista em `items` ao `Select`: assim o `SelectValue` mostra o texto do item escolhido, e não o `value`. Para um "texto de exemplo" que não seja uma opção de verdade, use um item com `value={null}`, como na seção **Demo**.
+
+## Composição
+
+Monte um `Select` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Select
+├── SelectTrigger
+│   └── SelectValue
+└── SelectContent
+    ├── SelectGroup
+    │   ├── SelectLabel
+    │   ├── SelectItem
+    │   └── SelectItem
+    ├── SelectSeparator
+    └── SelectGroup
+        ├── SelectLabel
+        ├── SelectItem
+        └── SelectItem`}
+/>
+
+## Acessibilidade
+
+- **Rótulo persistente:** o gatilho é um `<button role="combobox">` e precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do `SelectTrigger`. O texto do `SelectValue` (o placeholder, ou o item escolhido) não é o rótulo: ele some ou muda quando a pessoa escolhe. Todas as seções abaixo seguem esse padrão.
+- **Nome específico:** o rótulo diz o que a pessoa vai escolher ("Fuso horário", "Fruta"), não só "Selecione".
+- **Teclado:** Enter, Espaço ou ↓ abrem a lista; as setas, Home e End movem o destaque; digitar uma letra vai para o item que começa com ela; Enter escolhe; Esc fecha e devolve o foco ao gatilho. O teste da story **Demo** confere que o foco entra na lista e que o Esc o devolve ao gatilho.
+- **Foco visível:** o anel do gatilho é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Button e no Input. O campo não tem borda visível em repouso (o limite dele tem 1,25:1 no claro e 1,33:1 no escuro, escolha registrada nos tokens), então o foco e o estado inválido são o que o destacam. Dentro da lista, o item destacado usa `bg-accent`, sem anel.
+- **Estado inválido:** marque o gatilho com `aria-invalid` (a assistiva) e o `Field` com `data-invalid` (o visual, que pinta o rótulo de vermelho). A borda e o anel de foco passam a `destructive`. Cor sozinha não basta: explique o problema num `FieldError` com `id` e ligue-o ao gatilho por `aria-errormessage` e também por `aria-describedby`, junto com a descrição. O texto do gatilho continua `foreground`, para manter o contraste.
+- **Desabilitado:** `disabled` no `Select` tira o gatilho do Tab e apaga o campo em 50%. Um `SelectItem disabled` continua visível na lista, mas não recebe destaque nem pode ser escolhido. Informe o motivo numa descrição.
+- **Portal e RTL:** a lista vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ela, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** a lista fechada não existe para o axe. Por isso cada story tem um `play` que abre a lista, espera a animação de entrada terminar e só depois deixa o axe rodar, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field data-invalid>
+  <FieldLabel htmlFor="fruta">Fruta</FieldLabel>
+  <Select items={frutas}>
+    <SelectTrigger
+      id="fruta"
+      aria-invalid
+      aria-describedby="fruta-erro"
+      aria-errormessage="fruta-erro"
+    >
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>…</SelectContent>
+  </Select>
+  <FieldError id="fruta-erro">Selecione uma fruta.</FieldError>
+</Field>`}
+/>
+
+## Alinhar item com o gatilho
+
+Use `alignItemWithTrigger` no `SelectContent` para controlar se o item escolhido se alinha ao gatilho. Com `true` (o padrão), a lista se posiciona de modo que o item escolhido fique sobre o gatilho. Com `false`, ela se alinha à borda do gatilho.
+
+O exemplo do shadcn troca o valor com um `Switch`. Aqui os dois comportamentos aparecem lado a lado, para o código de cada um poder ser copiado. O teste abre o da direita (alinhado à borda).
+
+<Canvas of={SelectStories.AlinharItemComGatilho} />
+
+## Grupos
+
+Use `SelectGroup`, `SelectLabel` e `SelectSeparator` para organizar os itens.
+
+<Canvas of={SelectStories.Grupos} />
+
+## Com rolagem
+
+Um select com muitos itens, que rola. O teclado percorre a lista com as setas, e os botões de rolagem do topo e do fim aparecem quando há mais itens.
+
+<Canvas of={SelectStories.Rolagem} />
+
+## Desabilitado
+
+Use `disabled` no `Select` para desabilitar o campo todo. Para desabilitar só uma opção, use `disabled` no `SelectItem`. O exemplo do shadcn mostra os dois juntos, mas com o campo desabilitado a lista nunca abre; por isso aqui há um campo desabilitado e outro, aberto pelo teste, com uma opção desabilitada.
+
+<Canvas of={SelectStories.Desabilitado} />
+
+## Inválido
+
+Adicione `data-invalid` ao `Field` e `aria-invalid` ao `SelectTrigger` para mostrar o estado de erro. Ligue a mensagem por `aria-errormessage` e `aria-describedby` (veja **Acessibilidade**). O segundo campo mostra o erro com um valor já escolhido: o texto do gatilho segue em `foreground`.
+
+<Canvas of={SelectStories.Invalido} />
+
+## RTL
+
+Passe `dir="rtl"` (e o `lang`) ao `SelectTrigger` e ao `SelectContent`: a lista está num portal no `body`, e o `div` com `dir` em volta do gatilho não a alcança. O gatilho e os itens usam paddings e posições lógicos (`ps`/`pe`, `end-2`), então o indicador de escolha e a seta trocam de lado sozinhos. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SelectStories.Rtl} />
+
+## Referência da API
+
+O `Select` e as suas partes envolvem os primitivos do Base UI. Veja a [documentação do Select do Base UI](https://base-ui.com/react/components/select#api-reference) para todas as props. As partes abaixo recebem `data-slot` e as props do primitivo correspondente.
+
+### Select
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>items</code></td><td><code>{'Array<{ label: ReactNode; value: Value }> | Record<string, ReactNode>'}</code>: faz o <code>SelectValue</code> mostrar o rótulo do item escolhido</td><td>—</td></tr>
+    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>Value</code></td><td>—</td></tr>
+    <tr><td><code>onValueChange</code></td><td><code>{'(value: Value, details) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>name</code></td><td><code>string</code>: nome do campo enviado no formulário</td><td>—</td></tr>
+  </tbody>
+</table>
+
+### SelectTrigger
+
+O `SelectTrigger` renderiza um `<button role="combobox">` e aceita as props dele.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code>: altura de 32px ou 28px</td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### SelectValue
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placeholder</code></td><td><code>ReactNode</code>: mostrado enquanto nada foi escolhido e não há item com <code>value</code> nulo</td><td>—</td></tr>
+    <tr><td><code>children</code></td><td><code>{'ReactNode | (value) => ReactNode'}</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### SelectContent
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>4</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+    <tr><td><code>alignItemWithTrigger</code></td><td><code>boolean</code>: alinha o item escolhido ao gatilho</td><td><code>true</code></td></tr>
+    <tr><td><code>dir</code> / <code>lang</code></td><td><code>string</code>: necessários num exemplo RTL isolado, porque a lista está num portal</td><td>—</td></tr>
+  </tbody>
+</table>
+
+### SelectItem
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>Value</code> (use <code>null</code> para o item de "texto de exemplo")</td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+  </tbody>
+</table>
+
+`SelectGroup`, `SelectLabel`, `SelectSeparator`, `SelectScrollUpButton` e `SelectScrollDownButton` aceitam `className` e as props do primitivo. Os elementos recebem `data-slot` (`select-trigger`, `select-value`, `select-content`, `select-item`, `select-group`, `select-label`, `select-separator`…). O `SelectTrigger` também expõe `data-size`.

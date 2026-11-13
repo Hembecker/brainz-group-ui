@@ -1,6 +1,8 @@
 import * as React from "react"
 import type { Decorator, Preview } from "@storybook/react-vite"
 
+import { DirectionProvider } from "@workspace/ui/components/direction"
+
 import "@workspace/ui/globals.css"
 
 type Mode = "light" | "dark"
@@ -12,7 +14,8 @@ type Direction = "ltr" | "rtl"
  * background. The surface matters on Docs pages, where the story blocks
  * would otherwise sit on Storybook's white page in dark mode.
  * A component (not the decorator itself) owns the effect, so the hook rules
- * hold.
+ * hold. The DirectionProvider makes the Base UI primitives follow the
+ * direction in their keyboard handling too (Slider, menus, Tabs).
  */
 function Surface({
   mode,
@@ -42,7 +45,7 @@ function Surface({
         borderRadius: "0.5rem",
       }}
     >
-      {children}
+      <DirectionProvider direction={direction}>{children}</DirectionProvider>
     </div>
   )
 }

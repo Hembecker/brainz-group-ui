@@ -1,0 +1,455 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as FieldStories from "./field.stories";
+
+<Meta of={FieldStories} />
+
+# Field
+
+Combine rótulos, controles e textos de ajuda para montar campos de formulário acessíveis e grupos de campos.
+
+<Canvas of={FieldStories.Demo} />
+
+## Instalação
+
+O Field usa o `Label` e o `Separator` do pacote, o `class-variance-authority` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add field" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/field.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+} from "@workspace/ui/components/field"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<FieldSet>
+  <FieldLegend>Perfil</FieldLegend>
+  <FieldDescription>Aparece nas faturas e nos e-mails.</FieldDescription>
+  <FieldGroup>
+    <Field>
+      <FieldLabel htmlFor="nome">Nome completo</FieldLabel>
+      <Input
+        id="nome"
+        autoComplete="name"
+        placeholder="Joana Lima"
+        aria-describedby="nome-descricao"
+      />
+      <FieldDescription id="nome-descricao">
+        Aparece nas faturas e nos e-mails.
+      </FieldDescription>
+    </Field>
+    <Field data-invalid>
+      <FieldLabel htmlFor="usuario">Nome de usuário</FieldLabel>
+      <Input
+        id="usuario"
+        autoComplete="username"
+        aria-invalid
+        aria-describedby="usuario-erro"
+        aria-errormessage="usuario-erro"
+      />
+      <FieldError id="usuario-erro">Escolha outro nome de usuário.</FieldError>
+    </Field>
+    <Field orientation="horizontal">
+      <Switch id="novidades" />
+      <FieldLabel htmlFor="novidades">Receber as novidades</FieldLabel>
+    </Field>
+  </FieldGroup>
+</FieldSet>`}
+/>
+
+## Composição
+
+### Field
+
+Um único controle, com rótulo, texto de ajuda e validação.
+
+<Source
+  language="text"
+  dark
+  code={`Field
+├── FieldLabel
+├── Input / Textarea / Switch / Select
+├── FieldDescription
+└── FieldError`}
+/>
+
+### FieldGroup
+
+Campos relacionados num grupo. Use o `FieldSeparator` entre as seções quando precisar.
+
+<Source
+  language="text"
+  dark
+  code={`FieldGroup
+├── Field
+│   ├── FieldLabel
+│   ├── Input / Textarea / Switch / Select
+│   ├── FieldDescription
+│   └── FieldError
+├── FieldSeparator
+└── Field
+    ├── FieldLabel
+    └── Input / Textarea / Switch / Select`}
+/>
+
+### FieldSet
+
+Agrupamento semântico, com uma legenda e uma descrição, normalmente com um `FieldGroup` dentro.
+
+<Source
+  language="text"
+  dark
+  code={`FieldSet
+├── FieldLegend
+├── FieldDescription
+└── FieldGroup
+    ├── Field
+    │   ├── FieldLabel
+    │   ├── Input / Textarea / Switch / Select
+    │   ├── FieldDescription
+    │   └── FieldError
+    └── Field
+        ├── FieldLabel
+        └── Input / Textarea / Switch / Select`}
+/>
+
+## Anatomia
+
+A família `Field` foi feita para compor formulários acessíveis. Um campo típico tem esta estrutura:
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field>
+  <FieldLabel htmlFor="id-do-campo">Rótulo</FieldLabel>
+  {/* Input, Select, Switch etc. */}
+  <FieldDescription>Texto de ajuda opcional.</FieldDescription>
+  <FieldError>Mensagem de validação.</FieldError>
+</Field>`}
+/>
+
+- O `Field` é o contêiner de um único campo.
+- O `FieldContent` é uma coluna que agrupa o rótulo e a descrição. Não é necessário se o campo não tem descrição.
+- Envolva campos relacionados com um `FieldGroup` e use um `FieldSet` com um `FieldLegend` para o agrupamento semântico.
+
+## Acessibilidade
+
+- **Rótulo persistente:** todo controle tem um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` ao `id` do controle. O placeholder não serve de rótulo. Quando o rótulo envolve o campo todo (veja **Choice Card**), o `htmlFor` do `FieldLabel` aponta para o `id` do controle de dentro. O `FieldTitle` só dá um título visual: ele não liga nada a um controle, então um controle que o usa precisa do próprio nome (um `aria-labelledby` apontando para o `id` do título, como no **Slider**).
+- **Agrupamento:** o `FieldSet` é um `<fieldset>` e o `FieldLegend` é a `<legend>` dele, então o leitor de tela anuncia a legenda ao entrar no grupo. Use isso para um conjunto de caixas de seleção ou de botões de opção, e dê ao `RadioGroup` um `aria-labelledby` apontando para o `id` da legenda. O `Field` tem `role="group"`; só dê um nome a ele (`aria-label` ou `aria-labelledby`) quando o grupo precisar ser anunciado.
+- **Descrição e erro ligados ao campo:** a descrição e a mensagem de erro têm `id`, e o controle aponta para elas por `aria-describedby`. O erro também vai em `aria-errormessage`. Nem todo leitor de tela lê o `aria-errormessage`, e o `aria-describedby` cobre esses casos.
+- **Estado inválido:** `data-invalid` no `Field` mostra o estado na tela e `aria-invalid` no controle avisa a tecnologia assistiva. Cor sozinha não basta: sempre explique o problema num `FieldError`.
+- **Vermelho só no que deve ser vermelho:** o `data-invalid` pinta de vermelho (`destructive`) apenas o `FieldLabel` e o `FieldError`. O texto digitado nos controles, a descrição e o `FieldTitle` continuam nas cores normais. O vermelho tem 4,76:1 sobre o fundo e o card no claro, e 6,82:1 sobre o fundo e 6,01:1 sobre o card no escuro. Sobre as superfícies `muted` e `accent` ele cai para 4,28:1 no claro, e sobre o `field` para 3,82:1, abaixo dos 4,5:1: não coloque um rótulo ou um erro inválido sobre elas. Isso vale para o choice card marcado ou com o mouse em cima, que usa o fundo `accent`.
+- **Mensagem dinâmica:** o `FieldError` é uma região `aria-live="polite"` que fica **sempre montada**: quando não há erro, ela continua no DOM, vazia e fora do fluxo (sem criar espaço), e só o texto dela muda. Por isso o leitor de tela anuncia a mensagem quando ela aparece, sem interromper quem digita. Renderize o `FieldError` sempre, passando o texto como filho (ou o `errors`), em vez de montar e desmontar o componente. Para um erro crítico, que precisa interromper a leitura, passe `aria-live="assertive"` (ou `role="alert"`): as props do consumidor vencem as padrão. Um erro que já existe quando a página carrega não é anunciado; ele é lido pela descrição do campo.
+- **Foco:** o anel dos controles é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo. Num choice card, quem mostra o foco é o rótulo que envolve o campo.
+- **Teclado e leitor de tela:** os campos seguem a ordem natural de leitura, sem `tabIndex` positivo. Teste percorrendo só com o teclado e com um leitor de tela.
+
+<Source
+  language="tsx"
+  dark
+  code={`const [erro, setErro] = React.useState<string>()
+
+<Field data-invalid={erro ? true : undefined}>
+  <FieldLabel htmlFor="email">E-mail</FieldLabel>
+  <Input
+    id="email"
+    type="email"
+    aria-invalid={erro ? true : undefined}
+    aria-describedby="email-erro"
+    aria-errormessage="email-erro"
+    onBlur={(evento) =>
+      setErro(
+        evento.target.validity.valid
+          ? undefined
+          : "Informe um e-mail completo, como nome@exemplo.com."
+      )
+    }
+  />
+  {/* Sempre montado: só o texto muda. */}
+  <FieldError id="email-erro">{erro}</FieldError>
+</Field>`}
+/>
+
+## Formulários
+
+A página do shadcn mostra como montar formulários com o `Field` e o React Hook Form, o TanStack Form ou o Formisch. Esses pacotes não estão instalados neste projeto, então não há exemplo aqui. O `FieldError` já aceita o que eles produzem: passe o array de erros (`{ message }`) em `errors`, e ele mostra uma mensagem ou uma lista. O resto do formulário é o que mostram os exemplos desta página.
+
+## Input
+
+Use o `Input` dentro de um `Field`. Para o campo de senha do exemplo, a descrição vem antes do campo e continua ligada a ele por `aria-describedby`.
+
+<Canvas of={FieldStories.Entrada} />
+
+## Textarea
+
+<Canvas of={FieldStories.AreaDeTexto} />
+
+## Select
+
+O `FieldLabel` leva `htmlFor` e o `SelectTrigger` leva o `id` correspondente, para o seletor ter um nome. Sem isso, o gatilho fica sem rótulo.
+
+<Canvas of={FieldStories.Selecao} />
+
+## Slider
+
+O `FieldTitle` serve de rótulo visual do controle. Como o Slider nomeia o polegar pelo `aria-labelledby` do próprio Slider, ele aponta para o `id` do título. O exemplo do shadcn mostra o valor atual na descrição com `useState`; aqui a descrição é fixa, porque as stories são JSX literal.
+
+<Canvas of={FieldStories.Controle} />
+
+## Fieldset
+
+Use o `FieldSet` com um `FieldLegend` para agrupar campos relacionados.
+
+<Canvas of={FieldStories.ConjuntoDeCampos} />
+
+## Checkbox
+
+Para uma caixa de seleção, o `Field` usa `orientation="horizontal"`. O `FieldLegend` com `variant="label"` dá o nome do grupo, e o `FieldContent` mantém a descrição alinhada ao rótulo.
+
+<Canvas of={FieldStories.CaixaDeSelecao} />
+
+## Radio
+
+O `RadioGroup` fica dentro do `FieldSet`, e o `aria-labelledby` aponta para o `id` do `FieldLegend`.
+
+<Canvas of={FieldStories.Radio} />
+
+## Switch
+
+<Canvas of={FieldStories.Interruptor} />
+
+## Choice Card
+
+Envolva componentes `Field` com um `FieldLabel` para criar grupos de escolha selecionáveis. Funciona com `RadioGroupItem`, `Checkbox` e `Switch`. O `htmlFor` do rótulo aponta para o controle de dentro, e o card marcado ou com o mouse em cima usa o fundo `accent`. Não combine esse card com o estado inválido (veja **Acessibilidade**).
+
+<Canvas of={FieldStories.CartaoDeEscolha} />
+
+## Field Group
+
+Empilhe componentes `Field` com o `FieldGroup` e divida-os com o `FieldSeparator`. O título de cada bloco é um `FieldLegend` dentro do `FieldSet`; um `FieldLabel` sem controle não ligaria a nada. O atributo `data-slot="checkbox-group"` aproxima as caixas de seleção. O `Field` com `data-disabled` apaga o rótulo do item desabilitado.
+
+<Canvas of={FieldStories.GrupoDeCampos} />
+
+## RTL
+
+O `Field` usa margens e alinhamento lógicos (`ms-*`, `text-start`) e `flex`, então segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` porque esta página é LTR, e coloca o `dir` e o `lang` também no conteúdo do `Select`, que fica num portal fora desse `div`. Dados que são sempre LTR, como o número do cartão e o CVV, mantêm `dir="ltr"` no campo. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={FieldStories.Rtl} />
+
+## Layout responsivo
+
+- **Campos verticais:** a orientação padrão empilha o rótulo, o controle e o texto de ajuda. É ideal para telas pequenas.
+- **Campos horizontais:** use `orientation="horizontal"` no `Field` para alinhar o rótulo e o controle lado a lado. Combine com um `FieldContent` para manter as descrições alinhadas.
+- **Campos responsivos:** use `orientation="responsive"` para layouts em colunas automáticos dentro de contêineres que respondem ao tamanho. O `FieldGroup` já é um contêiner (`@container/field-group`), e o `Field` troca de orientação a partir de `@md`.
+
+Redimensione a janela do Storybook (ou o contêiner do exemplo) para ver a troca.
+
+<Canvas of={FieldStories.LayoutResponsivo} />
+
+## Validação e erros
+
+- Adicione `data-invalid` ao `Field` para mostrar o estado de erro: o rótulo e a mensagem ficam vermelhos.
+- Adicione `aria-invalid` ao próprio controle, para a tecnologia assistiva.
+- Renderize o `FieldError` logo depois do controle, ou dentro de um `FieldContent`, para manter a mensagem alinhada ao campo. Ligue-o ao controle por `aria-errormessage` e `aria-describedby`.
+- O `FieldError` fica sempre montado (veja **Acessibilidade**). O segundo campo do exemplo está válido e mantém o `FieldError` vazio: a região existe, não ocupa espaço, e só o texto muda quando surgir um erro.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field data-invalid>
+  <FieldLabel htmlFor="email">E-mail</FieldLabel>
+  <Input
+    id="email"
+    type="email"
+    aria-invalid
+    aria-describedby="email-erro"
+    aria-errormessage="email-erro"
+  />
+  <FieldError id="email-erro">Informe um e-mail válido.</FieldError>
+</Field>`}
+/>
+
+<Canvas of={FieldStories.ValidacaoEErros} />
+
+## Referência da API
+
+### FieldSet
+
+O contêiner que renderiza um `<fieldset>` semântico, com espaçamento. Aceita todas as props de um `<fieldset>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldLegend
+
+A legenda de um `FieldSet`. A variante `label` usa o tamanho de um rótulo, útil em `FieldSet` aninhados. Aceita todas as props de uma `<legend>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"legend" | "label"'}</code></td><td><code>{'"legend"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldGroup
+
+O layout que empilha os `Field` e habilita as consultas de contêiner para as orientações responsivas. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### Field
+
+O contêiner de um único campo. Define a orientação, o estilo do estado inválido e o espaçamento. Tem `role="group"` e aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"vertical" | "horizontal" | "responsive"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
+    <tr><td><code>data-invalid</code></td><td><code>boolean</code>: pinta o rótulo e o erro de vermelho</td><td>—</td></tr>
+    <tr><td><code>data-disabled</code></td><td><code>boolean</code>: apaga o rótulo e o título</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="field"` e `data-orientation`.
+
+### FieldContent
+
+Uma coluna que agrupa o controle e as descrições quando o rótulo fica ao lado do controle. Não é necessário se o campo não tem descrição.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldLabel
+
+O rótulo para controles diretos e para `Field` aninhados (choice card). Aceita as props de um `<label>`; use `htmlFor` para ligá-lo ao controle.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>htmlFor</code></td><td><code>string</code>: o <code>id</code> do controle</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldTitle
+
+Um título com o estilo de um rótulo, dentro de um `FieldContent`. É um `<div>`: não liga a um controle. Fica na cor normal mesmo num campo inválido.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldDescription
+
+O texto de ajuda. Equilibra as linhas longas nos layouts horizontais e fica na cor `muted-foreground`. Dê um `id` e cite-o no `aria-describedby` do controle.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldSeparator
+
+Um divisor visual entre as seções de um `FieldGroup`. Aceita um conteúdo no meio da linha.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>children</code></td><td><code>React.ReactNode</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### FieldError
+
+O contêiner acessível do erro. Aceita filhos ou um array `errors` (por exemplo, do React Hook Form). É uma região `aria-live="polite"` sempre montada: sem texto, fica vazia e fora do fluxo. Com vários erros diferentes em `errors`, renderiza uma lista.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>errors</code></td><td><code>{'Array<{ message?: string } | undefined>'}</code></td><td>—</td></tr>
+    <tr><td><code>id</code></td><td><code>string</code>: cite no <code>aria-errormessage</code> e no <code>aria-describedby</code></td><td>—</td></tr>
+    <tr><td><code>aria-live</code></td><td><code>{'"polite" | "assertive" | "off"'}</code>: use <code>assertive</code> só para erros críticos</td><td><code>{'"polite"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="field-error"`, `aria-live="polite"` e `aria-atomic="true"`, e não tem `role`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>FieldSet</code></td><td><code>{'<fieldset>'}</code></td><td><code>field-set</code></td></tr>
+    <tr><td><code>FieldLegend</code></td><td><code>{'<legend>'}</code></td><td><code>field-legend</code></td></tr>
+    <tr><td><code>FieldGroup</code></td><td><code>{'<div>'}</code></td><td><code>field-group</code></td></tr>
+    <tr><td><code>Field</code></td><td><code>{'<div role="group">'}</code></td><td><code>field</code></td></tr>
+    <tr><td><code>FieldContent</code></td><td><code>{'<div>'}</code></td><td><code>field-content</code></td></tr>
+    <tr><td><code>FieldLabel</code></td><td><code>{'<label>'}</code></td><td><code>field-label</code></td></tr>
+    <tr><td><code>FieldTitle</code></td><td><code>{'<div>'}</code></td><td><code>field-label</code></td></tr>
+    <tr><td><code>FieldDescription</code></td><td><code>{'<p>'}</code></td><td><code>field-description</code></td></tr>
+    <tr><td><code>FieldSeparator</code></td><td><code>{'<div>'}</code></td><td><code>field-separator</code></td></tr>
+    <tr><td><code>FieldError</code></td><td><code>{'<div>'}</code></td><td><code>field-error</code></td></tr>
+  </tbody>
+</table>
