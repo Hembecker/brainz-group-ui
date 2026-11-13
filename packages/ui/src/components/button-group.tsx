@@ -14,7 +14,7 @@ import { cn } from "cn"
  *   aninhados ganham um espaço entre eles.
  * - O filho focado sobe (`z-10`), para o anel de foco não ficar atrás do
  *   vizinho.
- * - Raio de 7,2px (`rounded-lg`), o mesmo do Button.
+ * - Raio `rounded-2xl` (~13px), o mesmo do Button.
  * - O separador usa `bg-muted-foreground` (6,1:1 sobre o secundário no claro,
  *   4,5:1 no escuro), e não o `bg-input` do shadcn, que com o input na mist 200
  *   quase some entre botões secundários.
@@ -22,14 +22,14 @@ import { cn } from "cn"
  * - Só para ações. Botões que ligam e desligam um estado pedem um ToggleGroup.
  */
 const buttonGroupVariants = cva(
-  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[>[data-variant=outline]]:*:data-[slot=input-group]:border-border has-[>[data-variant=outline]]:*:data-[slot=select-trigger]:border-border has-[>[data-variant=outline]]:[&>[data-slot=input-group]:has(:focus-visible)]:border-ring has-[>[data-variant=outline]]:[&>[data-slot=select-trigger]:focus-visible]:border-ring has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-e-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 has-[>[data-variant=outline]]:[&>input]:border-border has-[>[data-variant=outline]]:[&>input:focus-visible]:border-ring",
+  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[>[data-variant=outline]]:*:data-[slot=input-group]:border-border has-[>[data-variant=outline]]:*:data-[slot=select-trigger]:border-border has-[>[data-variant=outline]]:[&>[data-slot=input-group]:has(:focus-visible)]:border-ring has-[>[data-variant=outline]]:[&>[data-slot=select-trigger]:focus-visible]:border-ring has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-e-2xl [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 has-[>[data-variant=outline]]:[&>input]:border-border has-[>[data-variant=outline]]:[&>input:focus-visible]:border-ring",
   {
     variants: {
       orientation: {
         horizontal:
-          "*:data-slot:rounded-e-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-e-lg! [&>[data-slot]~[data-slot]]:rounded-s-none [&>[data-slot]~[data-slot]]:border-s-0",
+          "*:data-slot:rounded-e-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-e-2xl! [&>[data-slot]~[data-slot]]:rounded-s-none [&>[data-slot]~[data-slot]]:border-s-0",
         vertical:
-          "flex-col *:data-slot:rounded-b-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-b-lg! [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0",
+          "flex-col *:data-slot:rounded-b-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-b-2xl! [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0",
       },
     },
     defaultVariants: {
@@ -62,7 +62,7 @@ function ButtonGroupText({ className, render, ...props }: ButtonGroupTextProps) 
     props: mergeProps<"div">(
       {
         className: cn(
-          "flex items-center gap-2 rounded-lg border bg-muted px-2.5 text-sm font-medium text-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+          "flex items-center gap-2 rounded-2xl border bg-muted px-2.5 text-sm font-medium text-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
           className
         ),
       },

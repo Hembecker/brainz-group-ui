@@ -17,9 +17,10 @@ import { cn } from "cn"
  *   para o caso `disabled focusableWhenDisabled`.
  * - Links: `buttonVariants()` num <a> comum, não `render={<a />}`, para o
  *   link manter o próprio papel.
- * - Raio de 7,2px (`rounded-lg` = --radius, 0.45rem); alturas xs 24 / sm 32 /
- *   default 36 / lg 40 e os quadrados `icon-*` (com `rounded-full` para um
- *   botão de ícone redondo).
+ * - Escala do estilo rhea (escolha do usuário em 2026-11-13): raio
+ *   `rounded-2xl` (--radius × 1,8, ~13px); alturas xs 24 / sm 28 / default 32
+ *   / lg 36 e os quadrados `icon-*` (com `rounded-full` para um botão de
+ *   ícone redondo).
  * - O preenchimento primário é `primary` (Primária 600 com branco, 5,2:1, nos
  *   dois modos). Destrutivo é sólido, não o `destructive/10` do
  *   preset: red 600 com branco (4,8:1); no escuro, red 400 com mist 950 (6,8:1).
@@ -35,7 +36,7 @@ import { cn } from "cn"
  * - Nunca coloque um elemento interativo dentro de um botão.
  */
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-2xl border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -53,14 +54,14 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-9 gap-1.5 px-4 has-data-[icon=inline-end]:pe-3 has-data-[icon=inline-start]:ps-3",
-        xs: "h-6 gap-1 px-2 text-xs has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1.5 px-3 has-data-[icon=inline-end]:pe-2.5 has-data-[icon=inline-start]:ps-2.5",
-        lg: "h-10 gap-1.5 px-6 has-data-[icon=inline-end]:pe-4 has-data-[icon=inline-start]:ps-4",
-        icon: "size-9",
+          "h-8 gap-1.5 px-3 has-data-[icon=inline-end]:pe-2.5 has-data-[icon=inline-start]:ps-2.5",
+        xs: "h-6 gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 px-3 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
+        lg: "h-9 gap-1.5 px-4 has-data-[icon=inline-end]:pe-3 has-data-[icon=inline-start]:ps-3",
+        icon: "size-8",
         "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
+        "icon-sm": "size-7",
+        "icon-lg": "size-9",
       },
     },
     defaultVariants: {

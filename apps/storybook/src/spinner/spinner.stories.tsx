@@ -14,7 +14,7 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   render: () => (
-    <div className="flex w-full max-w-xs items-center gap-3 rounded-lg border border-border p-4">
+    <div className="flex w-full max-w-xs items-center gap-3 rounded-2xl border border-border p-4">
       <Spinner aria-label="Processando o pagamento" />
       <span className="flex-1 text-sm font-medium">
         Processando o pagamento…
@@ -61,7 +61,7 @@ export const Rtl: Story = {
     <div
       dir="rtl"
       lang="ar"
-      className="flex w-full max-w-xs items-center gap-3 rounded-lg border border-border bg-muted p-4"
+      className="flex w-full max-w-xs items-center gap-3 rounded-2xl border border-border bg-muted p-4"
     >
       <Spinner aria-label="جاري معالجة الدفع" />
       <span className="line-clamp-1 flex-1 text-sm font-medium">

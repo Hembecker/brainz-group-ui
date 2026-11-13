@@ -99,14 +99,14 @@ import { Spinner } from "@workspace/ui/components/spinner"
 
 - **Button:** construído sobre o Button do Base UI.
   - **Variantes:** `default`, `outline`, `secondary`, `ghost`, `destructive` e `link`.
-  - **Tamanhos:** `xs` (24px), `sm` (32px), `default` (36px) e `lg` (40px), mais os quadrados `icon-*`. Raio de 7,2px (0.45rem).
+  - **Tamanhos:** `xs` (24px), `sm` (28px), `default` (32px) e `lg` (36px), mais os quadrados `icon-*`. Raio `rounded-2xl` (~13px), a escala do estilo rhea.
   - **Ícones:** um ícone ao lado do rótulo leva `data-icon="inline-start"` ou `"inline-end"`.
   - **Carregamento:** coloque um `Spinner` dentro de um botão `disabled`. Com `focusableWhenDisabled`, o botão continua focável.
   - **Links:** use `buttonVariants()` num `<a>`.
   - **Atributos:** o elemento expõe `data-slot`, `data-variant` e `data-size`.
 - **Spinner:** um indicador de carregamento com `role="status"` e o rótulo "Carregando". Fica parado com movimento reduzido.
 - **ButtonGroup:** agrupa botões (`role="group"`) na horizontal ou na vertical. Tem também `ButtonGroupSeparator` e `ButtonGroupText`.
-- **Card:** cabeçalho (`CardTitle`, `CardDescription`, `CardAction`), `CardContent` e `CardFooter`. Tem `size="sm"` e a variável `--card-spacing`. Raio de ~10px (`rounded-xl`). Coloque um heading dentro do `CardTitle`.
+- **Card:** cabeçalho (`CardTitle`, `CardDescription`, `CardAction`), `CardContent` e `CardFooter`. Tem `size="sm"` e a variável `--card-spacing`. Raio de ~19px (`min(--radius-4xl, 24px)`, do rhea). Coloque um heading dentro do `CardTitle`.
 
 Todos funcionam em RTL: paddings e cantos são lógicos e seguem o `dir` do ancestral.
 

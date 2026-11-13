@@ -62,12 +62,14 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - cores de gráfico (`--chart-*`).
 
 ## Ritmo e escopo
-- O usuário quer estruturar **com calma**, um componente por vez. Não adicione componentes nem estrutura sem pedido.
-- **Componentes existentes:** Button, Spinner, ButtonGroup e Card. Spinner e ButtonGroup foram pedidos para compor o Button, como nas páginas do shadcn. O Card foi adicionado em 2026-11-13 com `shadcn add card -c apps/web`.
-- Quando o CLI trouxer um componente de dependência que não foi pedido (o `button-group` traz o `separator`), use o primitivo do Base UI direto e apague o arquivo extra. Registre a decisão no comentário do componente.
-- **Fora do escopo por enquanto:**
-  - o `DirectionProvider` (`shadcn add direction`): os três componentes só precisam das classes lógicas;
-  - exemplos que usam Input, Label, Select, Dropdown, Popover, Badge, ToggleGroup, Item ou Empty. Quando a página do shadcn só tem exemplos assim, adapte a mesma estrutura só com os componentes que existem e diga isso na MDX (veja o Card).
+- **Biblioteca completa** (pedido do usuário em 2026-11-13): `shadcn add --all` instalou todos os componentes do registro (63 no total, estilo `base-rhea`), commit `0436c87`. Não adicione estrutura fora disso sem pedido.
+- **Revisão em ondas:** cada componente fica em "Em revisão/<Nome>" no Storybook até ganhar as stories de todas as seções e a MDX completa; aí passa para "Componentes/<Nome>". Button, Spinner, ButtonGroup e Card já estão revisados. O andamento fica na nota compartilhada da sessão.
+- **Decisões do usuário para a biblioteca (2026-11-13):**
+  - Button, Card, ButtonGroup e Spinner: o `add --all` sobrescreveu e as decisões foram reaplicadas;
+  - escala do rhea em tudo: controles com 32px (`h-8`) e `rounded-2xl` (~13px); Card com `min(--radius-4xl, 24px)` (~19px);
+  - campos (Input, Select, Textarea, InputGroup, NativeSelect, Combobox, InputOTP, Command, SidebarInput, Questionnaire) preenchidos sem borda, com o papel `field`;
+  - anel de foco sólido corrigido em lote em todos (veja Convenção);
+  - cores com opacidade do registro: revisadas componente a componente, na revisão de cada um.
 
 ## Estrutura
 - `packages/ui` (`@workspace/ui`): os componentes e os tokens. O CLI e o `exports` do `package.json` mandam nesta pasta, então os componentes ficam **planos**, em `src/components/<nome>.tsx`, sem stories ao lado.
@@ -81,7 +83,8 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - Função comum: no React 19 o `ref` chega como prop, sem `forwardRef`.
   - Expõe `data-slot` e, quando tem variantes, os valores resolvidos (`data-variant`, `data-size`, `data-orientation`).
   - Paddings, margens e cantos lógicos (`ps`/`pe`, `ms`/`me`, `rounded-s`/`rounded-e`, `border-s`), para funcionar em RTL.
-  - Nenhuma cor com opacidade (`bg-primary/80`, `bg-destructive/10`…): os contrastes anotados nos tokens valem como estão. Exceção escolhida pelo usuário: o Button outline no escuro usa `dark:border-input dark:bg-input/30`, como no shadcn.
+  - Nenhuma cor com opacidade (`bg-primary/80`, `bg-destructive/10`…) nos componentes revisados: os contrastes anotados nos tokens valem como estão. Exceção escolhida pelo usuário: o Button outline no escuro usa `dark:border-input dark:bg-input/30`, como no shadcn. Os componentes em revisão ainda têm as do registro.
+  - Anel de foco: `focus-visible:ring-3 ring-ring ring-offset-2 ring-offset-background` (o mesmo vale com `focus-within:` ou um seletor `has-[…]:`), nunca o `ring-ring/30` ou `/50` do registro. Itens de menu e de lista destacam com `focus:bg-accent`, sem anel.
 - `apps/storybook/src/<nome>/<nome>.stories.tsx`: uma story por seção, na ordem da página do shadcn.
   - Cada story usa JSX literal, sem `args` e sem constantes, para o "Show code" dar um trecho que dá para copiar.
   - `render: () => (…)` é sempre a **última** propriedade da story, porque o `transform` do `.storybook/preview.tsx` extrai o snippet a partir dela.
@@ -115,6 +118,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - cada superfície tem um par `<papel>` + `<papel>-foreground`, para o texto e os ícones sobre ela;
   - todos os tokens do tema padrão do shadcn existem aqui, com os mesmos nomes, no `:root`, no `.dark` e no `@theme inline`: `background`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1` a `chart-5`, `sidebar-*` e `radius`, com a escala `radius-sm` a `radius-4xl`;
   - os tokens a mais da Big Brain seguem o "Adding New Tokens" do shadcn: valor no `:root` e no `.dark` e exposição no `@theme inline`. São `primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`, `destructive-foreground`, `link` e `link-hover`. Os estados de marca vêm da Primária (`primary-hover` 700 e `primary-pressed` 800 nos dois modos, porque a 500 com branco daria 3,5:1; `secondary-hover` 200 no claro e 800 no escuro) e os do vermelho, do red do Tailwind. No escuro, `destructive-foreground` é a mist 950 (branco no red 400 daria 2,9:1) e `link` é a Primária 300 (10,2:1 no fundo);
+  - `field`: fundo dos campos, sem borda, como no rhea. Mist 200 no claro e mist 800 no escuro. A11Y: o limite do campo tem 1,25:1 no claro e 1,33:1 no escuro (1,17:1 num card), abaixo dos 3:1 de uma borda de campo: escolha do usuário. Placeholder 5,9:1 e 6,1:1. O registro usava `bg-input/50`;
   - só `border`, `input` e `sidebar-border` do escuro usam transparência (branco a 10% e 40%), como no shadcn. O Button outline no escuro usa `border-input` (40%, 3,8:1) e o preenchimento `bg-input/30`, como no tema padrão do shadcn, porque a borda a 10% ficava apagada (1,25:1).
 - **`baseColor`:** `mist` nos dois `components.json`, igual à escala dos neutros. O CLI só usa esse campo no `init` e no `apply`.
 - **Superfícies no escuro**, do fundo para cima: `background` na mist 950, depois `card`, `popover` e `sidebar` na 900, depois `muted`, `accent` e `sidebar-accent` na 800. No claro, o fundo e o card são brancos, e `muted` e `accent` ficam na mist 100.
@@ -129,7 +133,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - Uma classe de cor sem papel definido não gera nada e não dá erro. Mapeie para um papel existente ou crie o papel nos dois modos, com o contraste anotado, e registre a classe no `@theme inline`.
 - **Modo escuro:** só a classe `.dark` num ancestral, a mesma do preset, do `ThemeProvider` de `apps/web` e da variante `dark:`. O `data-mode` do projeto antigo não existe mais.
 - **Ação primária:** a Primária **600** (`#2568D8`) com texto branco (5,2:1), nos dois modos, e não a base 500 (branco na 500 dá 3,5:1). No escuro, o botão tem 3,8:1 contra o fundo. Confira de novo os números quando mudar algum valor.
-- **Raio:** `--radius: 0.45rem` (7,2px), o raio `small` do preset, que é o `rounded-lg` do Button e do ButtonGroup. O Card usa `rounded-xl` (× 1,4, ~10px).
+- **Raio:** `--radius: 0.45rem` (7,2px), o raio `small` do preset. Os controles usam `rounded-2xl` (× 1,8, ~13px), como o estilo rhea; o Card usa `min(--radius-4xl, 24px)` (× 2,6, ~19px).
 
 ## Windows
 - No PowerShell, use `npm.cmd` e `npx.cmd`, porque a política de execução bloqueia os `.ps1`.
@@ -141,21 +145,20 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**. A 6006 fica para o Storybook do projeto antigo.
 
 ## Estado (2026-11-13)
-- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), todos publicados.
-- **Não commitado:** o tema da Brainz Group (cores de marca pela escala Primária).
+- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), publicados. Sem push: `bf3da8a` (tema da Brainz Group), `0436c87` (`add --all`) e o commit da fundação (escala rhea, `field`, foco).
 - **Remoto:** `origin` = https://github.com/Hembecker/big-brain-ui (privado). A branch `legacy/design-system` não foi enviada.
 - **Vercel:** projeto `big-brain-ui` no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://big-brain-ui.vercel.app. O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
 - **Histórico do projeto antigo:** a branch `legacy/design-system` tem os 4 commits dele (`07e12db` a `9e46818`). É só arquivo: não faça merge dela na `master`.
 - **Decisões da migração:**
   - stories e MDX em `apps/storybook`, componentes planos em `packages/ui`;
-  - `separator.tsx` do registro apagado, porque o ButtonGroup usa o `Separator` do Base UI;
+  - o ButtonGroup usa o `Separator` do registro, com a cor trocada;
   - o `ButtonGroupSeparator` usa `bg-muted-foreground` (6,1:1 sobre o secundário no claro, 4,5:1 no escuro), e não o `bg-input` do shadcn, que com o input na mist 200 quase sumia entre botões secundários. No projeto antigo era `bg-border`;
   - os testes rodam três vezes por `--mode`;
-  - Card: `rounded-xl` (~10px, maior que os 7,2px dos controles, para cantos concêntricos), contorno `ring-border` em vez de `ring-foreground/5`, recuo de 20px (sm 16px), título com um heading dentro.
+  - Card: raio do rhea (~19px, maior que os ~13px dos controles, para cantos concêntricos), contorno `ring-border` em vez de `ring-foreground/5`, recuo de 20px (sm 16px), título com um heading dentro.
 - **Verificado:**
   - `typecheck`, `lint` e `build` (web e Storybook estático) limpos;
   - `npm.cmd run test`: 35 stories passam com axe no claro, no escuro e em RTL;
-  - no navegador: as três páginas Docs nos dois modos e em RTL, as alturas de 24/32/36/40px, o raio (7,2px desde a troca para o preset `b1avsYW9Y`), o anel sólido por Tab (inclusive no primário no escuro), o "Show code" só com o JSX e a Inter carregada;
+  - no navegador: as três páginas Docs nos dois modos e em RTL, as alturas de 24/28/32/36px e o raio de ~13px (escala rhea), o anel sólido por Tab (inclusive no primário no escuro), o "Show code" só com o JSX e a Inter carregada;
   - console limpo.
 - **Ainda em aberto:**
   - leitor de tela e zoom a 200% não foram conferidos;
