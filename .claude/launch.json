@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "big-brain-ui-storybook",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev", "-w", "@workspace/storybook", "--", "--ci"],
+      "port": 6007
+    }
+  ]
+}

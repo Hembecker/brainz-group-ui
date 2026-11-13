@@ -1,0 +1,90 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SpinnerStories from "./spinner.stories";
+
+<Meta of={SpinnerStories} />
+
+# Spinner
+
+Um indicador que mostra que algo está carregando.
+
+<Canvas of={SpinnerStories.Demo} />
+
+## Instalação
+
+O Spinner usa o ícone `Loader2Icon` do `lucide-react`.
+
+<Source language="bash" dark code="npx shadcn add spinner" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/spinner.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Spinner } from "@workspace/ui/components/spinner"
+
+<Spinner />`}
+/>
+
+## Acessibilidade
+
+- **Rótulo:** o Spinner tem `role="status"` e o rótulo "Carregando". Use `aria-label` para dizer o que está carregando, por exemplo "Processando o pagamento".
+- **Movimento:** quando o sistema pede movimento reduzido, o ícone fica parado.
+- **Anúncio:** um Spinner que acaba de aparecer pode não ser anunciado, e o fim do carregamento não é anunciado. Para avisar que algo começou ou terminou, mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela. Reserve `aria-live="assertive"` para erros críticos.
+
+<Source
+  language="tsx"
+  dark
+  code={`const mensagens = {
+  ocioso: "",
+  salvando: "Salvando as alterações",
+  salvo: "Alterações salvas",
+  erro: "Não foi possível salvar as alterações",
+}
+
+<p aria-live="polite" aria-atomic="true" className="sr-only">
+  {mensagens[status]}
+</p>`}
+/>
+
+## Personalização
+
+Para trocar o ícone, edite o componente e substitua o `Loader2Icon` por outro ícone.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { LoaderIcon } from "lucide-react"
+
+<LoaderIcon
+  data-slot="spinner"
+  role="status"
+  aria-label="Carregando"
+  className={cn("size-4 animate-spin motion-reduce:animate-none", className)}
+  {...props}
+/>`}
+/>
+
+## Tamanho
+
+Use as classes `size-*` para mudar o tamanho do spinner. A cor acompanha a cor do texto.
+
+<Canvas of={SpinnerStories.Tamanho} />
+
+## Button
+
+Para mostrar que um botão está carregando, coloque o `<Spinner />` antes do rótulo com `data-icon="inline-start"` ou depois do rótulo com `data-icon="inline-end"`, e desabilite o botão.
+
+<Canvas of={SpinnerStories.NoBotao} />
+
+## RTL
+
+O Spinner não tem lado: em RTL, ele só acompanha o fluxo do conteúdo ao redor. Dê a ele um `aria-label` no idioma da página.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SpinnerStories.Rtl} />

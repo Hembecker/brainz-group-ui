@@ -1,0 +1,171 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ButtonStories from "./button.stories";
+
+<Meta of={ButtonStories} />
+
+# Button
+
+Mostra um botão, ou um componente com a aparência de um botão.
+
+<Canvas of={ButtonStories.Demo} />
+
+## Instalação
+
+O Button usa o primitivo de botão do Base UI e o `class-variance-authority`.
+
+<Source language="bash" dark code="npx shadcn add button" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/button.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Button } from "@workspace/ui/components/button"
+
+<Button variant="outline">Botão</Button>`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:** todo botão precisa de um nome que diga a ação e, quando ajudar, o alvo. Por exemplo, "Excluir fatura" em vez de "Excluir". Um botão só com ícone recebe o nome por `aria-label` ou por um texto `sr-only` dentro dele. O tooltip não substitui esse nome.
+- **Ícones decorativos:** levam `aria-hidden="true"`. O `lucide-react` já faz isso sozinho, mas outras bibliotecas de ícones não fazem.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo. Assim ele aparece nos dois modos e não se confunde com o preenchimento do botão. Não remova esse anel; se precisar trocá-lo, use um que seja pelo menos tão visível quanto ele.
+- **Ação ou navegação:** use `<Button>` para executar uma ação. Para navegar, use um `<a>` com `buttonVariants` (veja **Como link**).
+- **Gatilhos de outros componentes:** um menu ou diálogo que abre a partir de um botão recebe o Button pela prop `render`, por exemplo `<DialogTrigger render={<Button />} />`. Não envolva o botão num `div`, porque isso quebra o teclado e o ARIA do primitivo.
+- **Carregamento:** um texto que aparece na tela nem sempre é anunciado ao leitor de tela. Para avisar o fim de uma ação, mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela (veja o Spinner).
+
+<Source
+  language="tsx"
+  dark
+  code={`<Button variant="ghost" size="icon">
+  <TrashIcon aria-hidden="true" />
+  <span className="sr-only">Excluir fatura</span>
+</Button>
+
+<Button variant="ghost" size="icon" aria-label="Excluir fatura">
+  <TrashIcon aria-hidden="true" />
+</Button>`}
+/>
+
+## Cursor
+
+O Tailwind 4 trocou o cursor dos botões de `pointer` para `default`. Este projeto foi criado com `shadcn init --pointer`, então o `globals.css` do `@workspace/ui` já devolve o cursor `pointer` a todo botão habilitado:
+
+<Source
+  language="css"
+  dark
+  code={`@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}`}
+/>
+
+Um botão desabilitado continua com o cursor padrão. Com `focusableWhenDisabled`, ele também não recebe clique, porque `data-disabled` aplica `pointer-events: none`.
+
+## Tamanho
+
+Use a prop `size` para mudar o tamanho do botão: `xs` (24px), `sm` (32px), `default` (36px) e `lg` (40px). Para botões só com ícone, use `icon-xs`, `icon-sm`, `icon` e `icon-lg`.
+
+<Canvas of={ButtonStories.Tamanho} />
+
+## Padrão
+
+<Canvas of={ButtonStories.Padrao} />
+
+## Contorno
+
+<Canvas of={ButtonStories.Contorno} />
+
+## Secundário
+
+<Canvas of={ButtonStories.Secundario} />
+
+## Fantasma
+
+<Canvas of={ButtonStories.Fantasma} />
+
+## Destrutivo
+
+<Canvas of={ButtonStories.Destrutivo} />
+
+## Link
+
+<Canvas of={ButtonStories.Link} />
+
+## Ícone
+
+Um botão só com ícone precisa sempre de um nome específico, dado por `aria-label` ou por texto `sr-only` (veja **Acessibilidade**).
+
+<Canvas of={ButtonStories.Icone} />
+
+## Com ícone
+
+Adicione `data-icon="inline-start"` ou `data-icon="inline-end"` ao ícone. Isso ajusta o espaçamento daquele lado.
+
+<Canvas of={ButtonStories.ComIcone} />
+
+## Arredondado
+
+Use a classe `rounded-full` para deixar o botão arredondado.
+
+<Canvas of={ButtonStories.Arredondado} />
+
+## Spinner
+
+Para mostrar que algo está carregando, coloque um `<Spinner />` dentro do botão e desabilite o botão. O spinner também leva `data-icon="inline-start"` ou `data-icon="inline-end"`.
+
+Um botão `disabled` sai da ordem do Tab. Se o foco estava nele quando a ação começou, adicione `focusableWhenDisabled`: o botão continua focável, mas não responde ao clique.
+
+<Canvas of={ButtonStories.ComSpinner} />
+
+## Grupo de botões
+
+Para agrupar botões, use o componente `ButtonGroup`. Veja a documentação do [Button Group](?path=/docs/componentes-button-group--docs).
+
+<Canvas of={ButtonStories.GrupoDeBotoes} />
+
+## Como link
+
+Para um link com aparência de botão, aplique `buttonVariants` a um `<a>` comum.
+
+Não use `<Button render={<a />} nativeButton={false} />` para links. O Button do Base UI sempre aplica `role="button"`, que substitui o papel de link do `<a>`.
+
+<Canvas of={ButtonStories.ComoLink} />
+
+## RTL
+
+Os paddings do Button são lógicos (`ps-*` e `pe-*`), então ele segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop: `data-icon="inline-start"` fica sempre no início da leitura, que em RTL é a direita. Ícones de direção, como setas, levam `rtl:rotate-180`.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ButtonStories.Rtl} />
+
+## Referência da API
+
+### Button
+
+O `Button` envolve o elemento `<button>` e adiciona os estilos e o comportamento do Base UI. Ele aceita todas as props de um `<button>` nativo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | "secondary" | "ghost" | "destructive" | "link"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>{'React.ReactElement | (props, state) => React.ReactElement'}</code></td><td>—</td></tr>
+    <tr><td><code>nativeButton</code></td><td><code>boolean</code>: use <code>false</code> quando <code>render</code> troca o elemento por algo que não é <code>{'<button>'}</code></td><td><code>true</code></td></tr>
+    <tr><td><code>focusableWhenDisabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="button"`, `data-variant` e `data-size` com os valores resolvidos, e `data-disabled` quando está desabilitado.
+
+<Canvas of={ButtonStories.Playground} />

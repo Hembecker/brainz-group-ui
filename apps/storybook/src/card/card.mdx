@@ -1,0 +1,183 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CardStories from "./card.stories";
+
+<Meta of={CardStories} />
+
+# Card
+
+Mostra um card com cabeçalho, conteúdo e rodapé.
+
+<Canvas of={CardStories.Demo} />
+
+O exemplo principal do shadcn é um formulário de login. Ele usa Input e Label, que ainda não existem neste design system, então os exemplos desta página mantêm a mesma estrutura só com Button.
+
+## Instalação
+
+O Card não tem dependências além do `cn`.
+
+<Source language="bash" dark code="npx shadcn add card" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/card.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+
+<Card>
+  <CardHeader>
+    <CardTitle>Título do card</CardTitle>
+    <CardDescription>Descrição do card</CardDescription>
+    <CardAction>Ação do card</CardAction>
+  </CardHeader>
+  <CardContent>
+    <p>Conteúdo do card</p>
+  </CardContent>
+  <CardFooter>
+    <p>Rodapé do card</p>
+  </CardFooter>
+</Card>`}
+/>
+
+## Composição
+
+Monte um `Card` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Card
+├── CardHeader
+│   ├── CardTitle
+│   ├── CardDescription
+│   └── CardAction
+├── CardContent
+└── CardFooter`}
+/>
+
+## Acessibilidade
+
+- **Título:** o `CardTitle` é um `div`, então o leitor de tela não o trata como título. Coloque dentro dele um heading do nível certo para a página, como `<h3>`. A aparência não muda, porque o Tailwind zera o tamanho e o peso dos headings.
+- **Contraste:** o card usa os papéis `card`, `card-foreground` e `muted-foreground`, sem opacidade. O texto tem 16,9:1 no claro e 14,2:1 no escuro, e a descrição tem 7,4:1 e 6,1:1. O contorno (`ring-border`) é decorativo: o card não é um controle, então não precisa de 3:1.
+- **Ações:** a ação do cabeçalho segue a regra do Button. Para navegar, use um `<a>` com `buttonVariants`; para executar algo, use um `<Button>`. Cada ação precisa de um nome específico.
+- **Card clicável:** não envolva o card inteiro num link nem num botão, porque o leitor de tela leria todo o conteúdo como o nome do controle. Ponha o link no título ou numa ação.
+- **Rolagem:** uma área com rolagem dentro do card precisa de `tabIndex={0}`, para quem usa só o teclado conseguir rolar, e de um nome, com `role="region"` e `aria-labelledby` (veja **Borda a borda**). Como ela recebe foco, também precisa do anel: `focus-visible:ring-3 focus-visible:ring-ring`, com `ring-inset` quando vai de borda a borda.
+- **Imagem:** uma imagem que informa algo leva `alt` com essa informação. Uma imagem só decorativa leva `alt=""`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Card>
+  <CardHeader>
+    <CardTitle>
+      <h3>Relatórios agendados</h3>
+    </CardTitle>
+    <CardDescription>Resumos semanais.</CardDescription>
+  </CardHeader>
+</Card>`}
+/>
+
+## Tamanho
+
+Use `size="sm"` para deixar o card menor. O tamanho pequeno usa um espaçamento menor.
+
+<Canvas of={CardStories.Tamanho} />
+
+## Espaçamento
+
+Além da prop `size`, a variável CSS `--card-spacing` controla o espaço entre as partes e o recuo delas. O padrão é 20px, e no `sm` é 16px. Para mudar, use uma classe com propriedade arbitrária, como `[--card-spacing:--spacing(8)]` (32px).
+
+<Canvas of={CardStories.Espacamento} />
+
+### Borda a borda
+
+Use margens negativas com `-mx-(--card-spacing)` para o conteúdo ir de uma borda à outra sem perder o alinhamento com o recuo do card. Quando esse conteúdo fica acima do rodapé, use `-mb-(--card-spacing)` no `CardContent` para tirar o espaço entre as partes.
+
+<Canvas of={CardStories.BordaABorda} />
+
+## Imagem
+
+Coloque uma imagem antes do `CardHeader` para criar um card com imagem. Os cantos de cima da imagem acompanham o raio do card.
+
+<Canvas of={CardStories.Imagem} />
+
+## RTL
+
+Os recuos e o alinhamento da ação são lógicos (`px-*` e `justify-self-end`), então o card segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop: a ação do cabeçalho fica no fim da linha, que em RTL é a esquerda.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` no próprio card porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={CardStories.Rtl} />
+
+## Referência da API
+
+### Card
+
+O contêiner raiz do card. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="card"` e `data-size`. A variável `--card-spacing` pode ser trocada pela `className`.
+
+### CardHeader
+
+Recebe o título, a descrição e, se houver, a ação. Com uma `CardAction`, vira uma grade de duas colunas. Com a classe `border-b`, ganha um espaço abaixo da borda.
+
+### CardTitle
+
+O título do card. Coloque um heading dentro dele (veja **Acessibilidade**).
+
+### CardDescription
+
+Um texto de apoio abaixo do título, na cor `muted-foreground`.
+
+### CardAction
+
+Fica no canto do fim do cabeçalho (à direita em LTR, à esquerda em RTL). Serve para um botão ou um link.
+
+### CardContent
+
+O corpo principal do card.
+
+### CardFooter
+
+As ações e o conteúdo secundário na base do card. Com a classe `border-t`, ganha um espaço acima da borda.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>CardHeader</code></td><td><code>{'<div>'}</code></td><td><code>card-header</code></td></tr>
+    <tr><td><code>CardTitle</code></td><td><code>{'<div>'}</code></td><td><code>card-title</code></td></tr>
+    <tr><td><code>CardDescription</code></td><td><code>{'<div>'}</code></td><td><code>card-description</code></td></tr>
+    <tr><td><code>CardAction</code></td><td><code>{'<div>'}</code></td><td><code>card-action</code></td></tr>
+    <tr><td><code>CardContent</code></td><td><code>{'<div>'}</code></td><td><code>card-content</code></td></tr>
+    <tr><td><code>CardFooter</code></td><td><code>{'<div>'}</code></td><td><code>card-footer</code></td></tr>
+  </tbody>
+</table>
+
+Todas aceitam as props de um `<div>`.
+
+<Canvas of={CardStories.Playground} />

@@ -31,3 +31,8 @@ dist-ssr
 
 # typescript
 *.tsbuildinfo
+
+# storybook
+storybook-static
+*storybook.log
+__screenshots__

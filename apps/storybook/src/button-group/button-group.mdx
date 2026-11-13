@@ -1,0 +1,171 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ButtonGroupStories from "./button-group.stories";
+
+<Meta of={ButtonGroupStories} />
+
+# Button Group
+
+Um contêiner que agrupa botões relacionados com um estilo consistente.
+
+<Canvas of={ButtonGroupStories.Demo} />
+
+## Instalação
+
+O Button Group usa o `Separator` e o `useRender` do Base UI e o `class-variance-authority`.
+
+<Source language="bash" dark code="npx shadcn add button-group" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O CLI também cria `separator.tsx`, porque o registro do shadcn monta o grupo com o componente Separator. Apague esse arquivo: aqui o grupo usa o `Separator` do Base UI direto, para não criar um componente que não foi pedido.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/button-group.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+} from "@workspace/ui/components/button-group"
+
+<ButtonGroup>
+  <Button>Botão 1</Button>
+  <Button>Botão 2</Button>
+</ButtonGroup>`}
+/>
+
+## Composição
+
+Monte um `ButtonGroup` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`ButtonGroup
+├── Button
+├── ButtonGroupSeparator
+└── ButtonGroupText`}
+/>
+
+## Acessibilidade
+
+- O `ButtonGroup` tem `role="group"`.
+- Use Tab para passar de um botão do grupo para o outro.
+- Dê um nome ao grupo com `aria-label` ou `aria-labelledby`.
+- Cada botão só com ícone dentro do grupo também precisa de um nome específico, como "Próxima página" (veja o Button).
+- O botão focado sobe acima dos vizinhos, então o anel de foco nunca fica escondido.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ButtonGroup aria-label="Ações da mensagem">
+  <Button>Botão 1</Button>
+  <Button>Botão 2</Button>
+</ButtonGroup>`}
+/>
+
+## ButtonGroup ou ToggleGroup
+
+- Use o `ButtonGroup` para agrupar botões que executam uma ação.
+- Para agrupar botões que ligam e desligam um estado, o certo é um ToggleGroup. Esse componente ainda não existe neste design system.
+
+## Orientação
+
+Use a prop `orientation` para mudar a direção do grupo.
+
+<Canvas of={ButtonGroupStories.Orientacao} />
+
+## Tamanho
+
+Controle o tamanho com a prop `size` de cada botão.
+
+<Canvas of={ButtonGroupStories.Tamanho} />
+
+## Aninhado
+
+Coloque um `<ButtonGroup>` dentro de outro para criar grupos separados por um espaço.
+
+<Canvas of={ButtonGroupStories.Aninhado} />
+
+## Separador
+
+O `ButtonGroupSeparator` divide visualmente os botões dentro de um grupo.
+
+Botões com a variante `outline` não precisam de separador, porque já têm borda. Nas outras variantes, o separador deixa a divisão mais clara.
+
+<Canvas of={ButtonGroupStories.Separador} />
+
+## Dividido
+
+Para um botão dividido, coloque dois botões separados por um `ButtonGroupSeparator`.
+
+<Canvas of={ButtonGroupStories.Dividido} />
+
+## RTL
+
+Os cantos e as bordas que o grupo junta são lógicos (`rounded-s-*`, `rounded-e-*` e `border-s-0`), então o grupo segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop. Ícones de direção, como setas, levam `rtl:rotate-180`.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ButtonGroupStories.Rtl} />
+
+## Referência da API
+
+### ButtonGroup
+
+Um contêiner que agrupa botões relacionados com um estilo consistente.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+  </tbody>
+</table>
+
+Grupos aninhados criam layouts mais complexos, com espaço entre eles. Veja o exemplo **Aninhado**.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ButtonGroup>
+  <ButtonGroup />
+  <ButtonGroup />
+</ButtonGroup>`}
+/>
+
+### ButtonGroupSeparator
+
+Divide visualmente os botões dentro de um grupo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
+  </tbody>
+</table>
+
+### ButtonGroupText
+
+Mostra um texto dentro do grupo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Use `render` para trocar o elemento, por exemplo por um `<label>`: `<ButtonGroupText render={<label htmlFor="nome" />}>`.
+
+<Canvas of={ButtonGroupStories.Texto} />

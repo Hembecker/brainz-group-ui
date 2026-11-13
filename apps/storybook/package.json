@@ -1,0 +1,47 @@
+{
+  "name": "@workspace/storybook",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "storybook dev -p 6007",
+    "build": "storybook build",
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:light && npm run test:dark && npm run test:rtl",
+    "test:light": "vitest --project=storybook --run",
+    "test:dark": "vitest --project=storybook --run --mode dark",
+    "test:rtl": "vitest --project=storybook --run --mode rtl"
+  },
+  "dependencies": {
+    "@workspace/ui": "*",
+    "lucide-react": "1.72.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@storybook/addon-a11y": "10.6.7",
+    "@storybook/addon-docs": "10.6.7",
+    "@storybook/addon-vitest": "10.6.7",
+    "@storybook/react-vite": "10.6.7",
+    "@tailwindcss/vite": "4.3.5",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "@vitest/browser-playwright": "5.1.0",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.7",
+    "globals": "17.14.0",
+    "playwright": "1.65.0",
+    "storybook": "10.6.7",
+    "tailwindcss": "4.3.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  }
+}
