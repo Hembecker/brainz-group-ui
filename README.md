@@ -63,7 +63,7 @@ Ficam em `packages/ui/src/styles/globals.css`:
 
 O modo escuro é ativado pela classe `.dark` num ancestral.
 
-Os contrastes estão anotados no `globals.css`. Alguns valores do tema ficam abaixo dos mínimos (o anel de foco no claro, por exemplo, tem 2,4:1) e estão marcados com **A11Y** para serem corrigidos.
+Os contrastes estão anotados no `globals.css`. Cinco valores do tema foram ajustados para passar nos mínimos de contraste (o anel de foco e o texto suave do claro, a borda de campo, o texto da `sidebar-primary` no escuro e as cores de gráfico) e estão marcados com **A11Y**.
 
 ### Provisório
 

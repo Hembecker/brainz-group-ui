@@ -3,8 +3,9 @@
  *
  * Os papéis seguem o tema que o usuário definiu em 2026-11-13: o mist + blue
  * do shadcn (preset b1avsYW9Y), com os valores em oklch exatamente como foram
- * passados. A acessibilidade desses valores será revista depois (veja os
- * avisos "A11Y" abaixo e o CLAUDE.md).
+ * passados, com cinco ajustes de acessibilidade escolhidos pelo usuário
+ * (marcados com "A11Y"): ring e sidebar-ring do claro, muted-foreground do
+ * claro, input, sidebar-primary-foreground do escuro e as cores de gráfico.
  *
  * Convenção do shadcn (https://ui.shadcn.com/docs/theming): cada superfície
  * tem um par <papel> + <papel>-foreground (o texto e os ícones sobre ela).
@@ -120,22 +121,23 @@
   --secondary: oklch(0.967 0.001 286.375); /* zinc 100 */
   --secondary-foreground: oklch(0.21 0.006 285.885); /* zinc 900: 16,1:1 */
   --muted: oklch(0.963 0.002 197.1); /* mist 100 */
-  /* A11Y: 4,6:1 no branco, mas 4,1:1 sobre muted (abaixo de 4,5:1). */
-  --muted-foreground: oklch(0.56 0.021 213.5); /* mist 500 */
+  /* A11Y: mist 600 no lugar da mist 500 do tema (que dava 4,1:1 sobre muted). */
+  --muted-foreground: oklch(0.45 0.017 213.2); /* 7,4:1 no branco; 6,6:1 na muted */
   --accent: oklch(0.963 0.002 197.1); /* mist 100 */
   --accent-foreground: oklch(0.218 0.008 223.9); /* mist 900: 15,6:1 */
   --destructive: oklch(0.577 0.245 27.325); /* red 600: 4,8:1 com branco */
   --border: oklch(0.925 0.005 214.3); /* mist 200: 1,2:1, decorativa */
-  /* A11Y: borda de campo com 1,2:1 (abaixo de 3:1). */
-  --input: oklch(0.925 0.005 214.3);
-  /* A11Y: anel de foco com 2,4:1 no branco (abaixo de 3:1). */
-  --ring: oklch(0.723 0.014 214.4); /* mist 400 */
-  /* A11Y: chart-1 tem 1,8:1 no branco. Os demais: 3,8 / 5,2 / 6,8 / 8,8. */
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
+  /* A11Y: mist 500 no lugar da mist 200 do tema (1,2:1): borda de campo. */
+  --input: oklch(0.56 0.021 213.5); /* 4,6:1 no branco */
+  /* A11Y: mist 500 no lugar da mist 400 do tema (2,4:1). */
+  --ring: oklch(0.56 0.021 213.5); /* 4,6:1 no branco */
+  /* A11Y: blue 500 a 900 no claro (o tema usava 300 a 800; o 300 dava 1,8:1).
+     No branco: 3,8 / 5,2 / 6,8 / 8,8 / 10,4. */
+  --chart-1: oklch(0.623 0.214 259.815);
+  --chart-2: oklch(0.546 0.245 262.881);
+  --chart-3: oklch(0.488 0.243 264.376);
+  --chart-4: oklch(0.424 0.199 265.638);
+  --chart-5: oklch(0.379 0.146 265.522);
   --radius: 0.45rem; /* 7,2px */
   --sidebar: oklch(0.987 0.002 197.1); /* mist 50 */
   --sidebar-foreground: oklch(0.148 0.004 228.8); /* 19,0:1 */
@@ -144,7 +146,7 @@
   --sidebar-accent: oklch(0.963 0.002 197.1);
   --sidebar-accent-foreground: oklch(0.218 0.008 223.9); /* 15,6:1 */
   --sidebar-border: oklch(0.925 0.005 214.3);
-  --sidebar-ring: oklch(0.723 0.014 214.4); /* A11Y: 2,4:1 */
+  --sidebar-ring: oklch(0.56 0.021 213.5); /* A11Y: mist 500, 4,4:1 na sidebar */
 
   /* Tokens a mais da Big Brain (fora da lista do tema). */
   --primary-hover: oklch(0.424 0.199 265.638); /* blue 800: 8,1:1 com blue 50 */
@@ -174,20 +176,21 @@
   --accent-foreground: oklch(0.987 0.002 197.1); /* 14,2:1 */
   --destructive: oklch(0.704 0.191 22.216); /* red 400: 6,8:1 contra o fundo */
   --border: oklch(1 0 0 / 10%); /* ~1,25:1 no fundo, decorativa */
-  /* A11Y: borda de campo com ~1,5:1 (abaixo de 3:1). */
-  --input: oklch(1 0 0 / 15%);
+  /* A11Y: branco a 40% no lugar de 15% (~1,5:1): borda de campo. */
+  --input: oklch(1 0 0 / 40%); /* 3,8:1 no fundo e no card */
   --ring: oklch(0.56 0.021 213.5); /* mist 500: 4,3:1 no fundo, 3,8:1 no card */
-  /* A11Y: chart-4 (2,9:1) e chart-5 (2,2:1) ficam abaixo de 3:1 no fundo. */
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
+  /* A11Y: blue 200 a 600 no escuro (o tema usava 300 a 800; 700 e 800 ficavam
+     abaixo de 3:1). No fundo: 13,9 / 10,9 / 7,5 / 5,2 / 3,8. */
+  --chart-1: oklch(0.882 0.059 254.128);
+  --chart-2: oklch(0.809 0.105 251.813);
+  --chart-3: oklch(0.707 0.165 254.624);
+  --chart-4: oklch(0.623 0.214 259.815);
+  --chart-5: oklch(0.546 0.245 262.881);
   --sidebar: oklch(0.218 0.008 223.9);
   --sidebar-foreground: oklch(0.987 0.002 197.1); /* 16,7:1 */
   --sidebar-primary: oklch(0.623 0.214 259.815); /* blue 500 */
-  /* A11Y: texto com 3,5:1 na sidebar-primary (abaixo de 4,5:1). */
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
+  /* A11Y: mist 950 no lugar do blue 50 do tema (3,5:1). */
+  --sidebar-primary-foreground: oklch(0.148 0.004 228.8); /* 5,2:1 */
   --sidebar-accent: oklch(0.275 0.011 216.9);
   --sidebar-accent-foreground: oklch(0.987 0.002 197.1); /* 14,2:1 */
   --sidebar-border: oklch(1 0 0 / 10%);

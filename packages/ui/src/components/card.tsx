@@ -16,7 +16,7 @@ import { cn } from "cn"
  * - Contorno `ring-border` e fundo `card`, em vez do `ring-foreground/5` do
  *   preset. O `border` vem do tema (mist 200 no claro, branco a 10% no
  *   escuro). O texto do card tem 19,7:1 no claro e 16,7:1 no escuro; a
- *   descrição, 4,6:1 e 7,1:1.
+ *   descrição, 7,4:1 e 7,1:1.
  * - Recuos e alinhamentos lógicos (px, justify-self-end): funciona em RTL.
  * - O CardTitle é um <div>. Para entrar na estrutura de títulos da página,
  *   coloque um heading dentro dele (veja a página Docs).

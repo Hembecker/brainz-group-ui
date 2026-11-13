@@ -15,7 +15,7 @@ import { cn } from "cn"
  * - O filho focado sobe (`z-10`), para o anel de foco não ficar atrás do
  *   vizinho.
  * - Raio de 7,2px (`rounded-lg`), o mesmo do Button.
- * - O separador usa `bg-muted-foreground` (4,2:1 sobre o secundário no claro,
+ * - O separador usa `bg-muted-foreground` (6,7:1 sobre o secundário no claro,
  *   6,1:1 no escuro), e não o `bg-input` do shadcn, que com o input na mist 200
  *   quase some entre botões secundários.
  * - O separador usa o `Separator` do Base UI direto, e não o componente
