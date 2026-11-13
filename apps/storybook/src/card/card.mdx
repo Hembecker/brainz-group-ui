@@ -71,7 +71,7 @@ Monte um `Card` com esta composição:
 ## Acessibilidade
 
 - **Título:** o `CardTitle` é um `div`, então o leitor de tela não o trata como título. Coloque dentro dele um heading do nível certo para a página, como `<h3>`. A aparência não muda, porque o Tailwind zera o tamanho e o peso dos headings.
-- **Contraste:** o card usa os papéis `card`, `card-foreground` e `muted-foreground`, sem opacidade. O texto tem 16,9:1 no claro e 14,2:1 no escuro, e a descrição tem 7,4:1 e 6,1:1. O contorno (`ring-border`) é decorativo: o card não é um controle, então não precisa de 3:1.
+- **Contraste:** o card usa os papéis `card`, `card-foreground` e `muted-foreground`. O texto tem 19,7:1 no claro e 16,7:1 no escuro, e a descrição tem 4,6:1 e 7,1:1. O contorno (`ring-border`) é decorativo: o card não é um controle, então não precisa de 3:1.
 - **Ações:** a ação do cabeçalho segue a regra do Button. Para navegar, use um `<a>` com `buttonVariants`; para executar algo, use um `<Button>`. Cada ação precisa de um nome específico.
 - **Card clicável:** não envolva o card inteiro num link nem num botão, porque o leitor de tela leria todo o conteúdo como o nome do controle. Ponha o link no título ou numa ação.
 - **Rolagem:** uma área com rolagem dentro do card precisa de `tabIndex={0}`, para quem usa só o teclado conseguir rolar, e de um nome, com `role="region"` e `aria-labelledby` (veja **Borda a borda**). Como ela recebe foco, também precisa do anel: `focus-visible:ring-3 focus-visible:ring-ring`, com `ring-inset` quando vai de borda a borda.

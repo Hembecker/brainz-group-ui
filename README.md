@@ -2,7 +2,7 @@
 
 Tokens e componentes React da Big Brain (marca Brainz Group), num monorepo shadcn/ui. O projeto é independente dos produtos: nenhuma paleta de produto entra aqui.
 
-O preset de referência do shadcn é o `b1avsYW9Y` (estilo `rhea`, neutros mist, raio small, Inter, RTL e cursor pointer). Dele vêm os neutros e o raio, adotados à mão; a primária, o foco e os contrastes vêm dos tokens da Big Brain. Não rode `shadcn apply`: ele sobrescreve os componentes e os tokens (veja o `CLAUDE.md`).
+O preset de referência do shadcn é o `b1avsYW9Y` (estilo `rhea`, mist + blue, raio small, Inter, RTL e cursor pointer). Os tokens de cor são os do tema mist + blue, em `oklch`. Não rode `shadcn apply`: ele sobrescreve os componentes e os tokens (veja o `CLAUDE.md`).
 
 ## Começar
 
@@ -56,24 +56,24 @@ React 19.3.1, Vite 8, Tailwind 4, TypeScript 6, Turbo, `@base-ui/react`, class-v
 
 ## Tokens
 
-Ficam em `packages/ui/src/styles/globals.css`, em duas camadas:
+Ficam em `packages/ui/src/styles/globals.css`:
 
-1. **Paleta (`--bb-*`)**: os valores brutos, como `--bb-primary-500`. Os componentes não usam essa camada diretamente.
-2. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…): é o que os componentes usam. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`) e o `link`.
+1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…), com os valores `oklch` do tema mist + blue do shadcn. É o que os componentes usam. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground` e o `link`.
+2. **Paleta da marca** (`--bb-primary-*`, `--bb-ink`): fica só como referência. Nenhum papel a usa hoje.
 
 O modo escuro é ativado pela classe `.dark` num ancestral.
 
-A ação primária usa a **Primária 600** (`#2568D8`), não a base 500 (`#4787F0`). Texto branco na 500 dá 3,5:1, abaixo do mínimo de 4,5:1. Os contrastes estão anotados no `globals.css`. Quando mudar algum valor, confira os números de novo.
+Os contrastes estão anotados no `globals.css`. Alguns valores do tema ficam abaixo dos mínimos (o anel de foco no claro, por exemplo, tem 2,4:1) e estão marcados com **A11Y** para serem corrigidos.
 
 ### Provisório
 
 Estes valores ainda não estão no material da marca e precisam ser confirmados:
 
-- **Neutros:** a escala mist do Tailwind 4, um cinza levemente azulado (do preset `b1avsYW9Y`).
-- **Vermelho de erro.**
+- **Cores:** o tema mist + blue do shadcn, no lugar do azul da marca.
+- **Vermelho de erro** (red 600 / red 400 do Tailwind).
 - **Fonte:** Inter (`@fontsource-variable/inter`, a do preset).
 - **Modo escuro inteiro.**
-- **Cores de gráfico** (`--chart-*`): por enquanto, a escala da Primária.
+- **Cores de gráfico** (`--chart-*`): a escala blue do Tailwind.
 
 ## Componentes
 

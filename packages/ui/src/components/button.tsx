@@ -20,14 +20,15 @@ import { cn } from "cn"
  * - Raio de 7,2px (`rounded-lg` = --radius, 0.45rem); alturas xs 24 / sm 32 /
  *   default 36 / lg 40 e os quadrados `icon-*` (com `rounded-full` para um
  *   botão de ícone redondo).
- * - O preenchimento primário é `primary` (Primária 600): texto branco na base
- *   500 daria 3,5:1, abaixo de 4,5:1. Destrutivo é sólido (vermelho 600 com
- *   branco, 4,8:1), não o `destructive/10` do preset, e nenhuma cor usa
- *   opacidade: os contrastes anotados em globals.css valem como estão.
- * - Um único anel de foco para todas as variantes: sólido, 3px, no `ring`
- *   (≥ 3:1 no fundo), afastado 2px pela cor do fundo para não se fundir com
- *   um preenchimento do mesmo tom (primária 400 e anel no modo escuro).
- *   Nunca o `ring/30` do preset, que fica abaixo de 3:1.
+ * - O preenchimento primário é `primary` (blue 700 com blue 50, 6,3:1; no
+ *   escuro, blue 800, 8,1:1). Destrutivo é sólido, não o `destructive/10` do
+ *   preset: red 600 com branco (4,8:1); no escuro, red 400 com mist 950 (6,8:1).
+ * - Outline no escuro, como no shadcn: borda `input` (branco a 15%, 1,5:1) e
+ *   um preenchimento leve `bg-input/30`, para o botão se destacar do fundo. O
+ *   texto sobre ele continua com ~18:1. É a única cor com opacidade aqui.
+ * - Um único anel de foco para todas as variantes: sólido, 3px, no `ring`,
+ *   afastado 2px pela cor do fundo. Nunca o `ring/30` do preset. A11Y: com o
+ *   tema atual, o `ring` do claro (mist 400) tem 2,4:1, abaixo de 3:1.
  * - `data-variant` e `data-size` expõem a variante e o tamanho resolvidos,
  *   para testes e estilos de contexto (o ButtonGroup usa `data-variant`).
  * - Nunca coloque um elemento interativo dentro de um botão.
@@ -40,7 +41,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary-hover active:bg-primary-pressed",
         outline:
-          "border-border bg-background text-foreground shadow-xs hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground",
+          "border-border bg-background text-foreground shadow-xs hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-accent",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary-hover aria-expanded:bg-secondary-hover",
         ghost:

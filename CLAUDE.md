@@ -4,11 +4,9 @@ Design System da Big Brain (marca Brainz Group), num monorepo shadcn/ui (Vite, T
 
 Criado com `npx shadcn@latest init --preset b1auh2PSq --template vite --monorepo --rtl --pointer`. Do preset ficaram só o RTL, a fonte Inter e o cursor pointer. As cores neutras frias, o raio de 0.45rem e o anel de foco a 30% foram trocados pelos tokens da Big Brain.
 
-**Preset de referência: `b1avsYW9Y`** (desde 2026-11-13): estilo `rhea`, cor base `mist`, tema `blue`, raio `small`, Inter e lucide. Dele foram adotados à mão:
-- os neutros: a escala `mist` do Tailwind 4 virou a `--bb-neutral-*`, com cada papel no mesmo degrau;
-- o raio `small`: `--radius: 0.45rem`.
+**Preset de referência: `b1avsYW9Y`** (desde 2026-11-13): estilo `rhea`, cor base `mist`, tema `blue`, raio `small`, Inter e lucide.
 
-O tema `blue` do preset não entrou. A primária dele é o azul-700 genérico do Tailwind (`#1447E6`), e o anel dele é cinza, com 2,4:1, abaixo de 3:1. A primária e o anel continuam com o azul da marca.
+**Tokens atuais: o tema mist + blue, exatamente como o usuário passou** (2026-11-13). Os papéis do `globals.css` têm os valores `oklch` dele, um a um, nos modos claro e escuro. Isso substituiu as escolhas anteriores: primária, anel e link no azul da marca, secundário num tom da marca, `muted-foreground` na mist 600 e neutros em hex. O usuário pediu para aplicar assim e corrigir a acessibilidade depois (veja **Acessibilidade pendente** em Tokens).
 
 Presets anteriores, só registrados: `b1auh2PQm` (zinc, raio `default`) e `b1auhtCr2` (zinc, tema `blue`, raio `small`).
 
@@ -57,7 +55,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - `paleta-primaria.png`: Primária de 50 a 950, base 500 = `#4787F0`.
   - `brainz-group-logo.svg`: azul `#4787F0`, tinta `#1D1D1B` e gradiente de `#4787F0` para `#305BA3`.
 - Tudo marcado como **PROVISÓRIO** em `packages/ui/src/styles/globals.css` ainda precisa ser confirmado com a marca:
-  - neutros (hoje a escala `mist`);
+  - neutros e cores (hoje o tema mist + blue do shadcn, no lugar do azul da marca);
   - vermelho de erro;
   - fonte (Inter, a do preset);
   - modo escuro inteiro;
@@ -83,7 +81,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - Função comum: no React 19 o `ref` chega como prop, sem `forwardRef`.
   - Expõe `data-slot` e, quando tem variantes, os valores resolvidos (`data-variant`, `data-size`, `data-orientation`).
   - Paddings, margens e cantos lógicos (`ps`/`pe`, `ms`/`me`, `rounded-s`/`rounded-e`, `border-s`), para funcionar em RTL.
-  - Nenhuma cor com opacidade (`bg-primary/80`, `bg-destructive/10`…): os contrastes anotados nos tokens valem como estão.
+  - Nenhuma cor com opacidade (`bg-primary/80`, `bg-destructive/10`…): os contrastes anotados nos tokens valem como estão. Exceção escolhida pelo usuário: o Button outline no escuro usa `dark:border-input dark:bg-input/30`, como no shadcn.
 - `apps/storybook/src/<nome>/<nome>.stories.tsx`: uma story por seção, na ordem da página do shadcn.
   - Cada story usa JSX literal, sem `args` e sem constantes, para o "Show code" dar um trecho que dá para copiar.
   - `render: () => (…)` é sempre a **última** propriedade da story, porque o `transform` do `.storybook/preview.tsx` extrai o snippet a partir dela.
@@ -110,13 +108,25 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - O CLI do shadcn é o local (`packages/ui`, versão fixa). Depois de um `shadcn add`, confira se ele não voltou a escrever `^` no `package.json`.
 
 ## Tokens
-- Ficam em `packages/ui/src/styles/globals.css`, em **duas camadas**:
-  - paleta `--bb-*`, com os valores brutos;
-  - papéis semânticos (`--primary`, `--foreground`…), que são o que os componentes usam.
-- Todos os papéis do shadcn existem (`card`, `popover`, `muted`, `input`, `chart-*`, `sidebar-*`), mapeados para a paleta com o contraste anotado. A Big Brain acrescenta `primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`, `destructive-foreground`, `link` e `link-hover`.
+- Ficam em `packages/ui/src/styles/globals.css`:
+  - papéis semânticos (`--primary`, `--foreground`…), com os valores `oklch` do tema mist + blue escritos direto, como no shadcn. É o que os componentes usam;
+  - a paleta da marca (`--bb-primary-*`, `--bb-ink`, `--bb-gradient`) fica só como referência: nenhum papel a usa hoje.
+- **Convenção do shadcn** (https://ui.shadcn.com/docs/theming):
+  - cada superfície tem um par `<papel>` + `<papel>-foreground`, para o texto e os ícones sobre ela;
+  - todos os tokens do tema padrão do shadcn existem aqui, com os mesmos nomes, no `:root`, no `.dark` e no `@theme inline`: `background`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1` a `chart-5`, `sidebar-*` e `radius`, com a escala `radius-sm` a `radius-4xl`;
+  - os tokens a mais da Big Brain seguem o "Adding New Tokens" do shadcn: valor no `:root` e no `.dark` e exposição no `@theme inline`. São `primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`, `destructive-foreground`, `link` e `link-hover`. Não estão na lista do usuário: vêm das mesmas escalas do Tailwind (blue, zinc, red), porque os componentes dependem deles. No escuro, `destructive-foreground` é a mist 950 (branco no red 400 daria 2,9:1) e `link` é o blue 400 (a primária escura tem 2,2:1 no fundo);
+  - só `border`, `input` e `sidebar-border` do escuro usam transparência (branco a 10% e 15%), como no shadcn. O Button outline no escuro usa `border-input` (15%, 1,5:1) e o preenchimento `bg-input/30`, como no tema padrão do shadcn, porque a borda a 10% ficava apagada (1,25:1).
+- **`baseColor`:** `mist` nos dois `components.json`, igual à escala dos neutros. O CLI só usa esse campo no `init` e no `apply`.
+- **Superfícies no escuro**, do fundo para cima: `background` na mist 950, depois `card`, `popover` e `sidebar` na 900, depois `muted`, `accent` e `sidebar-accent` na 800. No claro, o fundo e o card são brancos, e `muted` e `accent` ficam na mist 100.
+- **Acessibilidade pendente** (o usuário vai corrigir depois; marcado com "A11Y" no `globals.css`). O axe só mede texto, então os testes não pegam nenhum destes:
+  - anel de foco no claro (`ring` e `sidebar-ring`, mist 400): **2,4:1** no branco, abaixo de 3:1. Fere a regra de foco visível do projeto;
+  - `muted-foreground` no claro (mist 500): 4,6:1 no branco, mas **4,1:1** sobre `muted`;
+  - `input`: **1,2:1** no claro e **~1,5:1** no escuro, abaixo dos 3:1 de uma borda de campo;
+  - `sidebar-primary-foreground` no escuro: **3,5:1** sobre a `sidebar-primary`;
+  - gráficos: `chart-1` com 1,8:1 no claro; `chart-4` (2,9:1) e `chart-5` (2,2:1) no escuro.
 - Uma classe de cor sem papel definido não gera nada e não dá erro. Mapeie para um papel existente ou crie o papel nos dois modos, com o contraste anotado, e registre a classe no `@theme inline`.
 - **Modo escuro:** só a classe `.dark` num ancestral, a mesma do preset, do `ThemeProvider` de `apps/web` e da variante `dark:`. O `data-mode` do projeto antigo não existe mais.
-- **Ação primária:** usa a Primária **600** (`#2568D8`), não a base 500. Texto branco na 500 dá 3,5:1, abaixo de 4,5:1. Confira de novo os números quando mudar algum valor.
+- **Ação primária:** blue 700 (`#1447E6`) com texto blue 50 (6,3:1) no claro; blue 800 com blue 50 (8,1:1) no escuro. Confira de novo os números quando mudar algum valor.
 - **Raio:** `--radius: 0.45rem` (7,2px), o raio `small` do preset, que é o `rounded-lg` do Button e do ButtonGroup. O Card usa `rounded-xl` (× 1,4, ~10px).
 
 ## Windows
@@ -129,15 +139,15 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**. A 6006 fica para o Storybook do projeto antigo.
 
 ## Estado (2026-11-13)
-- **Commit na `master`:** `beb27a0` (template do shadcn).
+- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`) e `c5d313c` (`.gitignore`).
+- **Remoto:** `origin` = https://github.com/Hembecker/big-brain-ui (privado). A branch `legacy/design-system` não foi enviada.
+- **Vercel:** projeto `big-brain-ui` no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://big-brain-ui.vercel.app. O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
 - **Histórico do projeto antigo:** a branch `legacy/design-system` tem os 4 commits dele (`07e12db` a `9e46818`). É só arquivo: não faça merge dela na `master`.
-- **Não commitado:** a migração inteira do projeto antigo (tokens, versões fixas, Storybook, os três componentes com stories e MDX, este arquivo e o README).
+- **Não commitado:** a troca para os tokens mist + blue do usuário, `baseColor: mist`, o outline do escuro como no shadcn e o separador do grupo em `muted-foreground`.
 - **Decisões da migração:**
   - stories e MDX em `apps/storybook`, componentes planos em `packages/ui`;
   - `separator.tsx` do registro apagado, porque o ButtonGroup usa o `Separator` do Base UI;
-  - o `ButtonGroupSeparator` usa `bg-input`, como o shadcn (no projeto antigo era `bg-border`);
-  - `--input` é a neutra 500, para a borda de campo ter 3:1;
-  - `card`, `popover` e `sidebar` vêm dos neutros, e `chart-*` da escala da Primária;
+  - o `ButtonGroupSeparator` usa `bg-muted-foreground` (4,2:1 sobre o secundário no claro, 6,1:1 no escuro), e não o `bg-input` do shadcn, que com o input na mist 200 quase sumia entre botões secundários. No projeto antigo era `bg-border`;
   - os testes rodam três vezes por `--mode`;
   - Card: `rounded-xl` (~10px, maior que os 7,2px dos controles, para cantos concêntricos), contorno `ring-border` em vez de `ring-foreground/5`, recuo de 20px (sm 16px), título com um heading dentro.
 - **Verificado:**
@@ -149,6 +159,5 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - leitor de tela e zoom a 200% não foram conferidos;
   - o `typecheck` de `apps/web` não confere nada (`tsconfig.json` com `files: []`, herdado do template);
   - o `npm audit` aponta 18 avisos (2 baixos, 16 moderados);
-  - no escuro, `--muted` e `--card` são a mesma neutra 800, então uma área `bg-muted` dentro de um card não se destaca (o Card só a separa com borda). Rever quando o modo escuro for definido;
-  - não há remoto configurado.
-- Commitar só quando o usuário pedir.
+  - o afastamento do anel de foco usa a cor do fundo da página (`ring-offset-background`). Dentro de um card no escuro, ele é a mist 950 sobre um card 900, um pouco mais escuro que o card.
+- Commitar só quando o usuário pedir. Cada push na `master` publica em produção no Vercel.
