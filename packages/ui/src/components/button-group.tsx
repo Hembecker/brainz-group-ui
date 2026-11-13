@@ -1,5 +1,5 @@
 import { mergeProps } from "@base-ui/react/merge-props"
-import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
+import { Separator } from "@workspace/ui/components/separator"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
@@ -18,8 +18,7 @@ import { cn } from "cn"
  * - O separador usa `bg-muted-foreground` (6,1:1 sobre o secundário no claro,
  *   4,5:1 no escuro), e não o `bg-input` do shadcn, que com o input na mist 200
  *   quase some entre botões secundários.
- * - O separador usa o `Separator` do Base UI direto, e não o componente
- *   `separator` do registro, para não criar um componente que não foi pedido.
+ * - O separador usa o componente `Separator` do registro, com a cor trocada.
  * - Só para ações. Botões que ligam e desligam um estado pedem um ToggleGroup.
  */
 const buttonGroupVariants = cva(
@@ -76,7 +75,7 @@ function ButtonGroupText({ className, render, ...props }: ButtonGroupTextProps) 
   })
 }
 
-type ButtonGroupSeparatorProps = SeparatorPrimitive.Props
+type ButtonGroupSeparatorProps = React.ComponentProps<typeof Separator>
 
 /** Divisória entre botões sem borda própria (todas as variantes menos outline). */
 function ButtonGroupSeparator({
@@ -85,7 +84,7 @@ function ButtonGroupSeparator({
   ...props
 }: ButtonGroupSeparatorProps) {
   return (
-    <SeparatorPrimitive
+    <Separator
       data-slot="button-group-separator"
       orientation={orientation}
       className={cn(
