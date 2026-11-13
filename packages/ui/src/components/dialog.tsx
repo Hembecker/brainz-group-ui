@@ -7,6 +7,40 @@ import { cn } from "cn"
 import { Button } from "@workspace/ui/components/button"
 import { XIcon } from "lucide-react"
 
+/*
+ * Dialog — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/dialog
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Dialog do Base UI: modal, com o foco preso dentro do
+ *   popup, o resto da página inerte, Esc para fechar e o foco devolvido ao
+ *   gatilho. `DialogTrigger` e `DialogClose` recebem o elemento pela prop
+ *   `render` (`render={<Button variant="outline" />}`), sem `div` envolvendo.
+ * - O conteúdo vai para um portal no `body`: a classe `dark` e o `dir` do
+ *   `<html>` chegam a ele, mas um `dir` posto num ancestral do gatilho não.
+ *   Para um diálogo RTL isolado, passe `dir` (e `lang`) ao `DialogContent`.
+ * - Nome acessível: o Popup recebe o nome do `DialogTitle` e a descrição do
+ *   `DialogDescription` (o Base UI liga os dois sozinho). Todo diálogo precisa
+ *   dos dois.
+ * - Botão de fechar: `showCloseButton` (padrão `true`), com o ícone
+ *   `aria-hidden` e o nome "Fechar" em texto `sr-only` (o rótulo é fixo, em
+ *   português, como o "Carregando" do Spinner; para outro idioma, use
+ *   `showCloseButton={false}` e um `DialogClose` próprio). O mesmo vale para
+ *   `DialogFooter showCloseButton`.
+ * - Véu de fundo: `bg-black/30` com desfoque, a única cor com opacidade aqui
+ *   (exceção aceita para véus). O véu não é texto, então não tem contraste a
+ *   cumprir; o popup (`popover`) é que destaca.
+ * - Contorno do popup: `ring-border` cheio, no lugar de `ring-foreground/5` e
+ *   `dark:ring-foreground/10` do registro. A sombra continua.
+ * - Raio do Card (`min(--radius-4xl, 24px)`), recuo de 24px, paddings e
+ *   posição lógicos (`start`/`end`, `rtl:translate-x-1/2`), para funcionar em
+ *   RTL.
+ * - Anel de foco: o Popup não tem anel (`outline-none`), porque o foco vai para
+ *   o primeiro controle; os botões e campos usam o anel sólido deles.
+ * - Conteúdo longo: limite a altura de uma região interna (`max-h-[50vh]
+ *   overflow-y-auto`) e dê a ela `tabIndex={0}`, `role="region"` e um nome, para
+ *   o teclado rolar (veja a MDX).
+ */
+
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
@@ -53,7 +87,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 start-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 gap-6 rounded-[min(var(--radius-4xl),24px)] bg-popover p-6 text-sm text-popover-foreground shadow-xl ring-1 ring-foreground/5 duration-100 outline-none sm:max-w-md dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 start-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 gap-6 rounded-[min(var(--radius-4xl),24px)] bg-popover p-6 text-sm text-popover-foreground shadow-xl ring-1 ring-border duration-100 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
@@ -70,9 +104,8 @@ function DialogContent({
               />
             }
           >
-            <XIcon
-            />
-            <span className="sr-only">Close</span>
+            <XIcon aria-hidden="true" />
+            <span className="sr-only">Fechar</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
@@ -110,7 +143,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close render={<Button variant="outline" />}>
-          Close
+          Fechar
         </DialogPrimitive.Close>
       )}
     </div>

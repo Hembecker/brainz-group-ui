@@ -1,0 +1,177 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as InputStories from "./input.stories";
+
+<Meta of={InputStories} />
+
+# Input
+
+Um campo de texto para formulários e entrada de dados, com estilo e recursos de acessibilidade já incluídos.
+
+<Canvas of={InputStories.Demo} />
+
+## Instalação
+
+O Input usa o primitivo de campo do Base UI (`@base-ui/react/input`) e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add input" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/input.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Input } from "@workspace/ui/components/input"
+
+<Input />`}
+/>
+
+O `Input` é só o campo. O rótulo, a descrição e a mensagem de erro vêm do `Field` (veja **Campo**), e por isso quase todo uso real começa por ele.
+
+## Acessibilidade
+
+- **Rótulo persistente:** todo campo precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do `Input`. O placeholder desaparece ao digitar, tem menos contraste e não é lido como rótulo de forma confiável, então ele só dá um exemplo do formato. Um campo sem rótulo visível, como a busca com um botão ao lado (veja **Em linha**), recebe o nome por `aria-label`.
+- **Descrição ligada ao campo:** o texto de ajuda fica num `FieldDescription` com `id`, e o campo aponta para ele com `aria-describedby`. Assim o leitor de tela lê a ajuda logo depois do nome, ao entrar no campo.
+- **Estado inválido:** marque o campo com `aria-invalid` (a assistiva) e o `Field` com `data-invalid` (o visual, que pinta o rótulo de vermelho). O `Input` já troca a borda e o anel de foco para `destructive` quando está com `aria-invalid`. Cor sozinha não basta: explique o problema numa mensagem de texto, num `FieldError` com `id`, e ligue-a ao campo por `aria-errormessage` e também por `aria-describedby`, junto com a descrição. Nem todo leitor de tela lê o `aria-errormessage`, e o `aria-describedby` cobre esses casos.
+- **Mensagem dinâmica:** o `FieldError` só existe enquanto há erro e traz `role="alert"`, que anuncia a mensagem quando ela aparece. Use isso para o erro depois de enviar o formulário. Para validar enquanto a pessoa digita, mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela, para não interromper a digitação. O `assertive` fica para erros críticos. Quando o campo voltar a ser válido, remova `aria-invalid`, `aria-errormessage` e `data-invalid`, e tire o id do erro do `aria-describedby`.
+- **Obrigatório:** use o atributo `required`, que a tecnologia assistiva já anuncia. O asterisco visual leva `aria-hidden="true"`, para não ser lido como "asterisco", e a página deve explicar o que ele significa, por exemplo "* campo obrigatório".
+- **Desabilitado:** `disabled` tira o campo da ordem do Tab e apaga o campo todo em 50%. Campos desabilitados não precisam cumprir contraste, mas informe o motivo numa descrição. Para mostrar um valor que a pessoa pode ler e copiar, mas não editar, use `readOnly`, que continua focável.
+- **Tipo e preenchimento automático:** use o `type` certo (`email`, `tel`, `url`, `search`, `password`) e o `autoComplete` do dado pedido (`name`, `email`, `given-name`, `tel`…). Isso abre o teclado correto no celular e deixa o navegador preencher, o que ajuda quem tem dificuldade para digitar.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. Não remova o anel.
+- **Contraste:** o texto digitado é sempre `foreground`, inclusive dentro de um `Field` inválido. O placeholder tem 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo, e a borda de erro tem 3,8:1 e 5,1:1.
+- **Dentro de formulários:** um campo de seleção também precisa de rótulo (veja **Formulário**), e os campos devem seguir a ordem natural de leitura, sem `tabIndex` positivo.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Field data-invalid>
+  <FieldLabel htmlFor="email">E-mail</FieldLabel>
+  <Input
+    id="email"
+    type="email"
+    autoComplete="email"
+    aria-invalid
+    aria-describedby="email-descricao email-erro"
+    aria-errormessage="email-erro"
+  />
+  <FieldDescription id="email-descricao">
+    Vamos enviar as novidades para este endereço.
+  </FieldDescription>
+  <FieldError id="email-erro">
+    Informe um e-mail completo, como nome@exemplo.com.
+  </FieldError>
+</Field>`}
+/>
+
+## Básico
+
+Um `Label` e um `Input`, sem `Field`. É o menor uso que ainda tem um rótulo persistente.
+
+<Canvas of={InputStories.Basico} />
+
+## Campo
+
+Use `Field`, `FieldLabel` e `FieldDescription` para criar um campo com rótulo e descrição. O `FieldLabel` leva `htmlFor`, o `Input` leva o `id` correspondente, e a descrição leva um `id` que o `Input` cita em `aria-describedby`.
+
+<Canvas of={InputStories.Campo} />
+
+## Grupo de campos
+
+Use `FieldGroup` para mostrar vários blocos `Field` e montar formulários.
+
+<Canvas of={InputStories.GrupoDeCampos} />
+
+## Desabilitado
+
+Use a prop `disabled` para desabilitar o campo. Para estilizar o estado desabilitado, adicione o atributo `data-disabled` ao `Field`, que também apaga o rótulo.
+
+<Canvas of={InputStories.Desabilitado} />
+
+## Inválido
+
+Use `aria-invalid` no `Input` para marcá-lo como inválido. Para estilizar o estado inválido, adicione o atributo `data-invalid` ao `Field`. Mostre o motivo num `FieldError` e ligue-o ao campo por `aria-errormessage` e `aria-describedby` (veja **Acessibilidade**).
+
+<Canvas of={InputStories.Invalido} />
+
+## Arquivo
+
+Use `type="file"` para criar um campo de arquivo. O texto do botão ("Escolher arquivo") e o do estado vazio vêm do navegador e seguem o idioma dele. Use `accept` para limitar os tipos aceitos e diga na descrição o que é esperado.
+
+<Canvas of={InputStories.Arquivo} />
+
+## Em linha
+
+Use `Field` com `orientation="horizontal"` para criar um campo em linha. Combine com um `Button` para fazer uma busca com botão. Como não há rótulo visível, o campo recebe o nome por `aria-label` e o formulário leva `role="search"`; o botão "Buscar" deixa o propósito claro para quem enxerga.
+
+<Canvas of={InputStories.EmLinha} />
+
+## Grade
+
+Use um layout em grade para colocar vários campos lado a lado. Cada campo mantém o próprio rótulo.
+
+<Canvas of={InputStories.Grade} />
+
+## Obrigatório
+
+Use o atributo `required` para indicar campos obrigatórios. O asterisco é só visual e leva `aria-hidden="true"`; o `required` é o que a tecnologia assistiva anuncia.
+
+<Canvas of={InputStories.Obrigatorio} />
+
+## Badge
+
+Use um `Badge` dentro do rótulo para destacar um campo, como um recurso em teste. O texto do badge entra no nome acessível do campo ("URL do webhook Beta"). Para o badge ficar no fim da linha, use a classe lógica `ms-auto`, que funciona em RTL.
+
+<Canvas of={InputStories.EtiquetaBadge} />
+
+## Grupo de input
+
+Para adicionar ícones, textos ou botões dentro do campo, use o componente `InputGroup`. Veja a documentação do Input Group para mais exemplos. Um texto que explica o campo, como o prefixo `https://`, pode ser ligado a ele por `aria-describedby`, e um ícone só decorativo leva `aria-hidden="true"`.
+
+<Canvas of={InputStories.GrupoDeInput} />
+
+## Grupo de botões
+
+Para adicionar botões ao campo, use o componente `ButtonGroup`. Veja a documentação do [Button Group](?path=/docs/componentes-button-group--docs) para mais exemplos. O `ButtonGroup` tem `role="group"`: dê um nome a ele por `aria-label` ou `aria-labelledby`, além do rótulo do campo.
+
+<Canvas of={InputStories.GrupoDeBotoes} />
+
+## Formulário
+
+Um formulário completo, com vários campos, uma seleção e um botão. Cada campo, inclusive o `Select`, tem um `FieldLabel` ligado pelo `id`. O `onSubmit` com `preventDefault` só evita que o exemplo recarregue esta página: num formulário real, trate o envio.
+
+<Canvas of={InputStories.Formulario} />
+
+## RTL
+
+O `Input` usa paddings simétricos e o texto segue a direção do campo, então ele funciona em RTL sem nenhuma prop. A `FieldDescription` usa `text-start`, que em RTL é a direita. Coloque `dir="rtl"` e o `lang` num ancestral: o exemplo usa um `div` porque esta página é LTR, e o `dir="rtl"` no próprio `Input` garante o sentido do texto digitado. Dados que são sempre LTR, como e-mail, URL e chave de API, podem manter `dir="ltr"` dentro do campo. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={InputStories.Rtl} />
+
+## Referência da API
+
+### Input
+
+O `Input` envolve o `<input>` do Base UI e aceita todas as props de um `<input>` nativo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td><code>React.HTMLInputTypeAttribute</code></td><td><code>{'"text"'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="input"`. O `Input` não tem variantes nem tamanhos: tem 32px de altura (`h-8`) e `rounded-2xl`.
+
+<Canvas of={InputStories.Playground} />

@@ -1,0 +1,184 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as DialogStories from "./dialog.stories";
+
+<Meta of={DialogStories} />
+
+# Dialog
+
+Uma janela sobreposta à janela principal ou a outro diálogo, que deixa o conteúdo de trás inerte.
+
+<Canvas of={DialogStories.Demo} />
+
+## Instalação
+
+O Dialog usa o `@base-ui/react`, o `lucide-react` e o `cn`, que já estão no pacote, e o Button.
+
+<Source language="bash" dark code="npx shadcn add dialog" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/dialog.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@workspace/ui/components/dialog"
+
+<Dialog>
+  <DialogTrigger>Abrir</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Tem certeza?</DialogTitle>
+      <DialogDescription>
+        Esta ação não pode ser desfeita. Ela exclui a sua conta e remove os
+        seus dados dos nossos servidores.
+      </DialogDescription>
+    </DialogHeader>
+  </DialogContent>
+</Dialog>`}
+/>
+
+## Composição
+
+Monte um `Dialog` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Dialog
+├── DialogTrigger
+└── DialogContent
+    ├── DialogHeader
+    │   ├── DialogTitle
+    │   └── DialogDescription
+    └── DialogFooter`}
+/>
+
+## Acessibilidade
+
+- **Nome e descrição:** o `DialogContent` tem `role="dialog"` e o Base UI o liga ao `DialogTitle` (`aria-labelledby`) e ao `DialogDescription` (`aria-describedby`). Todo diálogo precisa dos dois, e o título diz a ação ou o assunto ("Excluir fatura"), não só "Atenção".
+- **Foco preso e devolvido:** com o diálogo aberto, o foco vai para dentro dele e o Tab não sai dali, porque o resto da página fica inerte. Esc fecha, e o foco volta para o gatilho. O teste da story **Demo** confere isso (Tab oito vezes, Esc e o foco no gatilho).
+- **Gatilho e fechamento:** `DialogTrigger` e `DialogClose` recebem o elemento pela prop `render`, como `render={<Button variant="outline" />}`, sem `div` envolvendo. Os dois são `<button>`, porque abrir e fechar são ações.
+- **Botão de fechar:** o X do canto tem o nome "Fechar" em texto `sr-only`, e o ícone é `aria-hidden`. O nome é fixo, em português (como o "Carregando" do Spinner). Para outro idioma, use `showCloseButton={false}` e um `DialogClose` com o seu texto, como na seção **Botão de fechar personalizado**.
+- **Sem botão de fechar:** quem usa teclado fecha com Esc, mas num toque só resta clicar fora. Se o diálogo não tem o X, ofereça outro jeito visível de sair, como um botão no rodapé.
+- **Véu de fundo:** o `DialogOverlay` escurece a página (`bg-black/30` com desfoque), a única cor com opacidade do componente. Ele não carrega texto, então não tem contraste a cumprir: quem destaca o diálogo é o fundo `popover`, com o texto `popover-foreground` (19,7:1 no claro e 16,7:1 no escuro) e o contorno `ring-border`.
+- **Formulários:** os campos têm rótulo persistente (`Label` com `htmlFor`), e a descrição e o erro ficam ligados ao campo por `aria-describedby` e `aria-errormessage`. Um campo só de leitura também precisa de nome: use `Label` com `className="sr-only"`.
+- **Rolagem:** uma região que rola dentro do diálogo precisa de `tabIndex={0}`, para quem usa só o teclado conseguir rolar, e de um nome, com `role="region"` e `aria-labelledby` (o `id` do `DialogTitle`). Como ela recebe foco, também precisa do anel: `focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset`.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Testes:** o diálogo fechado não existe para o axe. Por isso cada story tem um `play` que abre o diálogo, espera a animação de entrada terminar e confere que ele está centralizado; o axe roda depois, com o diálogo aberto, no claro, no escuro e em RTL.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Dialog>
+  <DialogTrigger render={<Button variant="outline" />}>
+    Excluir fatura
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Excluir a fatura 0042?</DialogTitle>
+      <DialogDescription>
+        A fatura sai da sua lista e não dá para recuperá-la.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+      <Button variant="destructive">Excluir fatura</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>`}
+/>
+
+## Botão de fechar personalizado
+
+Troque o controle de fechar padrão pelo seu, com `DialogClose` e a prop `render`.
+
+<Canvas of={DialogStories.BotaoDeFecharPersonalizado} />
+
+## Sem botão de fechar
+
+Use `showCloseButton={false}` para esconder o X do canto.
+
+<Canvas of={DialogStories.SemBotaoDeFechar} />
+
+## Rodapé fixo
+
+Mantenha as ações à vista enquanto o conteúdo rola. A região que rola é focável e tem nome (veja **Acessibilidade**).
+
+<Canvas of={DialogStories.RodapeFixo} />
+
+## Conteúdo com rolagem
+
+Um conteúdo longo rola dentro do diálogo, e o cabeçalho continua à vista. O `-mx-6 px-6` leva a região até as bordas sem perder o alinhamento com o recuo de 24px do diálogo.
+
+<Canvas of={DialogStories.ConteudoComRolagem} />
+
+## RTL
+
+Os recuos e a posição são lógicos (`start`, `end` e `rtl:translate-x-1/2`), então o diálogo segue a direção do `<html>`: o X do canto fica no fim da linha, que em RTL é a esquerda.
+
+Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um diálogo isolado, como no exemplo, passe `dir` e `lang` ao próprio `DialogContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+O rótulo do X ("Fechar") é fixo em português: no exemplo em árabe, ele continua em português para o leitor de tela.
+
+<Canvas of={DialogStories.Rtl} />
+
+## Referência da API
+
+O `Dialog` é construído sobre o [Dialog do Base UI](https://base-ui.com/react/components/dialog#api-reference): `Dialog`, `DialogTrigger`, `DialogPortal`, `DialogClose`, `DialogOverlay`, `DialogTitle` e `DialogDescription` repassam as props do Base UI (por exemplo `open`, `defaultOpen`, `onOpenChange` e `modal` no `Dialog`, e `render` no gatilho e no `DialogClose`).
+
+### DialogContent
+
+O popup, com o véu e o portal. Aceita as props do Popup do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### DialogFooter
+
+As ações na base do diálogo. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Dialog</code></td><td>nenhum (só o contexto)</td><td><code>dialog</code></td></tr>
+    <tr><td><code>DialogTrigger</code></td><td><code>{'<button>'}</code></td><td><code>dialog-trigger</code></td></tr>
+    <tr><td><code>DialogPortal</code></td><td>portal no <code>body</code></td><td><code>dialog-portal</code></td></tr>
+    <tr><td><code>DialogOverlay</code></td><td><code>{'<div>'}</code></td><td><code>dialog-overlay</code></td></tr>
+    <tr><td><code>DialogContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>dialog-content</code></td></tr>
+    <tr><td><code>DialogClose</code></td><td><code>{'<button>'}</code></td><td><code>dialog-close</code></td></tr>
+    <tr><td><code>DialogHeader</code></td><td><code>{'<div>'}</code></td><td><code>dialog-header</code></td></tr>
+    <tr><td><code>DialogFooter</code></td><td><code>{'<div>'}</code></td><td><code>dialog-footer</code></td></tr>
+    <tr><td><code>DialogTitle</code></td><td><code>{'<h2>'}</code></td><td><code>dialog-title</code></td></tr>
+    <tr><td><code>DialogDescription</code></td><td><code>{'<p>'}</code></td><td><code>dialog-description</code></td></tr>
+  </tbody>
+</table>
