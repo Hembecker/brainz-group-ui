@@ -2,7 +2,7 @@
 
 Tokens e componentes React da Big Brain (marca Brainz Group), num monorepo shadcn/ui. O projeto é independente dos produtos: nenhuma paleta de produto entra aqui.
 
-O preset de referência do shadcn é o `b1avsYW9Y` (estilo `rhea`, mist + blue, raio small, Inter, RTL e cursor pointer). Os tokens de cor são os do tema mist + blue, em `oklch`. Não rode `shadcn apply`: ele sobrescreve os componentes e os tokens (veja o `CLAUDE.md`).
+O preset de referência do shadcn é o `b1avsYW9Y` (estilo `rhea`, mist + blue, raio small, Inter, RTL e cursor pointer). As cores são as da Brainz Group: neutros do tema mist, em `oklch`, e as cores de marca pela escala Primária. Não rode `shadcn apply`: ele sobrescreve os componentes e os tokens (veja o `CLAUDE.md`).
 
 ## Começar
 
@@ -58,22 +58,22 @@ React 19.3.1, Vite 8, Tailwind 4, TypeScript 6, Turbo, `@base-ui/react`, class-v
 
 Ficam em `packages/ui/src/styles/globals.css`:
 
-1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…), com os valores `oklch` do tema mist + blue do shadcn. É o que os componentes usam. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground` e o `link`.
-2. **Paleta da marca** (`--bb-primary-*`, `--bb-ink`): fica só como referência. Nenhum papel a usa hoje.
+1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…). É o que os componentes usam. Os neutros têm os valores `oklch` do tema mist do shadcn; as cores de marca (primária, secundária, anel, link, gráficos) referenciam a paleta da marca. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground` e o `link`.
+2. **Paleta da marca** (`--bb-primary-*` de 50 a 950, `--bb-ink`, `--bb-gradient`): os valores brutos. A ação primária usa a 600, e não a base 500, porque texto branco na 500 dá 3,5:1.
 
 O modo escuro é ativado pela classe `.dark` num ancestral.
 
-Os contrastes estão anotados no `globals.css`. Cinco valores do tema foram ajustados para passar nos mínimos de contraste (o anel de foco e o texto suave do claro, a borda de campo, o texto da `sidebar-primary` no escuro e as cores de gráfico) e estão marcados com **A11Y**.
+Os contrastes estão anotados no `globals.css`. Dois neutros do tema mist foram ajustados para passar nos mínimos de contraste (o texto suave do claro e a borda de campo) e estão marcados com **A11Y**.
 
 ### Provisório
 
 Estes valores ainda não estão no material da marca e precisam ser confirmados:
 
-- **Cores:** o tema mist + blue do shadcn, no lugar do azul da marca.
+- **Neutros:** os do tema mist do shadcn.
 - **Vermelho de erro** (red 600 / red 400 do Tailwind).
 - **Fonte:** Inter (`@fontsource-variable/inter`, a do preset).
 - **Modo escuro inteiro.**
-- **Cores de gráfico** (`--chart-*`): a escala blue do Tailwind.
+- **Cores de gráfico** (`--chart-*`): a escala Primária, uma faixa por modo.
 
 ## Componentes
 
