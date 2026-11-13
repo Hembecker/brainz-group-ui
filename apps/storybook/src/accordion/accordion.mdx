@@ -1,0 +1,176 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as AccordionStories from "./accordion.stories";
+
+<Meta of={AccordionStories} />
+
+# Accordion
+
+Um conjunto de títulos empilhados na vertical, cada um revelando uma seção de conteúdo.
+
+<Canvas of={AccordionStories.Demo} />
+
+## Instalação
+
+O Accordion usa o primitivo do Base UI (`@base-ui/react/accordion`), o `cn` e os ícones do lucide.
+
+<Source language="bash" dark code="npx shadcn add accordion" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/accordion.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@workspace/ui/components/accordion"
+
+<Accordion defaultValue={["item-1"]}>
+  <AccordionItem value="item-1">
+    <AccordionTrigger>É acessível?</AccordionTrigger>
+    <AccordionContent>
+      Sim. Segue o padrão de design WAI-ARIA.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>`}
+/>
+
+## Composição
+
+Monte um `Accordion` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Accordion
+├── AccordionItem
+│   ├── AccordionTrigger
+│   └── AccordionContent
+└── AccordionItem
+    ├── AccordionTrigger
+    └── AccordionContent`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:** o `AccordionTrigger` é um `<button>` e o texto dele é o nome. Escreva um texto específico, que diga o assunto da seção ("Como redefino minha senha?"), e não um genérico como "Saiba mais". O painel é uma região (`role="region"`) nomeada pelo gatilho, por `aria-labelledby`.
+- **Estado exposto:** o gatilho tem `aria-expanded` (`true` ou `false`) e, com o painel aberto, `aria-controls` apontando para ele. O estado nunca depende só do ícone: a seta que troca de sentido é decorativa (`aria-hidden="true"`).
+- **Teclado:** o Base UI 1.9 não tem foco itinerante (mudança do guia APG): cada gatilho é uma parada do Tab, e Enter ou Espaço abre e fecha o item. Não há setas, Home nem End. O RTL não muda nada aqui, porque a pilha é vertical.
+- **Cabeçalhos:** cada gatilho fica dentro de um heading (`<h3>`), o que deixa a lista de seções navegável pelo leitor de tela. Dentro de um `Card`, ponha o título do card num `<h3>` também, como nos exemplos.
+- **Foco visível:** o gatilho tem o anel sólido de 3px no token `--ring`, desenhado por dentro (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de fora. O registro do shadcn deixava `outline-none` sem substituto. O anel tem 3,5:1 no branco e 3,2:1 sobre o fundo do item aberto, no claro, e 7,6:1 e 5,7:1 no escuro.
+- **Contraste:** o item aberto usa o papel `muted`, no lugar do `bg-muted/50` do registro. O texto tem 17,7:1 sobre ele no claro e 14,3:1 no escuro, e a seta, 6,6:1 e 6,1:1.
+- **Desabilitado:** `disabled` num `AccordionItem` apaga o gatilho a 50% e o tira da ordem do Tab. Informe o motivo no texto da página.
+- **Painel fechado:** o conteúdo fechado sai do DOM (não é lido). Para a busca da página (Ctrl+F) achar o texto, use `hiddenUntilFound` no `Accordion`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Accordion defaultValue={["envio"]}>
+  <AccordionItem value="envio">
+    <AccordionTrigger>Quais são as opções de envio?</AccordionTrigger>
+    <AccordionContent>Padrão, expresso e no dia seguinte.</AccordionContent>
+  </AccordionItem>
+</Accordion>`}
+/>
+
+## Básico
+
+Um accordion que mostra um item por vez. O primeiro item começa aberto. Abrir outro item fecha o que estava aberto.
+
+<Canvas of={AccordionStories.Basico} />
+
+## Múltiplo
+
+Use a prop `multiple` para deixar vários itens abertos ao mesmo tempo.
+
+<Canvas of={AccordionStories.Multiplo} />
+
+## Desabilitado
+
+Use a prop `disabled` no `AccordionItem` para desabilitar itens individuais.
+
+<Canvas of={AccordionStories.Desabilitado} />
+
+## Bordas
+
+No shadcn, a página mostra como acrescentar as bordas. Neste design system (estilo rhea) elas já fazem parte do componente: a raiz tem `border` e `rounded-2xl`, e cada item tem uma linha entre ele e o próximo. Para ficar só com as linhas divisórias, tire a borda e o raio da raiz.
+
+<Canvas of={AccordionStories.Bordas} />
+
+## Card
+
+Envolva o `Accordion` num componente `Card`.
+
+<Canvas of={AccordionStories.CardStory} />
+
+## RTL
+
+Os recuos são lógicos e a seta usa `ms-auto`, então o accordion segue a direção de um ancestral com `dir="rtl"`: a seta fica à esquerda. O Accordion não tem tecla que dependa da direção, mas o exemplo traz o `DirectionProvider` (de `@workspace/ui/components/direction`) como o do preview, para os outros componentes de uma página em RTL. Num app em RTL, coloque o `dir` e o `lang` no `<html>`. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={AccordionStories.Rtl} />
+
+## Referência da API
+
+O Accordion é o do Base UI. Veja a [documentação do Base UI](https://base-ui.com/react/components/accordion#api-reference) para a lista completa. As props `orientation` e `loopFocus` estão deprecadas no Base UI 1.9 (sem foco itinerante) e não afetam o teclado, por isso não estão na tabela.
+
+### Accordion
+
+A raiz. Expõe `data-slot="accordion"`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>defaultValue</code></td><td><code>string[]</code></td><td>—</td></tr>
+    <tr><td><code>value</code></td><td><code>string[]</code></td><td>—</td></tr>
+    <tr><td><code>onValueChange</code></td><td><code>{'(value: string[]) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>hiddenUntilFound</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>keepMounted</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AccordionItem
+
+Um item. Precisa de um `value`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AccordionTrigger
+
+O botão que abre e fecha o item, dentro de um heading. Leva a seta decorativa. Aceita as props de um `<button>`.
+
+### AccordionContent
+
+O painel do item. Aceita as props do painel do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Accordion</code></td><td><code>{'<div>'}</code></td><td><code>accordion</code></td></tr>
+    <tr><td><code>AccordionItem</code></td><td><code>{'<div>'}</code></td><td><code>accordion-item</code></td></tr>
+    <tr><td><code>AccordionTrigger</code></td><td><code>{'<button>'}</code></td><td><code>accordion-trigger</code></td></tr>
+    <tr><td><code>AccordionContent</code></td><td><code>{'<div>'}</code></td><td><code>accordion-content</code></td></tr>
+  </tbody>
+</table>

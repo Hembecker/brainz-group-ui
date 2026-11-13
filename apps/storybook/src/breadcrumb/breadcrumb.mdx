@@ -1,0 +1,227 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as BreadcrumbStories from "./breadcrumb.stories";
+
+<Meta of={BreadcrumbStories} />
+
+# Breadcrumb
+
+Mostra o caminho até o recurso atual, numa hierarquia de links.
+
+<Canvas of={BreadcrumbStories.Demo} />
+
+## Instalação
+
+O Breadcrumb usa o `useRender` e o `mergeProps` do `@base-ui/react`, o `lucide-react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add breadcrumb" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/breadcrumb.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@workspace/ui/components/breadcrumb"
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink render={<a href="/" />}>Início</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink render={<a href="/componentes" />}>
+        Componentes
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>`}
+/>
+
+## Composição
+
+Monte um `Breadcrumb` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Breadcrumb
+└── BreadcrumbList
+    ├── BreadcrumbItem
+    │   └── BreadcrumbLink
+    ├── BreadcrumbSeparator
+    ├── BreadcrumbItem
+    │   └── BreadcrumbLink
+    ├── BreadcrumbSeparator
+    └── BreadcrumbItem
+        └── BreadcrumbPage`}
+/>
+
+## Acessibilidade
+
+- **Landmark e nome:** a raiz é um `<nav>` com `aria-label="Trilha de navegação"` (o registro usava "breadcrumb", em inglês). Se a página tiver outro `<nav>`, como o menu principal, os nomes precisam ser diferentes: troque o `aria-label` da trilha pela prop. Os itens ficam numa lista ordenada (`<ol>`), então o leitor de tela anuncia quantos níveis existem.
+- **Links e página atual:** cada nível é um `<a>` (navegação, nunca um `<button>`). O último item é um `BreadcrumbPage`, que leva `aria-current="page"` e não é clicável. Cada link tem o texto do próprio nível, que já é um nome específico.
+- **Separadores:** `BreadcrumbSeparator` é decorativo (`role="presentation"` e `aria-hidden="true"`): o leitor de tela já sabe que é uma lista, e ler "barra" ou "seta" entre cada nível só atrapalha. Um separador próprio, como o `DotIcon`, leva `aria-hidden="true"` no ícone.
+- **Reticências:** `BreadcrumbEllipsis` mostra o ícone (decorativo) e um texto `sr-only` "Mais itens", que o leitor de tela lê, porque os itens omitidos são informação (no registro o `aria-hidden` do contêiner escondia também esse texto). Quando as reticências ficam dentro de um botão que já tem nome, como o menu da página principal desta documentação, passe `aria-hidden="true"` a elas e dê o nome ao botão com texto `sr-only` ("Mostrar itens omitidos"): senão o nome repete. O tooltip nunca é o único nome.
+- **Foco:** o link e o gatilho do menu usam o anel sólido do projeto (3px, `--ring`, afastado 2px pela cor do fundo); o registro deixava o outline padrão do navegador. Um gatilho que não é o `Button` precisa trazer as mesmas classes (veja o exemplo **Dropdown**).
+- **Contraste:** os links usam `muted-foreground` sobre o fundo (mais de 7:1 nos dois modos), e a página atual usa `foreground`. A diferença entre os dois não depende só da cor: o último item não é um link e leva `aria-current`.
+- **Gatilhos de primitivos:** o menu abre com o `DropdownMenuTrigger` recebendo o elemento pela prop `render` (`<Button />` ou `<button />`), sem `div` envolvendo. Veja o [Dropdown Menu](?path=/docs/componentes-dropdown-menu--docs).
+- **Teclado:** Tab percorre os links e o gatilho do menu na ordem do caminho; Enter abre o menu e Esc o fecha, devolvendo o foco ao gatilho.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Breadcrumb aria-label="Trilha de navegação">
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink render={<a href="/" />}>Início</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Faturas</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>`}
+/>
+
+## Básico
+
+Uma trilha simples, com um link para o início e outro para os componentes.
+
+<Canvas of={BreadcrumbStories.Basico} />
+
+## Separador personalizado
+
+Passe um componente como `children` do `BreadcrumbSeparator` para trocar o separador. Um ícone de direção, como uma seta, leva `rtl:rotate-180`; um ponto, como no exemplo, não precisa.
+
+<Canvas of={BreadcrumbStories.SeparadorPersonalizado} />
+
+## Dropdown
+
+Combine o `BreadcrumbItem` com um `DropdownMenu` para listar as páginas de um nível. O gatilho aqui é um `<button>` com o texto do nível, então leva as classes do anel de foco.
+
+O menu abre num portal. O teste dessa story abre o menu antes de o axe rodar, porque um menu fechado não aparece para ele.
+
+<Canvas of={BreadcrumbStories.Dropdown} />
+
+## Recolhido
+
+Use o `BreadcrumbEllipsis` para mostrar o estado recolhido quando a trilha é longa demais. Sem um menu, ele só indica que há níveis omitidos (o texto "Mais itens" é lido pelo leitor de tela). Para o usuário chegar a esses níveis, use o exemplo da página principal desta documentação, com um menu.
+
+<Canvas of={BreadcrumbStories.Recolhido} />
+
+## Componente de link
+
+Para usar o link do seu roteador, passe-o pela prop `render` do `BreadcrumbLink`. O elemento continua sendo um `<a>`, e as classes e o anel de foco do Breadcrumb chegam a ele.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Link } from "react-router"
+
+<BreadcrumbLink render={<Link to="/componentes" />}>
+  Componentes
+</BreadcrumbLink>`}
+/>
+
+No exemplo, o `<a href="#link-component">` faz o papel do componente do roteador.
+
+<Canvas of={BreadcrumbStories.ComponenteDeLink} />
+
+## RTL
+
+Os espaçamentos da trilha são lógicos, então ela segue a direção de um ancestral com `dir="rtl"`: o primeiro nível fica à direita. A seta padrão do separador leva `rtl:rotate-180`.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. O menu abre num portal: um `dir` num ancestral não chega a ele, então o exemplo passa `dir` e `lang` ao `DropdownMenuContent` e usa `align="end"`. Troque também o `aria-label` da trilha pelo texto no idioma da página. Veja o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={BreadcrumbStories.Rtl} />
+
+## Referência da API
+
+### Breadcrumb
+
+O `<nav>` raiz. Aceita as props de um `<nav>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Trilha de navegação"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### BreadcrumbList
+
+A lista ordenada (`<ol>`) dos itens. Aceita a `className`.
+
+### BreadcrumbItem
+
+Envolve cada nível (`<li>`). Aceita a `className`.
+
+### BreadcrumbLink
+
+O link de um nível. Aceita as props de um `<a>` e `render`, para trocar o elemento (por exemplo, pelo link do roteador).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td><code>{'<a />'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### BreadcrumbPage
+
+A página atual (`<span>`, com `aria-current="page"`, `role="link"` e `aria-disabled="true"`). Não é clicável. Aceita a `className`.
+
+### BreadcrumbSeparator
+
+O separador entre os níveis (`<li>`, decorativo). Aceita a `className` e `children`, que trocam a seta padrão.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>seta (<code>ChevronRightIcon</code>, com <code>rtl:rotate-180</code>)</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### BreadcrumbEllipsis
+
+As reticências de uma trilha recolhida (`<span>`, com o texto `sr-only` "Mais itens"). Aceita as props de um `<span>`; dentro de um botão com nome, passe `aria-hidden="true"`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Breadcrumb</code></td><td><code>{'<nav>'}</code></td><td><code>breadcrumb</code></td></tr>
+    <tr><td><code>BreadcrumbList</code></td><td><code>{'<ol>'}</code></td><td><code>breadcrumb-list</code></td></tr>
+    <tr><td><code>BreadcrumbItem</code></td><td><code>{'<li>'}</code></td><td><code>breadcrumb-item</code></td></tr>
+    <tr><td><code>BreadcrumbLink</code></td><td><code>{'<a>'}</code></td><td><code>breadcrumb-link</code></td></tr>
+    <tr><td><code>BreadcrumbPage</code></td><td><code>{'<span>'}</code></td><td><code>breadcrumb-page</code></td></tr>
+    <tr><td><code>BreadcrumbSeparator</code></td><td><code>{'<li>'}</code></td><td><code>breadcrumb-separator</code></td></tr>
+    <tr><td><code>BreadcrumbEllipsis</code></td><td><code>{'<span>'}</code></td><td><code>breadcrumb-ellipsis</code></td></tr>
+  </tbody>
+</table>

@@ -1,0 +1,92 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SeparatorStories from "./separator.stories";
+
+<Meta of={SeparatorStories} />
+
+# Separator
+
+Separa conteúdo, visualmente ou semanticamente.
+
+<Canvas of={SeparatorStories.Demo} />
+
+## Instalação
+
+O Separator usa o primitivo de separador do `@base-ui/react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add separator" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/separator.tsx`. O `ButtonGroupSeparator` também é construído sobre ele.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Separator } from "@workspace/ui/components/separator"
+
+<Separator />`}
+/>
+
+## Acessibilidade
+
+- **Papel:** o Base UI renderiza o separador com `role="separator"` e `aria-orientation` ("horizontal" ou "vertical"). O leitor de tela o anuncia como uma divisão entre duas partes do conteúdo, então use-o quando a divisão tem significado.
+- **Linha só decorativa:** se a linha é só um enfeite e não divide nada que o leitor de tela precise anunciar, passe `aria-hidden="true"` a ela, para sair da árvore de acessibilidade. Um título de seção (`<h2>`) ou uma lista já dividem o conteúdo com mais clareza do que um separador.
+- **Sem nome e sem foco:** o separador não é um controle: não tem nome, não recebe foco e não precisa de anel. Por isso o contorno de 1px (`bg-border`) não precisa de 3:1, como um campo ou um botão precisam. Não ponha texto dentro dele.
+- **Separador vertical:** ele só aparece num contêiner flex com altura, porque usa `self-stretch` (veja o exemplo **Vertical**). Num contêiner sem altura, a linha some, e o conteúdo se junta sem aviso.
+- **Cor:** `bg-border`, sem opacidade, nos dois modos. O `ButtonGroupSeparator` usa `bg-muted-foreground` (6,1:1 sobre o secundário no claro e 4,5:1 no escuro), definido no Button Group.
+
+<Source
+  language="tsx"
+  dark
+  code={`<div className="flex flex-col gap-4">
+  <p>Resumo da fatura</p>
+  <Separator aria-hidden="true" />
+  <p>Itens</p>
+</div>`}
+/>
+
+## Vertical
+
+Use `orientation="vertical"` para um separador vertical. O contêiner precisa de altura (`h-5`, no exemplo) e de `items-center` ou `items-stretch`.
+
+<Canvas of={SeparatorStories.Vertical} />
+
+## Menu
+
+Separadores verticais entre itens de menu com descrição. O último separador e o último item aparecem só a partir da largura `md` (`hidden md:block` e `hidden md:flex`).
+
+<Canvas of={SeparatorStories.Menu} />
+
+## Lista
+
+Separadores horizontais entre itens de uma lista.
+
+<Canvas of={SeparatorStories.Lista} />
+
+## RTL
+
+O separador não tem margens nem cantos que dependam do lado: ele só preenche a linha, então não muda em RTL. O que muda é o conteúdo ao redor, que segue a direção de um ancestral com `dir="rtl"`.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SeparatorStories.Rtl} />
+
+## Referência da API
+
+O `Separator` é construído sobre o [Separator do Base UI](https://base-ui.com/react/components/separator#api-reference) e repassa as props dele, além das de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td><code>{'<div />'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="separator"` e `data-orientation`.

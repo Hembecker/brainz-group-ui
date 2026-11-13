@@ -3,6 +3,33 @@
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 import { cn } from "cn"
 
+/*
+ * Progress — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/progress
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o Progress do Base UI: o Root tem `role="progressbar"`
+ *   com `aria-valuenow`, `aria-valuemin`, `aria-valuemax` e `aria-valuetext`
+ *   ("56%"). `value` é obrigatório; com `value={null}` a barra é indeterminada e o
+ *   `aria-valuenow` some. O ProgressValue é `aria-hidden`: o valor lido vem do
+ *   Root.
+ * - Nome acessível: o ProgressLabel liga o rótulo ao Root por `aria-labelledby`
+ *   sozinho. Sem rótulo visível, passe `aria-label` no Progress.
+ * - Contraste não textual (WCAG 1.4.11, mínimo 3:1). O registro usava o trilho
+ *   `bg-muted` (1,1:1 no branco), que não aparecia como forma. Agora o trilho é
+ *   `bg-background` com contorno `border-input`:
+ *   - contorno do trilho, claro: `input` (mist 500), 4,6:1 no branco;
+ *   - contorno do trilho, escuro: `input` (branco a 40%), 3,8:1 no fundo e no
+ *     card;
+ *   - preenchimento (`primary` 600) sobre o trilho, claro: 5,2:1;
+ *   - preenchimento sobre o trilho, escuro: 3,8:1. O trilho é sempre o
+ *     `background`, também dentro de um card (o fundo mais escuro que o card).
+ *   Com `bg-muted` no escuro o preenchimento daria só 2,9:1 contra o trilho.
+ *   A borda tira 2px da altura útil do preenchimento (h-2 = 8px, 6px livres).
+ * - O texto do ProgressValue usa `muted-foreground` (7,4:1 no branco, 8,1:1 no
+ *   fundo escuro). Posição lógica: `ms-auto` e a barra cresce a partir do
+ *   início, que em RTL é a direita. Para os números seguirem o idioma, passe
+ *   `locale` no Progress.
+ */
 function Progress({
   className,
   children,
@@ -28,7 +55,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       className={cn(
-        "relative flex h-2 w-full items-center overflow-x-hidden rounded-2xl bg-muted",
+        "relative flex h-2 w-full items-center overflow-x-hidden rounded-2xl border border-input bg-background",
         className
       )}
       data-slot="progress-track"

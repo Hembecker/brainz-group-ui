@@ -1,0 +1,111 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SkeletonStories from "./skeleton.stories";
+
+<Meta of={SkeletonStories} />
+
+# Skeleton
+
+Mostra um espaço reservado enquanto o conteúdo carrega.
+
+<Canvas of={SkeletonStories.Demo} />
+
+## Instalação
+
+O Skeleton não tem dependências além do `cn`.
+
+<Source language="bash" dark code="npx shadcn add skeleton" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/skeleton.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Skeleton } from "@workspace/ui/components/skeleton"
+
+<Skeleton className="h-5 w-24 rounded-full" />`}
+/>
+
+## Acessibilidade
+
+- **Não é conteúdo:** o Skeleton é um `<div>` vazio, só visual. O leitor de tela não o lê, e ele não deve ganhar texto, `role` nem `aria-label`. Quem avisa que algo está carregando é o **contêiner**.
+- **Contêiner ocupado:** ponha `aria-busy="true"` no elemento que agrupa os blocos. Isso diz à tecnologia assistiva que aquela região ainda não está pronta. Ao terminar, tire o `aria-busy` e troque os blocos pelo conteúdo real.
+- **Rótulo de carregamento:** dentro do contêiner, coloque um texto só para o leitor de tela, `<span role="status" className="sr-only">Carregando o perfil</span>`. Seja específico: diga o que carrega ("Carregando a tabela de faturas"), e não só "Carregando".
+- **Região viva sempre montada:** o `role="status"` é uma região `aria-live="polite"`. Mantenha-a montada e troque só o texto ("Perfil carregado") quando o conteúdo chegar, em vez de remover e recriar o elemento. Assim o anúncio é confiável.
+- **Sem armadilha de foco:** não coloque nada focável dentro de um bloco de Skeleton nem use um botão como se fosse um Skeleton. Um controle que ainda não funciona deve estar `disabled`.
+- **Contraste:** o Skeleton usa o papel `muted`, sem opacidade. Ele é decorativo e não carrega texto, então não precisa dos 4,5:1 do texto. O contraste do conteúdo que o substitui é o do próprio conteúdo.
+- **Movimento:** o `animate-pulse` do registro não respeita `prefers-reduced-motion`. Se o seu app precisa disso, acrescente `motion-reduce:animate-none` na `className`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<div aria-busy="true" className="flex items-center gap-4">
+  <span role="status" className="sr-only">
+    Carregando o perfil
+  </span>
+  <Skeleton className="size-12 rounded-full" />
+  <div className="space-y-2">
+    <Skeleton className="h-4 w-[250px]" />
+    <Skeleton className="h-4 w-[200px]" />
+  </div>
+</div>`}
+/>
+
+## Avatar
+
+Um círculo e duas linhas de texto, o padrão para um autor ou um perfil.
+
+<Canvas of={SkeletonStories.Avatar} />
+
+## Card
+
+Dentro de um `Card`, ponha o `aria-busy` e o rótulo no próprio card.
+
+<Canvas of={SkeletonStories.CardExample} />
+
+## Texto
+
+Linhas com larguras diferentes imitam um parágrafo. A última costuma ser mais curta.
+
+<Canvas of={SkeletonStories.Text} />
+
+## Formulário
+
+Um bloco curto para cada rótulo, um mais alto para cada campo e outro para o botão.
+
+<Canvas of={SkeletonStories.Form} />
+
+## Tabela
+
+Uma linha de blocos para cada linha da tabela. Em uma tabela de verdade, o `aria-busy` vai no `<table>` ou no contêiner dela.
+
+<Canvas of={SkeletonStories.Table} />
+
+## RTL
+
+Os blocos seguem a direção de um ancestral com `dir="rtl"`: o círculo fica à direita e o texto à esquerda dele. O rótulo de carregamento também deve estar no idioma da página.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SkeletonStories.Rtl} />
+
+## Referência da API
+
+### Skeleton
+
+Um espaço reservado para o conteúdo que carrega. Aceita todas as props de um `<div>`. Quem define o tamanho e o formato é a `className`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="skeleton"`. O padrão é `animate-pulse rounded-2xl bg-muted`; a `className` é mesclada por cima.

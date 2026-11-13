@@ -1,0 +1,122 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as BadgeStories from "./badge.stories";
+
+<Meta of={BadgeStories} />
+
+# Badge
+
+Mostra um selo, ou um componente com a aparência de um selo.
+
+<Canvas of={BadgeStories.Demo} />
+
+## Instalação
+
+O Badge usa o `useRender` e o `mergeProps` do Base UI e o `class-variance-authority`.
+
+<Source language="bash" dark code="npx shadcn add badge" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/badge.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Badge } from "@workspace/ui/components/badge"
+
+<Badge variant="default | secondary | destructive | outline | ghost | link">
+  Badge
+</Badge>`}
+/>
+
+## Acessibilidade
+
+- **Não é um controle:** o Badge é um `span` de texto, sem papel e sem foco. Não ponha `onClick` nele. Para algo clicável, use um link (`render={<a href="…" />}`) ou um `Button`.
+- **Texto, não só cor:** o significado vem da palavra ("Excluindo", "Verificado"), nunca só da cor da variante. Quem não distingue o vermelho do azul precisa ler o texto.
+- **Contraste** (texto sobre o fundo do selo, nos dois modos):
+  - `default` (`primary-foreground` sobre `primary`): 5,2:1 e 5,2:1;
+  - `secondary`: 7,7:1 no claro e 9,0:1 no escuro;
+  - `destructive` (`destructive-foreground` sobre `destructive`): 4,8:1 no claro (red 600 com branco) e 6,8:1 no escuro (red 400 com mist 950). O `bg-destructive/10` do registro dava 4,0:1 no claro, então virou sólido, como o Button destrutivo;
+  - `outline` e `ghost` (`foreground`): 19,7:1 e 19,0:1 sobre o fundo da página, 19,7:1 e 16,7:1 sobre um card;
+  - `link` (`text-link`): 5,2:1 no claro e 10,2:1 no escuro. O `text-primary` do registro dava 3,8:1 no escuro;
+  - hover, quando o selo é um link: `primary-hover` com branco 7,2:1, `secondary-hover` 6,3:1 e 7,7:1, `destructive-hover` 6,4:1 e 10,3:1, outline `muted-foreground` sobre `muted` 6,6:1 e 6,1:1. O `ghost` reage ao hover mesmo sem ser link (como no shadcn), com os mesmos 6,6:1 e 6,1:1.
+- **Link:** um selo que é link precisa de um nome que diga o destino ("Abrir relatório") e, como a variante `default` não tem sublinhado, de algo além da cor para parecer um link: o ícone de seta do exemplo ajuda, ou use a variante `link`. Para navegação, use `<a>`; para uma ação, use um `<button>` (um `Button`, não o Badge).
+- **Ícones decorativos:** levam `aria-hidden="true"`. O ícone nunca é o único nome.
+- **Spinner:** o `Spinner` tem `role="status"` e o nome "Carregando". Dentro do selo, passe um `aria-label` específico ("Excluindo"), como no exemplo. Para avisar o fim da operação, use uma região `aria-live="polite"` sempre montada (veja o Spinner).
+- **Inválido:** `aria-invalid` pinta a borda de `destructive`, como no Button, mas o selo não é um campo: para um erro de formulário, use o `Field`.
+- **Foco:** só o selo que é link recebe foco. O anel é sólido, no `ring`, afastado 2px pela cor do fundo, como no Button.
+- **Cores personalizadas:** as cores do exemplo (`blue-50`, `green-700`…) não são papéis do tema, então o contraste é por sua conta: confira nos dois modos.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Badge render={<a href="/relatorios/mensal" />}>
+  Abrir relatório
+  <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
+</Badge>
+
+<Badge variant="destructive">
+  <Spinner data-icon="inline-start" aria-label="Excluindo" />
+  Excluindo
+</Badge>`}
+/>
+
+## Variantes
+
+Use a prop `variant` para mudar a variante do selo. O `link` é a variante de texto: sem fundo, com sublinhado no hover.
+
+<Canvas of={BadgeStories.Variantes} />
+
+## Com ícone
+
+Você pode pôr um ícone dentro do selo. Use `data-icon="inline-start"` para o ícone no começo da linha e `data-icon="inline-end"` para o ícone no fim. O ícone leva `aria-hidden="true"`.
+
+<Canvas of={BadgeStories.ComIcone} />
+
+## Com Spinner
+
+Você pode pôr um Spinner dentro do selo. Lembre de passar `data-icon="inline-start"` ou `data-icon="inline-end"` ao Spinner e um `aria-label` específico.
+
+<Canvas of={BadgeStories.ComSpinner} />
+
+## Link
+
+Use a prop `render` para renderizar um link como selo.
+
+<Canvas of={BadgeStories.Link} />
+
+## Cores personalizadas
+
+Para personalizar as cores, ponha classes como `bg-green-50 dark:bg-green-800` no `Badge`. Essas cores não são papéis do tema: confira o contraste nos dois modos (veja **Acessibilidade**).
+
+<Canvas of={BadgeStories.CoresPersonalizadas} />
+
+## RTL
+
+Os paddings dos ícones são lógicos (`ps` e `pe`), então o selo segue a direção de um ancestral com `dir="rtl"`: `inline-start` fica à direita e `inline-end` à esquerda. Um ícone de direção, como uma seta, leva `rtl:rotate-180`. O exemplo usa `dir` num `div` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={BadgeStories.Rtl} />
+
+## Referência da API
+
+### Badge
+
+Mostra um selo, ou um componente com a aparência de um selo. Aceita todas as props de um `<span>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "secondary" | "destructive" | "outline" | "ghost" | "link"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="badge"` e `data-variant`. O `badgeVariants` também é exportado, para dar a aparência de selo a outro elemento.
+
+<Canvas of={BadgeStories.Playground} />

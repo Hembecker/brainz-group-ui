@@ -44,11 +44,17 @@ function Slider({
   max = 100,
   ...props
 }: SliderPrimitive.Root.Props) {
+  // Um número solto em `value`/`defaultValue` é um polegar só; o registro
+  // caía em [min, max] e desenhava dois.
   const _values = Array.isArray(value)
     ? value
-    : Array.isArray(defaultValue)
-      ? defaultValue
-      : [min, max]
+    : typeof value === "number"
+      ? [value]
+      : Array.isArray(defaultValue)
+        ? defaultValue
+        : typeof defaultValue === "number"
+          ? [defaultValue]
+          : [min, max]
 
   return (
     <SliderPrimitive.Root

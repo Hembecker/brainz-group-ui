@@ -1,0 +1,234 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as EmptyStories from "./empty.stories";
+
+<Meta of={EmptyStories} />
+
+# Empty
+
+Mostra um estado vazio, quando não há nada para exibir.
+
+<Canvas of={EmptyStories.Demo} />
+
+## Instalação
+
+O Empty não tem dependências além do `class-variance-authority` e do `cn`.
+
+<Source language="bash" dark code="npx shadcn add empty" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/empty.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty"
+
+<Empty>
+  <EmptyHeader>
+    <EmptyMedia variant="icon">
+      <FolderCodeIcon aria-hidden="true" />
+    </EmptyMedia>
+    <EmptyTitle>
+      <h3>Nenhum dado</h3>
+    </EmptyTitle>
+    <EmptyDescription>Nenhum dado encontrado.</EmptyDescription>
+  </EmptyHeader>
+  <EmptyContent>
+    <Button>Adicionar dados</Button>
+  </EmptyContent>
+</Empty>`}
+/>
+
+## Composição
+
+Monte um estado vazio com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Empty
+├── EmptyHeader
+│   ├── EmptyMedia
+│   ├── EmptyTitle
+│   └── EmptyDescription
+└── EmptyContent`}
+/>
+
+## Acessibilidade
+
+- **Título:** o `EmptyTitle` é um `div`, então o leitor de tela não o trata como título. Coloque dentro dele um heading do nível certo para a página, como `<h3>`. A aparência não muda, porque o Tailwind zera o tamanho e o peso dos headings.
+- **Diga o que aconteceu e o que fazer:** o título e a descrição devem explicar por que está vazio e qual é o próximo passo ("Nenhum projeto ainda. Comece criando o seu primeiro projeto."). Evite só "Vazio".
+- **Ações:** as ações seguem a regra do Button. Para executar algo, use um `<Button>`; para navegar, use um `<a>` com `buttonVariants`. Cada ação precisa de um nome específico ("Criar projeto", e não só "Criar").
+- **Ícones decorativos:** o ícone do `EmptyMedia` leva `aria-hidden="true"`, porque o título já diz o que o estado significa.
+- **Avatares:** um avatar dentro do `EmptyMedia` precisa de nome. Só com iniciais, use `role="img"` e `aria-label` no `Avatar`; um grupo leva `role="group"` e um `aria-label` (veja o Avatar).
+- **Campo de busca:** um campo dentro do estado vazio precisa de rótulo persistente (`FieldLabel htmlFor` ligado ao `id`), e o placeholder não substitui o rótulo. Se mostrar uma tecla de atalho com `Kbd`, o atalho precisa estar de fato ligado, e o campo pode declará-lo com `aria-keyshortcuts`.
+- **Mudança dinâmica:** quando a lista passa de cheia para vazia (uma busca sem resultado, por exemplo), o leitor de tela não percebe sozinho. Mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela ("Nenhum resultado para a busca").
+- **Contraste:** o texto do título e o do botão são do `foreground` (alto contraste), e a descrição usa `muted-foreground` (7,4:1 no claro e 7,1:1 no escuro). O contorno tracejado é decorativo. Ao pôr um fundo, escolha um papel cheio (não uma cor com opacidade) e confira o contraste da descrição sobre ele.
+- **Links na descrição:** ficam sublinhados, o que os distingue do texto sem depender da cor.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Empty>
+  <EmptyHeader>
+    <EmptyTitle>
+      <h3>Nenhuma notificação</h3>
+    </EmptyTitle>
+    <EmptyDescription>Você está em dia.</EmptyDescription>
+  </EmptyHeader>
+  <EmptyContent>
+    <Button variant="outline">
+      <RefreshCcwIcon aria-hidden="true" data-icon="inline-start" />
+      Atualizar
+    </Button>
+  </EmptyContent>
+</Empty>`}
+/>
+
+## Contorno
+
+Use as classes `border` e `border-dashed` para um estado vazio com contorno tracejado.
+
+<Canvas of={EmptyStories.Contorno} />
+
+## Fundo
+
+Use as utilidades `bg-*` para dar um fundo ao estado vazio. O exemplo usa um gradiente de `muted` para `background`. Evite uma cor com opacidade (como `bg-muted/30`) e um fundo `bg-muted` chapado: o quadrado do ícone também é `muted` e sumiria nele.
+
+<Canvas of={EmptyStories.Fundo} />
+
+## Avatar
+
+Use o `EmptyMedia` para mostrar um avatar no estado vazio. Com `variant="default"`, ele não desenha o quadrado do ícone.
+
+<Canvas of={EmptyStories.AvatarExample} />
+
+## Grupo de avatares
+
+Use o `EmptyMedia` para mostrar um grupo de avatares. O exemplo usa o `AvatarGroup` com `*:data-[slot=avatar]:size-12` para aumentar os avatares.
+
+<Canvas of={EmptyStories.GrupoDeAvatares} />
+
+## InputGroup
+
+Você pode pôr um `InputGroup` dentro do `EmptyContent`. O campo precisa de um `FieldLabel` ligado ao `id`.
+
+<Canvas of={EmptyStories.GrupoDeCampo} />
+
+## RTL
+
+Os espaçamentos e o alinhamento são centralizados e lógicos, então o estado vazio segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop. Ícones de direção, como a seta do link, levam `rtl:-rotate-90`, que a espelha para o outro lado.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={EmptyStories.Rtl} />
+
+## Referência da API
+
+### Empty
+
+O componente principal do estado vazio. Envolve o `EmptyHeader` e o `EmptyContent`. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### EmptyHeader
+
+Envolve a mídia, o título e a descrição.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### EmptyMedia
+
+Mostra a mídia do estado vazio, como um ícone ou uma imagem. Também recebe outros componentes, como um avatar.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "icon"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="empty-icon"` (o nome vem do registro) e `data-variant`.
+
+### EmptyTitle
+
+O título do estado vazio. Coloque um heading dentro dele (veja **Acessibilidade**).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### EmptyDescription
+
+A descrição do estado vazio. Os links diretos dentro dela ficam sublinhados.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### EmptyContent
+
+O conteúdo do estado vazio, como um botão, um campo ou um link.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Empty</code></td><td><code>{'<div>'}</code></td><td><code>empty</code></td></tr>
+    <tr><td><code>EmptyHeader</code></td><td><code>{'<div>'}</code></td><td><code>empty-header</code></td></tr>
+    <tr><td><code>EmptyMedia</code></td><td><code>{'<div>'}</code></td><td><code>empty-icon</code></td></tr>
+    <tr><td><code>EmptyTitle</code></td><td><code>{'<div>'}</code></td><td><code>empty-title</code></td></tr>
+    <tr><td><code>EmptyDescription</code></td><td><code>{'<div>'}</code></td><td><code>empty-description</code></td></tr>
+    <tr><td><code>EmptyContent</code></td><td><code>{'<div>'}</code></td><td><code>empty-content</code></td></tr>
+  </tbody>
+</table>
+
+Todas aceitam as props de um `<div>` (a `EmptyDescription` é tipada como `<p>`, mas renderiza um `<div>`).

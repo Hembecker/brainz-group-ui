@@ -1,0 +1,106 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ToggleStories from "./toggle.stories";
+
+<Meta of={ToggleStories} />
+
+# Toggle
+
+Um botão de duas posições, que fica ligado ou desligado.
+
+<Canvas of={ToggleStories.Demo} />
+
+## Instalação
+
+O Toggle usa o primitivo de toggle do Base UI (`@base-ui/react/toggle`), o `class-variance-authority` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add toggle" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/toggle.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Toggle } from "@workspace/ui/components/toggle"
+
+<Toggle>Alternar</Toggle>`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:** um toggle só com ícone precisa de `aria-label`, ou de um texto `sr-only` dentro dele. Com texto visível, **não** ponha `aria-label`: o nome precisa conter o texto que aparece, e o texto já nomeia o botão. O nome não muda com o estado ("Favoritar" continua "Favoritar" quando ligado): quem informa o estado é o `aria-pressed`.
+- **Estado:** o Base UI expõe o estado em `aria-pressed` (e em `data-pressed`), que o leitor de tela anuncia como "pressionado" ou "não pressionado". Não troque o texto nem o `aria-label` para dizer o estado.
+- **Ligado sem depender de uma cor fraca:** o `bg-muted` do registro é o mesmo do hover e tem só ~1,1:1 contra o fundo claro, então o ligado quase não aparecia. Aqui o ligado é preenchido com `primary`: texto `primary-foreground` com 5,2:1 nos dois modos, e o preenchimento com 5,2:1 contra o fundo claro e 3,8:1 contra o escuro, acima dos 3:1 de um indicador de estado. O hover do ligado escurece para `primary-hover`, e no outline a borda do ligado vira `primary`. O desligado continua transparente.
+- **Conteúdo sobre o ligado:** o texto dentro do toggle herda a cor do botão. Não use `text-muted-foreground` em filhos: sobre o preenchimento primário ele cairia abaixo de 4,5:1.
+- **Ícones decorativos:** levam `aria-hidden="true"`. Um ícone que muda de aparência quando ligado (como o marcador preenchido) usa `group-aria-pressed/toggle:fill-current`, que segue a cor do texto.
+- **Foco:** anel sólido de 3px no token `--ring`, afastado 2px pela cor do fundo, como no Button.
+- **Teclado:** Tab chega ao toggle, e Espaço ou Enter alterna.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Toggle>
+  <BookmarkIcon aria-hidden="true" />
+  Favoritar
+</Toggle>
+
+<Toggle aria-label="Negrito">
+  <BoldIcon aria-hidden="true" />
+</Toggle>`}
+/>
+
+## Outline
+
+Use `variant="outline"` para o estilo com borda.
+
+<Canvas of={ToggleStories.Outline} />
+
+## Com texto
+
+<Canvas of={ToggleStories.ComTexto} />
+
+## Tamanho
+
+Use `size` para mudar o tamanho: `sm` (28px), `default` (32px) e `lg` (36px).
+
+<Canvas of={ToggleStories.Tamanho} />
+
+## Desabilitado
+
+<Canvas of={ToggleStories.Desabilitado} />
+
+## RTL
+
+Os recuos são lógicos, então o toggle segue a direção de um ancestral com `dir="rtl"`. O exemplo usa `dir` no próprio toggle porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ToggleStories.Rtl} />
+
+## Referência da API
+
+O `Toggle` envolve o `Toggle` do Base UI e repassa todas as props dele. Veja a [referência do Base UI Toggle](https://base-ui.com/react/components/toggle#api-reference) para a lista completa. As principais:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>pressed</code></td><td><code>boolean</code>: estado controlado</td><td>—</td></tr>
+    <tr><td><code>defaultPressed</code></td><td><code>boolean</code>: estado inicial, sem controle</td><td><code>false</code></td></tr>
+    <tr><td><code>onPressedChange</code></td><td><code>{'(pressed: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>value</code></td><td><code>string</code>: identifica o toggle dentro de um ToggleGroup</td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há texto visível</td><td>—</td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="toggle"`. O estado fica em `aria-pressed` e em `data-pressed`, e `data-disabled` quando desabilitado.
+
+<Canvas of={ToggleStories.Playground} />

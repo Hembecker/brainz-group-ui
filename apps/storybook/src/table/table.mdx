@@ -1,0 +1,204 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as TableStories from "./table.stories";
+
+<Meta of={TableStories} />
+
+# Table
+
+Uma tabela responsiva.
+
+<Canvas of={TableStories.Demo} />
+
+## Instalação
+
+A Table não tem dependências além do `cn`.
+
+<Source language="bash" dark code="npx shadcn add table" />
+
+Ela já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/table.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+
+<Table>
+  <TableCaption>Uma lista das suas faturas recentes.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead className="w-[100px]">Fatura</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Método</TableHead>
+      <TableHead className="text-end">Valor</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell className="font-medium">INV001</TableCell>
+      <TableCell>Paga</TableCell>
+      <TableCell>Cartão de crédito</TableCell>
+      <TableCell className="text-end">R$ 250,00</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>`}
+/>
+
+## Composição
+
+Monte uma `Table` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Table
+├── TableCaption
+├── TableHeader
+│   └── TableRow
+│       ├── TableHead
+│       ├── TableHead
+│       ├── TableHead
+│       └── TableHead
+├── TableBody
+│   ├── TableRow
+│   │   ├── TableCell
+│   │   ├── TableCell
+│   │   ├── TableCell
+│   │   └── TableCell
+│   └── TableRow
+│       ├── TableCell
+│       ├── TableCell
+│       ├── TableCell
+│       └── TableCell
+└── TableFooter`}
+/>
+
+## Acessibilidade
+
+- **Nome da tabela:** toda tabela precisa de um nome. O jeito certo é o `TableCaption` (o `<caption>`): o leitor de tela o lê ao entrar na tabela. Sem uma legenda visível, dê um `aria-label` ou um `aria-labelledby` à `Table`; as props vão para o `<table>`, como no exemplo **Ações**.
+- **Cabeçalhos com escopo:** o `TableHead` é um `<th>` e leva `scope="col"` por padrão (o registro não punha nenhum), para o leitor de tela ligar cada célula ao cabeçalho da coluna. Um cabeçalho de linha, dentro do `TableBody`, leva `scope="row"`: sem isso, ele continuaria apontando para a coluna. Um `scope` passado vale sobre o padrão.
+- **Só dados:** use a tabela para dados com linhas e colunas, não para alinhar o layout. Uma célula de cabeçalho vazia (a coluna de ações, por exemplo) precisa de texto: use o `sr-only` ou o título "Ações".
+- **Botões dentro das células:** um botão só com ícone precisa de `aria-label` ou de texto `sr-only` que diga a ação e o alvo, e o alvo é o que diferencia as linhas: "Abrir menu de Mouse sem fio", e não "Abrir menu" repetido em cada linha. O gatilho do menu recebe o `Button` pela prop `render`, sem um `div` envolvendo.
+- **Alinhamento:** use `text-end` (e não `text-right`) nas colunas de números, para a coluna seguir a direção. O cabeçalho e as células usam `text-start`.
+- **Hover e linha selecionada:** o fundo no hover e o da linha com `data-state="selected"` são o papel `muted`, a mesma cor. Quem seleciona linhas deve mostrar isso também por outro meio, como uma caixa marcada e um texto: a cor sozinha não basta (WCAG 1.4.1). O fundo da linha com um menu aberto usa o mesmo papel.
+- **Contraste:** o texto da tabela usa `foreground` (19,7:1 no branco e 19,0:1 no escuro). No rodapé (`bg-muted`), ele tem 17,7:1 no claro e 14,3:1 no escuro. A legenda usa `muted-foreground`, com 7,4:1 e 8,1:1. As bordas das linhas são decorativas: a leitura é feita pelas linhas e pelas colunas, não pela cor.
+- **Rolagem horizontal:** a `Table` põe um `<div>` com `overflow-x-auto` em volta do `<table>`, e ele não aceita props. Se a tabela puder ficar mais larga que a tela, quem usa só o teclado precisa de um jeito de rolar: uma área rolável sem nenhum elemento focável dentro (o caso de uma tabela só de texto) pode não receber foco. Nesse caso, ponha o `<Table>` dentro de um contêiner próprio com `role="region"`, `aria-labelledby` e `tabIndex={0}` (e o anel de foco `focus-visible:ring-3 focus-visible:ring-ring`).
+- **Tabelas grandes:** para ordenar, filtrar ou paginar, o cabeçalho que ordena é um botão dentro do `<th>`, com `aria-sort` no `<th>`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Table>
+  <TableCaption>Metas por equipe.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Equipe</TableHead>
+      <TableHead className="text-end">Meta</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableHead scope="row" className="font-medium">Vendas</TableHead>
+      <TableCell className="text-end">R$ 80.000,00</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>`}
+/>
+
+## Rodapé
+
+Use o `TableFooter` para pôr um rodapé na tabela. O fundo é o papel `muted` cheio (o registro usava `bg-muted/50`).
+
+<Canvas of={TableStories.Rodape} />
+
+## Ações
+
+Uma tabela com ações em cada linha, num `DropdownMenu`. O gatilho de cada linha tem um nome com o alvo, e a tabela, sem legenda visível, é nomeada por `aria-label`.
+
+<Canvas of={TableStories.Acoes} />
+
+## Tabela de dados
+
+Dá para montar tabelas de dados mais complexas com a `Table`. Combine-a com o [@tanstack/react-table](https://tanstack.com/table/latest) para ter ordenação, filtros e paginação. Veja a [documentação do Data Table](https://ui.shadcn.com/docs/components/data-table) do shadcn. Esta página não tem um exemplo disso, porque o Data Table ainda não faz parte deste design system.
+
+## RTL
+
+O alinhamento é lógico (`text-start`, `text-end` e `pe-0`), então a tabela segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop: a primeira coluna fica na direita e a coluna de valores, na esquerda.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` na própria tabela porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={TableStories.Rtl} />
+
+## Referência da API
+
+### Table
+
+O contêiner raiz: um `<div>` com rolagem horizontal em volta de um `<table>`. Aceita todas as props de um `<table>`, que vão para o próprio `<table>` (inclusive `aria-label` e `dir`).
+
+### TableHeader
+
+O `<thead>`. Põe uma borda embaixo de cada linha.
+
+### TableBody
+
+O `<tbody>`. A última linha fica sem borda.
+
+### TableFooter
+
+O `<tfoot>`, com `bg-muted` e uma borda em cima.
+
+### TableRow
+
+O `<tr>`. Muda de fundo no hover, com um menu aberto (`aria-expanded` num descendente) e com `data-state="selected"`.
+
+### TableHead
+
+O `<th>` de um cabeçalho.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>scope</code></td><td><code>{'"col" | "row" | "colgroup" | "rowgroup"'}</code></td><td><code>{'"col"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TableCell
+
+O `<td>` de uma célula.
+
+### TableCaption
+
+O `<caption>`, na cor `muted-foreground`, abaixo da tabela.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Table</code></td><td><code>{'<div>'}</code> + <code>{'<table>'}</code></td><td><code>table-container</code> e <code>table</code></td></tr>
+    <tr><td><code>TableHeader</code></td><td><code>{'<thead>'}</code></td><td><code>table-header</code></td></tr>
+    <tr><td><code>TableBody</code></td><td><code>{'<tbody>'}</code></td><td><code>table-body</code></td></tr>
+    <tr><td><code>TableFooter</code></td><td><code>{'<tfoot>'}</code></td><td><code>table-footer</code></td></tr>
+    <tr><td><code>TableRow</code></td><td><code>{'<tr>'}</code></td><td><code>table-row</code></td></tr>
+    <tr><td><code>TableHead</code></td><td><code>{'<th>'}</code></td><td><code>table-head</code></td></tr>
+    <tr><td><code>TableCell</code></td><td><code>{'<td>'}</code></td><td><code>table-cell</code></td></tr>
+    <tr><td><code>TableCaption</code></td><td><code>{'<caption>'}</code></td><td><code>table-caption</code></td></tr>
+  </tbody>
+</table>
+
+Todas aceitam as props do elemento delas.

@@ -1,0 +1,184 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ResizableStories from "./resizable.stories";
+
+<Meta of={ResizableStories} />
+
+# Resizable
+
+Grupos de painéis redimensionáveis, com suporte a teclado.
+
+<Canvas of={ResizableStories.Demo} />
+
+## Sobre
+
+O `Resizable` usa o [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels), de bvaughn, e não um primitivo do Base UI. A API de props de `ResizablePanelGroup`, `ResizablePanel` e `ResizableHandle` é a dele (versão 4).
+
+## Instalação
+
+O Resizable usa o `react-resizable-panels` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add resizable" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/resizable.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@workspace/ui/components/resizable"
+
+<ResizablePanelGroup orientation="horizontal">
+  <ResizablePanel>Um</ResizablePanel>
+  <ResizableHandle aria-label="Redimensionar o painel Um" />
+  <ResizablePanel>Dois</ResizablePanel>
+</ResizablePanelGroup>`}
+/>
+
+## Composição
+
+Monte um `ResizablePanelGroup` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`ResizablePanelGroup
+├── ResizablePanel
+├── ResizableHandle
+└── ResizablePanel`}
+/>
+
+## Acessibilidade
+
+- **Nome do handle:** o `ResizableHandle` é um `role="separator"` focável, e um controle focável precisa de nome. O componente já traz o padrão "Redimensionar painéis". Quando houver mais de um handle na tela, dê a cada um um `aria-label` específico e diferente ("Redimensionar a barra lateral"), como nos exemplos.
+- **Teclado:** Tab chega ao handle e as setas redimensionam os painéis vizinhos. O handle expõe `aria-valuenow` (o tamanho do painel, em %), `aria-valuemin`, `aria-valuemax` e `aria-orientation`, que o leitor de tela anuncia. Em RTL, o sentido das setas segue a direção da página. Quem só usa o teclado consegue fazer tudo o que o mouse faz.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo. Como a linha do handle tem 1px, o anel a envolve e o handle sobe na pilha ao receber foco (`z-10`), para não ficar sob o conteúdo dos painéis vizinhos. O contêiner do grupo corta o que passa das suas bordas, então nas pontas da linha o anel é aparado.
+- **Linha e pegada:** a linha do handle (`bg-border`) e a pegada (`withHandle`) são decorativas. A pegada leva `aria-hidden`. O controle é anunciado pelo `role="separator"`, não pelo desenho.
+- **Painéis:** o conteúdo de cada painel segue as regras do próprio conteúdo. Um painel que rola precisa ser alcançável pelo teclado (veja a página do Scroll Area).
+- **Zoom a 200%:** confira que os painéis continuam usáveis e que o handle continua alcançável.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ResizableHandle withHandle aria-label="Redimensionar a barra lateral" />`}
+/>
+
+## Vertical
+
+Use `orientation="vertical"` para redimensionar na vertical. O handle vira uma linha horizontal e as setas para cima e para baixo redimensionam.
+
+<Canvas of={ResizableStories.Vertical} />
+
+## Pegada
+
+Use a prop `withHandle` no `ResizableHandle` para mostrar uma pegada visível.
+
+<Canvas of={ResizableStories.Handle} />
+
+## RTL
+
+A linha, a área de clique e a pegada são lógicas, então o grupo segue a direção de um ancestral com `dir="rtl"`. O exemplo usa `dir` no próprio grupo porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ResizableStories.Rtl} />
+
+## Referência da API
+
+Veja a [documentação do react-resizable-panels](https://github.com/bvaughn/react-resizable-panels/tree/main/packages/react-resizable-panels) para a lista completa. As principais:
+
+### ResizablePanelGroup
+
+Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+    <tr><td><code>defaultLayout</code></td><td><code>Layout</code>: tamanhos iniciais por id de painel</td><td>—</td></tr>
+    <tr><td><code>onLayoutChange</code></td><td><code>{'(layout: Layout) => void'}</code>: chamado durante o redimensionamento</td><td>—</td></tr>
+    <tr><td><code>onLayoutChanged</code></td><td><code>{'(layout: Layout, meta) => void'}</code>: chamado ao terminar</td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>disableCursor</code></td><td><code>boolean</code>: não troca o cursor ao redimensionar</td><td><code>false</code></td></tr>
+    <tr><td><code>groupRef</code></td><td><code>{'Ref<GroupImperativeHandle>'}</code>: API imperativa</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="resizable-panel-group"` e `data-group`.
+
+### ResizablePanel
+
+Aceita as props de um `<div>`, menos `onResize`, que tem outra assinatura.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>defaultSize</code></td><td><code>{'number | string'}</code>: número em pixels, texto em % (<code>"50%"</code>)</td><td>—</td></tr>
+    <tr><td><code>minSize</code></td><td><code>{'number | string'}</code></td><td><code>{'"0%"'}</code></td></tr>
+    <tr><td><code>maxSize</code></td><td><code>{'number | string'}</code></td><td><code>{'"100%"'}</code></td></tr>
+    <tr><td><code>collapsible</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>collapsedSize</code></td><td><code>{'number | string'}</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>groupResizeBehavior</code></td><td><code>{'"preserve-relative-size" | "preserve-pixel-size"'}</code></td><td>—</td></tr>
+    <tr><td><code>onResize</code></td><td><code>{'(panelSize, id, prevPanelSize) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>panelRef</code></td><td><code>{'Ref<PanelImperativeHandle>'}</code>: API imperativa (recolher, expandir)</td><td>—</td></tr>
+    <tr><td><code>id</code></td><td><code>{'string | number'}</code></td><td>gerado</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="resizable-panel"`.
+
+### ResizableHandle
+
+Aceita as props do `Separator` do react-resizable-panels.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>withHandle</code></td><td><code>boolean</code>: mostra a pegada</td><td><code>false</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: o nome do handle</td><td><code>{'"Redimensionar painéis"'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>disableDoubleClick</code></td><td><code>boolean</code>: o clique duplo não volta o painel ao tamanho padrão</td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="resizable-handle"`, `role="separator"` e os atributos `aria-orientation`, `aria-valuenow`, `aria-valuemin` e `aria-valuemax`.
+
+## Histórico
+
+### 02/02/2025: `react-resizable-panels` v4
+
+Atualizado para a v4. Quem usa os primitivos do `react-resizable-panels` direto deve notar estas mudanças:
+
+<table>
+  <thead>
+    <tr><th>v3</th><th>v4</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>PanelGroup</code></td><td><code>Group</code></td></tr>
+    <tr><td><code>PanelResizeHandle</code></td><td><code>Separator</code></td></tr>
+    <tr><td>prop <code>direction</code></td><td>prop <code>orientation</code></td></tr>
+    <tr><td><code>{'defaultSize={50}'}</code></td><td><code>{'defaultSize="50%"'}</code></td></tr>
+    <tr><td><code>onLayout</code></td><td><code>onLayoutChange</code></td></tr>
+    <tr><td><code>ImperativePanelHandle</code></td><td><code>PanelImperativeHandle</code></td></tr>
+    <tr><td>prop <code>ref</code> no Panel</td><td>prop <code>panelRef</code></td></tr>
+    <tr><td><code>data-panel-group-direction</code></td><td><code>aria-orientation</code></td></tr>
+  </tbody>
+</table>
+
+Os componentes `ResizablePanelGroup`, `ResizablePanel` e `ResizableHandle` deste pacote não mudaram de nome.
+
+<Canvas of={ResizableStories.Playground} />

@@ -1,0 +1,258 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as AvatarStories from "./avatar.stories";
+
+<Meta of={AvatarStories} />
+
+# Avatar
+
+Uma imagem com um fallback, para representar uma pessoa.
+
+<Canvas of={AvatarStories.Demo} />
+
+Os exemplos desta página não usam fotos externas: a imagem é o logo da Brainz Group, que o Storybook serve a partir de `brand/`, e os demais avatares usam o fallback com as iniciais.
+
+## Instalação
+
+O Avatar usa o primitivo de avatar do Base UI.
+
+<Source language="bash" dark code="npx shadcn add avatar" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/avatar.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@workspace/ui/components/avatar"
+
+<Avatar>
+  <AvatarImage src="/fotos/maria.jpg" alt="Maria Costa" />
+  <AvatarFallback>MC</AvatarFallback>
+</Avatar>`}
+/>
+
+## Composição
+
+Monte um `Avatar` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Avatar
+├── AvatarImage
+├── AvatarFallback
+└── AvatarBadge`}
+/>
+
+Monte um `AvatarGroup` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`AvatarGroup
+├── Avatar
+│   ├── AvatarImage
+│   ├── AvatarFallback
+│   └── AvatarBadge
+├── Avatar
+│   ├── AvatarImage
+│   ├── AvatarFallback
+│   └── AvatarBadge
+└── AvatarGroupCount`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:** todo avatar precisa de um nome que diga quem é. Com foto, o nome é o `alt` do `AvatarImage` ("Maria Costa"), nunca "foto" nem o nome do arquivo. Se a imagem é só decorativa, porque o nome já está escrito ao lado, use `alt=""`.
+- **Só com iniciais:** as letras do fallback ("MC") são lidas soltas pelo leitor de tela. Dê ao `Avatar` `role="img"` e `aria-label` com o nome completo: ele passa a ser uma única imagem com nome, e vale também enquanto a foto carrega. Não coloque `aria-label` num `<span>` ou `<div>` sem `role`, porque o leitor de tela pode ignorá-lo.
+- **Selo de estado:** o `AvatarBadge` é um ponto decorativo. A cor sozinha não informa nada a quem não a enxerga: ponha o estado no nome do avatar (`aria-label="Eduarda Rocha, online"`). Se usar uma cor própria no selo, confira 3:1 contra o fundo nos dois modos.
+- **Grupo:** dê ao `AvatarGroup` `role="group"` e um `aria-label` ("Equipe do projeto"). Cada avatar do grupo tem o próprio nome.
+- **Contagem:** o `AvatarGroupCount` é um `<div>` com "+3". Esconda o texto visual com `aria-hidden="true"` e acrescente um texto `sr-only` ("e mais 3 pessoas"). Se a contagem tiver ícone, o ícone leva `aria-hidden="true"` e o texto `sr-only` diz o que ele representa.
+- **Ícones decorativos:** o ícone do selo e o da contagem levam `aria-hidden="true"`.
+- **Avatar que abre algo:** o avatar não é um controle. Para abrir um menu ou ir ao perfil, use um `<Button>` (ação) ou um `<a>` (navegação) em volta, com o nome da ação em `aria-label` ("Menu da conta"), e deixe o avatar com `alt=""`. Veja **Dropdown**.
+- **Foco:** o Avatar não recebe foco. O anel de foco é o do `Button` que o envolve.
+- **Contraste:** o fallback usa `muted-foreground` sobre `muted` (6,6:1 no claro). O contorno e o anel do grupo são decorativos.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Avatar role="img" aria-label="Eduarda Rocha, online">
+  <AvatarFallback>ER</AvatarFallback>
+  <AvatarBadge />
+</Avatar>
+
+<AvatarGroup role="group" aria-label="Equipe do projeto">
+  <Avatar role="img" aria-label="Carlos Nunes">
+    <AvatarFallback>CN</AvatarFallback>
+  </Avatar>
+  <AvatarGroupCount>
+    <span aria-hidden="true">+3</span>
+    <span className="sr-only">e mais 3 pessoas</span>
+  </AvatarGroupCount>
+</AvatarGroup>`}
+/>
+
+## Básico
+
+Um avatar com uma imagem e um fallback. O fallback aparece enquanto a imagem carrega e se ela falhar. Para a imagem quadrada ficar bem enquadrada, use uma foto 1:1 (`object-cover` já é o padrão); o logo da Brainz Group é horizontal, então o exemplo usa `object-left` para mostrar o início dele.
+
+<Canvas of={AvatarStories.Basico} />
+
+## Selo
+
+Use o `AvatarBadge` para acrescentar um selo ao avatar. Ele fica no canto inferior do fim (à direita em LTR, à esquerda em RTL). O padrão usa a cor `primary`; use a `className` para trocar a cor ou o tamanho, e informe o estado no `aria-label` do avatar.
+
+<Canvas of={AvatarStories.Selo} />
+
+## Selo com ícone
+
+Também dá para colocar um ícone dentro do `AvatarBadge`. No tamanho `sm` o ícone fica escondido, porque o selo é pequeno demais.
+
+<Canvas of={AvatarStories.SeloComIcone} />
+
+## Grupo de avatares
+
+Use o `AvatarGroup` para juntar vários avatares, sobrepostos.
+
+<Canvas of={AvatarStories.Grupo} />
+
+## Contagem do grupo
+
+Use o `AvatarGroupCount` para mostrar quantos avatares ficaram de fora.
+
+<Canvas of={AvatarStories.ContagemDoGrupo} />
+
+## Contagem do grupo com ícone
+
+O `AvatarGroupCount` também aceita um ícone.
+
+<Canvas of={AvatarStories.ContagemDoGrupoComIcone} />
+
+## Tamanho
+
+Use a prop `size` para mudar o tamanho do avatar: `sm` (24px), `default` (32px) e `lg` (40px).
+
+<Canvas of={AvatarStories.Tamanho} />
+
+## Dropdown
+
+O `Avatar` pode ser o gatilho de um menu. O gatilho é um `Button` de ícone, recebido pela prop `render`, sem `div` em volta. O nome do menu vem do `aria-label` do botão; por isso a imagem do avatar leva `alt=""`.
+
+<Canvas of={AvatarStories.Menu} />
+
+## RTL
+
+Os avatares do grupo se sobrepõem na direção da leitura, e o selo fica no fim da linha (à esquerda em RTL), porque as posições e margens são lógicas. Os nomes e a contagem ficam no idioma da página.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={AvatarStories.Rtl} />
+
+## Referência da API
+
+### Avatar
+
+O contêiner raiz. Envolve a imagem e o fallback. Aceita todas as props do Avatar do Base UI, além de `role` e `aria-label`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="avatar"` e `data-size`.
+
+### AvatarImage
+
+Mostra a imagem. Aceita todas as props do Avatar Image do Base UI. Só é exibida depois de carregar.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>src</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AvatarFallback
+
+Mostra o conteúdo reserva enquanto a imagem carrega ou quando ela falha. Aceita todas as props do Avatar Fallback do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AvatarBadge
+
+Um indicador no canto do avatar. Aceita as props de um `<span>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AvatarGroup
+
+Agrupa avatares com sobreposição. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AvatarGroupCount
+
+O indicador de quantos avatares ficaram de fora. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Avatar</code></td><td><code>{'<span>'}</code></td><td><code>avatar</code></td></tr>
+    <tr><td><code>AvatarImage</code></td><td><code>{'<img>'}</code></td><td><code>avatar-image</code></td></tr>
+    <tr><td><code>AvatarFallback</code></td><td><code>{'<span>'}</code></td><td><code>avatar-fallback</code></td></tr>
+    <tr><td><code>AvatarBadge</code></td><td><code>{'<span>'}</code></td><td><code>avatar-badge</code></td></tr>
+    <tr><td><code>AvatarGroup</code></td><td><code>{'<div>'}</code></td><td><code>avatar-group</code></td></tr>
+    <tr><td><code>AvatarGroupCount</code></td><td><code>{'<div>'}</code></td><td><code>avatar-group-count</code></td></tr>
+  </tbody>
+</table>
+
+Para os detalhes das props do Avatar, Avatar Image e Avatar Fallback, veja a [documentação do Base UI](https://base-ui.com/react/components/avatar#api-reference).

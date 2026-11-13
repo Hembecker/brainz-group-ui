@@ -6,6 +6,40 @@ import { cn } from "cn"
 
 import { Separator } from "@workspace/ui/components/separator"
 
+/*
+ * Item — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/item
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Composição: ItemGroup > Item (ItemHeader, ItemMedia, ItemContent >
+ *   ItemTitle + ItemDescription, ItemActions, ItemFooter) e ItemSeparator.
+ *   Todas as partes expõem `data-slot`; o Item expõe também `data-variant` e
+ *   `data-size`.
+ * - Link ou ação: a prop `render` troca o `<div>` por outro elemento (useRender
+ *   do Base UI). Use `<a href>` para navegar e `<button>` para executar algo;
+ *   o foco fica no próprio elemento, e o hover (`[a]:hover:bg-muted`, herdado
+ *   do registro) só existe para `<a>`: um `<button>` não muda de fundo no
+ *   hover (pendência). Um Item inteiro como link ou botão tem o conteúdo todo
+ *   como nome: mantenha título e descrição curtos.
+ * - Variante `muted`: o registro usava `bg-muted/50`; virou o papel cheio
+ *   `bg-muted` (mist 100 no claro e mist 800 no escuro). O texto fica com
+ *   17,7:1 (claro) e 14,3:1 (escuro) em `foreground` e 6,6:1 e 6,1:1 na
+ *   descrição (`muted-foreground`). Como `muted` e `accent` são a mesma cor, o
+ *   hover (`bg-muted`) de um link `muted` não muda o fundo: o foco é que o
+ *   distingue.
+ * - Anel de foco sólido, 3px, no `ring`, afastado 2px pela cor do fundo, como no
+ *   Button. Não há anel translúcido.
+ * - O ItemGroup tem `role="list"`: cada filho direto precisa de
+ *   `role="listitem"`. Um Item que é link não pode receber esse papel (apagaria
+ *   o papel de link): envolva-o num `<div role="listitem">`.
+ * - Pendência: o ItemSeparator (`role="separator"`) dentro do ItemGroup
+ *   (`role="list"`) reprova no axe (`aria-required-children`), e trocar o papel
+ *   dele por `presentation` reprova em `aria-allowed-attr` (o Base UI mantém o
+ *   `aria-orientation`). Por isso não há story com ItemSeparator: veja a MDX.
+ * - O ItemMedia só tem as variantes `default`, `icon` e `image`. A página do
+ *   shadcn cita `avatar`, mas o código e o exemplo dela usam o `default` com um
+ *   Avatar dentro.
+ * - Paddings lógicos e `text-start`: funciona em RTL.
+ */
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -41,7 +75,7 @@ const itemVariants = cva(
       variant: {
         default: "border-transparent",
         outline: "border-border",
-        muted: "border-transparent bg-muted/50",
+        muted: "border-transparent bg-muted",
       },
       size: {
         default: "gap-3.5 px-4 py-3.5",

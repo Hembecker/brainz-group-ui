@@ -1,0 +1,278 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ItemStories from "./item.stories";
+
+<Meta of={ItemStories} />
+
+# Item
+
+Um componente versátil para mostrar conteúdo com mídia, título, descrição e ações.
+
+<Canvas of={ItemStories.Demo} />
+
+O `Item` é um contêiner flex simples, que aceita quase qualquer conteúdo. Use-o para mostrar um título, uma descrição e ações. Agrupe vários com o `ItemGroup` para montar uma lista.
+
+## Instalação
+
+O Item usa o `Separator`, o `useRender` do Base UI e o `class-variance-authority`.
+
+<Source language="bash" dark code="npx shadcn add item" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/item.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@workspace/ui/components/item"
+
+<Item>
+  <ItemMedia variant="icon">
+    <Icon aria-hidden="true" />
+  </ItemMedia>
+  <ItemContent>
+    <ItemTitle>Título</ItemTitle>
+    <ItemDescription>Descrição</ItemDescription>
+  </ItemContent>
+  <ItemActions>
+    <Button>Ação</Button>
+  </ItemActions>
+</Item>`}
+/>
+
+## Composição
+
+Monte um `Item` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`ItemGroup
+└── Item
+    ├── ItemHeader
+    ├── ItemMedia
+    ├── ItemContent
+    │   ├── ItemTitle
+    │   └── ItemDescription
+    ├── ItemActions
+    └── ItemFooter`}
+/>
+
+## Acessibilidade
+
+- **Link ou ação:** o Item é um `<div>` por padrão. Para navegar, use a prop `render` com um `<a href>`; para executar algo, use `render={<button type="button" />}`. Nunca deixe o `<div>` com `onClick`: ele não recebe foco nem responde ao teclado. O `render` troca o elemento (`useRender` do Base UI), sem um `div` envolvendo.
+- **Nome acessível:** num Item que é link ou botão, o título e a descrição inteiros viram o nome do controle. Mantenha os dois curtos e comece pelo que diz a ação ou o destino. Um ícone de seta ou de link externo é decorativo e leva `aria-hidden="true"`; se o link abre numa nova aba, avise com um texto `sr-only` no título.
+- **Botões de ação dentro do Item:** um botão só com ícone precisa de `aria-label` ou de texto `sr-only` com a ação e o alvo, como "Convidar Carla Souza". Num Item que já é link ou botão, não ponha outro controle dentro dele: um controle dentro do outro não é válido em HTML.
+- **Grupo é lista:** o `ItemGroup` tem `role="list"`, então cada filho direto precisa de `role="listitem"`. Um Item comum recebe o papel direto. Um Item que é link **não** pode receber `role="listitem"` (o papel apagaria o de link): envolva-o num `<div role="listitem">`, como no exemplo **Imagem**.
+- **ItemSeparator dentro do grupo:** o separador (`role="separator"`) dentro de uma lista reprova no axe (`aria-required-children`), e trocar o papel dele por `presentation` reprova em `aria-allowed-attr`. Por enquanto, separe os itens pelo `gap` do grupo ou use o separador fora de um `ItemGroup`.
+- **Imagens e avatares:** uma imagem ou um avatar que repete o texto ao lado é decorativo: `alt=""` na imagem e `aria-hidden="true"` no `Avatar`, para o leitor de tela não ler as iniciais antes do nome. Uma imagem que informa algo leva `alt` com essa informação.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. No link, o foco e o hover ficam no próprio `<a>`. Não remova o anel.
+- **Hover:** o fundo no hover (`bg-muted`) só existe nos Items que são `<a>`. Um `<button>` não muda de fundo no hover, só mostra o foco. Na variante `muted`, o hover e o fundo são a mesma cor, então o fundo também não muda.
+- **Contraste:** o texto usa `foreground` e `muted-foreground`. Na variante `muted`, o título tem 17,7:1 no claro e 14,3:1 no escuro, e a descrição tem 6,6:1 e 6,1:1. O contorno da variante `outline` (`border`) é decorativo: o Item não é um campo, então não precisa de 3:1.
+- **Texto cortado:** o título e a descrição usam `line-clamp` (1 e 2 linhas). O texto cortado continua no HTML e o leitor de tela lê tudo, mas quem vê não lê o resto: não ponha informação que importa depois da segunda linha.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ItemGroup>
+  <div role="listitem">
+    <Item render={<a href="/painel" />}>
+      <ItemContent>
+        <ItemTitle>Painel</ItemTitle>
+        <ItemDescription>Visão geral da conta.</ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <ChevronRightIcon aria-hidden="true" className="rtl:rotate-180" />
+      </ItemActions>
+    </Item>
+  </div>
+  <Item role="listitem">
+    <ItemContent>
+      <ItemTitle>Carla Souza</ItemTitle>
+    </ItemContent>
+    <ItemActions>
+      <Button size="icon-sm" variant="outline" aria-label="Convidar Carla Souza">
+        <PlusIcon aria-hidden="true" />
+      </Button>
+    </ItemActions>
+  </Item>
+</ItemGroup>`}
+/>
+
+## Item ou Field
+
+Use o `Field` se precisar de um campo de formulário, como uma caixa de seleção, um campo de texto, um grupo de opções ou um select.
+
+Se só precisa mostrar conteúdo, como um título, uma descrição e ações, use o `Item`.
+
+## Variante
+
+Use a prop `variant` para mudar o estilo do item. O `muted` usa o papel `muted` cheio (o registro usava `bg-muted/50`).
+
+<Canvas of={ItemStories.Variante} />
+
+## Tamanho
+
+Use a prop `size` para mudar o tamanho do item. Os tamanhos são `default`, `sm` e `xs`.
+
+<Canvas of={ItemStories.Tamanho} />
+
+## Ícone
+
+Use o `ItemMedia` com `variant="icon"` para mostrar um ícone.
+
+<Canvas of={ItemStories.Icone} />
+
+## Avatar
+
+A página do shadcn cita `variant="avatar"`, mas o `ItemMedia` só tem `default`, `icon` e `image`, e o exemplo dela usa o `default` com um `Avatar` dentro. Aqui o exemplo é o mesmo, com as iniciais no lugar da foto.
+
+<Canvas of={ItemStories.AvatarStory} />
+
+## Imagem
+
+Use o `ItemMedia` com `variant="image"` para mostrar uma imagem. Os itens desta lista são links, então cada um fica num `<div role="listitem">`.
+
+<Canvas of={ItemStories.Imagem} />
+
+## Grupo
+
+Use o `ItemGroup` para agrupar itens relacionados. Cada Item do grupo leva `role="listitem"`.
+
+<Canvas of={ItemStories.Grupo} />
+
+## Cabeçalho
+
+Use o `ItemHeader` para pôr um cabeçalho acima do conteúdo do item.
+
+<Canvas of={ItemStories.Cabecalho} />
+
+## Link
+
+Use a prop `render` para renderizar o item como um link. O hover e o foco são aplicados ao próprio elemento `<a>`. Para uma ação, use `render={<button type="button" />}`: o foco aparece, mas o fundo não muda no hover.
+
+<Canvas of={ItemStories.Link} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<Item render={<a href="/painel" />}>
+  <ItemMedia variant="icon">
+    <HomeIcon aria-hidden="true" />
+  </ItemMedia>
+  <ItemContent>
+    <ItemTitle>Painel</ItemTitle>
+    <ItemDescription>Visão geral da conta e das atividades.</ItemDescription>
+  </ItemContent>
+</Item>`}
+/>
+
+## Dropdown
+
+Um Item pode ficar dentro de um `DropdownMenuItem`, num menu com mais informação por opção. O menu abre pelo teclado e o foco destaca a opção inteira.
+
+<Canvas of={ItemStories.Dropdown} />
+
+## RTL
+
+Os paddings e o alinhamento são lógicos (`px-*`, `text-start`), então o item segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop. A seta da direção leva `rtl:rotate-180`.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` num contêiner porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ItemStories.Rtl} />
+
+## Referência da API
+
+### Item
+
+O componente principal, para mostrar conteúdo com mídia, título, descrição e ações. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | "muted"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "xs"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="item"`, `data-variant` e `data-size`.
+
+### ItemGroup
+
+Agrupa itens relacionados. Tem `role="list"`: os filhos diretos precisam de `role="listitem"`.
+
+### ItemSeparator
+
+Um separador entre itens do grupo. Veja o aviso em **Acessibilidade**.
+
+### ItemMedia
+
+Mostra mídia, como ícones, imagens ou avatares.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "icon" | "image"'}</code></td><td><code>{'"default"'}</code></td></tr>
+  </tbody>
+</table>
+
+### ItemContent
+
+Envolve o título e a descrição do item.
+
+### ItemTitle
+
+O título do item.
+
+### ItemDescription
+
+A descrição do item, na cor `muted-foreground`.
+
+### ItemActions
+
+O contêiner de botões de ação ou de outros elementos interativos.
+
+### ItemHeader
+
+Um cabeçalho acima do conteúdo do item.
+
+### ItemFooter
+
+Um rodapé abaixo do conteúdo do item.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ItemGroup</code></td><td><code>{'<div role="list">'}</code></td><td><code>item-group</code></td></tr>
+    <tr><td><code>ItemSeparator</code></td><td><code>Separator</code></td><td><code>item-separator</code></td></tr>
+    <tr><td><code>ItemMedia</code></td><td><code>{'<div>'}</code></td><td><code>item-media</code></td></tr>
+    <tr><td><code>ItemContent</code></td><td><code>{'<div>'}</code></td><td><code>item-content</code></td></tr>
+    <tr><td><code>ItemTitle</code></td><td><code>{'<div>'}</code></td><td><code>item-title</code></td></tr>
+    <tr><td><code>ItemDescription</code></td><td><code>{'<p>'}</code></td><td><code>item-description</code></td></tr>
+    <tr><td><code>ItemActions</code></td><td><code>{'<div>'}</code></td><td><code>item-actions</code></td></tr>
+    <tr><td><code>ItemHeader</code></td><td><code>{'<div>'}</code></td><td><code>item-header</code></td></tr>
+    <tr><td><code>ItemFooter</code></td><td><code>{'<div>'}</code></td><td><code>item-footer</code></td></tr>
+  </tbody>
+</table>
+
+Todas aceitam as props do elemento delas.
+
+<Canvas of={ItemStories.Playground} />

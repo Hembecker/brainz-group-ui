@@ -1,11 +1,32 @@
 import { cn } from "cn"
 
+/*
+ * Kbd — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/kbd
+ * As cores, o contraste e o raio são os da Big Brain.
+ * - Um <kbd> com `data-slot="kbd"`; o KbdGroup agrupa várias teclas
+ *   (`data-slot="kbd-group"`). Estático, sem papel próprio.
+ * - Padrão: `muted-foreground` sobre `muted`, 6,6:1 no claro e 6,1:1 no
+ *   escuro. Dentro de um Button, o chip `muted` mantém esse contraste em
+ *   qualquer variante.
+ * - Dentro de um InputGroup: `bg-background` com `muted-foreground`, 7,4:1 no
+ *   claro e 8,1:1 no escuro, destacado do campo (`field`). O registro usava
+ *   `bg-input`, que dá 1,6:1 e 2,1:1 com esse texto. O `InputGroupAddon`
+ *   já aplica o mesmo `bg-background` nas teclas dele.
+ * - Dentro de um Tooltip (fundo `foreground`): `bg-muted-foreground` com
+ *   `text-background`, 7,4:1 no claro e 8,1:1 no escuro, um papel cheio nos
+ *   dois modos. O registro usava `bg-background/20` e `/10`, com a variante
+ *   `dark:`. O chip contra o tooltip tem 2,7:1 e 2,4:1: decorativo, o texto
+ *   é que vale.
+ * - Símbolos (⌘ ⇧ ⏎) são lidos de forma imprevisível: veja a página Docs.
+ */
+
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
       data-slot="kbd"
       className={cn(
-        "pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-lg bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none in-data-[slot=input-group]:bg-input in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background dark:in-data-[slot=tooltip-content]:bg-background/10 [&_svg:not([class*='size-'])]:size-3",
+        "pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-lg bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none in-data-[slot=input-group]:bg-background in-data-[slot=tooltip-content]:bg-muted-foreground in-data-[slot=tooltip-content]:text-background [&_svg:not([class*='size-'])]:size-3",
         className
       )}
       {...props}

@@ -1,0 +1,166 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ProgressStories from "./progress.stories";
+
+<Meta of={ProgressStories} />
+
+# Progress
+
+Mostra um indicador do andamento de uma tarefa, em geral como uma barra de progresso.
+
+<Canvas of={ProgressStories.Demo} />
+
+O exemplo do shadcn anima o valor de 13 para 66 com um temporizador. Aqui a barra já aparece com o valor final, porque um trecho de código literal não guarda estado.
+
+## Instalação
+
+O Progress usa o primitivo de progresso do Base UI.
+
+<Source language="bash" dark code="npx shadcn add progress" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/progress.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Progress } from "@workspace/ui/components/progress"
+
+<Progress value={33} aria-label="Progresso do envio" />`}
+/>
+
+## Composição
+
+### Com rótulo e valor
+
+Use o `ProgressLabel` e o `ProgressValue` para mostrar um rótulo e o valor.
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Progress,
+  ProgressLabel,
+  ProgressValue,
+} from "@workspace/ui/components/progress"
+
+<Progress value={56} className="w-full max-w-sm">
+  <ProgressLabel>Progresso do envio</ProgressLabel>
+  <ProgressValue />
+</Progress>`}
+/>
+
+<Source
+  language="text"
+  dark
+  code={`Progress
+├── ProgressLabel
+├── ProgressValue
+└── ProgressTrack
+    └── ProgressIndicator`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:** toda barra de progresso precisa de um nome que diga o que está andando ("Progresso do envio"). Com um `ProgressLabel`, o Base UI liga o rótulo à barra sozinho, por `aria-labelledby`. Sem um rótulo visível, passe `aria-label` ao `Progress`. Sem nenhum dos dois, a barra fica sem nome e reprova no axe.
+- **Valor exposto:** o `Progress` tem `role="progressbar"`, com `aria-valuenow`, `aria-valuemin`, `aria-valuemax` e `aria-valuetext` (por exemplo, "56%"). Quem lê é o leitor de tela. O texto do `ProgressValue` é só visual e fica com `aria-hidden`, então ele não é lido duas vezes.
+- **Indeterminado:** o `value` é obrigatório, e com `value={null}` a barra é indeterminada e o `aria-valuenow` some. Nesse caso, diga o que está acontecendo em texto, por exemplo "Enviando...".
+- **Contraste não textual (3:1):** o registro pintava o trilho de `muted`, que só tem 1,1:1 no branco e não aparecia como forma. Agora o trilho é `background` com um contorno `input`, que tem 4,6:1 no branco e 3,8:1 no fundo e no card escuros. O preenchimento usa a `primary`, com 5,2:1 sobre o trilho no claro e 3,8:1 no escuro. Com o trilho `muted` no escuro, o preenchimento daria só 2,9:1.
+- **Valor além da cor:** o trecho preenchido se distingue do vazio pela cor e pelo contorno do trilho. Se o número exato importa, mostre-o em texto com o `ProgressValue`, como no exemplo **Rótulo**.
+- **Mudança dinâmica:** o leitor de tela não anuncia cada mudança do valor. Para avisar uma etapa ou o fim, mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela ("Envio concluído"). Use `assertive` só para um erro crítico.
+- **Números no idioma:** o valor segue o idioma do navegador. Para fixar outro (como o árabe do Egito, no exemplo **RTL**), passe `locale` ao `Progress`.
+- **Movimento:** a largura do preenchimento anima (`transition-all`). Para quem pede menos movimento, acrescente `motion-reduce:transition-none` ao `ProgressIndicator`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Progress value={56} aria-label="Progresso do envio" />
+
+<div aria-live="polite" className="sr-only">
+  {concluido ? "Envio concluído" : ""}
+</div>`}
+/>
+
+## Rótulo
+
+Use o `ProgressLabel` e o `ProgressValue` para mostrar um rótulo e o valor.
+
+<Canvas of={ProgressStories.Rotulo} />
+
+## Controlado
+
+Uma barra de progresso controlada por um slider. O `Slider` recebe o valor como um array (`[valor]`); um número solto também funciona.
+
+<Canvas of={ProgressStories.Controlado} />
+
+<Source
+  language="tsx"
+  dark
+  code={`const [valor, setValor] = React.useState(50)
+
+<div className="flex w-full max-w-sm flex-col gap-4">
+  <Progress
+    value={valor}
+    aria-label="Progresso do envio"
+    className="w-full"
+  />
+  <div className="grid gap-3">
+    <Label id="controlado-ajuste">Ajustar o progresso</Label>
+    <Slider
+      aria-labelledby="controlado-ajuste"
+      value={[valor]}
+      onValueChange={(novo) => setValor((novo as number[])[0])}
+      min={0}
+      max={100}
+      step={1}
+    />
+  </div>
+</div>`}
+/>
+
+## RTL
+
+O `ProgressValue` usa `ms-auto` e o preenchimento cresce a partir do início, que em RTL é a direita. O exemplo passa `locale="ar-EG"` para os números saírem em algarismos arábico-índicos (٥٦٪): o `locale="ar"` sozinho, no Chromium, ainda escreve 0 a 9.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` num contêiner porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ProgressStories.Rtl} />
+
+## Referência da API
+
+O `Progress` é o `Progress.Root` do Base UI. Veja a [documentação do Progress do Base UI](https://base-ui.com/react/components/progress#api-reference) para a lista completa. As props mais usadas:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>{'number | null'}</code></td><td>obrigatório</td></tr>
+    <tr><td><code>min</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>100</code></td></tr>
+    <tr><td><code>locale</code></td><td><code>Intl.LocalesArgument</code></td><td>o do navegador</td></tr>
+    <tr><td><code>format</code></td><td><code>Intl.NumberFormatOptions</code></td><td>porcentagem</td></tr>
+    <tr><td><code>getAriaValueText</code></td><td><code>{'(formattedValue: string, value: number | null) => string'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="progress"`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Descrição</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ProgressLabel</code></td><td>O rótulo, ligado à barra por <code>aria-labelledby</code>.</td><td><code>progress-label</code></td></tr>
+    <tr><td><code>ProgressValue</code></td><td>O valor em texto, <code>aria-hidden</code>. Aceita uma função como filho.</td><td><code>progress-value</code></td></tr>
+    <tr><td><code>ProgressTrack</code></td><td>O trilho. O <code>Progress</code> já o inclui.</td><td><code>progress-track</code></td></tr>
+    <tr><td><code>ProgressIndicator</code></td><td>O preenchimento. O <code>Progress</code> já o inclui.</td><td><code>progress-indicator</code></td></tr>
+  </tbody>
+</table>
+
+<Canvas of={ProgressStories.Playground} />

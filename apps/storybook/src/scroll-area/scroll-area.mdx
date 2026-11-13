@@ -1,0 +1,125 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ScrollAreaStories from "./scroll-area.stories";
+
+<Meta of={ScrollAreaStories} />
+
+# Scroll Area
+
+Complementa a rolagem nativa com uma barra de estilo próprio, igual em todos os navegadores.
+
+<Canvas of={ScrollAreaStories.Demo} />
+
+## Instalação
+
+O ScrollArea usa o primitivo de scroll area do Base UI (`@base-ui/react/scroll-area`) e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add scroll-area" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/scroll-area.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { ScrollArea, ScrollBar } from "@workspace/ui/components/scroll-area"
+
+<ScrollArea
+  role="region"
+  aria-label="Notas de versão"
+  className="h-[200px] w-[350px] rounded-md border p-4"
+>
+  O conteúdo que rola entra aqui.
+</ScrollArea>`}
+/>
+
+## Composição
+
+Monte um `ScrollArea` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`ScrollArea
+└── ScrollBar`}
+/>
+
+O `ScrollArea` já inclui a barra vertical. Só use `ScrollBar` como filho quando precisar de outra, como a horizontal.
+
+## Acessibilidade
+
+- **Alcançável pelo teclado:** quem rola, e portanto quem recebe foco, é o viewport. Enquanto há o que rolar ele tem `tabindex="0"`, então o Tab chega até ele e as setas, o Page Up/Down, o Home e o End rolam o conteúdo. Quando o conteúdo cabe e não rola, o `tabindex` sai (`-1`), para não criar uma parada de Tab à toa. Sem isso, quem usa só o teclado não consegue ler o que está fora da vista (regra `scrollable-region-focusable` do axe).
+- **Região com nome:** um elemento focável precisa de nome. Dê ao `ScrollArea` `role="region"` e `aria-labelledby` apontando para um título visível, ou `aria-label`. O `ScrollArea` repassa `role`, `aria-label` e `aria-labelledby` ao viewport (o elemento focável) e não ao contêiner de fora, que é `role="presentation"`.
+- **Foco:** o viewport tem anel sólido de 3px no token `--ring`, afastado 2px pela cor do fundo.
+- **Barra de rolagem:** é decorativa e só para o mouse e o toque. A rolagem por teclado e pela roda do mouse é a nativa, e funciona com a barra escondida.
+- **Imagens e conteúdo:** imagens que informam algo levam `alt`; as decorativas levam `alt=""`. Não ponha controles sem nome no conteúdo.
+- **Zoom a 200%:** confira que a área continua alcançável e que o conteúdo não fica cortado sem como rolar.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ScrollArea
+  role="region"
+  aria-labelledby="versoes-titulo"
+  className="h-72 w-48 rounded-md border"
+>
+  <h4 id="versoes-titulo">Versões</h4>
+  …
+</ScrollArea>`}
+/>
+
+## Horizontal
+
+Use `ScrollBar` com `orientation="horizontal"` para rolar na horizontal. O conteúdo precisa ser mais largo que a área (`w-max`, e `whitespace-nowrap` para o texto).
+
+<Canvas of={ScrollAreaStories.Horizontal} />
+
+## RTL
+
+A barra e a rolagem seguem a direção de um ancestral com `dir="rtl"`. O exemplo usa `dir` no próprio `ScrollArea` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ScrollAreaStories.Rtl} />
+
+## Referência da API
+
+### ScrollArea
+
+O `ScrollArea` envolve o `ScrollArea.Root` do Base UI e repassa as props dele. Veja a [referência do Base UI Scroll Area](https://base-ui.com/react/components/scroll-area#api-reference) para a lista completa. As principais:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>role</code></td><td><code>string</code>: vai para o viewport; use <code>"region"</code></td><td>—</td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: vai para o viewport</td><td>—</td></tr>
+    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: vai para o viewport</td><td>—</td></tr>
+    <tr><td><code>overflowEdgeThreshold</code></td><td><code>{'number | Partial<{ xStart; xEnd; yStart; yEnd }>'}</code>: distância, em pixels, para marcar as bordas com conteúdo escondido</td><td><code>0</code></td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O contêiner recebe `data-slot="scroll-area"` e o viewport recebe `data-slot="scroll-area-viewport"`.
+
+### ScrollBar
+
+A barra de rolagem. Aceita as props do `ScrollArea.Scrollbar` do Base UI.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"vertical" | "horizontal"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
+    <tr><td><code>keepMounted</code></td><td><code>boolean</code>: mantém o elemento no DOM quando não há o que rolar</td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+A barra recebe `data-slot="scroll-area-scrollbar"` e `data-orientation`, e o polegar recebe `data-slot="scroll-area-thumb"`.
+
+<Canvas of={ScrollAreaStories.Playground} />

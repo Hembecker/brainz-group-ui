@@ -1,3 +1,19 @@
+/*
+ * Resizable — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/resizable
+ * Construído sobre o react-resizable-panels v4 (`Group`, `Panel`,
+ * `Separator`); a API de props é a dele. As cores e os tamanhos são os da
+ * Big Brain.
+ * - O handle é um `role="separator"` focável (Tab), com `aria-valuenow`, e
+ *   as setas redimensionam. Ele precisa de nome:
+ *   `aria-label` tem o padrão "Redimensionar painéis" (texto fixo do
+ *   componente em português), antes do spread, e deve ser trocado por um nome
+ *   específico ("Redimensionar a barra lateral") quando houver mais de um.
+ * - Anel de foco: sólido, 3px, no `ring`, afastado 2px pela cor do fundo. O
+ *   handle ganha `z-10` ao focar, para o anel não ficar por baixo do conteúdo
+ *   dos painéis vizinhos. A linha de 1px é `bg-border` (decorativa).
+ * - A pegada (`withHandle`) leva `aria-hidden`.
+ */
 "use client"
 
 import { cn } from "cn"
@@ -26,6 +42,7 @@ function ResizablePanel({ ...props }: ResizablePrimitive.PanelProps) {
 function ResizableHandle({
   withHandle,
   className,
+  "aria-label": ariaLabel = "Redimensionar painéis",
   ...props
 }: ResizablePrimitive.SeparatorProps & {
   withHandle?: boolean
@@ -33,14 +50,18 @@ function ResizableHandle({
   return (
     <ResizablePrimitive.Separator
       data-slot="resizable-handle"
+      aria-label={ariaLabel}
       className={cn(
-        "relative flex w-px items-center justify-center bg-border ring-offset-background after:absolute after:inset-y-0 after:start-1/2 after:w-1 after:-translate-x-1/2 rtl:after:translate-x-1/2 focus-visible:ring-3 focus-visible:ring-offset-2 focus-visible:ring-ring focus-visible:outline-hidden aria-[orientation=horizontal]:h-px aria-[orientation=horizontal]:w-full aria-[orientation=horizontal]:after:start-0 aria-[orientation=horizontal]:after:h-1 aria-[orientation=horizontal]:after:w-full aria-[orientation=horizontal]:after:translate-x-0 rtl:aria-[orientation=horizontal]:after:-translate-x-0 aria-[orientation=horizontal]:after:-translate-y-1/2 [&[aria-orientation=horizontal]>div]:rotate-90",
+        "relative flex w-px items-center justify-center bg-border ring-offset-background after:absolute after:inset-y-0 after:start-1/2 after:w-1 after:-translate-x-1/2 rtl:after:translate-x-1/2 focus-visible:ring-3 focus-visible:ring-offset-2 focus-visible:ring-ring focus-visible:outline-hidden aria-[orientation=horizontal]:h-px aria-[orientation=horizontal]:w-full aria-[orientation=horizontal]:after:start-0 aria-[orientation=horizontal]:after:h-1 aria-[orientation=horizontal]:after:w-full aria-[orientation=horizontal]:after:translate-x-0 rtl:aria-[orientation=horizontal]:after:-translate-x-0 aria-[orientation=horizontal]:after:-translate-y-1/2 focus-visible:z-10 [&[aria-orientation=horizontal]>div]:rotate-90",
         className
       )}
       {...props}
     >
       {withHandle && (
-        <div className="z-10 flex h-6 w-1 shrink-0 rounded-lg bg-border" />
+        <div
+          aria-hidden="true"
+          className="z-10 flex h-6 w-1 shrink-0 rounded-lg bg-border"
+        />
       )}
     </ResizablePrimitive.Separator>
   )

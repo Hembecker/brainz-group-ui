@@ -1,10 +1,28 @@
-import * as React from "react"
+/*
+ * ScrollArea — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/scroll-area
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Construído sobre o ScrollArea do Base UI. Quem rola, e portanto quem
+ *   recebe foco (`tabIndex` 0 enquanto há o que rolar, para o teclado
+ *   alcançar o conteúdo), é o Viewport; o Root é `role="presentation"`.
+ * - A11Y: por isso `role`, `aria-label` e `aria-labelledby` dados ao
+ *   `ScrollArea` são repassados ao Viewport, e não ao Root: é ali que a
+ *   região focável precisa do nome (`role="region"` + `aria-label`). Os
+ *   tipos das props não mudam; o resto das props continua no Root.
+ * - Anel de foco do Viewport: sólido, 3px, no `ring`, afastado 2px pela cor
+ *   do fundo (o Root não corta, não tem `overflow`).
+ * - O polegar da barra é `bg-border` (decorativo, a rolagem também funciona
+ *   por teclado e roda do mouse).
+ */
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { cn } from "cn"
 
 function ScrollArea({
   className,
   children,
+  role,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
   ...props
 }: ScrollAreaPrimitive.Root.Props) {
   return (
@@ -15,6 +33,9 @@ function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
+        role={role}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
         className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {children}

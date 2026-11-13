@@ -1,0 +1,226 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as PaginationStories from "./pagination.stories";
+
+<Meta of={PaginationStories} />
+
+# Pagination
+
+Paginação, com links de página, de página anterior e de próxima página.
+
+<Canvas of={PaginationStories.Demo} />
+
+## Instalação
+
+A Pagination usa o `Button` (o `buttonVariants`), o `lucide-react` e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add pagination" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/pagination.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@workspace/ui/components/pagination"
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="#" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#" aria-label="Ir para a página 1">1</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#" isActive aria-label="Ir para a página 2">
+        2
+      </PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#" aria-label="Ir para a página 3">3</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationEllipsis />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="#" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>`}
+/>
+
+## Composição
+
+Monte uma `Pagination` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Pagination
+└── PaginationContent
+    ├── PaginationItem
+    │   └── PaginationPrevious
+    ├── PaginationItem
+    │   └── PaginationLink
+    ├── PaginationItem
+    │   └── PaginationEllipsis
+    └── PaginationItem
+        └── PaginationNext`}
+/>
+
+## Acessibilidade
+
+- **Landmark e nome:** a raiz é um `<nav>` com `aria-label="Paginação"` (o registro usava "pagination", em inglês), e os itens ficam numa lista (`<ul>`). Se a página tiver mais de uma paginação, ou outro `<nav>`, os nomes precisam ser diferentes: troque o `aria-label` pela prop (por exemplo, "Paginação dos resultados").
+- **Links, não botões:** cada página é um `<a>` (navegação, com `href`), e `PaginationLink` o monta com `buttonVariants`. O registro usava `<Button render={<a />}>`, mas o Button do Base UI põe `role="button"` e o link deixava de ser um link para o leitor de tela. Se a troca de página não navega (uma tabela que carrega os dados no lugar), a regra do artigo é outra: use `<button>` para ação e `<a>` só para navegação.
+- **Página atual:** `isActive` marca o link com `aria-current="page"` e o desenha com a variante `outline`. A diferença não depende só da cor: o leitor de tela anuncia a página atual.
+- **Nomes específicos:** "Anterior" e "Próxima" levam `aria-label` ("Ir para a página anterior" e "Ir para a próxima página") que contém o texto visível, como pede o WCAG 2.5.3. Abaixo de `sm` o texto some e fica só a seta, e o `aria-label` mantém o nome. Um link só com número pode ganhar um nome mais claro: `aria-label="Ir para a página 3"`, que contém o "3" visível.
+- **Reticências:** `PaginationEllipsis` mostra o ícone (decorativo) e o texto `sr-only` "Mais páginas", que o leitor de tela lê (no registro o `aria-hidden` do contêiner escondia também esse texto). Elas não são um controle: para chegar às páginas omitidas, o usuário usa os links que estão visíveis.
+- **Ícones decorativos:** as setas e as reticências levam `aria-hidden="true"`.
+- **Foco:** o anel é o sólido do Button (3px, `--ring`, afastado 2px pela cor do fundo), nos dois modos.
+- **Contraste:** os números usam `foreground` sobre o fundo (ghost) e a variante `outline` na página atual. O axe confere o contraste nos dois modos.
+- **Teclado:** Tab percorre os links na ordem em que aparecem, e Enter segue o link.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Pagination aria-label="Paginação dos resultados">
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="?pagina=1" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?pagina=2" isActive aria-label="Ir para a página 2">
+        2
+      </PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="?pagina=3" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>`}
+/>
+
+## Simples
+
+Uma paginação simples, só com os números das páginas.
+
+<Canvas of={PaginationStories.Simples} />
+
+## Apenas ícones
+
+Use só os botões de anterior e de próxima, sem os números. Serve para uma tabela com o seletor de linhas por página. O seletor leva um rótulo persistente (`FieldLabel` ligado ao gatilho por `htmlFor` e `id`). Veja o [Select](?path=/docs/componentes-select--docs).
+
+Abaixo da largura `sm` o texto some e ficam só as setas; o `aria-label` mantém o nome do link.
+
+<Canvas of={PaginationStories.ApenasIcones} />
+
+## Next.js
+
+O `PaginationLink` renderiza um `<a>`. Para usar o `Link` do Next.js (ou o do seu roteador), aplique o `buttonVariants` ao componente do roteador, no lugar do `<a>` do `pagination.tsx`, mantendo `aria-current` e os `data-*`. O registro do shadcn faz o mesmo com um diff no componente: esta seção dele não é um exemplo, então não tem story aqui.
+
+<Source
+  language="tsx"
+  dark
+  code={`import Link from "next/link"
+
+import { buttonVariants } from "@workspace/ui/components/button"
+
+<Link
+  href="?pagina=3"
+  aria-current="page"
+  className={buttonVariants({ variant: "outline", size: "icon" })}
+>
+  3
+</Link>`}
+/>
+
+## RTL
+
+Os espaçamentos e os cantos são lógicos (`ps-*` e `pe-*`), e as setas de "Anterior" e de "Próxima" levam `rtl:rotate-180`. Em RTL, "Anterior" fica à direita, com a seta apontando para a direita, e "Próxima" fica à esquerda.
+
+O texto dos botões vem da prop `text` (o padrão é "Anterior" e "Próxima"); num app em outro idioma, passe-o e troque também o `aria-label`, que precisa conter o texto visível. O exemplo usa os números arábicos orientais, como o do shadcn.
+
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={PaginationStories.Rtl} />
+
+## Referência da API
+
+### Pagination
+
+O `<nav>` raiz. Aceita as props de um `<nav>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Paginação"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### PaginationContent e PaginationItem
+
+`PaginationContent` é a lista (`<ul>`) e `PaginationItem` é cada item (`<li>`). Aceitam as props de `<ul>` e `<li>`.
+
+### PaginationLink
+
+O link de uma página: um `<a>` com `buttonVariants`. Aceita as props de um `<a>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>isActive</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"'}</code></td><td><code>{'"icon"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Com `isActive`, o link leva `aria-current="page"`, `data-active` e a variante `outline`; sem ele, a variante é `ghost`. O elemento recebe `data-slot="pagination-link"`, `data-variant` e `data-size`.
+
+### PaginationPrevious e PaginationNext
+
+Os links de anterior e de próxima, com a seta e o texto. Aceitam as props de `PaginationLink`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>text</code></td><td><code>string</code></td><td><code>{'"Anterior"'}</code> / <code>{'"Próxima"'}</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Ir para a página anterior"'}</code> / <code>{'"Ir para a próxima página"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | …'}</code></td><td><code>{'"default"'}</code></td></tr>
+  </tbody>
+</table>
+
+### PaginationEllipsis
+
+As reticências de páginas omitidas (`<span>`, com o texto `sr-only` "Mais páginas"). Aceita as props de um `<span>`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Pagination</code></td><td><code>{'<nav>'}</code></td><td><code>pagination</code></td></tr>
+    <tr><td><code>PaginationContent</code></td><td><code>{'<ul>'}</code></td><td><code>pagination-content</code></td></tr>
+    <tr><td><code>PaginationItem</code></td><td><code>{'<li>'}</code></td><td><code>pagination-item</code></td></tr>
+    <tr><td><code>PaginationLink</code></td><td><code>{'<a>'}</code></td><td><code>pagination-link</code></td></tr>
+    <tr><td><code>PaginationEllipsis</code></td><td><code>{'<span>'}</code></td><td><code>pagination-ellipsis</code></td></tr>
+  </tbody>
+</table>

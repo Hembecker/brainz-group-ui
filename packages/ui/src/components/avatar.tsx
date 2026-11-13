@@ -2,6 +2,30 @@ import * as React from "react"
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 import { cn } from "cn"
 
+/*
+ * Avatar — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/avatar
+ * As cores e o contraste são os da Big Brain.
+ * - Construído sobre o Avatar do Base UI: `AvatarImage` só aparece quando a
+ *   imagem carrega, e o `AvatarFallback` ocupa o lugar enquanto isso (ou se
+ *   ela falhar). Composição: Avatar > AvatarImage, AvatarFallback e
+ *   AvatarBadge; AvatarGroup > Avatar + AvatarGroupCount. Todas as partes
+ *   expõem `data-slot`; o Avatar expõe também `data-size`.
+ * - Tamanhos: sm 24px, default 32px e lg 40px, a mesma escala dos controles.
+ *   O círculo (`rounded-full`) é do avatar, não do raio dos controles.
+ * - Nome acessível: com foto, o `alt` do `AvatarImage` (vazio se o avatar é
+ *   decorativo, como dentro de um botão que já tem nome). Só com iniciais, o
+ *   `Avatar` leva `role="img"` e `aria-label` com o nome da pessoa (as letras
+ *   do fallback viram parte da imagem). O selo é um ponto decorativo: o
+ *   estado ("online") entra no mesmo `aria-label`, nunca só na cor.
+ * - Sem cor com opacidade. Fallback: `muted-foreground` sobre `muted`, 6,6:1
+ *   no claro. Selo: `primary` com o anel `ring-background`. Uma cor própria no
+ *   selo (verde, vermelho) precisa de 3:1 contra o fundo nos dois modos.
+ * - Contorno do avatar com `border-border` e `mix-blend`, só decorativo.
+ * - Selo e grupo usam posições e margens lógicas (`end-0`, `-space-x`), então
+ *   funcionam em RTL. O `AvatarGroupCount` é um <div>: para o leitor de tela,
+ *   o "+3" precisa de um texto `sr-only` ao lado ("e mais 3 pessoas").
+ */
 function Avatar({
   className,
   size = "default",

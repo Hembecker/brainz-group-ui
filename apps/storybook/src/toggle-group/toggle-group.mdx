@@ -1,0 +1,170 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ToggleGroupStories from "./toggle-group.stories";
+
+<Meta of={ToggleGroupStories} />
+
+# Toggle Group
+
+Um conjunto de botões de duas posições, que podem ficar ligados ou desligados.
+
+<Canvas of={ToggleGroupStories.Demo} />
+
+## Instalação
+
+O ToggleGroup usa os primitivos de toggle e de toggle group do Base UI e o Toggle deste pacote (`toggleVariants`).
+
+<Source language="bash" dark code="npx shadcn add toggle-group" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/toggle-group.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@workspace/ui/components/toggle-group"
+
+<ToggleGroup aria-label="Alinhamento">
+  <ToggleGroupItem value="a">A</ToggleGroupItem>
+  <ToggleGroupItem value="b">B</ToggleGroupItem>
+  <ToggleGroupItem value="c">C</ToggleGroupItem>
+</ToggleGroup>`}
+/>
+
+Por padrão só um item fica ligado por vez. Use `multiple` para permitir vários. O valor é sempre uma lista (`defaultValue={["a"]}`).
+
+## Composição
+
+Monte um `ToggleGroup` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`ToggleGroup
+├── ToggleGroupItem
+└── ToggleGroupItem`}
+/>
+
+## Acessibilidade
+
+- **Nome do grupo:** o grupo tem `role="group"` e precisa de um nome, por `aria-label` ou por `aria-labelledby` apontando para um título visível ("Formatação do texto"). Sem isso, o leitor de tela não diz do que se trata.
+- **Nome de cada item:** um item só com ícone recebe `aria-label` ("Negrito"). Um item com texto visível não leva `aria-label`: o texto já é o nome, e o nome precisa conter o que aparece. O nome não muda com o estado.
+- **Estado:** cada item expõe `aria-pressed`. Mesmo no modo de seleção única, os itens são botões com `aria-pressed`, não opções de um radio.
+- **Ligado sem depender de uma cor fraca:** o item ligado é preenchido com `primary` (veja a seção de acessibilidade do Toggle: texto com 5,2:1, e 5,2:1 e 3,8:1 do preenchimento contra o fundo claro e o escuro). Filhos de um item não devem usar `text-muted-foreground`, que cairia abaixo de 4,5:1 sobre o preenchimento.
+- **Teclado:** Tab entra no grupo, Espaço ou Enter alterna o item focado e as setas movem o foco entre os itens (em RTL, a direção das setas se inverte). Com `loopFocus` (padrão), o foco volta ao primeiro item depois do último.
+- **Ícones decorativos:** levam `aria-hidden="true"`.
+- **Foco:** anel sólido de 3px no token `--ring`, afastado 2px pela cor do fundo. O item focado sobe na pilha (`z-10`), para o anel não ficar sob o vizinho quando os itens estão juntos (`spacing={0}`).
+- **Descrição:** uma ajuda sobre o grupo (como no exemplo Personalizado) liga-se por `aria-describedby`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ToggleGroup multiple aria-label="Formatação do texto">
+  <ToggleGroupItem value="bold" aria-label="Negrito">
+    <BoldIcon aria-hidden="true" />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="italic" aria-label="Itálico">
+    <ItalicIcon aria-hidden="true" />
+  </ToggleGroupItem>
+</ToggleGroup>`}
+/>
+
+## Outline
+
+Use `variant="outline"` para o estilo com borda.
+
+<Canvas of={ToggleGroupStories.Outline} />
+
+## Tamanho
+
+Use `size` para mudar o tamanho do grupo todo.
+
+<Canvas of={ToggleGroupStories.Tamanho} />
+
+## Espaçamento
+
+Use `spacing` para definir o espaço entre os itens, na escala do Tailwind (`spacing={2}` são 8px). `spacing={0}` junta os itens: as bordas se encontram e só as pontas ficam arredondadas.
+
+<Canvas of={ToggleGroupStories.Espacamento} />
+
+## Vertical
+
+Use `orientation="vertical"` para um grupo na vertical. As setas para cima e para baixo movem o foco.
+
+<Canvas of={ToggleGroupStories.Vertical} />
+
+## Desabilitado
+
+<Canvas of={ToggleGroupStories.Desabilitado} />
+
+## Personalizado
+
+Um exemplo controlado, com o grupo nomeado por um título (`aria-labelledby`) e descrito por um texto de ajuda (`aria-describedby`). Como o grupo é de seleção única, desligar o item ligado não zera o valor: o exemplo mantém o valor anterior.
+
+<Canvas of={ToggleGroupStories.Personalizado} />
+
+## RTL
+
+Os recuos, as bordas e os cantos são lógicos, então o grupo segue a direção de um ancestral com `dir="rtl"`. O exemplo usa `dir` no próprio grupo porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={ToggleGroupStories.Rtl} />
+
+## Referência da API
+
+### ToggleGroup
+
+O `ToggleGroup` envolve o `ToggleGroup` do Base UI e repassa todas as props dele. Veja a [referência do Base UI Toggle Group](https://base-ui.com/react/components/toggle-group#api-reference) para a lista completa. As principais:
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code> (nos itens)</td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code> (nos itens)</td></tr>
+    <tr><td><code>spacing</code></td><td><code>number</code>: espaço entre os itens</td><td><code>2</code></td></tr>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+    <tr><td><code>multiple</code></td><td><code>boolean</code>: permite vários itens ligados</td><td><code>false</code></td></tr>
+    <tr><td><code>value</code></td><td><code>string[]</code>: estado controlado</td><td>—</td></tr>
+    <tr><td><code>defaultValue</code></td><td><code>string[]</code>: estado inicial, sem controle</td><td>—</td></tr>
+    <tr><td><code>onValueChange</code></td><td><code>{'(value: string[], eventDetails) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>loopFocus</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>aria-label</code> / <code>aria-labelledby</code></td><td><code>string</code>: o nome do grupo</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="toggle-group"`, `data-variant`, `data-size`, `data-spacing` e `data-orientation`.
+
+### ToggleGroupItem
+
+Aceita as props do `Toggle` (veja a página do Toggle). `variant` e `size` vêm do grupo e prevalecem sobre os do item.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>string</code>: identifica o item no valor do grupo</td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há texto visível</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="toggle-group-item"`, `data-variant`, `data-size` e `data-spacing`. O estado fica em `aria-pressed`.
+
+## Histórico
+
+### 17/05/2026: espaçamento padrão
+
+O `spacing` padrão mudou de `0` para `2`, então o grupo mostra espaço entre os itens por padrão. Use `spacing={0}` para itens juntos.
+
+<Canvas of={ToggleGroupStories.Playground} />

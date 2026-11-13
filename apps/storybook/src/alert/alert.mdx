@@ -1,0 +1,207 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as AlertStories from "./alert.stories";
+
+<Meta of={AlertStories} />
+
+# Alert
+
+Mostra um destaque para chamar a atenção do usuário.
+
+<Canvas of={AlertStories.Demo} />
+
+## Instalação
+
+O Alert usa o `class-variance-authority` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add alert" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/alert.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@workspace/ui/components/alert"
+import { Button } from "@workspace/ui/components/button"
+
+<Alert>
+  <InfoIcon aria-hidden="true" />
+  <AlertTitle>Atenção!</AlertTitle>
+  <AlertDescription>
+    Você pode adicionar componentes e dependências ao app pela CLI.
+  </AlertDescription>
+  <AlertAction>
+    <Button size="xs" aria-label="Ativar a CLI">Ativar</Button>
+  </AlertAction>
+</Alert>`}
+/>
+
+## Composição
+
+Monte um `Alert` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Alert
+├── Ícone
+├── AlertTitle
+├── AlertDescription
+└── AlertAction`}
+/>
+
+## Acessibilidade
+
+- **Não é uma região viva:** o Alert estático é só um bloco de conteúdo, sem papel nenhum. O registro do shadcn fixava `role="alert"` em todo Alert, o que faz o leitor de tela interromper a fala para anunciar até um aviso comum, inclusive no carregamento da página. Aqui o `div` não tem papel, e você escolhe o que o leitor de tela faz (veja **Região viva**).
+- **Região viva:**
+  - `role="alert"` (assertivo, interrompe a fala) só para um **erro crítico inserido na página depois do carregamento**, como "Conexão perdida";
+  - `role="status"` ou `aria-live="polite"` para confirmações e avisos comuns que aparecem depois de uma ação, como "Rascunho salvo";
+  - não ponha papel nenhum num aviso que já está na página quando ela carrega: o leitor de tela o lê na ordem do conteúdo;
+  - a região precisa existir antes de o texto mudar. Se você monta o Alert já com o `role`, alguns leitores de tela não anunciam. Para mudanças repetidas, mantenha o contêiner `aria-live="polite"` sempre montado e troque só o texto dele.
+- **Título:** o `AlertTitle` é um `div`, então não entra na estrutura de títulos da página. Se o aviso precisa aparecer na navegação por títulos, coloque um heading dentro dele (`<h3>`), como no Card. Para um aviso curto, o `div` basta.
+- **Ícone:** decorativo, leva `aria-hidden="true"`. O sentido nunca depende só do ícone nem só da cor: o destrutivo tem o ícone e o texto ("Falha no pagamento"), porque quem não distingue o vermelho precisa da palavra.
+- **Contraste** (texto sobre o `card`, calculado nos dois modos):
+  - título e texto do `default`: 19,7:1 no claro e 16,7:1 no escuro;
+  - descrição (`muted-foreground`): 7,4:1 e 7,1:1;
+  - `destructive` (título e descrição, `text-destructive`): 4,8:1 no claro (red 600) e 6,0:1 no escuro (red 400). O registro deixava a descrição em `text-destructive/90`; sem a opacidade, o número acima vale para o título e para a descrição;
+  - o contorno (`border`) é decorativo.
+- **Ação:** o botão do `AlertAction` segue a regra do Button: nome específico (`aria-label="Ativar modo escuro"`, que contém o texto visível "Ativar"). O `AlertAction` reserva só 72px (`pe-18`) à direita, então use um rótulo visível curto e passe o nome completo por `aria-label`.
+- **Links:** os links dentro do título e da descrição ficam sublinhados e escurecem no hover (`foreground`).
+- **Cores personalizadas:** as cores do exemplo (âmbar) saem dos papéis do tema, então o contraste delas é por sua conta: confira texto e fundo nos dois modos (o exemplo tem `amber-900` sobre `amber-50`, e `amber-50` sobre `amber-950` no escuro).
+
+<Source
+  language="tsx"
+  dark
+  code={`{/* aviso comum que aparece depois de uma ação */}
+<Alert role="status">
+  <CheckCircle2Icon aria-hidden="true" />
+  <AlertTitle>Rascunho salvo</AlertTitle>
+  <AlertDescription>Suas alterações foram salvas.</AlertDescription>
+</Alert>
+
+{/* erro crítico inserido depois do carregamento */}
+<Alert variant="destructive" role="alert">
+  <AlertCircleIcon aria-hidden="true" />
+  <AlertTitle>Conexão perdida</AlertTitle>
+  <AlertDescription>Suas alterações não estão sendo salvas.</AlertDescription>
+</Alert>`}
+/>
+
+## Básico
+
+Um alerta básico, com ícone, título e descrição.
+
+<Canvas of={AlertStories.Basico} />
+
+## Destrutivo
+
+Use `variant="destructive"` para criar um alerta destrutivo.
+
+<Canvas of={AlertStories.Destrutivo} />
+
+## Ação
+
+Use o `AlertAction` para pôr um botão, ou outro elemento de ação, no alerta. Ele fica no canto do fim (à direita em LTR, à esquerda em RTL).
+
+<Canvas of={AlertStories.Acao} />
+
+## Cores personalizadas
+
+Para personalizar as cores, ponha classes como `bg-amber-50 dark:bg-amber-950` no `Alert`. Essas cores não são papéis do tema: confira o contraste nos dois modos (veja **Acessibilidade**).
+
+<Canvas of={AlertStories.CoresPersonalizadas} />
+
+## Região viva
+
+O `Alert` não anuncia nada sozinho. Passe `role="status"` para um aviso comum que aparece depois de uma ação, e `role="alert"` só para um erro crítico (veja **Acessibilidade**).
+
+<Canvas of={AlertStories.RegiaoViva} />
+
+## RTL
+
+Os recuos, o texto e a ação são lógicos (`text-start`, `pe`, `end`), então o alerta segue a direção de um ancestral com `dir="rtl"`: o ícone fica no começo da linha e a ação no fim. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` num `div` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={AlertStories.Rtl} />
+
+## Referência da API
+
+### Alert
+
+Mostra um destaque para chamar a atenção do usuário. Aceita todas as props de um `<div>`, inclusive `role` e `aria-live`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>role</code></td><td><code>string</code></td><td>— (veja <strong>Acessibilidade</strong>)</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="alert"`.
+
+### AlertTitle
+
+O título do alerta.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AlertDescription
+
+A descrição, ou o conteúdo, do alerta.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AlertAction
+
+Um elemento de ação, como um botão, posicionado no canto do fim do alerta.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Alert</code></td><td><code>{'<div>'}</code></td><td><code>alert</code></td></tr>
+    <tr><td><code>AlertTitle</code></td><td><code>{'<div>'}</code></td><td><code>alert-title</code></td></tr>
+    <tr><td><code>AlertDescription</code></td><td><code>{'<div>'}</code></td><td><code>alert-description</code></td></tr>
+    <tr><td><code>AlertAction</code></td><td><code>{'<div>'}</code></td><td><code>alert-action</code></td></tr>
+  </tbody>
+</table>
+
+Todas aceitam as props de um `<div>`.
+
+<Canvas of={AlertStories.Playground} />

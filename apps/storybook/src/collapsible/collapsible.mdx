@@ -1,0 +1,142 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CollapsibleStories from "./collapsible.stories";
+
+<Meta of={CollapsibleStories} />
+
+# Collapsible
+
+Um componente interativo que expande e recolhe um painel.
+
+<Canvas of={CollapsibleStories.Demo} />
+
+## Instalação
+
+O Collapsible usa o primitivo do Base UI (`@base-ui/react/collapsible`).
+
+<Source language="bash" dark code="npx shadcn add collapsible" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/collapsible.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@workspace/ui/components/collapsible"
+
+<Collapsible>
+  <CollapsibleTrigger>Posso usar no meu projeto?</CollapsibleTrigger>
+  <CollapsibleContent>
+    Sim. É livre para projetos pessoais e comerciais, sem atribuição.
+  </CollapsibleContent>
+</Collapsible>`}
+/>
+
+## Composição
+
+Monte um `Collapsible` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Collapsible
+├── CollapsibleTrigger
+└── CollapsibleContent`}
+/>
+
+## Acessibilidade
+
+- **Nome acessível:** o gatilho precisa de um nome específico ("Alternar detalhes do pedido"). Um botão só com ícone recebe o nome por texto `sr-only` (ou `aria-label`), como no exemplo principal. Como o nome é fixo, o estado vem de `aria-expanded`, e não de uma troca de texto como "Abrir" e "Fechar".
+- **Estado exposto:** o gatilho tem `aria-expanded` e, com o painel aberto, `aria-controls` apontando para ele. Fechado, o painel sai da árvore de acessibilidade. A seta ou o ícone do gatilho é decorativo (`aria-hidden="true"`) e gira por `group-data-panel-open/button:rotate-180`, que lê o estado do próprio gatilho.
+- **Gatilho com `render`:** o gatilho recebe o elemento pela prop `render` (um `Button`, por exemplo), sem um `div` em volta. Use `<button>` para alternar; não use um link.
+- **Teclado:** Tab chega ao gatilho; Enter e Espaço abrem e fecham. Não há setas.
+- **Foco visível:** o `Button` já traz o anel sólido de 3px no `--ring`, afastado 2px pelo fundo. O `CollapsibleTrigger` sozinho não tem estilo nenhum: se usá-lo sem o `Button`, dê a ele o anel (`focus-visible:ring-3 focus-visible:ring-ring`).
+- **Contraste:** o componente não pinta nada. O `data-open:bg-muted` do exemplo básico usa o papel cheio, com texto `foreground` (17,7:1 no claro, 14,3:1 no escuro).
+- **Conteúdo com campos:** quando o painel tem campos, cada um precisa do próprio rótulo e de um `id` único (veja **Painel de configurações**). Um painel aberto não muda a ordem do Tab: o conteúdo novo entra logo depois do gatilho.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Collapsible>
+  <CollapsibleTrigger render={<Button variant="ghost" size="icon" />}>
+    <ChevronsUpDownIcon aria-hidden="true" />
+    <span className="sr-only">Alternar detalhes do pedido</span>
+  </CollapsibleTrigger>
+  <CollapsibleContent>…</CollapsibleContent>
+</Collapsible>`}
+/>
+
+## Estado controlado
+
+Use as props `open` e `onOpenChange` para controlar o estado.
+
+<Canvas of={CollapsibleStories.EstadoControlado} />
+
+## Básico
+
+<Canvas of={CollapsibleStories.Basico} />
+
+## Painel de configurações
+
+Use um botão de gatilho para mostrar configurações adicionais. O botão só tem ícone: o nome vem do texto `sr-only`, e os dois ícones trocam pelo estado do gatilho (`group-data-panel-open/button`), sem estado no React. O exemplo do shadcn repete o mesmo `id` nos quatro campos; aqui cada campo tem o próprio rótulo e `id`.
+
+<Canvas of={CollapsibleStories.Configuracoes} />
+
+## Árvore de arquivos
+
+Use Collapsibles aninhados para montar uma árvore de arquivos. Num chat, esse é o padrão [File Tree](https://ui.shadcn.com/docs/ai-elements/base/file-tree). O estado do gatilho (aberto ou fechado) é lido pelo Base UI como `data-panel-open`, e não pelo `data-state` do Radix. O exemplo está escrito por extenso, sem uma função recursiva, para ser copiado como está.
+
+<Canvas of={CollapsibleStories.ArvoreDeArquivos} />
+
+## RTL
+
+Os recuos do exemplo são lógicos (`ms-5`), então o Collapsible segue a direção de um ancestral com `dir="rtl"`. O Collapsible não tem tecla que dependa da direção, mas o exemplo traz o `DirectionProvider` (de `@workspace/ui/components/direction`) como o do preview, para os outros componentes de uma página em RTL. Num app em RTL, coloque o `dir` e o `lang` no `<html>`. Setas de direção levam `rtl:rotate-180`. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={CollapsibleStories.Rtl} />
+
+## Referência da API
+
+O Collapsible é o do Base UI. Veja a [documentação do Base UI](https://base-ui.com/react/components/collapsible#api-reference) para a lista completa.
+
+### Collapsible
+
+A raiz. Expõe `data-slot="collapsible"`, e `data-open` quando aberto.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>open</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CollapsibleTrigger
+
+O botão que alterna o painel. Aceita `render` para trocar o elemento (um `Button`, por exemplo) e `nativeButton`, que diz se esse elemento é um `<button>` de verdade. Expõe `data-slot="collapsible-trigger"` e `data-panel-open` quando o painel está aberto.
+
+### CollapsibleContent
+
+O painel. Aceita `keepMounted` (mantém o conteúdo no DOM quando fechado) e `hiddenUntilFound` (a busca da página abre o painel). Expõe `data-slot="collapsible-content"`, `data-open` e `data-closed`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Collapsible</code></td><td><code>{'<div>'}</code></td><td><code>collapsible</code></td></tr>
+    <tr><td><code>CollapsibleTrigger</code></td><td><code>{'<button>'}</code></td><td><code>collapsible-trigger</code></td></tr>
+    <tr><td><code>CollapsibleContent</code></td><td><code>{'<div>'}</code></td><td><code>collapsible-content</code></td></tr>
+  </tbody>
+</table>
