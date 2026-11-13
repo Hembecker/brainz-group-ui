@@ -139,11 +139,10 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**. A 6006 fica para o Storybook do projeto antigo.
 
 ## Estado (2026-11-13)
-- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`) e `c5d313c` (`.gitignore`).
+- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`) e `f351923` (tema mist + blue), todos publicados.
 - **Remoto:** `origin` = https://github.com/Hembecker/big-brain-ui (privado). A branch `legacy/design-system` não foi enviada.
 - **Vercel:** projeto `big-brain-ui` no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://big-brain-ui.vercel.app. O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
 - **Histórico do projeto antigo:** a branch `legacy/design-system` tem os 4 commits dele (`07e12db` a `9e46818`). É só arquivo: não faça merge dela na `master`.
-- **Não commitado:** a troca para os tokens mist + blue do usuário, `baseColor: mist`, o outline do escuro como no shadcn e o separador do grupo em `muted-foreground`.
 - **Decisões da migração:**
   - stories e MDX em `apps/storybook`, componentes planos em `packages/ui`;
   - `separator.tsx` do registro apagado, porque o ButtonGroup usa o `Separator` do Base UI;
