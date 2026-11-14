@@ -45,7 +45,11 @@ async function abrirMenu(canvasElement: HTMLElement, nome: string) {
   await userEvent.click(await canvas.findByRole("button", { name: nome }))
   const menu = await screen.findByRole("menu", { name: nome })
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(menu).toBeVisible())
   return menu

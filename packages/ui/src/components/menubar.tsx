@@ -39,8 +39,8 @@ import { CheckIcon } from "lucide-react"
  *   ele importar para o leitor de tela, ponha `aria-keyshortcuts` no item.
  * - Foco do gatilho: o registro usava `outline-hidden` e só `hover`/
  *   `aria-expanded`, sem indicador de foco por teclado. Agora o gatilho usa o
- *   anel sólido (`focus-visible:ring-3 ring-ring ring-offset-2
- *   ring-offset-background`), como o Button.
+ *   anel sólido (`focus-visible:ring-3 ring-ring`), desenhado por dentro
+ *   (`ring-inset`) por causa da rolagem na barra (veja abaixo).
  * - Itens destacam com `focus:bg-accent focus:text-accent-foreground` (15,6:1
  *   no claro e 14,2:1 no escuro), sem anel, como no `DropdownMenu`.
  * - Item destrutivo em foco: o texto `destructive` sobre `accent` dava 4,3:1
@@ -58,16 +58,44 @@ import { CheckIcon } from "lucide-react"
  * - O estado de itens de marcar e de escolher é do Base UI: `checked`/
  *   `defaultChecked` e `value`/`defaultValue` (o indicador ganha
  *   `aria-hidden`; o estado vai por `aria-checked`).
+ * - Rolagem na barra (escolha do usuário): quando a barra não cabe na largura,
+ *   rola na horizontal dentro da própria barra, em vez de empurrar a página
+ *   (a 320px, ou com zoom de 400%). A barra de rolagem fica escondida
+ *   (`no-scrollbar`) e a dica de que há mais itens é o `scroll-fade-x` do
+ *   shadcn: a borda que tem conteúdo escondido se dissolve, e some quando não
+ *   há o que rolar. O fade só entra onde o navegador tem animações guiadas
+ *   pela rolagem; sem elas, o fallback do shadcn dissolveria as duas pontas
+ *   mesmo sem rolagem. Ele segue a direção da leitura em RTL. O
+ *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
+ *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
+ *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
+ *   afastamento de 2px).
  */
 
-function Menubar({ className, ...props }: MenubarPrimitive.Props) {
+// Na barra que rola, o focus() do navegador não rola um item que já aparece
+// em parte: ele ficava cortado na borda, dentro do fade. Isto traz o item
+// focado para dentro, respeitando o `scroll-padding`. Só age quando a barra
+// rola e o alvo está nela no DOM (o conteúdo dos portais fica de fora).
+function revelarItemFocado(event: React.FocusEvent<HTMLElement>) {
+  const barra = event.currentTarget
+  const alvo = event.target
+  if (alvo === barra || !barra.contains(alvo)) return
+  if (barra.scrollWidth <= barra.clientWidth) return
+  alvo.scrollIntoView({ block: "nearest", inline: "nearest" })
+}
+
+function Menubar({ className, onFocus, ...props }: MenubarPrimitive.Props) {
   return (
     <MenubarPrimitive
       data-slot="menubar"
       className={cn(
-        "flex h-8 items-center rounded-2xl border p-[3px]",
+        "flex h-8 items-center rounded-2xl border p-[3px] max-w-full overflow-x-auto overflow-y-hidden no-scrollbar scroll-px-10 supports-[animation-timeline:scroll()]:scroll-fade-x",
         className
       )}
+      onFocus={(event) => {
+        revelarItemFocado(event)
+        onFocus?.(event)
+      }}
       {...props}
     />
   )
@@ -97,7 +125,7 @@ function MenubarTrigger({
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
       className={cn(
-        "flex items-center rounded-2xl px-1.5 py-[2px] text-sm font-medium outline-hidden select-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-expanded:bg-muted",
+        "flex shrink-0 items-center rounded-2xl px-1.5 py-[2px] text-sm font-medium outline-hidden select-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset aria-expanded:bg-muted",
         className
       )}
       {...props}

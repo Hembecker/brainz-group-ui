@@ -74,7 +74,11 @@ async function abrirPrevia(canvasElement: HTMLElement) {
     name: "resumo-da-pesquisa.pdf",
   })
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(dialog).toBeVisible())
   return dialog

@@ -63,7 +63,10 @@ type Story = StoryObj<typeof meta>
 
 async function esperarAnimacoes() {
   for (let i = 0; i < 5; i++) {
-    const animacoes = document.getAnimations()
+    // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+    const animacoes = document
+      .getAnimations()
+      .filter((animacao) => animacao.timeline === document.timeline)
     if (animacoes.length === 0) return
     await Promise.allSettled(animacoes.map((animacao) => animacao.finished))
   }

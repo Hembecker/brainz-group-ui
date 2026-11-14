@@ -110,7 +110,11 @@ async function abrirPaleta(
   )
   const dialog = await screen.findByRole("dialog", { name: titulo })
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(dialog).toBeVisible())
   const busca = within(dialog).getByRole("combobox", { name: campo })

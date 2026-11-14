@@ -50,7 +50,11 @@ async function abrirPorTeclado(
     { timeout: 3000 }
   )
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(conteudo).toBeVisible())
   return { link, conteudo }

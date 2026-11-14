@@ -50,7 +50,11 @@ async function abrirPainel(link: RegExp) {
   await userEvent.keyboard("{Enter}")
   const item = await screen.findByRole("link", { name: link })
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(item).toBeVisible())
   return item

@@ -87,7 +87,11 @@ export const Demo: Story = {
       ).toBeVisible()
     )
     await Promise.allSettled(
-      document.getAnimations().map((animation) => animation.finished)
+      document
+        .getAnimations()
+        // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+        .filter((animation) => animation.timeline === document.timeline)
+        .map((animation) => animation.finished)
     )
   },
   render: () => (
@@ -164,7 +168,11 @@ export const Multiplo: Story = {
     await expect(privacidade).toHaveAttribute("aria-expanded", "true")
     await expect(notificacoes).toHaveAttribute("aria-expanded", "true")
     await Promise.allSettled(
-      document.getAnimations().map((animation) => animation.finished)
+      document
+        .getAnimations()
+        // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+        .filter((animation) => animation.timeline === document.timeline)
+        .map((animation) => animation.finished)
     )
   },
   render: () => (
@@ -339,7 +347,11 @@ export const Rtl: Story = {
     await userEvent.keyboard("{Enter}")
     await expect(segunda).toHaveAttribute("aria-expanded", "true")
     await Promise.allSettled(
-      document.getAnimations().map((animation) => animation.finished)
+      document
+        .getAnimations()
+        // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+        .filter((animation) => animation.timeline === document.timeline)
+        .map((animation) => animation.finished)
     )
   },
   render: () => (

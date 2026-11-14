@@ -31,8 +31,24 @@ import { cn } from "cn"
  * - Aba desabilitada: o Base UI usa `aria-disabled` e `data-disabled` (não o atributo
  *   `disabled`), então ela continua focável pelas setas, mas não ativa; fica
  *   apagada a 50% e sem contraste mínimo.
+ * - Rolagem na barra (escolha do usuário): quando a lista horizontal não cabe na largura,
+ *   rola na horizontal dentro da própria barra, em vez de empurrar a página
+ *   (a 320px, ou com zoom de 400%). A barra de rolagem fica escondida
+ *   (`no-scrollbar`) e a dica de que há mais itens é o `scroll-fade-x` do
+ *   shadcn: a borda que tem conteúdo escondido se dissolve, e some quando não
+ *   há o que rolar. O fade só entra onde o navegador tem animações guiadas
+ *   pela rolagem; sem elas, o fallback do shadcn dissolveria as duas pontas
+ *   mesmo sem rolagem. Ele segue a direção da leitura em RTL. O
+ *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
+ *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
+ *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
+ *   afastamento de 2px).
+ * - Sublinhado da `line` na horizontal: o registro o punha a `-5px` da aba, 1,5px
+ *   abaixo da lista, e a lista que rola o cortaria. Agora fica a `-3px`,
+ *   dentro dela.
  * - Anel de foco sólido de 3px no `ring`, afastado 2px pelo fundo, nas abas
- *   e também no painel (o painel entra na ordem do Tab, e o registro o
+ *   verticais e também no painel; nas abas horizontais ele é por dentro (veja
+ *   a rolagem acima). O painel (o painel entra na ordem do Tab, e o registro o
  *   deixava com `outline-none` sem anel).
  */
 
@@ -56,7 +72,7 @@ function Tabs({
 }
 
 const tabsListVariants = cva(
-  "group/tabs-list inline-flex w-fit items-center justify-center rounded-2xl p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col group-data-vertical/tabs:p-1 data-[variant=line]:rounded-none",
+  "group/tabs-list inline-flex w-fit items-center justify-center rounded-2xl p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-horizontal/tabs:max-w-full group-data-horizontal/tabs:overflow-x-auto group-data-horizontal/tabs:overflow-y-hidden group-data-horizontal/tabs:no-scrollbar group-data-horizontal/tabs:scroll-px-10 group-data-horizontal/tabs:supports-[animation-timeline:scroll()]:scroll-fade-x group-data-horizontal/tabs:justify-center-safe group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col group-data-vertical/tabs:p-1 data-[variant=line]:rounded-none",
   {
     variants: {
       variant: {
@@ -70,9 +86,22 @@ const tabsListVariants = cva(
   }
 )
 
+// Na barra que rola, o focus() do navegador não rola um item que já aparece
+// em parte: ele ficava cortado na borda, dentro do fade. Isto traz o item
+// focado para dentro, respeitando o `scroll-padding`. Só age quando a barra
+// rola e o alvo está nela no DOM (o conteúdo dos portais fica de fora).
+function revelarItemFocado(event: React.FocusEvent<HTMLElement>) {
+  const barra = event.currentTarget
+  const alvo = event.target
+  if (alvo === barra || !barra.contains(alvo)) return
+  if (barra.scrollWidth <= barra.clientWidth) return
+  alvo.scrollIntoView({ block: "nearest", inline: "nearest" })
+}
+
 function TabsList({
   className,
   variant = "default",
+  onFocus,
   ...props
 }: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants>) {
   return (
@@ -80,6 +109,10 @@ function TabsList({
       data-slot="tabs-list"
       data-variant={variant}
       className={cn(tabsListVariants({ variant }), className)}
+      onFocus={(event) => {
+        revelarItemFocado(event)
+        onFocus?.(event)
+      }}
       {...props}
     />
   )
@@ -90,10 +123,10 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-2xl border border-transparent! px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start group-data-vertical/tabs:px-3 group-data-vertical/tabs:py-0.5 hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative inline-flex h-[calc(100%-1px)] flex-1 shrink-0 items-center justify-center gap-1.5 rounded-2xl border border-transparent! px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start group-data-vertical/tabs:px-3 group-data-vertical/tabs:py-0.5 hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-data-horizontal/tabs:focus-visible:ring-inset group-data-horizontal/tabs:focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent",
         "data-active:bg-background data-active:text-foreground dark:data-active:bg-input/30",
-        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-end-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-3px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-end-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
         className
       )}
       {...props}

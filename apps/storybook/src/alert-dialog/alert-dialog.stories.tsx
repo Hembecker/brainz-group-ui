@@ -41,7 +41,11 @@ async function abrirAlerta(
   await userEvent.click(await canvas.findByRole("button", { name: gatilho }))
   const alerta = await screen.findByRole("alertdialog", { name: titulo })
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(alerta).toBeVisible())
   const box = alerta.getBoundingClientRect()

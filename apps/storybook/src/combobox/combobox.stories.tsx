@@ -68,7 +68,11 @@ async function abrirLista(canvasElement: HTMLElement, nome: string) {
   await userEvent.click(campo)
   const lista = await screen.findByRole("listbox")
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(lista).toBeVisible())
   return { campo, lista }

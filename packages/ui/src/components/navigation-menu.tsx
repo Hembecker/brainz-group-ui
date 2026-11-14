@@ -26,8 +26,9 @@ import { ChevronDownIcon } from "lucide-react"
  *   aberto e o link ativo usam `bg-muted` (era `bg-muted/50`) e os contornos do
  *   painel usam `ring-border` (era `ring-foreground/5` e
  *   `dark:ring-foreground/10`).
- * - Anel de foco: o gatilho e o link da barra usam o anel sólido, com
- *   afastamento de 2px. Dentro do painel, o link usa o mesmo anel sólido, por
+ * - Anel de foco: o gatilho e o link da barra usam o anel sólido,
+ *   desenhado por dentro (`ring-inset`), por causa da rolagem na barra (veja
+ *   abaixo). Dentro do painel, o link usa o mesmo anel sólido, também por
  *   dentro (`ring-inset`, sem afastamento), para não ser cortado pela borda do
  *   painel: o destaque `muted` sozinho mediria ~1,1:1 sobre o `popover`,
  *   abaixo dos 3:1 de um indicador de foco. O registro tirava esse anel
@@ -36,6 +37,18 @@ import { ChevronDownIcon } from "lucide-react"
  *   `data-ending-style:data-activation-direction=left:…` do
  *   `NavigationMenuContent` não são seletores válidos do Tailwind (não geram
  *   nada). O gatilho passou de `h-9` para `h-8`, a escala dos controles.
+ * - Rolagem na barra (escolha do usuário): quando a lista da barra não cabe na largura,
+ *   rola na horizontal dentro da própria barra, em vez de empurrar a página
+ *   (a 320px, ou com zoom de 400%). A barra de rolagem fica escondida
+ *   (`no-scrollbar`) e a dica de que há mais itens é o `scroll-fade-x` do
+ *   shadcn: a borda que tem conteúdo escondido se dissolve, e some quando não
+ *   há o que rolar. O fade só entra onde o navegador tem animações guiadas
+ *   pela rolagem; sem elas, o fallback do shadcn dissolveria as duas pontas
+ *   mesmo sem rolagem. Ele segue a direção da leitura em RTL. O
+ *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
+ *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
+ *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
+ *   afastamento de 2px).
  */
 
 function NavigationMenu({
@@ -49,7 +62,7 @@ function NavigationMenu({
     <NavigationMenuPrimitive.Root
       data-slot="navigation-menu"
       className={cn(
-        "group/navigation-menu relative flex max-w-max flex-1 items-center justify-center",
+        "group/navigation-menu relative flex max-w-max min-w-0 flex-1 items-center justify-center",
         className
       )}
       {...props}
@@ -60,17 +73,34 @@ function NavigationMenu({
   )
 }
 
+// Na barra que rola, o focus() do navegador não rola um item que já aparece
+// em parte: ele ficava cortado na borda, dentro do fade. Isto traz o item
+// focado para dentro, respeitando o `scroll-padding`. Só age quando a barra
+// rola e o alvo está nela no DOM (o conteúdo dos portais fica de fora).
+function revelarItemFocado(event: React.FocusEvent<HTMLElement>) {
+  const barra = event.currentTarget
+  const alvo = event.target
+  if (alvo === barra || !barra.contains(alvo)) return
+  if (barra.scrollWidth <= barra.clientWidth) return
+  alvo.scrollIntoView({ block: "nearest", inline: "nearest" })
+}
+
 function NavigationMenuList({
   className,
+  onFocus,
   ...props
 }: React.ComponentPropsWithRef<typeof NavigationMenuPrimitive.List>) {
   return (
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
       className={cn(
-        "group flex flex-1 list-none items-center justify-center gap-0",
+        "group flex min-w-0 flex-1 list-none items-center justify-center-safe gap-0 max-w-full overflow-x-auto overflow-y-hidden no-scrollbar scroll-px-10 supports-[animation-timeline:scroll()]:scroll-fade-x *:shrink-0",
         className
       )}
+      onFocus={(event) => {
+        revelarItemFocado(event)
+        onFocus?.(event)
+      }}
       {...props}
     />
   )
@@ -90,7 +120,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  "group/navigation-menu-trigger inline-flex h-8 w-max items-center justify-center rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-popup-open:bg-muted data-popup-open:hover:bg-muted data-open:bg-muted data-open:hover:bg-muted data-open:focus:bg-muted"
+  "group/navigation-menu-trigger inline-flex h-8 w-max items-center justify-center rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50 data-popup-open:bg-muted data-popup-open:hover:bg-muted data-open:bg-muted data-open:hover:bg-muted data-open:focus:bg-muted"
 )
 
 function NavigationMenuTrigger({
@@ -163,7 +193,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "flex items-center gap-2 rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background in-data-[slot=navigation-menu-content]:w-full in-data-[slot=navigation-menu-content]:focus-visible:ring-offset-0 in-data-[slot=navigation-menu-content]:focus-visible:ring-inset in-data-[slot=navigation-menu-content]:rounded-xl in-data-[slot=navigation-menu-content]:p-2 in-data-[slot=navigation-menu-content]:font-normal data-[active=true]:bg-muted data-[active=true]:hover:bg-muted data-[active=true]:focus:bg-muted [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center gap-2 rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset in-data-[slot=navigation-menu-content]:w-full in-data-[slot=navigation-menu-content]:rounded-xl in-data-[slot=navigation-menu-content]:p-2 in-data-[slot=navigation-menu-content]:font-normal data-[active=true]:bg-muted data-[active=true]:hover:bg-muted data-[active=true]:focus:bg-muted [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

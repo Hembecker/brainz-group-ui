@@ -42,7 +42,11 @@ async function abrirPopover(
   await userEvent.click(await canvas.findByRole("button", { name: gatilho }))
   const popover = await screen.findByRole("dialog", { name: nome })
   await Promise.allSettled(
-    document.getAnimations().map((animation) => animation.finished)
+    document
+      .getAnimations()
+      // As animações guiadas pela rolagem (o scroll-fade das barras) nunca terminam.
+      .filter((animation) => animation.timeline === document.timeline)
+      .map((animation) => animation.finished)
   )
   await waitFor(() => expect(popover).toBeVisible())
   return popover
