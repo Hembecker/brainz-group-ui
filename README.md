@@ -97,7 +97,7 @@ import { Spinner } from "@workspace/ui/components/spinner"
 </ButtonGroup>
 ```
 
-A biblioteca tem os 63 componentes do registro do shadcn (estilo `base-rhea`), instalados com `shadcn add --all` e revisados um a um: cores dos tokens da Big Brain (sem opacidade), anel de foco sólido, textos fixos em português, contrastes anotados no comentário do topo de cada arquivo e uma página Docs com uma story por seção da página do shadcn.
+A biblioteca tem os 63 componentes do registro do shadcn (estilo `base-rhea`), instalados com `shadcn add --all` e revisados um a um: cores dos tokens da Big Brain (sem opacidade, exceto o véu de fundo dos diálogos, o outline do Button no escuro e a linha removida do CodeBlock), anel de foco sólido, textos fixos em português, contrastes anotados no comentário do topo de cada arquivo e uma página Docs com uma story por seção da página do shadcn.
 
 - **Formulários:** Button, ButtonGroup, Input, InputGroup, InputOTP, Textarea, Label, Field, Checkbox, RadioGroup, Switch, Slider, Select, NativeSelect, Combobox, Toggle, ToggleGroup, Calendar e Questionnaire.
 - **Sobreposições e menus:** Dialog, AlertDialog, Sheet, Drawer, Popover, HoverCard, Tooltip, DropdownMenu, ContextMenu, Menubar, Command, NavigationMenu e Toast.

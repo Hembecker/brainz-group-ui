@@ -240,7 +240,7 @@ export const Desabilitado: Story = {
         id="desabilitado-codigo"
         maxLength={6}
         disabled
-        value="123456"
+        defaultValue="123456"
         aria-describedby="desabilitado-codigo-descricao"
       >
         <InputOTPGroup>

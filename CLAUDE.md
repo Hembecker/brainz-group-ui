@@ -85,7 +85,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - Função comum: no React 19 o `ref` chega como prop, sem `forwardRef`.
   - Expõe `data-slot` e, quando tem variantes, os valores resolvidos (`data-variant`, `data-size`, `data-orientation`).
   - Paddings, margens e cantos lógicos (`ps`/`pe`, `ms`/`me`, `rounded-s`/`rounded-e`, `border-s`), para funcionar em RTL.
-  - Nenhuma cor com opacidade (`bg-primary/80`, `bg-destructive/10`…) nos componentes revisados: os contrastes anotados nos tokens valem como estão. Exceção escolhida pelo usuário: o Button outline no escuro usa `dark:border-input dark:bg-input/30`, como no shadcn. Os componentes em revisão ainda têm as do registro.
+  - Nenhuma cor com opacidade (`bg-primary/80`, `bg-destructive/10`…) nos componentes revisados: os contrastes anotados nos tokens valem como estão. Exceção escolhida pelo usuário: o Button outline no escuro usa `dark:border-input dark:bg-input/30`, como no shadcn. Outras exceções anotadas: o véu `bg-black/30` de Dialog, AlertDialog, Sheet e Drawer e a linha removida do CodeBlock (`bg-destructive/10`, sem papel cheio equivalente).
   - Anel de foco: `focus-visible:ring-3 ring-ring ring-offset-2 ring-offset-background` (o mesmo vale com `focus-within:` ou um seletor `has-[…]:`), nunca o `ring-ring/30` ou `/50` do registro. Itens de menu e de lista destacam com `focus:bg-accent`, sem anel.
 - `apps/storybook/src/<nome>/<nome>.stories.tsx`: uma story por seção, na ordem da página do shadcn.
   - Cada story usa JSX literal, sem `args` e sem constantes, para o "Show code" dar um trecho que dá para copiar.
@@ -159,7 +159,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - Card: raio do rhea (~19px, maior que os ~13px dos controles, para cantos concêntricos), contorno `ring-border` em vez de `ring-foreground/5`, recuo de 20px (sm 16px), título com um heading dentro.
 - **Verificado:**
   - `typecheck`, `lint` e `build` (web e Storybook estático) limpos;
-  - `npm.cmd run test`: 509 stories passam com axe no claro, no escuro e em RTL;
+  - `npm.cmd run test`: 518 stories passam com axe no claro, no escuro e em RTL;
   - o axe deixa de fora, globalmente, só os spans `[data-base-ui-focus-guard]` do Base UI (falso positivo de `aria-hidden-focus`); o preview envolve as stories num `DirectionProvider`;
   - a primeira rodada do vitest com cache frio pode falhar com "Vite unexpectedly reloaded" (otimização de dependências); rodar de novo resolve;
   - no navegador: as três páginas Docs nos dois modos e em RTL, as alturas de 24/28/32/36px e o raio de ~13px (escala rhea), o anel sólido por Tab (inclusive no primário no escuro), o "Show code" só com o JSX e a Inter carregada;
@@ -168,6 +168,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - leitor de tela e zoom a 200% não foram conferidos em nenhum componente; a conferência visual foi por amostragem;
   - decisões de visual tomadas na revisão, para o usuário confirmar: Toggle ligado em `primary`; Progress com trilho contornado; Badge destrutivo sólido; aba ativa do escuro sem `bg-input/30`; `side` físico na Sidebar, no Sheet e no Drawer;
   - abaixo de 3:1 e não corrigidos: a linha e a pegada do Resizable e o polegar do ScrollArea (`bg-border`, ~1,2:1); o botão selecionado do Calendar sobre a faixa do intervalo no escuro (2,8:1); o `ItemSeparator` dentro de um `ItemGroup` reprova no axe (não há story com ele);
+  - o InputOTP com `defaultValue` gera um aviso do React no console (a biblioteca `input-otp` repassa `defaultValue` e `value` ao `<input>`); só aviso de desenvolvimento;
   - o `./lib/*` do `exports` de `packages/ui` aponta para `.ts`, então o `highlighter.tsx` não é importável como `@workspace/ui/lib/highlighter` (o hook usa import relativo);
   - o `typecheck` de `apps/web` não confere nada (`tsconfig.json` com `files: []`, herdado do template);
   - o `npm audit` aponta 17 avisos (2 baixos, 15 moderados), conferido depois do `add --all`;
