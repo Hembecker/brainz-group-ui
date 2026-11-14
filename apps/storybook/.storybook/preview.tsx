@@ -4,6 +4,7 @@ import type { Decorator, Preview } from "@storybook/react-vite"
 import { DirectionProvider } from "@workspace/ui/components/direction"
 
 import "@workspace/ui/globals.css"
+import "./docs.css"
 
 type Mode = "light" | "dark"
 type Direction = "ltr" | "rtl"

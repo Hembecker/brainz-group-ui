@@ -84,7 +84,7 @@ export const Demo: Story = {
     await esperarAnimacoes()
   },
   render: () => (
-    <Collapsible className="flex w-[350px] flex-col gap-2">
+    <Collapsible className="flex w-full max-w-[350px] flex-col gap-2">
       <div className="flex items-center justify-between gap-4 px-4">
         <h4 className="text-sm font-semibold">Pedido nº 4189</h4>
         <CollapsibleTrigger
@@ -119,7 +119,7 @@ function EstadoControladoExemplo() {
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="flex w-[350px] flex-col gap-2"
+      className="flex w-full max-w-[350px] flex-col gap-2"
     >
       <CollapsibleTrigger render={<Button variant="outline" />}>
         {open ? "Ocultar detalhes" : "Mostrar detalhes"}
@@ -145,7 +145,7 @@ export function Exemplo() {
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="flex w-[350px] flex-col gap-2"
+      className="flex w-full max-w-[350px] flex-col gap-2"
     >
       <CollapsibleTrigger render={<Button variant="outline" />}>
         {open ? "Ocultar detalhes" : "Mostrar detalhes"}
@@ -488,7 +488,7 @@ export const Rtl: Story = {
   render: () => (
     <DirectionProvider direction="rtl">
       <div dir="rtl" lang="ar">
-        <Collapsible className="flex w-[350px] flex-col gap-2">
+        <Collapsible className="flex w-full max-w-[350px] flex-col gap-2">
           <div className="flex items-center justify-between gap-4 px-4">
             <h4 className="text-sm font-semibold">الطلب #4189</h4>
             <CollapsibleTrigger

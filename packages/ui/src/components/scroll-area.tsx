@@ -11,8 +11,8 @@
  *   tipos das props não mudam; o resto das props continua no Root.
  * - Anel de foco do Viewport: sólido, 3px, no `ring`, afastado 2px pela cor
  *   do fundo (o Root não corta, não tem `overflow`).
- * - O polegar da barra é `bg-border` (decorativo, a rolagem também funciona
- *   por teclado e roda do mouse).
+ * - O polegar da barra é `bg-input`, para ter 3:1 como algo que se arrasta
+ *   (4,6:1 no branco, 3,8:1 no escuro). O registro usava `bg-border` (~1,2:1).
  */
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { cn } from "cn"
@@ -64,7 +64,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
-        className="relative flex-1 rounded-full bg-border"
+        className="relative flex-1 rounded-full bg-input"
       />
     </ScrollAreaPrimitive.Scrollbar>
   )

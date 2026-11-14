@@ -35,7 +35,10 @@ import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react
  *   `primary-foreground` (5,2:1 no claro e 3,8:1 contra o fundo no escuro,
  *   acima dos 3:1 de um controle); hoje `muted` com `foreground`; fora do mês
  *   `muted-foreground` (no botão, porque a variante ghost fixa o `text-foreground`) (7,4:1 no branco, 6,6:1 sobre `muted`); intervalo
- *   `muted`. O dia de hoje também leva `aria-current="date"` (acrescentado aqui, o
+ *   `muted`. No escuro, as pontas do intervalo ganham uma borda de 2px na
+ *   cor do fundo: sem ela, a primária tinha só 2,8:1 contra a faixa; com ela,
+ *   3,8:1. A faixa não escurece porque, no escuro, `card` e `popover` são a
+ *   mesma mist 900 e ela sumiria num Date Picker. O dia de hoje também leva `aria-current="date"` (acrescentado aqui, o
  *   DayPicker não põe) e "Hoje" no nome.
  * - Anel de foco do dia e dos botões de mês: o sólido de sempre (3px, `ring`,
  *   afastado 2px pela cor do fundo). No seletor de mês e ano (`captionLayout`
@@ -264,7 +267,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring group-data-[focused=true]/day:ring-offset-2 group-data-[focused=true]/day:ring-offset-background data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-e-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-s-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground data-[outside=true]:text-muted-foreground [&>span]:text-xs",
+        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring group-data-[focused=true]/day:ring-offset-2 group-data-[focused=true]/day:ring-offset-background data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-e-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-s-(--cell-radius) data-[range-start=true]:bg-primary dark:data-[range-start=true]:border-2 dark:data-[range-start=true]:border-background dark:data-[range-end=true]:border-2 dark:data-[range-end=true]:border-background data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground data-[outside=true]:text-muted-foreground [&>span]:text-xs",
         defaultClassNames.day,
         className
       )}

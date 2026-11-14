@@ -28,6 +28,7 @@ import {
   ItemGroup,
   ItemHeader,
   ItemMedia,
+  ItemSeparator,
   ItemTitle,
 } from "@workspace/ui/components/item"
 
@@ -330,6 +331,7 @@ export const Grupo: Story = {
           </Button>
         </ItemActions>
       </Item>
+      <ItemSeparator />
       <Item variant="outline" role="listitem">
         <ItemMedia>
           <Avatar aria-hidden="true">
@@ -351,6 +353,7 @@ export const Grupo: Story = {
           </Button>
         </ItemActions>
       </Item>
+      <ItemSeparator />
       <Item variant="outline" role="listitem">
         <ItemMedia>
           <Avatar aria-hidden="true">

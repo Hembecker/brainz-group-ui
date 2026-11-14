@@ -748,12 +748,17 @@ export const Inset: Story = {
       "data-variant",
       "inset"
     )
-    // The inset sits next to the sidebar, not under it. Not under the global
-    // RTL mode: `side` is physical, so this sidebar stays on the left while
-    // the flex row flips (use `side="right"` in RTL, see the RTL story).
-    if (document.documentElement.dir !== "rtl") {
-      const barra = pegar(canvasElement, "[data-slot=sidebar-container]")
-      const inset = pegar(canvasElement, "[data-slot=sidebar-inset]")
+    // The inset sits next to the sidebar, not under it. Without `side`, the
+    // sidebar follows the direction: on the left in LTR (the inset to its
+    // right) and on the right in RTL (the inset to its left), also in the
+    // global RTL mode.
+    const barra = pegar(canvasElement, "[data-slot=sidebar-container]")
+    const inset = pegar(canvasElement, "[data-slot=sidebar-inset]")
+    if (document.documentElement.dir === "rtl") {
+      await expect(inset.getBoundingClientRect().right).toBeLessThanOrEqual(
+        barra.getBoundingClientRect().left + 2
+      )
+    } else {
       await expect(inset.getBoundingClientRect().left).toBeGreaterThanOrEqual(
         barra.getBoundingClientRect().right - 2
       )
@@ -816,9 +821,15 @@ export const Offcanvas: Story = {
     await expect(link).toBeVisible()
 
     // The border faces the page: physical, so on the right of a left sidebar
-    // (the registry's `border-e` went to the screen edge in RTL).
-    await expect(getComputedStyle(container).borderRightWidth).toBe("1px")
-    await expect(getComputedStyle(container).borderLeftWidth).toBe("0px")
+    // (LTR) and on the left of a right sidebar (RTL, where the sidebar follows
+    // the direction). The registry's `border-e` went to the screen edge in RTL.
+    const rtl = document.documentElement.dir === "rtl"
+    await expect(getComputedStyle(container).borderRightWidth).toBe(
+      rtl ? "0px" : "1px"
+    )
+    await expect(getComputedStyle(container).borderLeftWidth).toBe(
+      rtl ? "1px" : "0px"
+    )
 
     // Collapsed, the panel leaves the screen and nothing in it takes focus.
     await userEvent.click(gatilho)
@@ -826,9 +837,15 @@ export const Offcanvas: Story = {
       expect(barra).toHaveAttribute("data-state", "collapsed")
     )
     await esperarAnimacoes()
-    await expect(container.getBoundingClientRect().right).toBeLessThanOrEqual(
-      caixa.getBoundingClientRect().left + 2
-    )
+    if (rtl) {
+      await expect(container.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+        caixa.getBoundingClientRect().right - 2
+      )
+    } else {
+      await expect(container.getBoundingClientRect().right).toBeLessThanOrEqual(
+        caixa.getBoundingClientRect().left + 2
+      )
+    }
     await expect(link).not.toBeVisible()
     gatilho.focus()
     for (let i = 0; i < 4; i++) {
@@ -1690,8 +1707,8 @@ export const Rtl: Story = {
     conferirDesktop()
     await conferirContido(canvasElement)
 
-    // `side` is physical: in RTL the sidebar goes to the right edge by hand,
-    // and the content is on its left.
+    // Without `side`, the sidebar follows the direction: in RTL it opens on
+    // the right edge, and the content is on its left.
     const container = pegar(canvasElement, "[data-slot=sidebar-container]")
     const inset = pegar(canvasElement, "[data-slot=sidebar-inset]")
     const caixa = pegar(canvasElement, "[data-caixa]")
@@ -1721,7 +1738,7 @@ export const Rtl: Story = {
     <div dir="rtl" lang="ar">
       <DirectionProvider direction="rtl">
         <SidebarProvider>
-          <Sidebar side="right" dir="rtl" collapsible="icon">
+          <Sidebar dir="rtl" collapsible="icon">
             <SidebarHeader>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -1753,7 +1770,7 @@ export const Rtl: Story = {
                       <CollapsibleTrigger
                         render={
                           <SidebarMenuButton
-                            tooltip={{ children: "ملعب", side: "left" }}
+                            tooltip="ملعب"
                           />
                         }
                       >
@@ -1786,7 +1803,7 @@ export const Rtl: Story = {
                       <CollapsibleTrigger
                         render={
                           <SidebarMenuButton
-                            tooltip={{ children: "النماذج", side: "left" }}
+                            tooltip="النماذج"
                           />
                         }
                       >

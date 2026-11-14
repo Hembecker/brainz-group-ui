@@ -11,7 +11,9 @@
  *   específico ("Redimensionar a barra lateral") quando houver mais de um.
  * - Anel de foco: sólido, 3px, no `ring`, afastado 2px pela cor do fundo. O
  *   handle ganha `z-10` ao focar, para o anel não ficar por baixo do conteúdo
- *   dos painéis vizinhos. A linha de 1px é `bg-border` (decorativa).
+ *   dos painéis vizinhos. A linha de 1px é `bg-border` (decorativa); a
+ *   pegada (`withHandle`) é `bg-input`, para ter 3:1 como algo que se
+ *   arrasta (4,6:1 no branco, 3,8:1 no escuro).
  * - A pegada (`withHandle`) leva `aria-hidden`.
  */
 "use client"
@@ -60,7 +62,7 @@ function ResizableHandle({
       {withHandle && (
         <div
           aria-hidden="true"
-          className="z-10 flex h-6 w-1 shrink-0 rounded-lg bg-border"
+          className="z-10 flex h-6 w-1 shrink-0 rounded-lg bg-input"
         />
       )}
     </ResizablePrimitive.Separator>

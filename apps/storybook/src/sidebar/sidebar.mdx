@@ -201,7 +201,7 @@ O componente principal, que renderiza uma barra que recolhe.
 </SidebarProvider>`}
 />
 
-Na variante `inset`, a margem do `SidebarInset` é lógica (`ms-0`): com `side` contrário à direção da página, ela fica do lado errado.
+Na variante `inset`, a margem do `SidebarInset` acompanha o lado resolvido da barra (`ml-0` com a barra à esquerda, `mr-0` à direita), em LTR e em RTL.
 
 ### Recolhível
 
@@ -219,7 +219,7 @@ Na variante `inset`, a margem do `SidebarInset` é lógica (`ms-0`): com `side` 
 
 ### Lado
 
-`side` é `left` (padrão) ou `right`. Os dois são lados **físicos**, como no Sheet: em RTL a barra não troca de lado sozinha. Veja **RTL**.
+`side` é `left` ou `right`. Sem `side`, a barra abre no **início da linha**: na esquerda em LTR e na direita em RTL (a direção vem do `useDirection`, do `DirectionProvider`). Com `side="left"` ou `side="right"` explícito, o lado é **físico**, como no Sheet, em qualquer direção. Veja **RTL**.
 
 <Canvas of={SidebarStories.LadoDireito} />
 
@@ -590,19 +590,15 @@ O `isActive` põe `data-active` no botão (não `data-active="true"`): a classe 
 
 ## RTL
 
-Os recuos, as margens e os cantos são lógicos (`ps`, `pe`, `ms`, `me`, `rounded-s`), e o ícone do `SidebarTrigger` gira em RTL (`rtl:rotate-180`). A posição da barra é **física**: `side="left"` é a borda esquerda, em LTR e em RTL. Em RTL a barra não troca de lado sozinha: passe `side="right"` e `dir="rtl"`, como no exemplo do shadcn. O `dir` só chega ao Sheet do celular; no desktop a direção vem do ancestral.
+Os recuos, as margens e os cantos são lógicos (`ps`, `pe`, `ms`, `me`, `rounded-s`), e o ícone do `SidebarTrigger` gira em RTL (`rtl:rotate-180`). Sem `side`, a barra segue a direção: abre na esquerda em LTR e na direita em RTL, lida do `useDirection` (o `DirectionProvider` do Base UI, que precisa concordar com o `dir` do `<html>` ou de um ancestral). Não passe `side` para o layout inverter sozinho, como no exemplo do shadcn. `side="left"` e `side="right"` explícitos continuam **físicos**: a borda da tela, em LTR e em RTL. O lado resolvido vale também para o Sheet do celular, a `SidebarRail`, a margem do `SidebarInset` e o `side` do tooltip do botão recolhido (do lado voltado para a página). O `dir` da `Sidebar` só chega ao Sheet do celular; no desktop a direção vem do ancestral.
+
+Um `side` contrário à direção (como `side="left"` em RTL) deixa o vão da barra, que fica no fluxo, no início da linha, e a barra fixa na borda oposta: evite.
 
 A borda da barra voltada para a página é física (`border-r` na esquerda, `border-l` na direita), no lugar do `border-e` e `border-s` do registro, que em RTL iam para a borda da tela.
 
-Os menus abrem num portal no `body`: passe `dir` e `lang` ao `DropdownMenuContent`, e `side="inline-end"` para ele abrir no fim da linha. Com a barra à direita, o tooltip da barra recolhida também precisa de `side: "left"` (o padrão dele é `right`):
+Os menus abrem num portal no `body`: passe `dir` e `lang` ao `DropdownMenuContent`, e `side="inline-end"` para ele abrir no fim da linha. O tooltip da barra recolhida abre sozinho do lado voltado para a página (`right` com a barra à esquerda, `left` com ela à direita), sem `side` à mão; um `side` seu em `tooltip={{ … }}` prevalece.
 
-<Source
-  language="tsx"
-  dark
-  code={`<SidebarMenuButton tooltip={{ children: "ملعب", side: "left" }} />`}
-/>
-
-Para ver a página inteira em RTL, use o seletor **Direção** da barra de ferramentas: as stories que não passam `side="right"` ficam com a barra na esquerda e o conteúdo por baixo dela, como descrito acima. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+Para ver a página inteira em RTL, use o seletor **Direção** da barra de ferramentas: as stories sem `side` abrem a barra na direita, e as que passam `side` explícito ficam onde ele manda. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={SidebarStories.Rtl} />
 
@@ -632,7 +628,7 @@ Todas as partes repassam as props do elemento que renderizam (o `SidebarInput` e
     <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
   </thead>
   <tbody>
-    <tr><td><code>side</code></td><td><code>{'"left" | "right"'}</code> (físico)</td><td><code>{'"left"'}</code></td></tr>
+    <tr><td><code>side</code></td><td><code>{'"left" | "right"'}</code> (físico)</td><td>o início da linha (<code>{'"left"'}</code> em LTR, <code>{'"right"'}</code> em RTL)</td></tr>
     <tr><td><code>variant</code></td><td><code>{'"sidebar" | "floating" | "inset"'}</code></td><td><code>{'"sidebar"'}</code></td></tr>
     <tr><td><code>collapsible</code></td><td><code>{'"offcanvas" | "icon" | "none"'}</code></td><td><code>{'"offcanvas"'}</code></td></tr>
     <tr><td><code>dir</code></td><td><code>{'"ltr" | "rtl"'}</code> (só chega ao Sheet do celular)</td><td>—</td></tr>

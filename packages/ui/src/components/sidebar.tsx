@@ -6,6 +6,7 @@ import { cn } from "cn"
 
 import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 import { Button } from "@workspace/ui/components/button"
+import { useDirection } from "@workspace/ui/components/direction"
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 import {
@@ -53,9 +54,15 @@ import { PanelLeftIcon } from "lucide-react"
  *   `SIDEBAR_WIDTH_ICON` (3rem) são constantes do arquivo. Para uma sidebar
  *   diferente, sobrescreva `--sidebar-width` no `style` do SidebarProvider (o
  *   do celular só muda pela constante: `--sidebar-width-mobile` não é lido).
- * - `side` é FÍSICO (`left` ou `right`), como no Sheet. Em RTL a barra NÃO
- *   troca de lado sozinha: passe `side="right"` e `dir="rtl"`. O `dir` só
- *   chega ao Sheet do celular; no desktop a direção vem do ancestral.
+ * - `side` é FÍSICO (`left` ou `right`, como no Sheet), mas SEM `side` a barra
+ *   segue a direção: abre no início da linha (esquerda em LTR, direita em RTL),
+ *   lida do `useDirection` (o `DirectionProvider` do Base UI, que o Storybook já
+ *   põe em volta das stories). `side="left"` ou `"right"` explícito vale como
+ *   está, em qualquer direção. O lado resolvido é que vai para o `data-side`, o
+ *   Sheet do celular, a `SidebarRail`, a margem do `SidebarInset` e o `side` do
+ *   tooltip do botão recolhido (do lado voltado para a página). O `dir` só chega
+ *   ao Sheet do celular; no desktop o `dir` vem do ancestral, e o
+ *   `DirectionProvider` precisa concordar com ele.
  * - Offcanvas recolhido: o painel sai da tela, mas o registro o deixava
  *   focável. Aqui os filhos da barra (menos a `SidebarRail`, que é o que
  *   reabre com o mouse) ficam `invisible` quando recolhidos, com a transição de
@@ -65,15 +72,18 @@ import { PanelLeftIcon } from "lucide-react"
  *   claro e 7,1:1 no escuro sobre a sidebar). O contorno da variante
  *   `outline` do botão de menu usava `hsl(var(--sidebar-border))`, que não
  *   gerava nada (os tokens são `oklch`): agora é `var(--sidebar-border)`.
- * - Bordas físicas: a borda da barra voltada para a página usa `border-r` e
- *   `border-l` no lugar de `border-e`/`border-s` do registro, que em RTL
- *   iam para a borda da tela (como no Sheet).
+ * - Bordas e posições físicas: a borda da barra voltada para a página usa
+ *   `border-r` e `border-l` no lugar de `border-e`/`border-s` do registro, que
+ *   em RTL iam para a borda da tela (como no Sheet). O mesmo vale para a
+ *   `SidebarRail` (`left`/`right`, sem inversão em RTL) e para a margem do
+ *   `SidebarInset` na variante `inset` (`ml`/`mr` pelo `data-side` da barra).
  * - Anel de foco: `ring-sidebar-ring` sólido com `focus-visible:ring-3`
  *   (3,4:1 na sidebar no claro e 6,7:1 no escuro), sem afastamento: a barra
  *   tem fundo próprio. Não troque pelo padrão `ring-ring`.
- * - Limite conhecido: na variante `inset`, a margem do `SidebarInset` é
- *   lógica (`ms-0`), então com `side` contrário à direção ela fica do lado
- *   errado.
+ * - Limite conhecido: o vão da barra (`sidebar-gap`) fica no fluxo, no início
+ *   da linha, e a barra é `fixed` no lado físico. Com `side` contrário à
+ *   direção (por exemplo `side="left"` em RTL) os dois ficam em bordas
+ *   opostas: deixe `side` de fora para seguir a direção.
  */
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -94,6 +104,19 @@ type SidebarContextProps = {
 }
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
+
+type SidebarSide = "left" | "right"
+
+// Sem `side`, a barra abre no início da linha: esquerda em LTR, direita em RTL.
+function resolveSidebarSide(
+  side: SidebarSide | undefined,
+  direction: "ltr" | "rtl"
+): SidebarSide {
+  return side ?? (direction === "rtl" ? "right" : "left")
+}
+
+// O lado resolvido da `Sidebar` mais próxima (para o tooltip do botão de menu).
+const SidebarSideContext = React.createContext<SidebarSide | null>(null)
 
 function useSidebar() {
   const context = React.useContext(SidebarContext)
@@ -201,7 +224,7 @@ function SidebarProvider({
 }
 
 function Sidebar({
-  side = "left",
+  side: sideProp,
   variant = "sidebar",
   collapsible = "offcanvas",
   className,
@@ -209,24 +232,28 @@ function Sidebar({
   dir,
   ...props
 }: React.ComponentProps<"div"> & {
-  side?: "left" | "right"
+  side?: SidebarSide
   variant?: "sidebar" | "floating" | "inset"
   collapsible?: "offcanvas" | "icon" | "none"
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const direction = useDirection()
+  const side = resolveSidebarSide(sideProp, direction)
 
   if (collapsible === "none") {
     return (
-      <div
-        data-slot="sidebar"
-        className={cn(
-          "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </div>
+      <SidebarSideContext.Provider value={side}>
+        <div
+          data-slot="sidebar"
+          className={cn(
+            "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </div>
+      </SidebarSideContext.Provider>
     )
   }
 
@@ -250,7 +277,9 @@ function Sidebar({
             <SheetTitle>Barra lateral</SheetTitle>
             <SheetDescription>Exibe a barra lateral no celular.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <SidebarSideContext.Provider value={side}>
+            <div className="flex h-full w-full flex-col">{children}</div>
+          </SidebarSideContext.Provider>
         </SheetContent>
       </Sheet>
     )
@@ -295,7 +324,9 @@ function Sidebar({
           data-slot="sidebar-inner"
           className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-2xl group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border group-data-[collapsible=offcanvas]:[&>:not([data-slot=sidebar-rail])]:invisible [&>:not([data-slot=sidebar-rail])]:transition-[visibility] [&>:not([data-slot=sidebar-rail])]:duration-200"
         >
-          {children}
+          <SidebarSideContext.Provider value={side}>
+            {children}
+          </SidebarSideContext.Provider>
         </div>
       </div>
     </div>
@@ -341,12 +372,12 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
       onClick={toggleSidebar}
       title="Alternar barra lateral"
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
-        "in-data-[side=left]:cursor-w-resize rtl:in-data-[side=left]:cursor-e-resize in-data-[side=right]:cursor-e-resize rtl:in-data-[side=right]:cursor-w-resize",
-        "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
-        "group-data-[collapsible=offcanvas]:translate-x-0 rtl:group-data-[collapsible=offcanvas]:-translate-x-0 group-data-[collapsible=offcanvas]:after:start-full hover:group-data-[collapsible=offcanvas]:bg-sidebar",
-        "[[data-side=left][data-collapsible=offcanvas]_&]:-end-2",
-        "[[data-side=right][data-collapsible=offcanvas]_&]:-start-2",
+        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex -translate-x-1/2",
+        "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
+        "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
+        "group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-sidebar",
+        "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
+        "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
         className
       )}
       {...props}
@@ -359,7 +390,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ms-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2",
+        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:peer-data-[side=left]:ml-0 md:peer-data-[variant=inset]:peer-data-[side=right]:mr-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[side=left]:peer-data-[state=collapsed]:ml-2 md:peer-data-[variant=inset]:peer-data-[side=right]:peer-data-[state=collapsed]:mr-2",
         className
       )}
       {...props}
@@ -565,6 +596,11 @@ function SidebarMenuButton({
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar()
+  const direction = useDirection()
+  const sidebarSide = resolveSidebarSide(
+    React.useContext(SidebarSideContext) ?? undefined,
+    direction
+  )
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
@@ -597,7 +633,7 @@ function SidebarMenuButton({
     <Tooltip>
       {comp}
       <TooltipContent
-        side="right"
+        side={sidebarSide === "right" ? "left" : "right"}
         align="center"
         hidden={state !== "collapsed" || isMobile}
         {...tooltip}

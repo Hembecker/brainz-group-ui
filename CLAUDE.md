@@ -164,13 +164,22 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - a primeira rodada do vitest com cache frio pode falhar com "Vite unexpectedly reloaded" (otimização de dependências); rodar de novo resolve;
   - no navegador: as três páginas Docs nos dois modos e em RTL, as alturas de 24/28/32/36px e o raio de ~13px (escala rhea), o anel sólido por Tab (inclusive no primário no escuro), o "Show code" só com o JSX e a Inter carregada;
   - console limpo.
+- **Decisões do usuário depois da revisão (2026-11-13):**
+  - mantidos: Toggle ligado em `primary`; Badge destrutivo sólido; Progress com trilho contornado; Alert sem `role` padrão (quem usa passa `status` ou `alert`); botões de seta e de limpar do Combobox fora do Tab;
+  - Tabs: a aba ativa no escuro volta a ter `dark:bg-input/30` (exceção, como o Button outline);
+  - Sidebar: sem `side`, abre no início da linha (esquerda em LTR, direita em RTL, pelo `useDirection`); `left`/`right` explícitos continuam físicos. Sheet e Drawer seguem físicos;
+  - pegada do Resizable e polegar do ScrollArea em `bg-input` (3:1); a linha de 1px do Resizable continua decorativa;
+  - Calendar no escuro: as pontas do intervalo ganham borda de 2px na cor do fundo (3,8:1). A faixa não escurece porque `card` e `popover` são a mesma mist 900 no escuro e ela sumiria num Date Picker (o usuário tinha escolhido escurecer a faixa; a troca foi explicada);
+  - ItemSeparator: contêiner `role="none"` com a linha `aria-hidden`, testado na story Grupo do Item;
+  - InputOTP: o componente guarda o `defaultValue` e entrega só `value` à biblioteca;
+  - os valores PROVISÓRIOS (neutros, vermelho, fonte, gráficos, modo escuro) esperam o material da marca: não mexa neles.
+- **Zoom e reflow (2026-11-13):** as 63 páginas Docs foram abertas a 640px (zoom de 200%) e a 320px, e as Demos a 320px. A 640px nenhuma rola na horizontal. O `apps/storybook/.storybook/docs.css` faz o código em linha quebrar e as tabelas e blocos de código rolarem dentro de si; Tabs e Collapsible perderam as larguras fixas das stories, e o Popover ganhou `max-w-(--available-width)`.
 - **Ainda em aberto:**
-  - leitor de tela e zoom a 200% não foram conferidos em nenhum componente; a conferência visual foi por amostragem;
-  - decisões de visual tomadas na revisão, para o usuário confirmar: Toggle ligado em `primary`; Progress com trilho contornado; Badge destrutivo sólido; aba ativa do escuro sem `bg-input/30`; `side` físico na Sidebar, no Sheet e no Drawer;
-  - abaixo de 3:1 e não corrigidos: a linha e a pegada do Resizable e o polegar do ScrollArea (`bg-border`, ~1,2:1); o botão selecionado do Calendar sobre a faixa do intervalo no escuro (2,8:1); o `ItemSeparator` dentro de um `ItemGroup` reprova no axe (não há story com ele);
-  - o InputOTP com `defaultValue` gera um aviso do React no console (a biblioteca `input-otp` repassa `defaultValue` e `value` ao `<input>`); só aviso de desenvolvimento;
+  - leitor de tela: com o usuário, pelo roteiro `roteiro-leitor-de-tela.md` da nota compartilhada;
+  - a 320px ainda rolam: as barras horizontais (lista das Tabs, Menubar e NavigationMenu, que não cabem) e as páginas Docs do DropdownMenu (+17px) e do Questionnaire (+33px), por um elemento que a varredura não isolou;
+  - o `npm audit` aponta 17 avisos (2 baixos, 15 moderados), todos em ferramentas de desenvolvimento (ESLint, typescript-eslint, plugin do Storybook, CLI do shadcn), nenhum no que é publicado. O ESLint 10.15.0 corrige o dele; os demais esperam versões novas (o `npm audit fix --force` sugeria rebaixar o Storybook para a 8 e o shadcn para a 1). Nada foi mudado, a pedido do usuário;
   - o `./lib/*` do `exports` de `packages/ui` aponta para `.ts`, então o `highlighter.tsx` não é importável como `@workspace/ui/lib/highlighter` (o hook usa import relativo);
   - o `typecheck` de `apps/web` não confere nada (`tsconfig.json` com `files: []`, herdado do template);
-  - o `npm audit` aponta 17 avisos (2 baixos, 15 moderados), conferido depois do `add --all`;
+  - a Sidebar com `side` contrário à direção (`side="left"` em RTL) fica incoerente (documentado);
   - o afastamento do anel de foco usa a cor do fundo da página (`ring-offset-background`). Dentro de um card no escuro, ele é a mist 950 sobre um card 900, um pouco mais escuro que o card.
 - Commitar só quando o usuário pedir. Cada push na `master` publica em produção no Vercel.

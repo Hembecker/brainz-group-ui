@@ -1,0 +1,22 @@
+/*
+ * Docs pages only (Storybook's own content, not the components).
+ * Reflow at 320px / 400% zoom: long inline code (class lists, paths) used to
+ * push the page sideways, because Storybook keeps inline code on one line.
+ * It now wraps; API tables scroll inside themselves instead of the page.
+ */
+.sbdocs :not(pre) > code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.sbdocs-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Code blocks scroll inside themselves, never the page. */
+.sbdocs-content div:has(> pre.prismjs) {
+  max-width: 100%;
+  overflow-x: auto;
+}

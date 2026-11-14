@@ -74,7 +74,7 @@ Monte um `Item` com esta composição:
 - **Nome acessível:** num Item que é link ou botão, o título e a descrição inteiros viram o nome do controle. Mantenha os dois curtos e comece pelo que diz a ação ou o destino. Um ícone de seta ou de link externo é decorativo e leva `aria-hidden="true"`; se o link abre numa nova aba, avise com um texto `sr-only` no título.
 - **Botões de ação dentro do Item:** um botão só com ícone precisa de `aria-label` ou de texto `sr-only` com a ação e o alvo, como "Convidar Carla Souza". Num Item que já é link ou botão, não ponha outro controle dentro dele: um controle dentro do outro não é válido em HTML.
 - **Grupo é lista:** o `ItemGroup` tem `role="list"`, então cada filho direto precisa de `role="listitem"`. Um Item comum recebe o papel direto. Um Item que é link **não** pode receber `role="listitem"` (o papel apagaria o de link): envolva-o num `<div role="listitem">`, como no exemplo **Imagem**.
-- **ItemSeparator dentro do grupo:** o separador (`role="separator"`) dentro de uma lista reprova no axe (`aria-required-children`), e trocar o papel dele por `presentation` reprova em `aria-allowed-attr`. Por enquanto, separe os itens pelo `gap` do grupo ou use o separador fora de um `ItemGroup`.
+- **ItemSeparator dentro do grupo:** o separador é um contêiner `role="none"` com a linha decorativa (`aria-hidden`) dentro, então a lista do `ItemGroup` continua contendo só itens. A separação é só visual; o leitor de tela anuncia a lista e os itens.
 - **Imagens e avatares:** uma imagem ou um avatar que repete o texto ao lado é decorativo: `alt=""` na imagem e `aria-hidden="true"` no `Avatar`, para o leitor de tela não ler as iniciais antes do nome. Uma imagem que informa algo leva `alt` com essa informação.
 - **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. No link, o foco e o hover ficam no próprio `<a>`. Não remova o anel.
 - **Hover:** o fundo no hover (`bg-muted`) só existe nos Items que são `<a>`. Um `<button>` não muda de fundo no hover, só mostra o foco. Na variante `muted`, o hover e o fundo são a mesma cor, então o fundo também não muda.
@@ -217,7 +217,7 @@ Agrupa itens relacionados. Tem `role="list"`: os filhos diretos precisam de `rol
 
 ### ItemSeparator
 
-Um separador entre itens do grupo. Veja o aviso em **Acessibilidade**.
+Um separador visual entre itens do grupo (veja **Grupo**). O `className` vai para o contêiner; as demais props, para a linha.
 
 ### ItemMedia
 

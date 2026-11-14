@@ -85,7 +85,7 @@ export const Demo: Story = {
     await expect(visao).toHaveAttribute("aria-selected", "true")
   },
   render: () => (
-    <Tabs defaultValue="visao" className="w-[400px]">
+    <Tabs defaultValue="visao" className="w-full max-w-[400px]">
       <TabsList aria-label="Seções do projeto">
         <TabsTrigger value="visao">Visão geral</TabsTrigger>
         <TabsTrigger value="analises">Análises</TabsTrigger>

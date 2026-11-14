@@ -33,17 +33,32 @@ import { MinusIcon } from "lucide-react"
  *   cada grupo. As bordas e os cantos são lógicos (`border-s`/`border-e`,
  *   `rounded-s`/`rounded-e`), então o componente funciona em RTL.
  * - Desabilitado: o container fica em `opacity-50` e o input sai do Tab.
+ * - `defaultValue` é guardado aqui, e a biblioteca recebe só `value`: o
+ *   `input-otp` repassava `defaultValue` e `value` juntos ao <input>, e o React
+ *   avisava no console (controlado e não controlado ao mesmo tempo).
  */
 
 function InputOTP({
   className,
   containerClassName,
+  value,
+  defaultValue,
+  onChange,
   ...props
 }: React.ComponentProps<typeof OTPInput> & {
   containerClassName?: string
 }) {
+  const [interno, setInterno] = React.useState(() =>
+    defaultValue === undefined ? "" : String(defaultValue)
+  )
+  const controlado = value !== undefined
   return (
     <OTPInput
+      value={controlado ? value : interno}
+      onChange={(novo: string) => {
+        if (!controlado) setInterno(novo)
+        onChange?.(novo)
+      }}
       data-slot="input-otp"
       containerClassName={cn(
         "cn-input-otp flex items-center has-disabled:opacity-50",

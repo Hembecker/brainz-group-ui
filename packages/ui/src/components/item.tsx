@@ -31,10 +31,12 @@ import { Separator } from "@workspace/ui/components/separator"
  * - O ItemGroup tem `role="list"`: cada filho direto precisa de
  *   `role="listitem"`. Um Item que é link não pode receber esse papel (apagaria
  *   o papel de link): envolva-o num `<div role="listitem">`.
- * - Pendência: o ItemSeparator (`role="separator"`) dentro do ItemGroup
- *   (`role="list"`) reprova no axe (`aria-required-children`), e trocar o papel
- *   dele por `presentation` reprova em `aria-allowed-attr` (o Base UI mantém o
- *   `aria-orientation`). Por isso não há story com ItemSeparator: veja a MDX.
+ * - O ItemSeparator é um `<div role="none">` com a linha decorativa
+ *   (`aria-hidden`) dentro. Assim, dentro de um ItemGroup (`role="list"`), a
+ *   lista só contém itens: um `role="separator"` ali reprovava no axe
+ *   (`aria-required-children`), e `presentation` direto no Separator reprovava
+ *   em `aria-allowed-attr` (o Base UI mantém o `aria-orientation`). O
+ *   `className` vai para o contêiner, as demais props para a linha.
  * - O ItemMedia só tem as variantes `default`, `icon` e `image`. A página do
  *   shadcn cita `avatar`, mas o código e o exemplo dela usam o `default` com um
  *   Avatar dentro.
@@ -59,12 +61,9 @@ function ItemSeparator({
   ...props
 }: React.ComponentProps<typeof Separator>) {
   return (
-    <Separator
-      data-slot="item-separator"
-      orientation="horizontal"
-      className={cn("my-2", className)}
-      {...props}
-    />
+    <div role="none" data-slot="item-separator" className={cn("my-2", className)}>
+      <Separator aria-hidden="true" orientation="horizontal" {...props} />
+    </div>
   )
 }
 
