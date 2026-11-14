@@ -25,7 +25,8 @@ import { cn } from "cn"
  *   `bg-background` e `text-foreground`; no escuro, por cima, o
  *   `dark:bg-input/30` do registro, exceção escolhida pelo usuário (a mesma
  *   do Button outline), para a aba ativa se destacar da lista. Na `line` a
- *   aba ativa ganha o sublinhado.
+ *   aba ativa fica sem fundo nos dois modos (o `bg-input/30` não entra) e
+ *   ganha o sublinhado.
  * - O estado ativo não depende só do fundo: a cor do texto muda
  *   (`foreground` contra `muted-foreground`) e o `aria-selected` o expõe.
  * - Aba desabilitada: o Base UI usa `aria-disabled` e `data-disabled` (não o atributo
@@ -42,14 +43,16 @@ import { cn } from "cn"
  *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
  *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
  *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
- *   afastamento de 2px).
+ *   afastamento de 2px). Por dentro, ele encosta no fundo do item: 3,15:1
+ *   sobre `muted` e 3,5:1 sobre `background` no claro; 5,7:1 e 7,6:1 no
+ *   escuro.
  * - Sublinhado da `line` na horizontal: o registro o punha a `-5px` da aba, 1,5px
  *   abaixo da lista, e a lista que rola o cortaria. Agora fica a `-3px`,
  *   dentro dela.
  * - Anel de foco sólido de 3px no `ring`, afastado 2px pelo fundo, nas abas
  *   verticais e também no painel; nas abas horizontais ele é por dentro (veja
- *   a rolagem acima). O painel (o painel entra na ordem do Tab, e o registro o
- *   deixava com `outline-none` sem anel).
+ *   a rolagem acima). O painel entra na ordem do Tab, e o registro o deixava
+ *   com `outline-none` sem anel.
  */
 
 function Tabs({
@@ -124,7 +127,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
       data-slot="tabs-trigger"
       className={cn(
         "relative inline-flex h-[calc(100%-1px)] flex-1 shrink-0 items-center justify-center gap-1.5 rounded-2xl border border-transparent! px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start group-data-vertical/tabs:px-3 group-data-vertical/tabs:py-0.5 hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-data-horizontal/tabs:focus-visible:ring-inset group-data-horizontal/tabs:focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent",
+        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
         "data-active:bg-background data-active:text-foreground dark:data-active:bg-input/30",
         "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-3px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-end-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
         className

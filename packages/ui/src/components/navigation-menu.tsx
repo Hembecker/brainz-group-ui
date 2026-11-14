@@ -48,7 +48,9 @@ import { ChevronDownIcon } from "lucide-react"
  *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
  *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
  *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
- *   afastamento de 2px).
+ *   afastamento de 2px). Por dentro, ele encosta no fundo do item: 3,15:1
+ *   sobre `muted` e 3,5:1 sobre `background` no claro; 5,7:1 e 7,6:1 no
+ *   escuro.
  */
 
 function NavigationMenu({
