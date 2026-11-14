@@ -37,9 +37,9 @@ import { cn } from "cn"
  *   (a 320px, ou com zoom de 400%). A barra de rolagem fica escondida
  *   (`no-scrollbar`) e a dica de que há mais itens é o `scroll-fade-x` do
  *   shadcn: a borda que tem conteúdo escondido se dissolve, e some quando não
- *   há o que rolar. O fade só entra onde o navegador tem animações guiadas
- *   pela rolagem; sem elas, o fallback do shadcn dissolveria as duas pontas
- *   mesmo sem rolagem. Ele segue a direção da leitura em RTL. O
+ *   há o que rolar. Nos navegadores sem animações guiadas pela rolagem, vale
+ *   o fallback do shadcn, escolhido pelo usuário: as duas pontas ficam
+ *   sempre esmaecidas, mesmo quando a barra cabe. Ele segue a direção da leitura em RTL. O
  *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
  *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
  *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
@@ -75,7 +75,7 @@ function Tabs({
 }
 
 const tabsListVariants = cva(
-  "group/tabs-list inline-flex w-fit items-center justify-center rounded-2xl p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-horizontal/tabs:max-w-full group-data-horizontal/tabs:overflow-x-auto group-data-horizontal/tabs:overflow-y-hidden group-data-horizontal/tabs:no-scrollbar group-data-horizontal/tabs:scroll-px-10 group-data-horizontal/tabs:supports-[animation-timeline:scroll()]:scroll-fade-x group-data-horizontal/tabs:justify-center-safe group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col group-data-vertical/tabs:p-1 data-[variant=line]:rounded-none",
+  "group/tabs-list inline-flex w-fit items-center justify-center rounded-2xl p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-horizontal/tabs:max-w-full group-data-horizontal/tabs:overflow-x-auto group-data-horizontal/tabs:overflow-y-hidden group-data-horizontal/tabs:no-scrollbar group-data-horizontal/tabs:scroll-px-10 group-data-horizontal/tabs:scroll-fade-x group-data-horizontal/tabs:justify-center-safe group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col group-data-vertical/tabs:p-1 data-[variant=line]:rounded-none",
   {
     variants: {
       variant: {

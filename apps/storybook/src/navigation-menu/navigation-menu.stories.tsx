@@ -46,6 +46,27 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+// Rolagem na barra: o item focado fica inteiro dentro da barra e, do lado em
+// que ainda há itens escondidos, a pelo menos 40px da borda (fora do fade).
+async function esperarItemForaDoFade(barra: HTMLElement) {
+  await waitFor(() => {
+    const item = document.activeElement as HTMLElement
+    expect(barra).toContainElement(item)
+    const b = barra.getBoundingClientRect()
+    const i = item.getBoundingClientRect()
+    const max = barra.scrollWidth - barra.clientWidth
+    const rtl = getComputedStyle(barra).direction === "rtl"
+    const escondidoAEsquerda = rtl ? max + barra.scrollLeft : barra.scrollLeft
+    const escondidoADireita = max - escondidoAEsquerda
+    expect(i.left).toBeGreaterThanOrEqual(
+      b.left + (escondidoAEsquerda > 1 ? 39 : -1)
+    )
+    expect(i.right).toBeLessThanOrEqual(
+      b.right - (escondidoADireita > 1 ? 39 : -1)
+    )
+  })
+}
+
 async function abrirPainel(link: RegExp) {
   await userEvent.keyboard("{Enter}")
   const item = await screen.findByRole("link", { name: link })
@@ -453,5 +474,71 @@ export const Rtl: Story = {
         </NavigationMenuList>
       </NavigationMenu>
     </div>
+  ),
+}
+
+export const RolagemNaBarra: Story = {
+  name: "Rolagem na barra",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const barra = canvas.getByRole("list")
+    // A barra precisa rolar de verdade, senão o teste não confere nada.
+    expect(barra.scrollWidth).toBeGreaterThan(barra.clientWidth)
+    const itens = canvas.getAllByRole("link")
+    itens[0]!.focus()
+    for (const item of itens.slice(1)) {
+      // Tab, e não as setas: as setas do Base UI já rolam o item; o Tab
+      // depende do onFocus da lista (o focus() não rola um item que aparece em parte).
+      await userEvent.tab()
+      await waitFor(() => expect(item).toHaveFocus())
+      await esperarItemForaDoFade(barra)
+    }
+    expect(Math.abs(barra.scrollLeft)).toBeGreaterThan(0)
+  },
+  render: () => (
+    <NavigationMenu aria-label="Principal" className="w-full max-w-[220px]">
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            render={<a href="#" />}
+            className={navigationMenuTriggerStyle()}
+          >
+            Início
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            render={<a href="#" />}
+            className={navigationMenuTriggerStyle()}
+          >
+            Produtos
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            render={<a href="#" />}
+            className={navigationMenuTriggerStyle()}
+          >
+            Preços
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            render={<a href="#" />}
+            className={navigationMenuTriggerStyle()}
+          >
+            Blog
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            render={<a href="#" />}
+            className={navigationMenuTriggerStyle()}
+          >
+            Contato
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   ),
 }

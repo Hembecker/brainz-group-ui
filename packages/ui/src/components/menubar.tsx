@@ -63,9 +63,9 @@ import { CheckIcon } from "lucide-react"
  *   (a 320px, ou com zoom de 400%). A barra de rolagem fica escondida
  *   (`no-scrollbar`) e a dica de que há mais itens é o `scroll-fade-x` do
  *   shadcn: a borda que tem conteúdo escondido se dissolve, e some quando não
- *   há o que rolar. O fade só entra onde o navegador tem animações guiadas
- *   pela rolagem; sem elas, o fallback do shadcn dissolveria as duas pontas
- *   mesmo sem rolagem. Ele segue a direção da leitura em RTL. O
+ *   há o que rolar. Nos navegadores sem animações guiadas pela rolagem, vale
+ *   o fallback do shadcn, escolhido pelo usuário: as duas pontas ficam
+ *   sempre esmaecidas, mesmo quando a barra cabe. Ele segue a direção da leitura em RTL. O
  *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
  *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
  *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
@@ -91,7 +91,7 @@ function Menubar({ className, onFocus, ...props }: MenubarPrimitive.Props) {
     <MenubarPrimitive
       data-slot="menubar"
       className={cn(
-        "flex h-8 items-center rounded-2xl border p-[3px] max-w-full overflow-x-auto overflow-y-hidden no-scrollbar scroll-px-10 supports-[animation-timeline:scroll()]:scroll-fade-x",
+        "flex h-8 items-center rounded-2xl border p-[3px] max-w-full overflow-x-auto overflow-y-hidden no-scrollbar scroll-px-10 scroll-fade-x",
         className
       )}
       onFocus={(event) => {

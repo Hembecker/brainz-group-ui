@@ -35,6 +35,33 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+// Rolagem na barra: o item focado fica inteiro dentro da barra e, do lado em
+// que ainda há itens escondidos, a pelo menos 40px da borda (fora do fade).
+async function esperarItemForaDoFade(barra: HTMLElement) {
+  await waitFor(() => {
+    const item = document.activeElement as HTMLElement
+    expect(barra).toContainElement(item)
+    const b = barra.getBoundingClientRect()
+    const i = item.getBoundingClientRect()
+    const max = barra.scrollWidth - barra.clientWidth
+    const rtl = getComputedStyle(barra).direction === "rtl"
+    const escondidoAEsquerda = rtl ? max + barra.scrollLeft : barra.scrollLeft
+    const escondidoADireita = max - escondidoAEsquerda
+    expect(i.left).toBeGreaterThanOrEqual(
+      b.left + (escondidoAEsquerda > 1 ? 39 : -1)
+    )
+    expect(i.right).toBeLessThanOrEqual(
+      b.right - (escondidoADireita > 1 ? 39 : -1)
+    )
+  })
+}
+
+function setaParaAvancar(elemento: HTMLElement) {
+  return getComputedStyle(elemento).direction === "rtl"
+    ? "{ArrowLeft}"
+    : "{ArrowRight}"
+}
+
 function teclas(elemento: HTMLElement) {
   const rtl = getComputedStyle(elemento).direction === "rtl"
   return {
@@ -419,5 +446,49 @@ export const Rtl: Story = {
         </Tabs>
       </div>
     </DirectionProvider>
+  ),
+}
+
+export const RolagemNaBarra: Story = {
+  name: "Rolagem na barra",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const barra = canvas.getByRole("tablist")
+    // A barra precisa rolar de verdade, senão o teste não confere nada.
+    expect(barra.scrollWidth).toBeGreaterThan(barra.clientWidth)
+    const itens = canvas.getAllByRole("tab")
+    itens[0]!.focus()
+    for (const item of itens.slice(1)) {
+      await userEvent.keyboard(setaParaAvancar(barra))
+      await waitFor(() => expect(item).toHaveFocus())
+      await esperarItemForaDoFade(barra)
+    }
+    expect(Math.abs(barra.scrollLeft)).toBeGreaterThan(0)
+  },
+  render: () => (
+    <Tabs defaultValue="visao" className="w-full max-w-[240px]">
+      <TabsList aria-label="Seções do projeto">
+        <TabsTrigger value="visao">Visão geral</TabsTrigger>
+        <TabsTrigger value="analises">Análises</TabsTrigger>
+        <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
+        <TabsTrigger value="equipe">Equipe</TabsTrigger>
+        <TabsTrigger value="ajustes">Ajustes</TabsTrigger>
+      </TabsList>
+      <TabsContent value="visao" className="p-2">
+        Os principais indicadores do projeto.
+      </TabsContent>
+      <TabsContent value="analises" className="p-2">
+        O desempenho e o engajamento dos usuários.
+      </TabsContent>
+      <TabsContent value="relatorios" className="p-2">
+        Os relatórios gerados neste mês.
+      </TabsContent>
+      <TabsContent value="equipe" className="p-2">
+        As pessoas que participam do projeto.
+      </TabsContent>
+      <TabsContent value="ajustes" className="p-2">
+        As preferências do projeto.
+      </TabsContent>
+    </Tabs>
   ),
 }

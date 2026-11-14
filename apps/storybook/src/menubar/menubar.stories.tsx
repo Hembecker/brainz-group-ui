@@ -49,6 +49,33 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+// Rolagem na barra: o item focado fica inteiro dentro da barra e, do lado em
+// que ainda há itens escondidos, a pelo menos 40px da borda (fora do fade).
+async function esperarItemForaDoFade(barra: HTMLElement) {
+  await waitFor(() => {
+    const item = document.activeElement as HTMLElement
+    expect(barra).toContainElement(item)
+    const b = barra.getBoundingClientRect()
+    const i = item.getBoundingClientRect()
+    const max = barra.scrollWidth - barra.clientWidth
+    const rtl = getComputedStyle(barra).direction === "rtl"
+    const escondidoAEsquerda = rtl ? max + barra.scrollLeft : barra.scrollLeft
+    const escondidoADireita = max - escondidoAEsquerda
+    expect(i.left).toBeGreaterThanOrEqual(
+      b.left + (escondidoAEsquerda > 1 ? 39 : -1)
+    )
+    expect(i.right).toBeLessThanOrEqual(
+      b.right - (escondidoADireita > 1 ? 39 : -1)
+    )
+  })
+}
+
+function setaParaAvancar(elemento: HTMLElement) {
+  return getComputedStyle(elemento).direction === "rtl"
+    ? "{ArrowLeft}"
+    : "{ArrowRight}"
+}
+
 async function abrirMenu(
   canvasElement: HTMLElement,
   gatilho: string,
@@ -531,5 +558,59 @@ export const Rtl: Story = {
         </MenubarMenu>
       </Menubar>
     </div>
+  ),
+}
+
+export const RolagemNaBarra: Story = {
+  name: "Rolagem na barra",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const barra = canvas.getByRole("menubar")
+    // A barra precisa rolar de verdade, senão o teste não confere nada.
+    expect(barra.scrollWidth).toBeGreaterThan(barra.clientWidth)
+    const itens = canvas.getAllByRole("menuitem")
+    itens[0]!.focus()
+    for (const item of itens.slice(1)) {
+      await userEvent.keyboard(setaParaAvancar(barra))
+      await waitFor(() => expect(item).toHaveFocus())
+      await esperarItemForaDoFade(barra)
+    }
+    expect(Math.abs(barra.scrollLeft)).toBeGreaterThan(0)
+  },
+  render: () => (
+    <Menubar className="w-full max-w-[220px]">
+      <MenubarMenu>
+        <MenubarTrigger>Arquivo</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Novo arquivo</MenubarItem>
+          <MenubarItem>Abrir arquivo</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Editar</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Desfazer</MenubarItem>
+          <MenubarItem>Refazer</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Exibir</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Tela cheia</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Perfis</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Editar perfis</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Ajuda</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Documentação</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
   ),
 }
