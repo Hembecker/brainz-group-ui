@@ -10,7 +10,7 @@ Mostra um card com cabeçalho, conteúdo e rodapé.
 
 <Canvas of={CardStories.Demo} />
 
-O exemplo principal do shadcn é um formulário de login. Ele usa Input e Label, que ainda não existem neste design system, então os exemplos desta página mantêm a mesma estrutura só com Button.
+O exemplo principal é um formulário de login. Cada campo tem um `FieldLabel` ligado por `htmlFor`, e o botão de enviar fica no rodapé, ligado ao formulário pelo atributo `form`.
 
 ## Instalação
 
@@ -75,6 +75,7 @@ Monte um `Card` com esta composição:
 - **Ações:** a ação do cabeçalho segue a regra do Button. Para navegar, use um `<a>` com `buttonVariants`; para executar algo, use um `<Button>`. Cada ação precisa de um nome específico.
 - **Card clicável:** não envolva o card inteiro num link nem num botão, porque o leitor de tela leria todo o conteúdo como o nome do controle. Ponha o link no título ou numa ação.
 - **Rolagem:** uma área com rolagem dentro do card precisa de `tabIndex={0}`, para quem usa só o teclado conseguir rolar, e de um nome, com `role="region"` e `aria-labelledby` (veja **Borda a borda**). Como ela recebe foco, também precisa do anel: `focus-visible:ring-3 focus-visible:ring-ring`, com `ring-inset` quando vai de borda a borda.
+- **Formulário:** cada campo precisa de um rótulo persistente (`FieldLabel` com `htmlFor`); o placeholder não é rótulo. Um botão `type="submit"` fora do `<form>`, como o do rodapé, precisa do atributo `form` com o `id` do formulário, senão ele não envia nada.
 - **Imagem:** uma imagem que informa algo leva `alt` com essa informação. Uma imagem só decorativa leva `alt=""`.
 
 <Source
@@ -98,7 +99,7 @@ Use `size="sm"` para deixar o card menor. O tamanho pequeno usa um espaçamento 
 
 ## Espaçamento
 
-Além da prop `size`, a variável CSS `--card-spacing` controla o espaço entre as partes e o recuo delas. O padrão é 20px, e no `sm` é 16px. Para mudar, use uma classe com propriedade arbitrária, como `[--card-spacing:--spacing(8)]` (32px).
+Além da prop `size`, a variável CSS `--card-spacing` controla o espaço entre as partes e o recuo delas. O padrão é 20px, e no `sm` é 16px. Para mudar, use uma classe com propriedade arbitrária, como `[--card-spacing:--spacing(8)]` (32px). No exemplo, o `ToggleGroup` escolhe entre 16, 20, 24 e 32px.
 
 <Canvas of={CardStories.Espacamento} />
 
@@ -110,7 +111,7 @@ Use margens negativas com `-mx-(--card-spacing)` para o conteúdo ir de uma bord
 
 ## Imagem
 
-Coloque uma imagem antes do `CardHeader` para criar um card com imagem. Os cantos de cima da imagem acompanham o raio do card.
+Coloque uma imagem antes do `CardHeader` para criar um card com imagem. Os cantos de cima da imagem acompanham o raio do card. O `Badge` fica na `CardAction`, que vem antes do título.
 
 <Canvas of={CardStories.Imagem} />
 

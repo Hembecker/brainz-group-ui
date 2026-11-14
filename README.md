@@ -58,7 +58,7 @@ React 19.3.1, Vite 8, Tailwind 4, TypeScript 6, Turbo, `@base-ui/react`, class-v
 
 Ficam em `packages/ui/src/styles/globals.css`:
 
-1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…). É o que os componentes usam. Os neutros têm os valores `oklch` do tema mist do shadcn; as cores de marca (primária, secundária, anel, link, gráficos) referenciam a paleta da marca. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground` e o `link`.
+1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…). É o que os componentes usam. Os neutros têm os valores `oklch` do tema mist do shadcn; as cores de marca (primária, secundária, anel, link, gráficos) referenciam a paleta da marca. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground`, o `link` e o `field` (fundo dos campos).
 2. **Paleta da marca** (`--bb-primary-*` de 50 a 950, `--bb-ink`, `--bb-gradient`): os valores brutos. A ação primária usa a 600, e não a base 500, porque texto branco na 500 dá 3,5:1.
 
 O modo escuro é ativado pela classe `.dark` num ancestral.
@@ -97,16 +97,21 @@ import { Spinner } from "@workspace/ui/components/spinner"
 </ButtonGroup>
 ```
 
-- **Button:** construído sobre o Button do Base UI.
-  - **Variantes:** `default`, `outline`, `secondary`, `ghost`, `destructive` e `link`.
-  - **Tamanhos:** `xs` (24px), `sm` (28px), `default` (32px) e `lg` (36px), mais os quadrados `icon-*`. Raio `rounded-2xl` (~13px), a escala do estilo rhea.
-  - **Ícones:** um ícone ao lado do rótulo leva `data-icon="inline-start"` ou `"inline-end"`.
-  - **Carregamento:** coloque um `Spinner` dentro de um botão `disabled`. Com `focusableWhenDisabled`, o botão continua focável.
-  - **Links:** use `buttonVariants()` num `<a>`.
-  - **Atributos:** o elemento expõe `data-slot`, `data-variant` e `data-size`.
-- **Spinner:** um indicador de carregamento com `role="status"` e o rótulo "Carregando". Fica parado com movimento reduzido.
-- **ButtonGroup:** agrupa botões (`role="group"`) na horizontal ou na vertical. Tem também `ButtonGroupSeparator` e `ButtonGroupText`.
-- **Card:** cabeçalho (`CardTitle`, `CardDescription`, `CardAction`), `CardContent` e `CardFooter`. Tem `size="sm"` e a variável `--card-spacing`. Raio de ~19px (`min(--radius-4xl, 24px)`, do rhea). Coloque um heading dentro do `CardTitle`.
+A biblioteca tem os 63 componentes do registro do shadcn (estilo `base-rhea`), instalados com `shadcn add --all` e revisados um a um: cores dos tokens da Big Brain (sem opacidade), anel de foco sólido, textos fixos em português, contrastes anotados no comentário do topo de cada arquivo e uma página Docs com uma story por seção da página do shadcn.
+
+- **Formulários:** Button, ButtonGroup, Input, InputGroup, InputOTP, Textarea, Label, Field, Checkbox, RadioGroup, Switch, Slider, Select, NativeSelect, Combobox, Toggle, ToggleGroup, Calendar e Questionnaire.
+- **Sobreposições e menus:** Dialog, AlertDialog, Sheet, Drawer, Popover, HoverCard, Tooltip, DropdownMenu, ContextMenu, Menubar, Command, NavigationMenu e Toast.
+- **Exibição:** Card, Alert, Badge, Kbd, Avatar, AspectRatio, Skeleton, Spinner, Empty, Item, Table, Progress, Separator, ScrollArea, Resizable, Accordion, Collapsible, Tabs, Carousel e Chart.
+- **Navegação e layout:** Breadcrumb, Pagination, Sidebar e Direction (o `DirectionProvider`).
+- **Conversa e IA:** Message, MessageScroller, Bubble, Attachment, CodeBlock, Marker e Trace.
+
+Pontos que valem para todos:
+
+- **Escala:** controles com 32px (`h-8`) e cantos `rounded-2xl` (~13px), a escala do estilo rhea; o Button tem `xs` (24px), `sm` (28px), `default` (32px) e `lg` (36px).
+- **Campos:** preenchidos e sem borda, com o papel `field`.
+- **Ícones:** um ícone ao lado do rótulo leva `data-icon="inline-start"` ou `"inline-end"`; ícones decorativos levam `aria-hidden="true"`.
+- **Links:** use `buttonVariants()` num `<a>` para um link com cara de botão.
+- **Atributos:** cada parte expõe `data-slot`; os componentes com variantes expõem também `data-variant` e `data-size`.
 
 Todos funcionam em RTL: paddings e cantos são lógicos e seguem o `dir` do ancestral.
 
@@ -118,4 +123,4 @@ Dentro de `packages/ui`, rode o CLI local do shadcn:
 npx.cmd shadcn add <nome>
 ```
 
-Depois, troque as cores e os tamanhos do preset pelos tokens da Big Brain, fixe as versões que o CLI tiver escrito com `^` e crie as stories e a página MDX em `apps/storybook/src/<nome>/`. As regras estão no `CLAUDE.md`.
+Depois, revise o componente (cores sem opacidade, anel de foco sólido, textos em português), fixe as versões que o CLI tiver escrito com `^` e crie as stories e a página MDX em `apps/storybook/src/<nome>/`, com o título "Em revisão/<Nome>" até a revisão terminar. As regras estão no `CLAUDE.md`.

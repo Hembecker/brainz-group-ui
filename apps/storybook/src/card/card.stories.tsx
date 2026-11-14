@@ -1,6 +1,8 @@
+import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ChevronRightIcon } from "lucide-react"
 
+import { Badge } from "@workspace/ui/components/badge"
 import { Button, buttonVariants } from "@workspace/ui/components/button"
 import {
   Card,
@@ -11,11 +13,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
+import { Field, FieldGroup, FieldLabel } from "@workspace/ui/components/field"
+import { Input } from "@workspace/ui/components/input"
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@workspace/ui/components/toggle-group"
 
 /*
  * One story per section of card.mdx, in the order of the shadcn/ui page.
- * The shadcn examples use Input, Label, ToggleGroup and Badge, which this
- * system does not have yet: these keep the structure with Button only.
+ * The login form of the shadcn examples has a persistent `FieldLabel` tied to
+ * each `Input` by `htmlFor`/`id`; its submit button sits in the footer, so it
+ * points at the form with the `form` attribute. Ids are prefixed with the
+ * story name: the Docs page renders all stories in the same document.
+ *
+ * "Espaçamento" needs state (the chosen spacing), so it uses the small
+ * component below and gives the Docs page the copyable snippet in
+ * `docs.source.code`.
  */
 const meta = {
   title: "Componentes/Card",
@@ -25,32 +39,163 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+function CardComEspacamento() {
+  const opcoesDeEspacamento = [
+    { className: "[--card-spacing:--spacing(4)]", label: "16px", value: "4" },
+    { className: "[--card-spacing:--spacing(5)]", label: "20px", value: "5" },
+    { className: "[--card-spacing:--spacing(6)]", label: "24px", value: "6" },
+    { className: "[--card-spacing:--spacing(8)]", label: "32px", value: "8" },
+  ]
+
+  const [espacamento, setEspacamento] = React.useState("4")
+  const escolhida = opcoesDeEspacamento.find(
+    (opcao) => opcao.value === espacamento
+  )
+
+  return (
+    <div className="mx-auto grid w-full max-w-sm gap-4">
+      <ToggleGroup
+        value={[espacamento]}
+        onValueChange={(valor) => {
+          if (valor[0]) {
+            setEspacamento(valor[0])
+          }
+        }}
+        variant="outline"
+        size="sm"
+        className="justify-center"
+        aria-label="Espaçamento do card"
+      >
+        {opcoesDeEspacamento.map((opcao) => (
+          <ToggleGroupItem key={opcao.value} value={opcao.value}>
+            {opcao.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <Card className={escolhida?.className}>
+        <CardHeader>
+          <CardTitle>
+            <h3>Entre na sua conta</h3>
+          </CardTitle>
+          <CardDescription>
+            Informe o seu e-mail abaixo para entrar na sua conta
+          </CardDescription>
+          <CardAction>
+            <a
+              href="#criar-conta"
+              className={buttonVariants({ variant: "link" })}
+            >
+              Criar conta
+            </a>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <form
+            id="espacamento-login"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="espacamento-email">E-mail</FieldLabel>
+                <Input
+                  id="espacamento-email"
+                  type="email"
+                  placeholder="nome@exemplo.com"
+                  autoComplete="email"
+                  required
+                />
+              </Field>
+              <Field>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="espacamento-senha">Senha</FieldLabel>
+                  <a
+                    href="#esqueci-a-senha"
+                    className="ms-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Esqueceu a senha?
+                  </a>
+                </div>
+                <Input
+                  id="espacamento-senha"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                />
+              </Field>
+            </FieldGroup>
+          </form>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button type="submit" form="espacamento-login" className="w-full">
+            Entrar
+          </Button>
+          <Button variant="outline" className="w-full">
+            Entrar com o Google
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  )
+}
+
 export const Demo: Story = {
   render: () => (
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>
-          <h3>Relatórios agendados</h3>
+          <h3>Entre na sua conta</h3>
         </CardTitle>
         <CardDescription>
-          Receba um resumo semanal sem exportar nada à mão.
+          Informe o seu e-mail abaixo para entrar na sua conta
         </CardDescription>
         <CardAction>
-          <a href="#novidades" className={buttonVariants({ variant: "link" })}>
-            Novidades
+          <a
+            href="#criar-conta"
+            className={buttonVariants({ variant: "link" })}
+          >
+            Criar conta
           </a>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <p>
-          Escolha a frequência, os destinatários e os indicadores que entram em
-          cada relatório.
-        </p>
+        <form id="demo-login" onSubmit={(event) => event.preventDefault()}>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="demo-email">E-mail</FieldLabel>
+              <Input
+                id="demo-email"
+                type="email"
+                placeholder="nome@exemplo.com"
+                autoComplete="email"
+                required
+              />
+            </Field>
+            <Field>
+              <div className="flex items-center">
+                <FieldLabel htmlFor="demo-senha">Senha</FieldLabel>
+                <a
+                  href="#esqueci-a-senha"
+                  className="ms-auto inline-block text-sm underline-offset-4 hover:underline"
+                >
+                  Esqueceu a senha?
+                </a>
+              </div>
+              <Input
+                id="demo-senha"
+                type="password"
+                autoComplete="current-password"
+                required
+              />
+            </Field>
+          </FieldGroup>
+        </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button className="w-full">Agendar relatório</Button>
+        <Button type="submit" form="demo-login" className="w-full">
+          Entrar
+        </Button>
         <Button variant="outline" className="w-full">
-          Ver exemplo
+          Entrar com o Google
         </Button>
       </CardFooter>
     </Card>
@@ -107,27 +252,112 @@ export const Tamanho: Story = {
 
 export const Espacamento: Story = {
   name: "Espaçamento",
-  render: () => (
-    <Card className="mx-auto w-full max-w-sm [--card-spacing:--spacing(8)]">
-      <CardHeader>
-        <CardTitle>
-          <h3>Convite para o workspace</h3>
-        </CardTitle>
-        <CardDescription>
-          Você foi convidado para o workspace da equipe de produto.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p>O convite expira em 7 dias.</p>
-      </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button className="w-full">Aceitar convite</Button>
-        <Button variant="outline" className="w-full">
-          Recusar
-        </Button>
-      </CardFooter>
-    </Card>
-  ),
+  parameters: {
+    docs: {
+      source: {
+        language: "tsx",
+        code: `function CardComEspacamento() {
+  const opcoesDeEspacamento = [
+    { className: "[--card-spacing:--spacing(4)]", label: "16px", value: "4" },
+    { className: "[--card-spacing:--spacing(5)]", label: "20px", value: "5" },
+    { className: "[--card-spacing:--spacing(6)]", label: "24px", value: "6" },
+    { className: "[--card-spacing:--spacing(8)]", label: "32px", value: "8" },
+  ]
+
+  const [espacamento, setEspacamento] = React.useState("4")
+  const escolhida = opcoesDeEspacamento.find(
+    (opcao) => opcao.value === espacamento
+  )
+
+  return (
+    <div className="mx-auto grid w-full max-w-sm gap-4">
+      <ToggleGroup
+        value={[espacamento]}
+        onValueChange={(valor) => {
+          if (valor[0]) {
+            setEspacamento(valor[0])
+          }
+        }}
+        variant="outline"
+        size="sm"
+        className="justify-center"
+        aria-label="Espaçamento do card"
+      >
+        {opcoesDeEspacamento.map((opcao) => (
+          <ToggleGroupItem key={opcao.value} value={opcao.value}>
+            {opcao.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <Card className={escolhida?.className}>
+        <CardHeader>
+          <CardTitle>
+            <h3>Entre na sua conta</h3>
+          </CardTitle>
+          <CardDescription>
+            Informe o seu e-mail abaixo para entrar na sua conta
+          </CardDescription>
+          <CardAction>
+            <a
+              href="#criar-conta"
+              className={buttonVariants({ variant: "link" })}
+            >
+              Criar conta
+            </a>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <form
+            id="espacamento-login"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="espacamento-email">E-mail</FieldLabel>
+                <Input
+                  id="espacamento-email"
+                  type="email"
+                  placeholder="nome@exemplo.com"
+                  autoComplete="email"
+                  required
+                />
+              </Field>
+              <Field>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="espacamento-senha">Senha</FieldLabel>
+                  <a
+                    href="#esqueci-a-senha"
+                    className="ms-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Esqueceu a senha?
+                  </a>
+                </div>
+                <Input
+                  id="espacamento-senha"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                />
+              </Field>
+            </FieldGroup>
+          </form>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button type="submit" form="espacamento-login" className="w-full">
+            Entrar
+          </Button>
+          <Button variant="outline" className="w-full">
+            Entrar com o Google
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  )
+}`,
+      },
+    },
+  },
+  render: () => <CardComEspacamento />,
 }
 
 export const BordaABorda: Story = {
@@ -186,6 +416,9 @@ export const Imagem: Story = {
         className="aspect-video w-full bg-muted object-contain p-10"
       />
       <CardHeader>
+        <CardAction>
+          <Badge variant="secondary">Destaque</Badge>
+        </CardAction>
         <CardTitle>
           <h3>Encontro de design systems</h3>
         </CardTitle>
@@ -213,13 +446,51 @@ export const Rtl: Story = {
           أدخل بريدك الإلكتروني أدناه لتسجيل الدخول إلى حسابك
         </CardDescription>
         <CardAction>
-          <a href="#إنشاء-حساب" className={buttonVariants({ variant: "link" })}>
+          <a
+            href="#إنشاء-حساب"
+            className={buttonVariants({ variant: "link" })}
+          >
             إنشاء حساب
           </a>
         </CardAction>
       </CardHeader>
+      <CardContent>
+        <form id="rtl-login" onSubmit={(event) => event.preventDefault()}>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="rtl-email">البريد الإلكتروني</FieldLabel>
+              <Input
+                id="rtl-email"
+                type="email"
+                placeholder="m@example.com"
+                autoComplete="email"
+                required
+              />
+            </Field>
+            <Field>
+              <div className="flex items-center">
+                <FieldLabel htmlFor="rtl-senha">كلمة المرور</FieldLabel>
+                <a
+                  href="#نسيت-كلمة-المرور"
+                  className="ms-auto inline-block text-sm underline-offset-4 hover:underline"
+                >
+                  نسيت كلمة المرور؟
+                </a>
+              </div>
+              <Input
+                id="rtl-senha"
+                type="password"
+                autoComplete="current-password"
+                required
+              />
+            </Field>
+          </FieldGroup>
+        </form>
+      </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button className="w-full">تسجيل الدخول</Button>
+        <Button type="submit" form="rtl-login" className="w-full">
+          تسجيل الدخول
+        </Button>
         <Button variant="outline" className="w-full">
           تسجيل الدخول باستخدام Google
         </Button>

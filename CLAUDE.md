@@ -63,7 +63,9 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 
 ## Ritmo e escopo
 - **Biblioteca completa** (pedido do usuário em 2026-11-13): `shadcn add --all` instalou todos os componentes do registro (63 no total, estilo `base-rhea`), commit `0436c87`. Não adicione estrutura fora disso sem pedido.
-- **Revisão em ondas:** cada componente fica em "Em revisão/<Nome>" no Storybook até ganhar as stories de todas as seções e a MDX completa; aí passa para "Componentes/<Nome>". Button, Spinner, ButtonGroup e Card já estão revisados. O andamento fica na nota compartilhada da sessão.
+- **Revisão:** os 63 componentes foram revisados e documentados em quatro ondas (2026-11-13) e estão em "Componentes/<Nome>". Um componente novo fica em "Em revisão/<Nome>" até ganhar as stories de todas as seções e a MDX completa. O briefing usado nas ondas (fontes, modelos, regras de story e de revisão) fica na nota compartilhada `brief-docs-componentes.md`.
+- **Fontes de cada página:** `npx.cmd shadcn docs <nome>` confirma a página; a MDX da página está em `https://raw.githubusercontent.com/shadcn-ui/ui/refs/heads/main/apps/v4/content/docs/components/base/<nome>.mdx` e cada exemplo em `…/apps/v4/examples/base/<exemplo>.tsx`.
+- **Modelos:** Input (formulário) e Dialog (sobreposição: `play` que abre e espera as animações antes do axe, `dir`/`lang` no conteúdo do portal na story RTL).
 - **Decisões do usuário para a biblioteca (2026-11-13):**
   - Button, Card, ButtonGroup e Spinner: o `add --all` sobrescreveu e as decisões foram reaplicadas;
   - escala do rhea em tudo: controles com 32px (`h-8`) e `rounded-2xl` (~13px); Card com `min(--radius-4xl, 24px)` (~19px);
@@ -145,7 +147,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**. A 6006 fica para o Storybook do projeto antigo.
 
 ## Estado (2026-11-13)
-- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), publicados. Sem push: `bf3da8a` (tema da Brainz Group), `0436c87` (`add --all`) e o commit da fundação (escala rhea, `field`, foco).
+- **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), publicados. **Sem push** (o usuário escolheu só commitar): `bf3da8a` (tema da Brainz Group), `0436c87` (`add --all`), `477f6e0` (escala rhea, `field`, foco), `4a3c1d1` (modelos Input e Dialog), `ba6a149`, `ac66a3f`, `01a0331` e `95bf988` (as quatro ondas de revisão) e o commit de fechamento.
 - **Remoto:** `origin` = https://github.com/Hembecker/big-brain-ui (privado). A branch `legacy/design-system` não foi enviada.
 - **Vercel:** projeto `big-brain-ui` no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://big-brain-ui.vercel.app. O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
 - **Histórico do projeto antigo:** a branch `legacy/design-system` tem os 4 commits dele (`07e12db` a `9e46818`). É só arquivo: não faça merge dela na `master`.
@@ -157,12 +159,17 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
   - Card: raio do rhea (~19px, maior que os ~13px dos controles, para cantos concêntricos), contorno `ring-border` em vez de `ring-foreground/5`, recuo de 20px (sm 16px), título com um heading dentro.
 - **Verificado:**
   - `typecheck`, `lint` e `build` (web e Storybook estático) limpos;
-  - `npm.cmd run test`: 35 stories passam com axe no claro, no escuro e em RTL;
+  - `npm.cmd run test`: 509 stories passam com axe no claro, no escuro e em RTL;
+  - o axe deixa de fora, globalmente, só os spans `[data-base-ui-focus-guard]` do Base UI (falso positivo de `aria-hidden-focus`); o preview envolve as stories num `DirectionProvider`;
+  - a primeira rodada do vitest com cache frio pode falhar com "Vite unexpectedly reloaded" (otimização de dependências); rodar de novo resolve;
   - no navegador: as três páginas Docs nos dois modos e em RTL, as alturas de 24/28/32/36px e o raio de ~13px (escala rhea), o anel sólido por Tab (inclusive no primário no escuro), o "Show code" só com o JSX e a Inter carregada;
   - console limpo.
 - **Ainda em aberto:**
-  - leitor de tela e zoom a 200% não foram conferidos;
+  - leitor de tela e zoom a 200% não foram conferidos em nenhum componente; a conferência visual foi por amostragem;
+  - decisões de visual tomadas na revisão, para o usuário confirmar: Toggle ligado em `primary`; Progress com trilho contornado; Badge destrutivo sólido; aba ativa do escuro sem `bg-input/30`; `side` físico na Sidebar, no Sheet e no Drawer;
+  - abaixo de 3:1 e não corrigidos: a linha e a pegada do Resizable e o polegar do ScrollArea (`bg-border`, ~1,2:1); o botão selecionado do Calendar sobre a faixa do intervalo no escuro (2,8:1); o `ItemSeparator` dentro de um `ItemGroup` reprova no axe (não há story com ele);
+  - o `./lib/*` do `exports` de `packages/ui` aponta para `.ts`, então o `highlighter.tsx` não é importável como `@workspace/ui/lib/highlighter` (o hook usa import relativo);
   - o `typecheck` de `apps/web` não confere nada (`tsconfig.json` com `files: []`, herdado do template);
-  - o `npm audit` aponta 18 avisos (2 baixos, 16 moderados);
+  - o `npm audit` aponta 17 avisos (2 baixos, 15 moderados), conferido depois do `add --all`;
   - o afastamento do anel de foco usa a cor do fundo da página (`ring-offset-background`). Dentro de um card no escuro, ele é a mist 950 sobre um card 900, um pouco mais escuro que o card.
 - Commitar só quando o usuário pedir. Cada push na `master` publica em produção no Vercel.

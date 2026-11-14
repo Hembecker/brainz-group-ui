@@ -1,22 +1,52 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { fn } from "storybook/test"
+import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test"
 import {
+  ArchiveIcon,
+  ArrowLeftIcon,
   ArrowRightIcon,
   ArrowUpIcon,
   ArrowUpRightIcon,
+  CalendarPlusIcon,
+  CircleFadingArrowUpIcon,
+  ClockIcon,
   GitBranchIcon,
   GitForkIcon,
+  ListFilterIcon,
+  MailCheckIcon,
+  MoreHorizontalIcon,
   PlusIcon,
+  TagIcon,
+  Trash2Icon,
 } from "lucide-react"
 
 import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { ButtonGroup } from "@workspace/ui/components/button-group"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
 import { Spinner } from "@workspace/ui/components/spinner"
 
 /*
  * One story per section of button.mdx, in the same order as the shadcn/ui
  * page. Section stories use literal JSX (no args) so "Show code" can be
  * copied as is; Playground is the one with controls.
+ *
+ * "Grupo de botões" is the Button Group demo of the shadcn page, with its
+ * dropdown menu. A closed menu is invisible to axe, so that story has a
+ * `play` that opens the menu and its submenu first (the test runs axe after
+ * `play`). The menu is portaled to <body>: it is queried with `screen`, and
+ * the helpers wait for the enter animation to end, because axe would measure
+ * contrast mid-fade.
  */
 const meta = {
   title: "Componentes/Button",
@@ -25,6 +55,12 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+async function esperarAnimacoes() {
+  await Promise.allSettled(
+    document.getAnimations().map((animation) => animation.finished)
+  )
+}
 
 export const Demo: Story = {
   render: () => (
@@ -103,8 +139,8 @@ export const Link: Story = {
 export const Icone: Story = {
   name: "Ícone",
   render: () => (
-    <Button variant="outline" size="icon" aria-label="Enviar mensagem">
-      <ArrowUpIcon aria-hidden="true" />
+    <Button variant="outline" size="icon" aria-label="Atualizar versão">
+      <CircleFadingArrowUpIcon aria-hidden="true" />
     </Button>
   ),
 }
@@ -113,11 +149,11 @@ export const ComIcone: Story = {
   name: "Com ícone",
   render: () => (
     <div className="flex flex-wrap items-center gap-2">
-      <Button variant="outline" size="sm">
+      <Button variant="outline">
         <GitBranchIcon aria-hidden="true" data-icon="inline-start" /> Nova
         branch
       </Button>
-      <Button variant="outline" size="sm">
+      <Button variant="outline">
         Fork <GitForkIcon aria-hidden="true" data-icon="inline-end" />
       </Button>
     </div>
@@ -162,11 +198,99 @@ export const ComSpinner: Story = {
 
 export const GrupoDeBotoes: Story = {
   name: "Grupo de botões",
+  play: async ({ canvasElement }) => {
+    // Opens the menu and, inside it, the submenu: axe sees both levels.
+    await userEvent.click(
+      await within(canvasElement).findByRole("button", { name: "Mais opções" })
+    )
+    const menu = await screen.findByRole("menu", { name: "Mais opções" })
+    await esperarAnimacoes()
+    await waitFor(() => expect(menu).toBeVisible())
+    await userEvent.click(
+      await screen.findByRole("menuitem", { name: "Etiquetar como..." })
+    )
+    const submenu = await screen.findByRole("menu", {
+      name: "Etiquetar como...",
+    })
+    await esperarAnimacoes()
+    await waitFor(() => expect(submenu).toBeVisible())
+  },
   render: () => (
     <ButtonGroup aria-label="Ações da mensagem">
-      <Button variant="outline">Arquivar</Button>
-      <Button variant="outline">Denunciar</Button>
-      <Button variant="outline">Adiar</Button>
+      <ButtonGroup className="hidden sm:flex">
+        <Button variant="outline" size="icon" aria-label="Voltar">
+          <ArrowLeftIcon aria-hidden="true" className="rtl:rotate-180" />
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup>
+        <Button variant="outline">Arquivar</Button>
+        <Button variant="outline">Denunciar</Button>
+      </ButtonGroup>
+      <ButtonGroup>
+        <Button variant="outline">Adiar</Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="outline" size="icon" aria-label="Mais opções" />
+            }
+          >
+            <MoreHorizontalIcon aria-hidden="true" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <MailCheckIcon aria-hidden="true" />
+                Marcar como lida
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ArchiveIcon aria-hidden="true" />
+                Arquivar
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <ClockIcon aria-hidden="true" />
+                Adiar
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CalendarPlusIcon aria-hidden="true" />
+                Adicionar ao calendário
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ListFilterIcon aria-hidden="true" />
+                Adicionar à lista
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <TagIcon aria-hidden="true" />
+                  Etiquetar como...
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup defaultValue="personal">
+                    <DropdownMenuRadioItem value="personal">
+                      Pessoal
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="work">
+                      Trabalho
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="other">
+                      Outro
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem variant="destructive">
+                <Trash2Icon aria-hidden="true" />
+                Mover para a lixeira
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </ButtonGroup>
     </ButtonGroup>
   ),
 }
@@ -174,7 +298,10 @@ export const GrupoDeBotoes: Story = {
 export const ComoLink: Story = {
   name: "Como link",
   render: () => (
-    <a href="#entrar" className={buttonVariants()}>
+    <a
+      href="#entrar"
+      className={buttonVariants({ variant: "secondary", size: "sm" })}
+    >
       Entrar
     </a>
   ),

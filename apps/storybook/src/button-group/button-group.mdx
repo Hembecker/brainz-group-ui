@@ -12,13 +12,13 @@ Um contêiner que agrupa botões relacionados com um estilo consistente.
 
 ## Instalação
 
-O Button Group usa o `Separator` e o `useRender` do Base UI e o `class-variance-authority`.
+O Button Group usa o `Separator` do pacote, o `useRender` do Base UI e o `class-variance-authority`.
 
 <Source language="bash" dark code="npx shadcn add button-group" />
 
 Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
 
-O CLI também cria `separator.tsx`, porque o registro do shadcn monta o grupo com o componente Separator. Apague esse arquivo: aqui o grupo usa o `Separator` do Base UI direto, para não criar um componente que não foi pedido.
+O CLI também instala o `separator.tsx`, que o grupo usa no `ButtonGroupSeparator`. Se o arquivo mudar, confira a cor do separador (veja o comentário do topo do componente).
 
 O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/button-group.tsx`.
 
@@ -57,7 +57,8 @@ Monte um `ButtonGroup` com esta composição:
 - O `ButtonGroup` tem `role="group"`.
 - Use Tab para passar de um botão do grupo para o outro.
 - Dê um nome ao grupo com `aria-label` ou `aria-labelledby`.
-- Cada botão só com ícone dentro do grupo também precisa de um nome específico, como "Próxima página" (veja o Button).
+- Cada botão só com ícone dentro do grupo também precisa de um nome específico, como "Próxima página" (veja o Button). O mesmo vale para o gatilho de um menu, de um popover ou de um select dentro do grupo: dê a ele um `aria-label`.
+- Um campo dentro do grupo (`Input`) precisa de um rótulo persistente: um `FieldLabel` com `htmlFor`, ou um `aria-label` quando o botão ao lado já diz o propósito. O placeholder não é rótulo.
 - O botão focado sobe acima dos vizinhos, então o anel de foco nunca fica escondido.
 
 <Source
@@ -72,7 +73,7 @@ Monte um `ButtonGroup` com esta composição:
 ## ButtonGroup ou ToggleGroup
 
 - Use o `ButtonGroup` para agrupar botões que executam uma ação.
-- Para agrupar botões que ligam e desligam um estado, o certo é um ToggleGroup. Esse componente ainda não existe neste design system.
+- Use o [ToggleGroup](?path=/docs/componentes-toggle-group--docs) para agrupar botões que ligam e desligam um estado.
 
 ## Orientação
 
@@ -88,7 +89,7 @@ Controle o tamanho com a prop `size` de cada botão.
 
 ## Aninhado
 
-Coloque um `<ButtonGroup>` dentro de outro para criar grupos separados por um espaço.
+Coloque um `<ButtonGroup>` dentro de outro para criar grupos separados por um espaço. O tooltip do botão de voz abre ao passar o mouse ou ao focar o botão, mas o nome do botão vem do `aria-label`, nunca só do tooltip.
 
 <Canvas of={ButtonGroupStories.Aninhado} />
 
@@ -106,11 +107,41 @@ Para um botão dividido, coloque dois botões separados por um `ButtonGroupSepar
 
 <Canvas of={ButtonGroupStories.Dividido} />
 
+## Input
+
+Coloque um `Input` dentro do grupo para juntar o campo a um botão. O campo continua precisando de um rótulo persistente: aqui, um `FieldLabel` ligado por `htmlFor`.
+
+<Canvas of={ButtonGroupStories.Entrada} />
+
+## Input Group
+
+Para um campo com botões e complementos dentro dele, coloque um `InputGroup` dentro de um `ButtonGroup`. O botão de voz liga e desliga um estado, então leva `aria-pressed`. O destaque do estado ligado usa o papel `secondary`, e não uma cor da paleta.
+
+<Canvas of={ButtonGroupStories.GrupoDeEntrada} />
+
+## Dropdown Menu
+
+Crie um botão dividido com um `DropdownMenu`: o gatilho recebe o `Button` pela prop `render`, sem um `div` em volta, e leva `aria-label` porque só tem um ícone.
+
+<Canvas of={ButtonGroupStories.MenuSuspenso} />
+
+## Select
+
+Coloque um `Select` dentro do grupo para juntar a um campo. O gatilho do select não tem texto que o nomeie (só o valor), então leva `aria-label`.
+
+<Canvas of={ButtonGroupStories.Selecao} />
+
+## Popover
+
+Use um `Popover` para abrir um conteúdo a partir de um botão do grupo. O gatilho recebe o `Button` pela prop `render`, e o popover tem um `PopoverTitle`, que é o nome dele. O campo de dentro tem um rótulo só para leitor de tela (`sr-only`), porque o título já diz o que é.
+
+<Canvas of={ButtonGroupStories.Popup} />
+
 ## RTL
 
 Os cantos e as bordas que o grupo junta são lógicos (`rounded-s-*`, `rounded-e-*` e `border-s-0`), então o grupo segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop. Ícones de direção, como setas, levam `rtl:rotate-180`.
 
-Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. O menu fica num portal, fora desse `div`, então ele recebe `dir="rtl"` e `lang="ar"` também, e o exemplo usa o `DirectionProvider` para o teclado do menu seguir a direção. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={ButtonGroupStories.Rtl} />
 

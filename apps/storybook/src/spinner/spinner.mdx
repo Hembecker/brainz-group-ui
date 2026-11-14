@@ -53,7 +53,11 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/spi
 
 ## Personalização
 
-Para trocar o ícone, edite o componente e substitua o `Loader2Icon` por outro ícone.
+Para trocar o ícone, edite o componente e substitua o `Loader2Icon` por outro ícone. O exemplo mostra o `LoaderIcon` do `lucide-react` com a mesma API: `role="status"`, o rótulo e a animação, que fica parada com movimento reduzido.
+
+<Canvas of={SpinnerStories.Personalizacao} />
+
+O componente fica assim:
 
 <Source
   language="tsx"
@@ -80,6 +84,24 @@ Use as classes `size-*` para mudar o tamanho do spinner. A cor acompanha a cor d
 Para mostrar que um botão está carregando, coloque o `<Spinner />` antes do rótulo com `data-icon="inline-start"` ou depois do rótulo com `data-icon="inline-end"`, e desabilite o botão.
 
 <Canvas of={SpinnerStories.NoBotao} />
+
+## Badge
+
+Adicione um Spinner a um Badge com `data-icon="inline-start"` ou `data-icon="inline-end"`. O Badge já ajusta o espaçamento daquele lado.
+
+<Canvas of={SpinnerStories.NoBadge} />
+
+## Input Group
+
+Coloque um Spinner num `InputGroupAddon`, ao lado de um campo. Enquanto ele gira, o campo fica desabilitado. O campo continua precisando de um nome (`aria-label`), porque o placeholder não é rótulo, e o Spinner leva um `aria-label` que diz o que está acontecendo.
+
+<Canvas of={SpinnerStories.NoGrupoDeEntrada} />
+
+## Empty
+
+Use um Spinner no `EmptyMedia` para um estado de carregamento de página ou de seção. O `EmptyTitle` é um `div`, então coloque um heading dentro dele (veja o Empty).
+
+<Canvas of={SpinnerStories.NoVazio} />
 
 ## RTL
 
