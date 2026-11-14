@@ -39,3 +39,6 @@ __screenshots__
 
 # vercel
 .vercel
+
+# relatório de cobertura do Vitest (painel de testes do Storybook)
+coverage
