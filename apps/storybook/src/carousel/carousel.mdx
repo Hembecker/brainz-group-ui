@@ -1,0 +1,360 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CarouselStories from "./carousel.stories";
+
+<Meta of={CarouselStories} />
+
+# Carousel
+
+Um carrossel com movimento e gesto de arrastar, feito com o Embla.
+
+<Canvas of={CarouselStories.Demo} />
+
+## Sobre
+
+O Carousel usa a biblioteca [Embla Carousel](https://www.embla-carousel.com/). As opções (`opts`), os plugins e a API vêm direto dela: veja a [documentação do Embla](https://www.embla-carousel.com/api/) para a lista completa.
+
+## Instalação
+
+O Carousel usa o `embla-carousel-react`, o Button e o ícone do `lucide-react`.
+
+<Source language="bash" dark code="npx shadcn add carousel" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/carousel.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@workspace/ui/components/carousel"
+
+<Carousel aria-label="Destaques da semana">
+  <CarouselContent>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>`}
+/>
+
+## Composição
+
+Monte um `Carousel` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Carousel
+├── CarouselContent
+│   ├── CarouselItem
+│   └── CarouselItem
+├── CarouselPrevious
+└── CarouselNext`}
+/>
+
+## Acessibilidade
+
+O Carousel segue o padrão de carrossel do WAI-ARIA.
+
+- **Região com nome:** o contêiner é uma região com `aria-roledescription="carousel"`. Ele **precisa de um nome**, que o componente não tem como adivinhar: passe `aria-label` ou `aria-labelledby` ("Destaques da semana"). Com vários carrosséis na página, cada um leva um nome diferente.
+- **Slides com nome:** cada `CarouselItem` é um grupo com `aria-roledescription="slide"` e o nome automático "1 de 5", calculado pela posição e pelo total (os itens contam como filhos diretos, em arrays ou em Fragments; um item escondido dentro de outro componente não é contado, e então leva um `aria-label` próprio). Para um nome mais específico ("Plano Pro"), passe `aria-label` no item: ele tem preferência.
+- **Botões com nome:** "Slide anterior" e "Próximo slide" (texto `sr-only`), e as setas levam `aria-hidden="true"`. O nome é fixo em português; para outro idioma, passe `aria-label` no botão (veja **RTL**). No primeiro slide o anterior fica desabilitado, e no último, o próximo (a menos que use `loop`).
+- **Teclado:** `Tab` chega aos botões, e as setas ← e → trocam de slide quando o foco está dentro do carrossel. Em RTL as setas espelham (← avança). O anel de foco é o do Button: sólido, no token `--ring`, afastado 2px pela cor do fundo.
+- **Sem reprodução automática:** o conteúdo que se move sozinho precisa de um controle para pausar (WCAG 2.2.2). O padrão é não ter autoplay. Se usar o plugin de autoplay (veja **Plugins**), ofereça um botão de pausar e pare a rolagem quando o foco ou o mouse entrar no carrossel.
+- **Mudanças dinâmicas:** quem usa a API para mostrar "Slide 2 de 5" deve manter essa região `aria-live="polite"` (`role="status"`) sempre montada, trocando só o texto (veja **API**).
+- **Cor e contraste:** os botões são o Button `outline`, com texto e contorno nos papéis do sistema. O conteúdo dos slides segue as regras de cada componente.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Carousel aria-label="Destaques da semana">
+  <CarouselContent>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem aria-label="Plano Pro">...</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>`}
+/>
+
+## Tamanho
+
+Para mudar o tamanho dos itens, use a classe `basis-*` no `CarouselItem`. Os botões ficam fora do carrossel (`-start-12` e `-end-12`), então deixe uma folga nas laterais, como um `px-12` no contêiner.
+
+<Canvas of={CarouselStories.Tamanho} />
+
+<Source
+  language="tsx"
+  dark
+  code={`// 33% da largura do carrossel.
+<Carousel>
+  <CarouselContent>
+    <CarouselItem className="basis-1/3">...</CarouselItem>
+    <CarouselItem className="basis-1/3">...</CarouselItem>
+    <CarouselItem className="basis-1/3">...</CarouselItem>
+  </CarouselContent>
+</Carousel>
+
+// 50% em telas pequenas e 33% nas maiores.
+<Carousel>
+  <CarouselContent>
+    <CarouselItem className="md:basis-1/2 lg:basis-1/3">...</CarouselItem>
+    <CarouselItem className="md:basis-1/2 lg:basis-1/3">...</CarouselItem>
+    <CarouselItem className="md:basis-1/2 lg:basis-1/3">...</CarouselItem>
+  </CarouselContent>
+</Carousel>`}
+/>
+
+## Espaçamento
+
+Para definir o espaço entre os itens, use `ps-*` (recuo no início) no `CarouselItem` e o `-ms-*` negativo correspondente no `CarouselContent`. As classes são lógicas (`ps`/`ms`, não `pl`/`ml`), então o espaço também funciona em RTL.
+
+<Canvas of={CarouselStories.Espacamento} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<Carousel>
+  <CarouselContent className="-ms-4">
+    <CarouselItem className="ps-4">...</CarouselItem>
+    <CarouselItem className="ps-4">...</CarouselItem>
+    <CarouselItem className="ps-4">...</CarouselItem>
+  </CarouselContent>
+</Carousel>
+
+<Carousel>
+  <CarouselContent className="-ms-2 md:-ms-4">
+    <CarouselItem className="ps-2 md:ps-4">...</CarouselItem>
+    <CarouselItem className="ps-2 md:ps-4">...</CarouselItem>
+    <CarouselItem className="ps-2 md:ps-4">...</CarouselItem>
+  </CarouselContent>
+</Carousel>`}
+/>
+
+## Orientação
+
+Use a prop `orientation` para definir a orientação. No vertical, o `CarouselContent` precisa de uma altura (como `h-[270px]`) e os botões ficam acima e abaixo, com o ícone girado 90°. Deixe uma folga em cima e embaixo (`py-12`).
+
+<Canvas of={CarouselStories.Orientacao} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<Carousel orientation="vertical" aria-label="Últimas notícias">
+  <CarouselContent className="h-[270px]">
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>`}
+/>
+
+## Opções
+
+Passe opções do Embla pela prop `opts`. Veja a [documentação das opções](https://www.embla-carousel.com/api/options/).
+
+<Source
+  language="tsx"
+  dark
+  code={`<Carousel
+  aria-label="Destaques da semana"
+  opts={{
+    align: "start",
+    loop: true,
+  }}
+>
+  <CarouselContent>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+  </CarouselContent>
+</Carousel>`}
+/>
+
+## API
+
+Use um estado e a prop `setApi` para obter a instância da API do carrossel. O exemplo mostra "Slide 2 de 5" numa região `role="status"` que fica sempre montada: só o texto muda, e o leitor de tela anuncia a troca.
+
+<Canvas of={CarouselStories.Api} />
+
+## Eventos
+
+Escute os eventos pela instância de `setApi`. Veja a [documentação dos eventos](https://www.embla-carousel.com/api/events/).
+
+<Source
+  language="tsx"
+  dark
+  code={`import { type CarouselApi } from "@workspace/ui/components/carousel"
+
+export function Exemplo() {
+  const [api, setApi] = React.useState<CarouselApi>()
+
+  React.useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    const aoSelecionar = () => {
+      // Faça algo quando o slide mudar.
+    }
+    api.on("select", aoSelecionar)
+
+    return () => {
+      api.off("select", aoSelecionar)
+    }
+  }, [api])
+
+  return (
+    <Carousel setApi={setApi} aria-label="Destaques da semana">
+      <CarouselContent>
+        <CarouselItem>...</CarouselItem>
+        <CarouselItem>...</CarouselItem>
+        <CarouselItem>...</CarouselItem>
+      </CarouselContent>
+    </Carousel>
+  )
+}`}
+/>
+
+## Plugins
+
+Use a prop `plugins` para adicionar plugins do Embla, como o de reprodução automática. O pacote `embla-carousel-autoplay` não está instalado neste projeto, então esta seção não tem exemplo ao vivo; instale-o antes de usar.
+
+**O trecho abaixo não foi executado**, porque o pacote não está instalado: confira o comportamento do `reset` ao sair do mouse depois de uma pausa manual (ele pode retomar a rolagem). Um carrossel que avança sozinho **precisa de um botão de pausar** (WCAG 2.2.2). O exemplo do shadcn só para a rolagem ao passar o mouse, o que não serve para quem usa o teclado: ofereça também um controle de pausar (um botão com nome fixo e `aria-pressed`, não um rótulo que troca), e pare a rolagem quando o foco entrar.
+
+<Source
+  language="tsx"
+  dark
+  code={`import Autoplay from "embla-carousel-autoplay"
+
+export function Exemplo() {
+  const autoplay = React.useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true, stopOnFocusIn: true })
+  )
+  const [tocando, setTocando] = React.useState(true)
+
+  return (
+    <div className="mx-auto w-full max-w-sm px-12">
+      <Carousel
+        aria-label="Destaques da semana"
+        plugins={[autoplay.current]}
+        onMouseEnter={autoplay.current.stop}
+        onMouseLeave={autoplay.current.reset}
+      >
+        <CarouselContent>
+          <CarouselItem>...</CarouselItem>
+          <CarouselItem>...</CarouselItem>
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+      <Button
+        variant="outline"
+        size="sm"
+        aria-pressed={!tocando}
+        onClick={() => {
+          if (tocando) {
+            autoplay.current.stop()
+          } else {
+            autoplay.current.play()
+          }
+          setTocando(!tocando)
+        }}
+      >
+        Pausar a rolagem automática
+      </Button>
+    </div>
+  )
+}`}
+/>
+
+## RTL
+
+Em RTL, o Embla precisa da opção `direction`, porque ele não lê o `dir` do DOM. O Carousel usa a direção do `DirectionProvider` quando `opts.direction` não é passada; no exemplo ela vem explícita, como na página do shadcn. Use também `dir="rtl"` no carrossel.
+
+Os botões já espelham as setas (`rtl:rotate-180` no ícone), então não repita a classe nos botões: as duas se anulariam. No modo vertical o botão já gira 90° e o espelhamento não vale. As setas do teclado também espelham. O nome dos botões é fixo em português, então, em outro idioma, passe `aria-label` neles, e também nos itens, como no exemplo.
+
+<Canvas of={CarouselStories.Rtl} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<DirectionProvider direction="rtl">
+  <div dir="rtl" lang="ar">
+    <Carousel dir="rtl" aria-label="معرض الصور" opts={{ direction: "rtl" }}>
+      <CarouselContent>
+        <CarouselItem aria-label="١ من ٥">...</CarouselItem>
+        <CarouselItem aria-label="٢ من ٥">...</CarouselItem>
+      </CarouselContent>
+      <CarouselPrevious aria-label="الشريحة السابقة" />
+      <CarouselNext aria-label="الشريحة التالية" />
+    </Carousel>
+  </div>
+</DirectionProvider>`}
+/>
+
+## Referência da API
+
+### Carousel
+
+O contêiner raiz. É uma região (`role="region"`) com `aria-roledescription="carousel"`. Aceita todas as props de um `<div>`, e o `aria-label` é obrigatório na prática.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+    <tr><td><code>opts</code></td><td><code>CarouselOptions</code> (opções do Embla)</td><td>direção do <code>DirectionProvider</code></td></tr>
+    <tr><td><code>plugins</code></td><td><code>CarouselPlugin</code> (plugins do Embla)</td><td>—</td></tr>
+    <tr><td><code>setApi</code></td><td><code>{'(api: CarouselApi) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-label</code> / <code>aria-labelledby</code></td><td><code>string</code></td><td>— (passe um dos dois)</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="carousel"`. Veja a [documentação do Embla](https://www.embla-carousel.com/api/) para as opções e os plugins.
+
+### CarouselContent
+
+Envolve os itens e é o elemento que o Embla move. Aceita as props de um `<div>`; a `className` vai para a faixa interna (use para o espaçamento e a altura no vertical). Passa a posição e o total para cada item, para o nome automático. Recebe `data-slot="carousel-content"`.
+
+### CarouselItem
+
+Um slide. É um grupo (`role="group"`) com `aria-roledescription="slide"` e `aria-label` automático "n de total". Aceita as props de um `<div>`, e um `aria-label` próprio tem preferência. Recebe `data-slot="carousel-item"`.
+
+### CarouselPrevious e CarouselNext
+
+Os botões de navegação, com o nome "Slide anterior" e "Próximo slide". Aceitam as props do Button.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td>variantes do Button</td><td><code>{'"outline"'}</code></td></tr>
+    <tr><td><code>size</code></td><td>tamanhos do Button</td><td><code>{'"icon-sm"'}</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td>texto <code>sr-only</code> em português</td></tr>
+  </tbody>
+</table>
+
+Recebem `data-slot="carousel-previous"` e `data-slot="carousel-next"`.
+
+### useCarousel
+
+Um hook, só para uso dentro do `Carousel`, que devolve a API do Embla, `scrollPrev`, `scrollNext`, `canScrollPrev`, `canScrollNext`, `orientation` e `opts`.
+
+O tipo `CarouselApi` também é exportado, para tipar o estado do `setApi`.

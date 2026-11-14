@@ -1,0 +1,202 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as MarkerStories from "./marker.stories";
+
+<Meta of={MarkerStories} />
+
+# Marker
+
+Mostra um status em linha, uma nota do sistema, uma linha com borda ou um separador com rótulo numa conversa.
+
+<Canvas of={MarkerStories.Demo} />
+
+O `Marker` mostra marcadores em linha numa conversa: atualizações de status, notas do sistema, linhas com borda e separadores com rótulo. Componha-o com o `Message` numa conversa.
+
+## Instalação
+
+O Marker não precisa de outros componentes. Ele usa o `useRender` e o `mergeProps` do Base UI, o `cva` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add marker" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/marker.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Marker,
+  MarkerContent,
+  MarkerIcon,
+} from "@workspace/ui/components/marker"
+
+<Marker>
+  <MarkerIcon>
+    <CheckIcon />
+  </MarkerIcon>
+  <MarkerContent>Explorou 4 arquivos</MarkerContent>
+</Marker>`}
+/>
+
+## Composição
+
+Monte um `Marker` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Marker
+├── MarkerIcon
+└── MarkerContent`}
+/>
+
+## Recursos
+
+- Marcador em linha, linha com borda e separador com rótulo.
+- Um espaço para o ícone, que a tecnologia assistiva ignora.
+- A raiz é polimórfica, pela prop `render`: serve para um link ou um botão.
+- Combina com o utilitário `shimmer`, para o texto de um status em andamento.
+- Cada parte aceita `className`.
+
+## Acessibilidade
+
+O `Marker` é presentacional por padrão: o papel certo depende do uso, e quem monta o marcador é quem escolhe.
+
+- **Status e progresso:** para um marcador que muda enquanto algo acontece, como "Pensando..." ou uma ferramenta em execução, use `role="status"`, e a atualização é anunciada de forma educada (`polite`). O `Marker` repassa o `role` para o elemento. O `Spinner` dentro do `MarkerIcon` fica escondido da tecnologia assistiva junto com o ícone, então só o texto é lido (veja **Status**).
+- **Separador com texto:** não ponha `role="separator"`. Um separador toma o nome do `aria-label` e trata o conteúdo como apresentação, então o texto visível não seria lido. As linhas dos lados são pseudo-elementos decorativos, e o texto é lido como um texto comum. Reserve `role="separator"` para um divisor sem texto.
+- **Marcador com borda:** tem a mesma semântica do padrão. A borda de baixo é decorativa.
+- **Ícone decorativo:** o `MarkerIcon` leva `aria-hidden="true"`, e o `MarkerContent` ao lado carrega o sentido. Um marcador só com ícone precisa de um `aria-label` ou de texto visível, para não ser lido como vazio.
+- **Link e botão:** use `render` com um `<a>` (navegação) ou um `<button type="button">` (ação). O nome vem do texto do `MarkerContent`. O foco é o anel sólido do projeto (`--ring`, afastado 2px pela cor do fundo), e o link fica sublinhado, para não depender só da cor.
+- **Contraste:** o texto usa `muted-foreground`: 7,4:1 no fundo claro e 8,1:1 no escuro. As linhas do separador e da borda (`border`) são decorativas, porque o texto é que carrega o sentido.
+- **Movimento:** o `shimmer` passa um brilho pelo texto e pausa sozinho com `prefers-reduced-motion`. Durante a passagem do brilho, uma parte do texto fica mais clara; use só em texto de status que não seja a única fonte de uma informação importante.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Marker role="status">
+  <MarkerIcon>
+    <Spinner />
+  </MarkerIcon>
+  <MarkerContent>Resumindo a conversa</MarkerContent>
+</Marker>
+
+<Marker variant="separator">
+  <MarkerContent>Hoje</MarkerContent>
+</Marker>
+
+<Marker aria-label="Sincronizado">
+  <MarkerIcon>
+    <CheckIcon />
+  </MarkerIcon>
+</Marker>
+
+<Marker render={<a href="/arquivos" />}>
+  <MarkerIcon>
+    <FileTextIcon />
+  </MarkerIcon>
+  <MarkerContent>Explorou 4 arquivos</MarkerContent>
+</Marker>`}
+/>
+
+## Variantes
+
+Use `variant` para trocar entre o marcador em linha, a linha com borda e o separador com rótulo.
+
+<Canvas of={MarkerStories.Variantes} />
+
+<table>
+  <thead>
+    <tr><th>Variante</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>default</code></td><td>Um marcador em linha, para status, notas e ações.</td></tr>
+    <tr><td><code>border</code></td><td>Um marcador padrão com uma borda embaixo da linha.</td></tr>
+    <tr><td><code>separator</code></td><td>Um rótulo centralizado, com uma linha de cada lado.</td></tr>
+  </tbody>
+</table>
+
+## Status
+
+Use `role="status"` e um [Spinner](?path=/docs/componentes-spinner--docs) em marcadores de streaming ou de progresso, para as atualizações serem anunciadas.
+
+<Canvas of={MarkerStories.Status} />
+
+## Shimmer
+
+Adicione o utilitário `shimmer` ao `MarkerContent` para o efeito animado de texto em streaming. O utilitário vem do pacote `shadcn/tailwind.css`, que o `globals.css` já importa.
+
+<Canvas of={MarkerStories.Shimmer} />
+
+## Separador
+
+Use a variante `separator` para divisores com rótulo, como datas ou quebras de seção numa conversa.
+
+<Canvas of={MarkerStories.Separador} />
+
+## Borda
+
+Use a variante `border` para linhas de status que mantêm o alinhamento do marcador padrão e separam a linha seguinte.
+
+<Canvas of={MarkerStories.Borda} />
+
+## Com ícone
+
+Use o `MarkerIcon` para mostrar um ícone junto do conteúdo. Use `flex-col` para empilhar o ícone sobre o conteúdo.
+
+<Canvas of={MarkerStories.ComIcone} />
+
+## Links e botões
+
+Transforme o marcador num link ou num botão com a prop `render` do `Marker`.
+
+<Canvas of={MarkerStories.LinksEBotoes} />
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Marker, MarkerContent } from "@workspace/ui/components/marker"
+
+export function MarkerLink() {
+  return (
+    <Marker render={<a href="#" />}>
+      <MarkerContent>Ver o pull request</MarkerContent>
+    </Marker>
+  )
+}`}
+/>
+
+## RTL
+
+A página do shadcn não tem uma seção de RTL, mas as linhas do separador e o espaço do ícone usam margens lógicas (`me` e `ms`) e o texto usa `text-start`, então o `Marker` segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop. O exemplo usa um `div` com `dir` e `lang` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas.
+
+<Canvas of={MarkerStories.Rtl} />
+
+## Referência da API
+
+### Marker
+
+A raiz do marcador. O arquivo também exporta `markerVariants`, para usar o estilo em componentes próprios. Aceita as props de um `<div>`, ou do elemento passado em `render`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "border" | "separator"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code>: renderiza outro elemento, como um link</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="marker"` e `data-variant`.
+
+### MarkerIcon
+
+Um espaço decorativo para o ícone, escondido da tecnologia assistiva com `aria-hidden`. Aceita as props de um `<span>`. Recebe `data-slot="marker-icon"`.
+
+### MarkerContent
+
+O texto do marcador. Aceita as props de um `<span>`. Recebe `data-slot="marker-content"`.

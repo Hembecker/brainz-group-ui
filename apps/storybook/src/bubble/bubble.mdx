@@ -1,0 +1,268 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as BubbleStories from "./bubble.stories";
+
+<Meta of={BubbleStories} />
+
+# Bubble
+
+Mostra conteúdo de conversa num balão: variantes, alinhamento, agrupamento, reações e conteúdo recolhível.
+
+<Canvas of={BubbleStories.Demo} />
+
+O `Bubble` mostra o conteúdo de conversa com moldura. Use para o texto do chat, uma saída estruturada curta, respostas citadas, sugestões e reações.
+
+Para uma interface de chat completa, use o [`Message`](?path=/docs/componentes-message--docs). O `Bubble` cuida só da superfície do balão: avatar, nome, horário, metadados e ações da mensagem ficam no `Message`.
+
+## Instalação
+
+O Bubble usa o `@base-ui/react` (`useRender` e `mergeProps`), o cva e o `cn`, que já estão no pacote.
+
+<Source language="bash" dark code="npx shadcn add bubble" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/bubble.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Bubble,
+  BubbleContent,
+  BubbleReactions,
+} from "@workspace/ui/components/bubble"
+
+<Bubble>
+  <BubbleContent>
+    Conferi a saída do registro e removi a rota antiga.
+  </BubbleContent>
+  <BubbleReactions role="img" aria-label="Reação: joinha">
+    <span>👍</span>
+  </BubbleReactions>
+</Bubble>`}
+/>
+
+## Composição
+
+Monte um balão com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Bubble
+├── BubbleContent
+└── BubbleReactions`}
+/>
+
+Use o `BubbleGroup` para agrupar balões seguidos do mesmo autor:
+
+<Source
+  language="text"
+  dark
+  code={`BubbleGroup
+├── Bubble
+│   └── BubbleContent
+└── Bubble
+    └── BubbleContent`}
+/>
+
+## Recursos
+
+- Sete variantes visuais, do balão primário forte ao conteúdo fantasma, sem moldura.
+- Alinhamento no início e no fim, para quem envia e quem recebe.
+- Reações presas à borda do balão, com lado e alinhamento configuráveis.
+- O balão acompanha o tamanho do conteúdo, até 80% da largura do contêiner.
+- Conteúdo polimórfico com `render`, para balões que são link ou botão.
+- Estilo ajustável pela prop `className` em todas as partes.
+
+## Acessibilidade
+
+O `Bubble` é só a superfície. A estrutura da conversa fica no contêiner em volta, e o balão cuida do contraste, do foco e dos controles que ele recebe.
+
+- **Estrutura da conversa:** uma lista de balões é uma conversa, então agrupe-a num elemento com `role="log"` e um nome (`aria-label="Conversa com a Lia"`). O `log` é uma região `polite`: mensagens novas são anunciadas sem interromper a leitura. Numa conversa que rola, o `MessageScrollerContent` já é esse `log` (veja o [`MessageScroller`](?path=/docs/componentes-message-scroller--docs)).
+- **Autor de cada mensagem:** o balão não diz quem escreveu. Com um `Message`, o nome vem do `MessageHeader` ou do avatar. Sem ele, ponha um texto `sr-only` dentro do balão (`<span className="sr-only">Você: </span>`), para o leitor de tela dizer o autor antes do texto.
+- **Reações:** uma fileira de emoji é lida glifo a glifo, e um contador como `+8` vira "mais oito". Dê à fileira `role="img"` e `aria-label` ("Reações: joinha, fogo e mais 8"): ela passa a ser uma imagem só, com um nome, e os emoji de dentro ficam escondidos do leitor de tela. O `aria-label` sozinho, num `div` sem papel, é ignorado: o `role="img"` é obrigatório. Reações que são botões ficam fora do `role="img"`, e cada botão precisa de nome (`aria-label="Joinha"`), com o ícone `aria-hidden="true"`.
+- **Balões interativos:** um balão clicável é um `<button type="button">` (ação) ou um `<a href>` (navegação), passado ao `BubbleContent` pela prop `render`, sem `div` envolvendo. O nome vem do próprio texto do balão, então não precisa de `aria-label`.
+- **Foco visível:** `button` e `a` ganham o anel sólido de 3px no `--ring`, afastado 2px pela cor do fundo (`focus-visible`), igual ao do Button. O anel passa por fora do balão, então deixe espaço em volta numa área com rolagem, para ele não ser cortado.
+- **Contraste do texto, em todas as variantes, sem cor com opacidade:** primária (branco sobre `primary`) 5,2:1; secundária 7,7:1 no claro e 9,0:1 no escuro; discreta 17,7:1 e 14,3:1; com tom 15,7:1 e 13,2:1; com contorno 19,7:1 e 19,0:1; destrutiva (`destructive-hover` sobre `accent`) 5,8:1 e 7,7:1. No hover de um balão `button` ou `a`, o menor valor é 5,1:1. Confira de novo os números quando mudar algum token.
+- **Significado além da cor:** as variantes dizem o papel e o tom com cor. Some a ela texto, alinhamento ou ícone. Na variante destrutiva, deixe o contexto do erro no texto ("Erro: não foi possível enviar"), e não só na cor. Ela também ganha um contorno vermelho, para não depender só da cor do texto.
+- **Tooltip e popover:** um botão só com ícone dentro do balão (a seção **Tooltip**, **Popover**) precisa do próprio nome por `aria-label`. O tooltip só repete a informação, nunca é o único nome. O popover precisa de um título (`PopoverTitle`), que vira o nome da janela.
+- **Conteúdo recolhível:** o gatilho do `Collapsible` é um `<button>` com `aria-expanded`. O texto do botão muda entre "Mostrar mais" e "Mostrar menos", e a seta é decorativa.
+
+<Source
+  language="tsx"
+  dark
+  code={`<div role="log" aria-label="Conversa com a Lia">
+  <Bubble variant="muted">
+    <BubbleContent>
+      <span className="sr-only">Lia: </span>Posso olhar isso agora.
+    </BubbleContent>
+    <BubbleReactions role="img" aria-label="Reação: joinha">
+      <span>👍</span>
+    </BubbleReactions>
+  </Bubble>
+</div>`}
+/>
+
+## Variantes
+
+Use `variant` para mudar o tratamento visual do balão.
+
+<Canvas of={BubbleStories.Variantes} />
+
+<table>
+  <thead>
+    <tr><th>Variante</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>default</code></td><td>Um balão primário forte, em geral para o usuário atual.</td></tr>
+    <tr><td><code>secondary</code></td><td>O balão neutro padrão para o conteúdo da conversa.</td></tr>
+    <tr><td><code>muted</code></td><td>Um balão de menos destaque, para conteúdo de apoio.</td></tr>
+    <tr><td><code>tinted</code></td><td>Um balão com um leve tom da cor primária.</td></tr>
+    <tr><td><code>outline</code></td><td>Um balão com contorno, para conteúdo secundário ou rico.</td></tr>
+    <tr><td><code>ghost</code></td><td>Conteúdo sem moldura, para o texto do assistente ou conteúdo rico.</td></tr>
+    <tr><td><code>destructive</code></td><td>Um balão destrutivo, para erros e ações que falharam.</td></tr>
+  </tbody>
+</table>
+
+O balão acompanha o tamanho do conteúdo, até 80% da largura do contêiner. A variante `ghost` tira esse limite, para o texto do assistente e o conteúdo rico ocuparem a linha toda.
+
+## Alinhamento
+
+Use `align` no `Bubble` para alinhar o balão ao início ou ao fim da conversa.
+
+<Canvas of={BubbleStories.Alinhamento} />
+
+<table>
+  <thead>
+    <tr><th>align</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>start</code></td><td>Alinha o balão ao início da conversa.</td></tr>
+    <tr><td><code>end</code></td><td>Alinha o balão ao fim da conversa.</td></tr>
+  </tbody>
+</table>
+
+**Observação:** numa interface de chat, o normal é alinhar pelo componente `Message` (`align="end"`), e não pelo `Bubble`. O `Bubble` dentro de um `Message` alinhado ao fim já vai para o fim (`group-data-[align=end]/message`). O alinhamento é lógico (`self-end`), então em RTL o fim é a esquerda.
+
+## Grupo de balões
+
+Use o `BubbleGroup` para agrupar balões seguidos do mesmo autor. A prop `align` vai em cada `Bubble`, e não no `BubbleGroup`.
+
+<Canvas of={BubbleStories.GrupoDeBaloes} />
+
+## Links e botões
+
+Transforme um balão em link ou botão com a prop `render` do `BubbleContent`.
+
+<Canvas of={BubbleStories.LinksEBotoes} />
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Bubble, BubbleContent } from "@workspace/ui/components/bubble"
+
+export function BalaoBotao() {
+  return (
+    <Bubble variant="muted">
+      <BubbleContent render={<button type="button" />}>
+        Clique aqui
+      </BubbleContent>
+    </Bubble>
+  )
+}`}
+/>
+
+## Reações
+
+Use o `BubbleReactions` para as reações de um balão. Ele serve para mostrar reações ou botões de ação rápida. Use `side` e `align` para posicionar a fileira: `side="top"` a prende à borda de cima. As reações se sobrepõem à borda do balão, então deixe espaço vertical entre as linhas: os exemplos usam um `gap` maior por isso.
+
+<Canvas of={BubbleStories.Reacoes} />
+
+## Mostrar mais
+
+Um conteúdo longo pode ser composto com o [`Collapsible`](?path=/docs/componentes-collapsible--docs) para um "mostrar mais" e "mostrar menos". O `CollapsibleTrigger` recebe um `Button` pela prop `render`.
+
+<Canvas of={BubbleStories.MostrarMais} />
+
+## Tooltip
+
+Envolva o botão de um balão num [`Tooltip`](?path=/docs/componentes-tooltip--docs) para mostrar um metadado ao passar o mouse ou ao focar, como quando a mensagem foi lida. O botão tem o próprio nome por `aria-label`: o tooltip só repete a informação.
+
+<Canvas of={BubbleStories.TooltipDoBalao} />
+
+## Popover
+
+Combine um balão com um [`Popover`](?path=/docs/componentes-popover--docs) para mostrar mais informação sob demanda, como a mensagem de erro completa de uma ação que falhou.
+
+<Canvas of={BubbleStories.PopoverDoBalao} />
+
+## Referência da API
+
+### Bubble
+
+O contêiner raiz do balão. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "secondary" | "muted" | "tinted" | "outline" | "ghost" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="bubble"`, `data-variant` e `data-align`.
+
+### BubbleContent
+
+O conteúdo do balão. Aceita as props do elemento renderizado.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Com `render={<button />}` ou `render={<a />}`, o balão vira um botão ou um link, com hover e anel de foco. O elemento recebe `data-slot="bubble-content"`.
+
+### BubbleReactions
+
+A fileira de reações, sobreposta à borda do balão. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"top" | "bottom"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"end"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="bubble-reactions"`, `data-align` e `data-side`.
+
+### BubbleGroup
+
+Agrupa balões seguidos do mesmo autor. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="bubble-group"`.

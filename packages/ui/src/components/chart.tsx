@@ -3,6 +3,33 @@ import { cn } from "cn"
 import * as RechartsPrimitive from "recharts"
 import type { TooltipValueType } from "recharts"
 
+/*
+ * Chart — estrutura e API do shadcn/ui (versão Base UI), sobre o Recharts 3:
+ * https://ui.shadcn.com/docs/components/base/chart
+ * As cores, o contraste e os tamanhos são os da Big Brain. Não envolve o
+ * Recharts: o ChartContainer só traz o tema, o tooltip e a legenda.
+ * - Cores das séries: `--chart-1` a `--chart-5` (escala Primária, uma por modo,
+ *   com os contrastes anotados no `globals.css`). Passe-as no `config` como
+ *   `color: "var(--chart-1)"` e use `var(--color-<chave>)` nas séries. Os
+ *   passos vizinhos da escala se parecem (500 e 600, por exemplo): numa
+ *   comparação de duas séries, use passos distantes (`--chart-1` e
+ *   `--chart-4`) e nunca dependa só da cor (legenda, tooltip e tabela dizem
+ *   o nome de cada série).
+ * - O `ChartContainer` mede o espaço pelo Recharts: dê uma altura (`h-*`,
+ *   `min-h-*` ou `aspect-*`) e uma largura, senão o gráfico sai vazio.
+ * - Acessibilidade: o Recharts 3 já liga o `accessibilityLayer` (o `svg` vira
+ *   `role="application"` com `tabindex="0"`, e as setas percorrem os pontos e
+ *   abrem o tooltip). Dê o nome por `title` e `desc` no gráfico e ponha o
+ *   gráfico num `figure` com legenda. O `svg` focável usa o mesmo anel sólido
+ *   do projeto (`ring-3 ring-ring ring-offset-2`), no lugar do `outline-hidden`
+ *   do registro, que apagava o foco.
+ * - Cores com opacidade do registro trocadas por papéis cheios: o contorno do
+ *   tooltip `ring-foreground/5 dark:ring-foreground/10` virou `ring-border`
+ *   (como no Card) e a grade `stroke-border/50` virou `stroke-border`. O
+ *   texto do tooltip e dos eixos é `text-foreground`/`muted-foreground`
+ *   sobre `popover`/`background`; o texto da legenda herda `foreground`.
+ */
+
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
 
@@ -62,7 +89,7 @@ function ChartContainer({
         data-slot="chart"
         data-chart={chartId}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
+          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-none [&_.recharts-surface:focus-visible]:ring-3 [&_.recharts-surface:focus-visible]:ring-ring [&_.recharts-surface:focus-visible]:ring-offset-2 [&_.recharts-surface:focus-visible]:ring-offset-background",
           className
         )}
         {...props}
@@ -188,7 +215,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "grid min-w-32 items-start gap-1.5 rounded-xl bg-popover px-2.5 py-1.5 text-xs text-popover-foreground shadow-lg ring-1 ring-foreground/5 dark:ring-foreground/10",
+        "grid min-w-32 items-start gap-1.5 rounded-xl bg-popover px-2.5 py-1.5 text-xs text-popover-foreground shadow-lg ring-1 ring-border",
         className
       )}
     >

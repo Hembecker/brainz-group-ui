@@ -1,0 +1,260 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CalendarStories from "./calendar.stories";
+
+<Meta of={CalendarStories} />
+
+# Calendar
+
+Um calendário para escolher uma data ou um intervalo de datas.
+
+<Canvas of={CalendarStories.Demo} />
+
+Os exemplos desta página fixam o dia de hoje em 12 de junho de 2025 (`today={new Date(2025, 5, 12)}`), para o destaque de "hoje", os nomes dos botões e os anos do seletor não mudarem com o relógio. No seu código, omita a prop `today`.
+
+## Instalação
+
+O Calendar usa o React DayPicker e o `date-fns`, e o Button para os botões de mês e de dia.
+
+<Source language="bash" dark code="npx shadcn add calendar" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/calendar.tsx`. As dependências são `react-day-picker` e `date-fns`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { ptBR } from "react-day-picker/locale"
+
+import { Calendar } from "@workspace/ui/components/calendar"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`const [data, setData] = React.useState<Date | undefined>(new Date())
+
+return (
+  <Calendar
+    mode="single"
+    selected={data}
+    onSelect={setData}
+    locale={ptBR}
+    className="rounded-lg border"
+  />
+)`}
+/>
+
+Veja a documentação do [React DayPicker](https://react-day-picker.js.org) para as demais props.
+
+## Acessibilidade
+
+- **Idioma e nomes:** passe o `locale` em português com o `ptBR` de `react-day-picker/locale`. Ele é o `ptBR` do `date-fns` mais as traduções dos rótulos de acessibilidade: sem elas, os botões de mês ficam "Go to the Next Month" e um dia fica "Today, …, selected" num leitor de tela em português. Com o locale, o nome de um dia é "Hoje, quinta-feira, 12 de junho de 2025" e, selecionado, termina em ", selecionado". O `ptBR` do próprio `date-fns` não traz esses rótulos.
+- **Teclado:** o dia é um botão, e só o dia em foco está no Tab (os outros têm `tabindex="-1"`). As setas movem o foco entre os dias, Page Up e Page Down trocam o mês, Shift mais Page Up ou Page Down (ou mais Seta para cima ou para baixo) trocam o ano, Shift mais Seta para a esquerda ou para a direita trocam o mês, Home e End vão ao começo e ao fim da semana, e Enter ou Espaço escolhem o dia. O teste da story **Demo** percorre isso (clique, setas, Page Down e Page Up).
+- **Anúncio do mês:** o rótulo do mês é uma região viva (`role="status"` com `aria-live="polite"`) que o DayPicker mantém sempre montada. Só o texto muda, e o leitor de tela anuncia o mês novo quando você usa Page Up, Page Down ou os botões. Com `captionLayout="dropdown"`, a região fica oculta na tela mas continua anunciando, porque o rótulo visível vira os dois `<select>`.
+- **Dia de hoje, selecionado e fora do mês:** nenhum estado depende só da cor. Hoje leva "Hoje" no nome e `aria-current="date"`; o selecionado leva ", selecionado" no nome e `aria-selected` na célula. Os contrastes: o texto do dia selecionado é branco sobre `primary` (5,2:1 nos dois modos), e o selecionado, como controle, tem 5,2:1 contra o fundo no claro e 3,8:1 no escuro (3,4:1 sobre o `card` no escuro), todos acima dos 3:1. O dia de hoje é `foreground` sobre `muted` (17,7:1 no claro e 14,2:1 no escuro). Os dias fora do mês são `muted-foreground` (7,4:1 no claro e 8,1:1 no escuro, no fundo da página).
+- **Limite conhecido:** nas pontas de um intervalo (e no dia de hoje selecionado), o botão `primary` fica sobre a faixa `muted`. No claro são 4,7:1, mas no escuro são 2,8:1, abaixo dos 3:1 para o limite do controle. O texto passa nos dois, e o estado também é dito no nome do botão. Está anotado para a marca decidir.
+- **Foco visível:** o dia em foco leva o anel sólido de sempre (3px na cor `ring`, afastado 2px pela cor do fundo), conferido no teste da **Demo**. Os botões de mês usam o anel do Button. No seletor de mês e ano, o `<select>` é invisível e o anel aparece no contêiner (`has-focus-visible`).
+- **Seletores de mês e ano:** com `captionLayout="dropdown"`, são `<select>` nativos com nome ("Escolha o mês", "Escolha o ano", vindos do locale), então funcionam no teclado e no leitor de tela sem nada a mais.
+- **Datas indisponíveis:** `disabled` deixa o botão desabilitado (fora do Tab, com `opacity-50`). Não dependa só do risco: diga o motivo no texto da página, como "Datas reservadas".
+- **Informação extra no dia:** um texto dentro do botão (como o preço da story **Tamanho da célula**) precisa estar no nome do botão, senão o leitor de tela não o lê e o axe reprova (`label-content-name-mismatch`). Ponha o dado no `aria-label` e desenhe o texto visível por CSS (`data-price` com `after:content-[attr(data-price)]`), como na story.
+- **Semanas:** com `showWeekNumber`, o número é um `<th scope="row">` com o nome "Semana N".
+- **RTL:** o `dir` vem da prop ou, sem ela, do `DirectionProvider`. O DayPicker usa o `dir` para inverter as setas do teclado: em RTL, a seta para a direita vai ao dia anterior. Veja **RTL**.
+- **Testes:** as stories rodam no axe no claro, no escuro e em RTL. O teclado e o anúncio do mês estão no `play` da Demo e da RTL. Leitor de tela e zoom a 200% ainda precisam de conferência manual.
+
+## Sobre
+
+O `Calendar` é construído sobre o [React DayPicker](https://react-day-picker.js.org). Cada exemplo abaixo usa só props dele (`mode`, `selected`, `onSelect`, `numberOfMonths`, `captionLayout`, `disabled`, `modifiers`, `showWeekNumber`…), mais `className` para o contorno e o tamanho da célula.
+
+## Date Picker
+
+Use o `Calendar` para montar um seletor de data: um botão (`Button variant="outline"`) que abre um `Popover` com o calendário dentro. O `Popover` já existe no pacote; veja a página dele para o gatilho, o foco e o `Esc`. Dentro do `PopoverContent`, o calendário fica com o fundo transparente (`in-data-[slot=popover-content]`) e herda o `popover`; zere o recuo com `className="p-0"` se quiser.
+
+## Calendário persa, Hijri e Jalali
+
+Para usar o calendário persa, edite `packages/ui/src/components/calendar.tsx` e troque `react-day-picker` por `react-day-picker/persian`:
+
+<Source
+  language="diff"
+  dark
+  code={`- import { DayPicker } from "react-day-picker"
++ import { DayPicker } from "react-day-picker/persian"`}
+/>
+
+Esta página não mostra o exemplo do shadcn (`calendar-hijri`): ele usa `next/font` para a fonte Vazirmatn e uma cópia inteira do componente, que não cabem aqui.
+
+## Data selecionada (com fuso horário)
+
+O `Calendar` aceita a prop `timeZone`, para as datas serem mostradas e escolhidas no fuso do usuário.
+
+<Source
+  language="tsx"
+  dark
+  code={`export function CalendarWithTimezone() {
+  const [date, setDate] = React.useState<Date | undefined>(undefined)
+  const [timeZone, setTimeZone] = React.useState<string | undefined>(undefined)
+
+  React.useEffect(() => {
+    setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+  }, [])
+
+  return (
+    <Calendar
+      mode="single"
+      selected={date}
+      onSelect={setDate}
+      timeZone={timeZone}
+    />
+  )
+}`}
+/>
+
+Se a data escolhida aparecer deslocada (escolher o dia 20 destaca o 19), confira se o `timeZone` é o do usuário. O fuso é lido num `useEffect` por causa da renderização no servidor: lido durante a renderização, ele causaria diferença entre o servidor e o cliente.
+
+## Básico
+
+Um calendário simples. A classe `rounded-lg border` dá o contorno.
+
+<Canvas of={CalendarStories.Basico} />
+
+## Intervalo
+
+Use `mode="range"` para escolher um intervalo. Com `numberOfMonths={2}`, mostra dois meses lado a lado.
+
+<Canvas of={CalendarStories.Intervalo} />
+
+## Seletor de mês e ano
+
+Use `captionLayout="dropdown"` para trocar o rótulo do mês por dois seletores de mês e de ano. Sem `startMonth` e `endMonth`, o seletor de ano vai de 100 anos atrás até o fim do ano de hoje.
+
+<Canvas of={CalendarStories.SeletorDeMesEAno} />
+
+## Atalhos
+
+Botões de data pronta ao lado do calendário. O mês mostrado fica em estado (`month` e `onMonthChange`), para o calendário ir até a data do atalho. Os exemplos usam um dia de hoje fixo (12 de junho de 2025) nos cálculos; no seu código, parta de `new Date()`.
+
+<Canvas of={CalendarStories.Atalhos} />
+
+## Data e hora
+
+Um calendário com campos de hora. Cada campo tem rótulo persistente, e o ícone do relógio é decorativo (`aria-hidden`).
+
+<Canvas of={CalendarStories.DataEHora} />
+
+## Datas reservadas
+
+`disabled` com uma lista de datas as desabilita, e `modifiers` mais `modifiersClassNames` marcam as reservadas com um risco (`line-through`).
+
+<Canvas of={CalendarStories.DatasReservadas} />
+
+## Tamanho da célula
+
+Mude o tamanho das células com a variável CSS `--cell-size`, inclusive com valores por ponto de quebra:
+
+<Source
+  language="tsx"
+  dark
+  code={`<Calendar
+  mode="single"
+  selected={date}
+  onSelect={setDate}
+  className="rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)]"
+/>`}
+/>
+
+Ou com valores fixos:
+
+<Source
+  language="tsx"
+  dark
+  code={`<Calendar
+  mode="single"
+  selected={date}
+  onSelect={setDate}
+  className="rounded-lg border [--cell-size:2.75rem] md:[--cell-size:3rem]"
+/>`}
+/>
+
+O exemplo abaixo usa uma célula maior e o `CalendarDayButton` com um preço em cada dia. O preço entra no nome do botão pelo `aria-label` (veja **Acessibilidade**).
+
+<Canvas of={CalendarStories.TamanhoDaCelula} />
+
+## Números de semana
+
+Use `showWeekNumber` para mostrar o número de cada semana.
+
+<Canvas of={CalendarStories.NumerosDeSemana} />
+
+## RTL
+
+Em RTL, passe o `locale` de `react-day-picker/locale` (como o `arSA`) e, se não houver um `DirectionProvider` acima, o `dir="rtl"`. Os botões de mês giram e as setas do teclado se invertem.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { arSA } from "react-day-picker/locale"
+
+<Calendar
+  mode="single"
+  selected={date}
+  onSelect={setDate}
+  locale={arSA}
+  dir="rtl"
+/>`}
+/>
+
+<Canvas of={CalendarStories.Rtl} />
+
+Para o `DirectionProvider`, veja a página **Direction**.
+
+## Referência da API
+
+O `Calendar` repassa todas as props do `DayPicker` do [React DayPicker](https://react-day-picker.js.org). Estas são as que a página usa, e as que o Calendar acrescenta ou muda.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>mode</code></td><td><code>{'"single" | "multiple" | "range"'}</code></td><td>—</td></tr>
+    <tr><td><code>selected</code></td><td><code>{'Date | Date[] | DateRange'}</code></td><td>—</td></tr>
+    <tr><td><code>onSelect</code></td><td><code>{'(selected) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>numberOfMonths</code></td><td><code>number</code></td><td><code>{'1'}</code></td></tr>
+    <tr><td><code>captionLayout</code></td><td><code>{'"label" | "dropdown" | "dropdown-months" | "dropdown-years"'}</code></td><td><code>{'"label"'}</code></td></tr>
+    <tr><td><code>showOutsideDays</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>showWeekNumber</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>{'Matcher | Matcher[]'}</code></td><td>—</td></tr>
+    <tr><td><code>modifiers</code> e <code>modifiersClassNames</code></td><td><code>{'Record<string, Matcher | Matcher[]>'}</code> e <code>{'Record<string, string>'}</code></td><td>—</td></tr>
+    <tr><td><code>month</code>, <code>defaultMonth</code> e <code>onMonthChange</code></td><td><code>{'Date'}</code> e <code>{'(month: Date) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>startMonth</code> e <code>endMonth</code></td><td><code>Date</code></td><td>—</td></tr>
+    <tr><td><code>today</code></td><td><code>Date</code></td><td>a data atual</td></tr>
+    <tr><td><code>timeZone</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>locale</code></td><td><code>Locale</code></td><td><code>enUS</code></td></tr>
+    <tr><td><code>dir</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td>a direção do <code>DirectionProvider</code></td></tr>
+    <tr><td><code>buttonVariant</code></td><td><code>{'ButtonProps["variant"]'}</code></td><td><code>{'"ghost"'}</code></td></tr>
+    <tr><td><code>formatters</code>, <code>components</code> e <code>classNames</code></td><td>veja o DayPicker</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento raiz recebe `data-slot="calendar"`. A variável `--cell-size` (padrão `--spacing(8)`) muda o tamanho das células, e `--cell-radius` muda o raio.
+
+### CalendarDayButton
+
+O botão de cada dia, usado pelo `Calendar` e exportado para quem monta um `DayButton` próprio (como na story **Tamanho da célula**). Aceita as props do `DayButton` do DayPicker e `locale`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>day</code></td><td><code>CalendarDay</code></td><td>—</td></tr>
+    <tr><td><code>modifiers</code></td><td><code>Modifiers</code></td><td>—</td></tr>
+    <tr><td><code>locale</code></td><td><code>{'Partial<Locale>'}</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="button"`, `data-day` e os atributos de estado (`data-selected-single`, `data-range-start`, `data-range-middle`, `data-range-end` e `data-outside`).

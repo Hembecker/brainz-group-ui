@@ -1,6 +1,9 @@
 import * as React from "react"
 
-import { loadHighlighter } from "@workspace/ui/lib/highlighter"
+// Relative on purpose: the `exports` of package.json maps `lib/*` to `.ts`,
+// and the highlighter is a `.tsx` file (it returns React nodes), so the
+// `@workspace/ui/lib/highlighter` specifier of the registry does not resolve.
+import { loadHighlighter } from "../lib/highlighter"
 
 export function useHighlightedCode(value: string, language: string) {
   // A trailing newline would render as an extra empty line.

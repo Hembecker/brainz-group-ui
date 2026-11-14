@@ -1,0 +1,284 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as AttachmentStories from "./attachment.stories";
+
+<Meta of={AttachmentStories} />
+
+# Attachment
+
+Mostra um arquivo ou uma imagem anexada, com a mídia, o nome e os metadados, o estado do envio e as ações.
+
+<Canvas of={AttachmentStories.Demo} />
+
+O `Attachment` mostra um arquivo ou uma imagem, a mídia, o nome e os metadados, com ações opcionais e o estado do envio. Use-o para arquivos e imagens em compositores de chat, em conversas e em listas de envio.
+
+## Instalação
+
+O Attachment usa o `Button` do próprio pacote, o `useRender` e o `mergeProps` do Base UI, o `cva` e o `cn`.
+
+<Source language="bash" dark code="npx shadcn add attachment" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/attachment.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@workspace/ui/components/attachment"
+
+<Attachment>
+  <AttachmentMedia>
+    <FileTextIcon />
+  </AttachmentMedia>
+  <AttachmentContent>
+    <AttachmentTitle>painel-de-vendas.pdf</AttachmentTitle>
+    <AttachmentDescription>PDF · 2,4 MB</AttachmentDescription>
+  </AttachmentContent>
+  <AttachmentActions>
+    <AttachmentAction aria-label="Remover painel-de-vendas.pdf">
+      <XIcon />
+    </AttachmentAction>
+  </AttachmentActions>
+</Attachment>`}
+/>
+
+## Composição
+
+Monte um anexo com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Attachment
+├── AttachmentMedia
+├── AttachmentContent
+│   ├── AttachmentTitle
+│   └── AttachmentDescription
+├── AttachmentActions
+│   └── AttachmentAction
+└── AttachmentTrigger`}
+/>
+
+Use o `AttachmentGroup` para organizar vários anexos numa linha com rolagem:
+
+<Source
+  language="text"
+  dark
+  code={`AttachmentGroup
+├── Attachment
+└── Attachment`}
+/>
+
+## Recursos
+
+- Mídia em ícone ou em imagem, pelo `AttachmentMedia`.
+- Estados do envio: `idle`, `uploading`, `processing`, `error` e `done`, com estilo próprio e um brilho no nome enquanto está em andamento.
+- Três tamanhos e orientação horizontal ou vertical.
+- Um `AttachmentTrigger` que cobre o card e abre um link ou um diálogo, com as ações clicáveis por conta própria.
+- Um `AttachmentGroup` com rolagem horizontal, encaixe e desvanecimento nas bordas.
+- Cada parte aceita `className`.
+
+## Acessibilidade
+
+O `AttachmentAction` renderiza um `Button`, e o `AttachmentTrigger` renderiza um `<button>` de verdade (ou o seu elemento, pela prop `render`). As regras abaixo deixam os dois operáveis e anunciados.
+
+- **Nome das ações:** a ação costuma ser só um ícone, então cada uma leva um `aria-label` com a ação e o alvo, e o nome do arquivo entra nele: "Remover painel-de-vendas.pdf", "Cancelar o envio de painel-de-vendas.pdf". Dois botões "Remover" lado a lado não dizem qual arquivo sai. O ícone leva `aria-hidden="true"`.
+- **Nome do gatilho:** o `AttachmentTrigger` cobre o card e não tem texto próprio. Dê a ele um `aria-label` com o que acontece ao ativar: "Visualizar resumo-da-pesquisa.pdf" (para um `<button>`/diálogo) ou "Abrir logotipo.svg" (para um `<a>`). Ele fica atrás das ações na ordem de empilhamento, então o gatilho e as ações nunca se prendem: os dois recebem foco e clique. O gatilho é um `<a>` quando navega e um `<button>` quando age.
+- **Foco visível:** o card inteiro ganha o anel sólido do projeto (`--ring`, afastado 2px pela cor do fundo) quando uma parte dele recebe foco. O gatilho não tem outline próprio e usa esse anel, e os botões de ação têm o anel do Button.
+- **Rolagem pelo teclado:** o `AttachmentGroup` rola na horizontal. Quando os anexos são interativos (têm gatilho ou ações), o teclado chega aos itens fora da tela com o Tab. Para uma linha de anexos só de apresentação, torne o próprio grupo focável: `tabIndex={0}`, `role="group"`, um `aria-label` e o anel `focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset` (o `ring-inset`, porque o desvanecimento das bordas é uma máscara que cortaria um anel por fora). Sem isso o axe reprova (`scrollable-region-focusable`).
+- **Sentido além da cor:** o estado `error` usa a cor destrutiva. Escreva o motivo da falha na `AttachmentDescription` ("Falha no envio. Tente de novo."), para o estado não depender só da cor. Os estados `uploading` e `processing` brilham no nome e mostram o andamento na descrição; o brilho pausa com `prefers-reduced-motion`.
+- **Progresso:** o `Spinner` dentro da mídia é um `role="status"`: troque o nome dele para dizer o que carrega (`aria-label="Enviando painel-de-vendas.pdf"`).
+- **Imagem:** a `<img>` da mídia leva um `alt` com o que a imagem mostra. Se a imagem só repete o nome do arquivo, use `alt=""`.
+- **Contraste:** o texto usa `card-foreground` (19,7:1 no claro) e a descrição, `muted-foreground` (7,4:1). No erro, a descrição e o ícone usam `destructive-hover` (6,4:1 no card claro), e a borda, `destructive`. Nenhuma cor do componente tem opacidade, com a exceção da imagem enviando (`opacity-60` no elemento).
+
+<Source
+  language="tsx"
+  dark
+  code={`<AttachmentAction aria-label="Remover painel-de-vendas.pdf">
+  <XIcon aria-hidden="true" />
+</AttachmentAction>
+
+<AttachmentTrigger
+  render={
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Abrir logotipo.svg"
+    />
+  }
+/>
+
+<AttachmentGroup
+  role="group"
+  aria-label="Imagens anexadas"
+  tabIndex={0}
+  className="outline-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset"
+>
+  {/* anexos só de apresentação */}
+</AttachmentGroup>`}
+/>
+
+## Imagem
+
+Use `variant="image"` no `AttachmentMedia` e coloque uma `<img>` dentro dele. Use `orientation="vertical"` para empilhar a mídia sobre o conteúdo. Os exemplos desta página usam o logotipo da marca em vez das fotos do shadcn.
+
+<Canvas of={AttachmentStories.Imagem} />
+
+## Estados
+
+Use `state` para refletir o ciclo do envio. `uploading` e `processing` fazem o nome brilhar, e `error` troca para o tratamento destrutivo.
+
+<Canvas of={AttachmentStories.Estados} />
+
+## Tamanhos
+
+Use `size` para trocar entre `default`, `sm` e `xs`.
+
+<Canvas of={AttachmentStories.Tamanhos} />
+
+## Grupo
+
+Envolva os anexos num `AttachmentGroup` para organizá-los numa linha com rolagem horizontal, encaixe e desvanecimento nas bordas.
+
+<Canvas of={AttachmentStories.Grupo} />
+
+## Gatilho
+
+Adicione um `AttachmentTrigger` para o card inteiro abrir um link ou um diálogo. Ele preenche o card atrás das ações, então as ações continuam clicáveis. O exemplo abre um diálogo: o `DialogTrigger` recebe o `AttachmentTrigger` pela prop `render`.
+
+<Canvas of={AttachmentStories.Gatilho} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<Dialog>
+  <Attachment>
+    {/* mídia, conteúdo, ações */}
+    <DialogTrigger
+      render={<AttachmentTrigger aria-label="Visualizar resumo-da-pesquisa.pdf" />}
+    />
+  </Attachment>
+  <DialogContent>{/* ... */}</DialogContent>
+</Dialog>`}
+/>
+
+## RTL
+
+A página do shadcn não tem uma seção de RTL, mas as posições das ações do card vertical (`end-3`) e os espaçamentos são lógicos, então o `Attachment` segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop: a mídia fica à direita e as ações à esquerda. O exemplo usa um `div` com `dir` e `lang` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas.
+
+<Canvas of={AttachmentStories.Rtl} />
+
+## Referência da API
+
+### Attachment
+
+O contêiner raiz do anexo. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>state</code></td><td><code>{'"idle" | "uploading" | "processing" | "error" | "done"'}</code>: o estado do envio, que muda o estilo e o brilho</td><td><code>{'"done"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "xs"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code>: a mídia ao lado ou acima do conteúdo</td><td><code>{'"horizontal"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="attachment"`, `data-state`, `data-size` e `data-orientation`.
+
+### AttachmentMedia
+
+O espaço da mídia, para um ícone ou uma prévia de imagem. Aceita as props de um `<div>`. Recebe `data-slot="attachment-media"` e `data-variant`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"icon" | "image"'}</code>: se a mídia guarda um ícone ou uma <code>{'<img>'}</code></td><td><code>{'"icon"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AttachmentContent
+
+Envolve o título e a descrição. Aceita as props de um `<div>`.
+
+### AttachmentTitle
+
+O nome do anexo (`<span>`). Brilha enquanto o anexo está em `uploading` ou `processing`, e trunca com reticências.
+
+### AttachmentDescription
+
+Os metadados secundários, como o tipo, o tamanho ou o andamento do envio (`<span>`).
+
+### AttachmentActions
+
+Um contêiner para uma ou mais ações, alinhado ao fim do anexo (`<div>`). No card vertical, fica no canto superior do fim.
+
+### AttachmentAction
+
+Um botão de ação. Renderiza um [Button](?path=/docs/componentes-button--docs) e aceita todas as props dele. Dê sempre um `aria-label` com a ação e o arquivo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>Button["variant"]</code></td><td><code>{'"ghost"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>Button["size"]</code></td><td><code>{'"icon-xs"'}</code></td></tr>
+    <tr><td><code>...props</code></td><td><code>{'React.ComponentProps<typeof Button>'}</code>: repassadas ao <code>Button</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AttachmentTrigger
+
+Uma camada que cobre o card e ativa o anexo. Renderiza um `<button type="button">` por padrão. Dê sempre um `aria-label`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code>: renderiza outro elemento, como um link</td><td>—</td></tr>
+    <tr><td><code>...props</code></td><td><code>{'React.ComponentProps<"button">'}</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### AttachmentGroup
+
+Organiza os anexos numa linha com rolagem horizontal e encaixe. Aceita as props de um `<div>`. Para uma linha de anexos só de apresentação, veja **Acessibilidade**.
+
+### Partes e data-slot
+
+Cada parte expõe um `data-slot`:
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AttachmentMedia</code></td><td><code>{'<div>'}</code></td><td><code>attachment-media</code></td></tr>
+    <tr><td><code>AttachmentContent</code></td><td><code>{'<div>'}</code></td><td><code>attachment-content</code></td></tr>
+    <tr><td><code>AttachmentTitle</code></td><td><code>{'<span>'}</code></td><td><code>attachment-title</code></td></tr>
+    <tr><td><code>AttachmentDescription</code></td><td><code>{'<span>'}</code></td><td><code>attachment-description</code></td></tr>
+    <tr><td><code>AttachmentActions</code></td><td><code>{'<div>'}</code></td><td><code>attachment-actions</code></td></tr>
+    <tr><td><code>AttachmentAction</code></td><td><code>{'<button>'}</code> (Button)</td><td><code>attachment-action</code></td></tr>
+    <tr><td><code>AttachmentTrigger</code></td><td><code>{'<button>'}</code></td><td><code>attachment-trigger</code></td></tr>
+    <tr><td><code>AttachmentGroup</code></td><td><code>{'<div>'}</code></td><td><code>attachment-group</code></td></tr>
+  </tbody>
+</table>

@@ -1,0 +1,98 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as DirectionStories from "./direction.stories";
+
+<Meta of={DirectionStories} />
+
+# Direction
+
+Um provedor que define a direção do texto (`ltr` ou `rtl`) para a aplicação.
+
+O `DirectionProvider` diz à aplicação se o texto vai da esquerda para a direita (`ltr`) ou da direita para a esquerda (`rtl`). Isso é essencial para idiomas como o árabe, o hebraico e o persa. O exemplo abaixo é um Card em árabe, dentro de um `DirectionProvider direction="rtl"`. Para ver mais exemplos, procure a seção **RTL** nas páginas dos componentes.
+
+<Canvas of={DirectionStories.Demo} />
+
+## Instalação
+
+O Direction só reexporta o provedor do Base UI.
+
+<Source language="bash" dark code="npx shadcn add direction" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/direction.tsx`. A dependência é `@base-ui/react`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { DirectionProvider } from "@workspace/ui/components/direction"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<html dir="rtl" lang="ar">
+  <body>
+    <DirectionProvider direction="rtl">
+      {/* O conteúdo da aplicação */}
+    </DirectionProvider>
+  </body>
+</html>`}
+/>
+
+O `DirectionProvider` não escreve o atributo `dir`. Os dois andam juntos e fazem coisas diferentes:
+
+- o atributo `dir` (e `lang`) no `<html>` ou num ancestral inverte o layout e vale para o CSS (`rtl:`, `ps-*`, `ms-*`, `start` e `end`);
+- o `DirectionProvider` vale para o que o CSS não alcança: o teclado (as setas do Slider, dos menus, das Tabs e do Calendar) e as posições calculadas dos popups (`side="inline-start"` e `"inline-end"`).
+
+## Acessibilidade
+
+- **Idioma e direção:** declare os dois no `<html>`, `dir` e `lang` (como `dir="rtl" lang="ar"`). O `lang` faz o leitor de tela escolher a voz e a pronúncia certas, e o `dir` inverte o layout.
+- **Teclado:** sem o `DirectionProvider`, as setas dos primitivos do Base UI seguem sempre a direção LTR, e a seta para a direita avança mesmo num layout invertido. Com ele, as setas acompanham a leitura: em RTL, a seta para a direita volta.
+- **Portais:** Dialog, Popover, Menu e semelhantes vão para o `body`. O `dir` do `<html>` chega a eles, mas o de um ancestral do gatilho não: num exemplo RTL isolado, ponha `dir` e `lang` também no conteúdo do portal.
+- **Ícones de direção:** um ícone que aponta para um lado (setas, chevrons) leva `rtl:rotate-180`, para apontar para o lado certo.
+- **Aqui:** o preview do Storybook já envolve todas as stories num `DirectionProvider` que segue a barra de ferramentas "Direção" (e o `dir` do `<html>`). Por isso o `npm run test:rtl` roda cada story em RTL, com o axe.
+
+## useDirection
+
+O hook `useDirection` devolve a direção do provedor mais próximo, ou `"ltr"` quando não há nenhum.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useDirection } from "@workspace/ui/components/direction"
+
+function MyComponent() {
+  const direction = useDirection()
+  return <div>Direção atual: {direction}</div>
+}`}
+/>
+
+## Referência da API
+
+### DirectionProvider
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>direction</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td><code>{'"ltr"'}</code></td></tr>
+    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O `DirectionProvider` não gera elemento nem `data-slot`: só passa a direção por contexto.
+
+### useDirection
+
+<table>
+  <thead>
+    <tr><th>Retorno</th><th>Tipo</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>direction</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td>A direção do provedor mais próximo, ou <code>"ltr"</code> sem provedor.</td></tr>
+  </tbody>
+</table>

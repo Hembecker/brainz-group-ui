@@ -1,0 +1,511 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ChartStories from "./chart.stories";
+
+<Meta of={ChartStories} />
+
+# Chart
+
+Gráficos bonitos, feitos com o Recharts.
+
+<Canvas of={ChartStories.Demo} />
+
+Os gráficos têm boa aparência de fábrica, combinam com os outros componentes e são totalmente personalizáveis.
+
+## Componente
+
+O Chart usa o [Recharts](https://recharts.org/) por baixo. Ele foi pensado para composição: **você monta o gráfico com os componentes do Recharts e só traz componentes próprios, como o `ChartTooltip`, onde precisar**.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Bar, BarChart } from "recharts"
+
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@workspace/ui/components/chart"
+
+export function MeuGrafico() {
+  return (
+    <ChartContainer config={config} className="h-[250px] w-full">
+      <BarChart data={dados}>
+        <Bar dataKey="valor" />
+        <ChartTooltip content={<ChartTooltipContent />} />
+      </BarChart>
+    </ChartContainer>
+  )
+}`}
+/>
+
+O Recharts não é encapsulado. Quando sair uma versão nova dele, siga o guia de atualização oficial. **Os componentes são seus.**
+
+## Atualizando para o Recharts v3
+
+Se for atualizar um código de gráfico antigo para o Recharts v3:
+
+- Use `var(--chart-1)` em vez de `hsl(var(--chart-1))` ao referenciar os tokens de gráfico.
+- Use `ChartTooltip.defaultIndex` só para o estado inicial do tooltip. Mantenha formas ativas persistentes no estado do seu gráfico.
+- Remova `layout` do `<Bar>` quando o `<BarChart>` pai já define o `layout`.
+- Mantenha uma altura, um `min-h-*` ou um `aspect-*` no `ChartContainer`, para o `ResponsiveContainer` medir na primeira renderização.
+
+## Instalação
+
+O Chart usa o `recharts` (versão 3).
+
+<Source language="bash" dark code="npx shadcn add chart" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+As cores `--chart-1` a `--chart-5` já existem no `globals.css` do `@workspace/ui`, no claro e no escuro, então não é preciso copiar as do shadcn.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/chart.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@workspace/ui/components/chart"
+
+const config = {
+  desktop: { label: "Desktop", color: "var(--chart-1)" },
+  celular: { label: "Celular", color: "var(--chart-4)" },
+} satisfies ChartConfig
+
+<figure aria-labelledby="visitantes-titulo">
+  <figcaption>
+    <h3 id="visitantes-titulo">Visitantes por mês</h3>
+    <p>De janeiro a junho, em desktop e em celular.</p>
+  </figcaption>
+  <ChartContainer config={config} className="aspect-auto h-[250px] w-full">
+    <BarChart
+      accessibilityLayer
+      title="Visitantes por mês"
+      desc="Gráfico de barras com os visitantes de desktop e de celular."
+      data={dados}
+    >
+      <CartesianGrid vertical={false} />
+      <XAxis dataKey="mes" tickLine={false} axisLine={false} />
+      <ChartTooltip content={<ChartTooltipContent />} />
+      <ChartLegend content={<ChartLegendContent />} />
+      <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+      <Bar dataKey="celular" fill="var(--color-celular)" radius={4} />
+    </BarChart>
+  </ChartContainer>
+</figure>`}
+/>
+
+## Acessibilidade
+
+Um gráfico é uma imagem de dados: quem não enxerga as barras precisa de outra forma de chegar aos mesmos números.
+
+- **Alternativa em texto:** ponha cada gráfico num `<figure>` com um `<figcaption>` (título e descrição) e dê o nome ao `figure` por `aria-labelledby`. No gráfico, use `title` e `desc` (o Recharts os escreve como `<title>` e `<desc>` do `svg`). Quando couber, ofereça também **os dados em uma tabela**, visível (num `<details>`, como no exemplo principal) ou só para o leitor de tela (`sr-only`, como abaixo).
+- **Teclado e leitor de tela:** o Recharts 3 já liga o `accessibilityLayer`, e mantê-lo ligado é o que torna o gráfico alcançável: o `svg` vira `role="application"` com `tabindex="0"`, e as setas percorrem os pontos e abrem o tooltip. Não o desligue. Passe `accessibilityLayer` mesmo assim, para ficar explícito no código.
+- **Foco visível:** o `svg` focável mostra o anel sólido do projeto (`ring-3 ring-ring ring-offset-2 ring-offset-background`). O registro do shadcn usava `outline-hidden` nele, o que apagava o foco; aqui isso foi trocado.
+- **Cor não é a única pista:** a legenda, o tooltip e a tabela dizem o nome de cada série em texto. Não dependa só da cor para distinguir as séries.
+- **Cores das séries:** use `--chart-1` a `--chart-5`. O `--chart-1` e o `--chart-4` ficam bem distantes em cada modo (no claro, 500 e 800 da Primária, 3,5:1 e 9,3:1 no branco; no escuro, 200 e 500, 13,3:1 e 5,6:1 no fundo): para duas séries, prefira esse par. Passos vizinhos da escala (500 e 600, por exemplo) se parecem; use-os só quando o contraste entre as séries não importar. As formas do gráfico precisam de 3:1 contra o fundo da página, e os cinco passos passam nos dois modos (o menor é o `--chart-1` no claro, 3,5:1, e o `--chart-5` no escuro, 3,8:1).
+- **Texto do gráfico:** o tooltip usa `popover-foreground` (valor) e `muted-foreground` (nomes), 7,4:1 no claro e 7,1:1 no escuro sobre o `popover`. Os rótulos dos eixos usam `muted-foreground` sobre o fundo (7,4:1 no claro e 8,1:1 no escuro). A legenda herda `foreground`. Não confie no axe para o texto dentro do `svg`; esses números foram conferidos à mão.
+- **Tamanho:** o Recharts mede o contêiner. Dê ao `ChartContainer` uma altura (`h-*`, `min-h-*` ou `aspect-*`) e uma largura, senão o gráfico sai vazio.
+
+<Canvas of={ChartStories.Acessibilidade} />
+
+## Seu primeiro gráfico
+
+Vamos montar um gráfico de barras e acrescentar grade, eixo, tooltip e legenda.
+
+### Defina os dados
+
+Os dados são o número de visitantes de desktop e de celular em cada mês. Eles podem ter qualquer formato: use `dataKey` para ligar os dados ao gráfico.
+
+<Source
+  language="tsx"
+  dark
+  code={`const dados = [
+  { mes: "Janeiro", desktop: 186, celular: 80 },
+  { mes: "Fevereiro", desktop: 305, celular: 200 },
+  { mes: "Março", desktop: 237, celular: 120 },
+  { mes: "Abril", desktop: 73, celular: 190 },
+  { mes: "Maio", desktop: 209, celular: 130 },
+  { mes: "Junho", desktop: 214, celular: 140 },
+]`}
+/>
+
+### Defina a configuração
+
+A configuração guarda o que é legível por pessoas (rótulos, ícones) e as cores do tema. Ela fica separada dos dados.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { type ChartConfig } from "@workspace/ui/components/chart"
+
+const config = {
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
+  },
+  celular: {
+    label: "Celular",
+    color: "var(--chart-4)",
+  },
+} satisfies ChartConfig`}
+/>
+
+### Monte o gráfico
+
+Agora monte o gráfico com os componentes do Recharts. **Importante:** dê uma altura ao `ChartContainer` (`h-[250px]`, ou `min-h-[200px]`). Sem ela, o `ResponsiveContainer` não consegue medir.
+
+<Canvas of={ChartStories.PrimeiroGrafico} />
+
+### Acrescente uma grade
+
+Importe o `CartesianGrid` e ponha-o dentro do gráfico.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ChartContainer config={config} className="aspect-auto h-[250px] w-full">
+  <BarChart accessibilityLayer data={dados}>
+    <CartesianGrid vertical={false} />
+    <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+    <Bar dataKey="celular" fill="var(--color-celular)" radius={4} />
+  </BarChart>
+</ChartContainer>`}
+/>
+
+<Canvas of={ChartStories.Grade} />
+
+### Acrescente um eixo
+
+Para o eixo X, use o `XAxis`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ChartContainer config={config} className="aspect-auto h-[250px] w-full">
+  <BarChart accessibilityLayer data={dados}>
+    <CartesianGrid vertical={false} />
+    <XAxis
+      dataKey="mes"
+      tickLine={false}
+      tickMargin={10}
+      axisLine={false}
+      tickFormatter={(valor) => valor.slice(0, 3)}
+    />
+    <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+    <Bar dataKey="celular" fill="var(--color-celular)" radius={4} />
+  </BarChart>
+</ChartContainer>`}
+/>
+
+<Canvas of={ChartStories.Eixo} />
+
+### Acrescente um tooltip
+
+Até aqui só usamos componentes do Recharts. Para o tooltip, use o `ChartTooltip` e o `ChartTooltipContent` do Chart.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { ChartTooltip, ChartTooltipContent } from "@workspace/ui/components/chart"
+
+<ChartTooltip content={<ChartTooltipContent />} />`}
+/>
+
+Passe o mouse sobre o gráfico, ou use `Tab` e as setas, para ver o tooltip.
+
+<Canvas of={ChartStories.Tooltip} />
+
+### Acrescente uma legenda
+
+Para a legenda, use o `ChartLegend` e o `ChartLegendContent`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { ChartLegend, ChartLegendContent } from "@workspace/ui/components/chart"
+
+<ChartLegend content={<ChartLegendContent />} />`}
+/>
+
+<Canvas of={ChartStories.Legenda} />
+
+Pronto, o primeiro gráfico está feito.
+
+## Configuração do gráfico
+
+A configuração define os rótulos, os ícones e as cores do gráfico. Ela é separada dos dados de propósito: dá para compartilhar a configuração e as cores entre gráficos, e ela funciona sozinha quando os dados ou as cores vêm de outro lugar.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { MonitorIcon } from "lucide-react"
+
+import { type ChartConfig } from "@workspace/ui/components/chart"
+
+const config = {
+  desktop: {
+    label: "Desktop",
+    icon: MonitorIcon,
+    // Uma cor, como "var(--chart-1)",
+    color: "var(--chart-1)",
+    // OU um objeto de tema, com as chaves "light" e "dark".
+    theme: {
+      light: "var(--chart-1)",
+      dark: "var(--chart-1)",
+    },
+  },
+} satisfies ChartConfig`}
+/>
+
+Use `color` **ou** `theme`, nunca os dois (o tipo não permite).
+
+## Tema
+
+Os gráficos têm suporte a temas. Use variáveis CSS (recomendado) ou qualquer formato de cor.
+
+### Variáveis CSS
+
+Neste sistema, `--chart-1` a `--chart-5` já estão definidas no `globals.css`, com **uma escala por modo** (a Primária de 500 a 900 no claro, e de 200 a 600 no escuro). Basta usá-las no `config`:
+
+<Source
+  language="tsx"
+  dark
+  code={`const config = {
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
+  },
+  celular: {
+    label: "Celular",
+    color: "var(--chart-4)",
+  },
+} satisfies ChartConfig`}
+/>
+
+No Recharts 3 use `var(--chart-1)`, e não `hsl(var(--chart-1))`.
+
+### Outros formatos
+
+Também dá para escrever a cor direto no `config`, em hex, hsl ou oklch. Isso foge dos tokens do sistema e do contraste anotado neles: prefira as variáveis `--chart-*`.
+
+<Source
+  language="tsx"
+  dark
+  code={`const config = {
+  desktop: { label: "Desktop", color: "#2563eb" },
+  celular: { label: "Celular", color: "hsl(220, 98%, 61%)" },
+  tablet: { label: "Tablet", color: "oklch(0.5 0.2 240)" },
+  notebook: { label: "Notebook", color: "var(--chart-2)" },
+} satisfies ChartConfig`}
+/>
+
+### Usando as cores
+
+Para usar as cores do tema, referencie-as no formato `var(--color-CHAVE)`.
+
+<Source
+  language="tsx"
+  dark
+  code={`// Nos componentes
+<Bar dataKey="desktop" fill="var(--color-desktop)" />
+
+// Nos dados
+const dados = [
+  { navegador: "chrome", visitantes: 275, fill: "var(--color-chrome)" },
+  { navegador: "safari", visitantes: 200, fill: "var(--color-safari)" },
+]
+
+// No Tailwind
+<LabelList className="fill-(--color-desktop)" />`}
+/>
+
+## Tooltip
+
+O tooltip tem rótulo, nome, indicador e valor. Combine-os como quiser. Use `hideLabel` e `hideIndicator` para ocultar o rótulo e o indicador, e `indicator` para mudar o estilo do indicador. Use `labelKey` e `nameKey` para trocar a chave do rótulo e a do nome.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { ChartTooltip, ChartTooltipContent } from "@workspace/ui/components/chart"
+
+<ChartTooltip content={<ChartTooltipContent />} />`}
+/>
+
+O exemplo abaixo mostra os três indicadores, cada um com o tooltip aberto no mês de fevereiro (`defaultIndex`, que serve só para o estado inicial). Na página do shadcn esta seção é uma ilustração com setas e anotações; aqui são gráficos de verdade.
+
+<Canvas of={ChartStories.Indicador} />
+
+### Props
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labelKey</code></td><td><code>string</code></td><td>A chave do <code>config</code> ou dos dados usada no rótulo.</td></tr>
+    <tr><td><code>nameKey</code></td><td><code>string</code></td><td>A chave do <code>config</code> ou dos dados usada no nome.</td></tr>
+    <tr><td><code>indicator</code></td><td><code>{'"dot" | "line" | "dashed"'}</code></td><td>O estilo do indicador.</td></tr>
+    <tr><td><code>hideLabel</code></td><td><code>boolean</code></td><td>Oculta o rótulo.</td></tr>
+    <tr><td><code>hideIndicator</code></td><td><code>boolean</code></td><td>Oculta o indicador.</td></tr>
+  </tbody>
+</table>
+
+### Cores
+
+As cores vêm do `config` automaticamente.
+
+### Personalizado
+
+Para usar outra chave no rótulo e nos nomes, use `labelKey` e `nameKey`:
+
+<Source
+  language="tsx"
+  dark
+  code={`const dados = [
+  { navegador: "chrome", visitantes: 187, fill: "var(--color-chrome)" },
+  { navegador: "safari", visitantes: 200, fill: "var(--color-safari)" },
+]
+
+const config = {
+  visitantes: { label: "Total de visitantes" },
+  chrome: { label: "Chrome", color: "var(--chart-1)" },
+  safari: { label: "Safari", color: "var(--chart-4)" },
+} satisfies ChartConfig
+
+<ChartTooltip
+  content={<ChartTooltipContent labelKey="visitantes" nameKey="navegador" />}
+/>`}
+/>
+
+Isso usa "Total de visitantes" no rótulo e "Chrome" e "Safari" nos nomes.
+
+## Legenda
+
+Use o `ChartLegend` e o `ChartLegendContent` para acrescentar uma legenda. A legenda é texto com um quadrado de cor: o nome da série é o que a identifica, e a cor é só um reforço.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { ChartLegend, ChartLegendContent } from "@workspace/ui/components/chart"
+
+<ChartLegend content={<ChartLegendContent />} />`}
+/>
+
+### Cores
+
+As cores vêm do `config` automaticamente.
+
+### Personalizado
+
+Para usar outra chave nos nomes da legenda, use `nameKey`:
+
+<Source
+  language="tsx"
+  dark
+  code={`<ChartLegend content={<ChartLegendContent nameKey="navegador" />} />`}
+/>
+
+Isso usa "Chrome" e "Safari" como nomes na legenda.
+
+## RTL
+
+Em RTL, use `dir="rtl"` no contêiner e `reversed` no `XAxis`, para os meses correrem da direita para a esquerda. O exemplo usa os textos em árabe, inclusive o título, a descrição e o nome das séries. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`.
+
+<Canvas of={ChartStories.Rtl} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<div dir="rtl" lang="ar">
+  <figure aria-labelledby="rtl-titulo">
+    <figcaption>
+      <h3 id="rtl-titulo">الزوار الشهريون</h3>
+    </figcaption>
+    <ChartContainer config={config} className="aspect-auto h-[250px] w-full">
+      <BarChart accessibilityLayer title="الزوار الشهريون" data={dados}>
+        <CartesianGrid vertical={false} />
+        <XAxis dataKey="mes" tickLine={false} axisLine={false} reversed />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
+        <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+        <Bar dataKey="celular" fill="var(--color-celular)" radius={4} />
+      </BarChart>
+    </ChartContainer>
+  </figure>
+</div>`}
+/>
+
+## Referência da API
+
+### ChartContainer
+
+O contêiner do gráfico. Entrega a configuração aos filhos, escreve as variáveis `--color-<chave>` e envolve o `ResponsiveContainer` do Recharts. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>config</code></td><td><code>ChartConfig</code></td><td>— (obrigatória)</td></tr>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>gerado com <code>useId</code></td></tr>
+    <tr><td><code>initialDimension</code></td><td><code>{'{ width: number; height: number }'}</code></td><td><code>{'{ width: 320, height: 200 }'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td><code>aspect-video</code> (troque por uma altura)</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="chart"` e `data-chart`.
+
+### ChartConfig
+
+Um objeto cuja chave é a chave da série. Cada item tem `label` e `icon` opcionais e **uma** destas: `color` ou `theme` (`{'{ light, dark }'}`).
+
+### ChartTooltip e ChartTooltipContent
+
+O `ChartTooltip` é o `Tooltip` do Recharts. O `ChartTooltipContent` é o conteúdo, com as props abaixo, além das do `Tooltip`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>indicator</code></td><td><code>{'"dot" | "line" | "dashed"'}</code></td><td><code>{'"dot"'}</code></td></tr>
+    <tr><td><code>hideLabel</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>hideIndicator</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>labelKey</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>nameKey</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>labelFormatter</code> / <code>formatter</code></td><td>funções do Recharts</td><td>—</td></tr>
+    <tr><td><code>className</code> / <code>labelClassName</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### ChartLegend e ChartLegendContent
+
+O `ChartLegend` é a `Legend` do Recharts. O `ChartLegendContent` é o conteúdo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>nameKey</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>hideIcon</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>verticalAlign</code></td><td><code>{'"top" | "bottom"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### ChartStyle
+
+Escreve o `<style>` com as variáveis `--color-<chave>` de cada modo. O `ChartContainer` já o usa; só chame direto num caso fora do contêiner.

@@ -5,7 +5,34 @@ import useEmblaCarousel, {
 } from "embla-carousel-react"
 
 import { Button } from "@workspace/ui/components/button"
+import { useDirection } from "@workspace/ui/components/direction"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+
+/*
+ * Carousel — estrutura e API do shadcn/ui (versão Base UI), sobre o Embla:
+ * https://ui.shadcn.com/docs/components/base/carousel
+ * As cores e os tamanhos são os da Big Brain (os botões são o Button).
+ * - Semântica (padrão WAI-ARIA de carrossel): o contêiner é uma região com
+ *   `aria-roledescription="carousel"` e precisa de nome (`aria-label` ou
+ *   `aria-labelledby`, passado por quem usa: o componente não tem como saber).
+ *   Cada `CarouselItem` é um grupo com `aria-roledescription="slide"` e nome
+ *   automático "1 de 5": o `CarouselContent` passa a posição e o total pelo
+ *   contexto (conta filhos diretos, arrays e Fragments; um item dentro de
+ *   outro componente não é contado), e um `aria-label` próprio no item tem
+ *   preferência.
+ * - Textos fixos em português: "Slide anterior" e "Próximo slide" (sr-only).
+ *   Os ícones levam `aria-hidden`.
+ * - RTL: o Embla não lê o `dir` do DOM. Sem `opts.direction`, o Carousel usa
+ *   a direção do DirectionProvider (padrão "ltr"); passe `opts.direction` para
+ *   forçar. A seta de teclado também espelha em RTL (←/→ trocam de lado).
+ *   Os ícones levam `rtl:rotate-180`, então não repita a classe nos botões
+ *   (as duas se anulariam). No modo vertical o botão já gira 90°, e espelhar
+ *   o ícone o apontaria para o lado errado: o espelhamento só vale no
+ *   horizontal. No vertical o teclado continua com ← e → (como no shadcn).
+ * - Sem reprodução automática por padrão. Se usar um plugin de autoplay, ofereça
+ *   um botão de pausar (WCAG 2.2.2) e pare a rolagem ao focar ou passar o mouse.
+ * - Sem cores com opacidade neste arquivo.
+ */
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
@@ -30,6 +57,12 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null)
 
+// Posição e total do slide, para o nome automático "1 de 5".
+const CarouselSlideContext = React.createContext<{
+  index: number
+  count: number
+} | null>(null)
+
 function useCarousel() {
   const context = React.useContext(CarouselContext)
 
@@ -49,8 +82,10 @@ function Carousel({
   children,
   ...props
 }: React.ComponentProps<"div"> & CarouselProps) {
+  const direction = useDirection()
   const [carouselRef, api] = useEmblaCarousel(
     {
+      direction,
       ...opts,
       axis: orientation === "horizontal" ? "x" : "y",
     },
@@ -75,15 +110,17 @@ function Carousel({
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === "ArrowLeft") {
+      // Em RTL as setas espelham: ← avança e → volta.
+      const rtl = (opts?.direction ?? direction) === "rtl"
+      if (event.key === (rtl ? "ArrowRight" : "ArrowLeft")) {
         event.preventDefault()
         scrollPrev()
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === (rtl ? "ArrowLeft" : "ArrowRight")) {
         event.preventDefault()
         scrollNext()
       }
     },
-    [scrollPrev, scrollNext]
+    [scrollPrev, scrollNext, opts?.direction, direction]
   )
 
   React.useEffect(() => {
@@ -133,8 +170,24 @@ function Carousel({
   )
 }
 
-function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
+// Os itens podem vir em arrays e dentro de Fragments (<>…</>): achata os dois,
+// para a contagem do nome "1 de 5" ser a dos slides de verdade.
+function flattenSlides(children: React.ReactNode): React.ReactNode[] {
+  return React.Children.toArray(children).flatMap((child) =>
+    React.isValidElement<{ children?: React.ReactNode }>(child) &&
+    child.type === React.Fragment
+      ? flattenSlides(child.props.children)
+      : [child]
+  )
+}
+
+function CarouselContent({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
   const { carouselRef, orientation } = useCarousel()
+  const slides = flattenSlides(children)
 
   return (
     <div
@@ -149,18 +202,29 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
           className
         )}
         {...props}
-      />
+      >
+        {slides.map((slide, index) => (
+          <CarouselSlideContext.Provider
+            key={index}
+            value={{ index, count: slides.length }}
+          >
+            {slide}
+          </CarouselSlideContext.Provider>
+        ))}
+      </div>
     </div>
   )
 }
 
 function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   const { orientation } = useCarousel()
+  const slide = React.useContext(CarouselSlideContext)
 
   return (
     <div
       role="group"
       aria-roledescription="slide"
+      aria-label={slide ? `${slide.index + 1} de ${slide.count}` : undefined}
       data-slot="carousel-item"
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
@@ -196,8 +260,11 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ChevronLeftIcon className="rtl:rotate-180" />
-      <span className="sr-only">Previous slide</span>
+      <ChevronLeftIcon
+        aria-hidden="true"
+        className={cn(orientation === "horizontal" && "rtl:rotate-180")}
+      />
+      <span className="sr-only">Slide anterior</span>
     </Button>
   )
 }
@@ -226,8 +293,11 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ChevronRightIcon className="rtl:rotate-180" />
-      <span className="sr-only">Next slide</span>
+      <ChevronRightIcon
+        aria-hidden="true"
+        className={cn(orientation === "horizontal" && "rtl:rotate-180")}
+      />
+      <span className="sr-only">Próximo slide</span>
     </Button>
   )
 }

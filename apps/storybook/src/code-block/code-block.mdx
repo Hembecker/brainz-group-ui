@@ -1,0 +1,433 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CodeBlockStories from "./code-block.stories";
+
+<Meta of={CodeBlockStories} />
+
+# Code Block
+
+Mostra código, saída de terminal e diffs, com um cabeçalho opcional, números de linha e um botão de copiar.
+
+<Canvas of={CodeBlockStories.Demo} />
+
+O `CodeBlock` mostra código, saída de terminal, logs e diffs. Tem um cabeçalho com título e ações, números de linha, quebra de linha, linhas de diff e linhas realçadas, e um tamanho pequeno para a saída de ferramentas dentro de um Trace.
+
+O realce de sintaxe é opcional e vive num hook separado: um bloco que só mostra saída simples continua pequeno.
+
+## Instalação
+
+O CodeBlock precisa do `shiki` (para o realce) e do [Button](?path=/docs/componentes-button--docs) do próprio pacote. O comando instala três arquivos: o componente (`components/code-block.tsx`), o hook `useHighlightedCode` (`hooks/use-highlighted-code.ts`) e o realce (`lib/highlighter.tsx`). Depois, ajuste os caminhos de import ao seu projeto.
+
+<Source language="bash" dark code="npx shadcn add code-block" />
+
+Para instalar à mão: `npm install shiki`, `npx shadcn add button` e copie os três arquivos.
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente. O realce fica em `packages/ui/src/lib/highlighter.tsx` e `packages/ui/src/hooks/use-highlighted-code.ts`: reaplique também as cores corrigidas do `highlighter.tsx` (veja **Acessibilidade**) e o import relativo do hook.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/code-block.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  CodeBlock,
+  CodeBlockActions,
+  CodeBlockContent,
+  CodeBlockCopyButton,
+  CodeBlockFooter,
+  CodeBlockHeader,
+  CodeBlockLine,
+  CodeBlockTitle,
+} from "@workspace/ui/components/code-block"`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<CodeBlock>
+  <CodeBlockHeader>
+    <CodeBlockTitle>Terminal</CodeBlockTitle>
+    <CodeBlockActions>
+      <CodeBlockCopyButton value={saida} />
+    </CodeBlockActions>
+  </CodeBlockHeader>
+  <CodeBlockContent>{saida}</CodeBlockContent>
+</CodeBlock>`}
+/>
+
+## Composição
+
+<Source
+  language="text"
+  dark
+  code={`CodeBlock
+├── CodeBlockHeader
+│   ├── CodeBlockTitle
+│   └── CodeBlockActions
+│       └── CodeBlockCopyButton
+├── CodeBlockActions (flutuante, quando não há cabeçalho)
+├── CodeBlockContent
+│   └── CodeBlockLine
+└── CodeBlockFooter`}
+/>
+
+O `CodeBlockContent` recebe uma string ou uma lista de `CodeBlockLine`. Use as linhas quando precisar de variantes de linha ou de tokens realçados.
+
+## Recursos
+
+- **Barato em streaming.** Uma string vira um só nó de texto, e o realce tokeniza só as linhas novas conforme o código chega.
+- **Copia limpo.** Os números de linha e os marcadores do diff ficam fora da seleção, e as linhas em branco sobrevivem à cópia.
+- **Lê da esquerda para a direita.** O conteúdo é sempre `dir="ltr"`. O cabeçalho segue a direção da página.
+- **Realça sem WASM.** O `useHighlightedCode` usa o motor de regex em JavaScript do Shiki, carrega cada linguagem no primeiro uso e mostra as cores ANSI da saída de terminal. No servidor, o `highlightCode` mantém o Shiki fora do bundle do cliente.
+- **Serve onde o código aparece.** Numa mensagem, num Trace, em abas, num diálogo.
+- **Rola pelo teclado.** O conteúdo é focável, e as ações flutuantes aparecem com o foco, não só com o mouse.
+
+## Acessibilidade
+
+- **Bloco rolável alcançável pelo teclado:** o `CodeBlockContent` é um `<pre>` com `tabIndex={0}`, então quem usa só o teclado chega a ele e rola com as setas (sem isso o axe reprova: `scrollable-region-focusable`). O anel de foco aparece no bloco inteiro (`--ring`, afastado 2px pela cor do fundo), porque a máscara do `scroll-fade` cortaria um anel no próprio `<pre>`. Dê um nome ao bloco que rola ou que tem título: `role="region"` com `aria-labelledby` apontando para o `CodeBlockTitle` (que precisa de `id`) ou um `aria-label`, como nos exemplos de **Altura** e **Mostrar mais**. Sem nome, o leitor de tela encontra um campo de rolagem sem anúncio. Para tirar a parada de Tab de um bloco que nunca rola, passe `tabIndex={-1}`.
+- **Botão de copiar com nome em português:** o `CodeBlockCopyButton` se chama "Copiar código" e não muda de nome ao copiar. Passe um `aria-label` que diga o alvo quando houver mais de um botão na página: "Copiar o erro", "Copiar app/api/chat/route.ts". O ícone leva `aria-hidden="true"`.
+- **Aviso de "Copiado":** uma região `aria-live="polite"` fica sempre montada ao lado do botão, e só o texto dela muda para "Copiado" (por 2 segundos). Um nome fixo no botão e o aviso na região evitam que o leitor de tela leia a mesma notícia duas vezes. Se a cópia falhar (o navegador nega o acesso à área de transferência), nada é anunciado nem mostrado.
+- **Botões só de ícone:** cada um leva `aria-label` com a ação e o alvo, e o ícone leva `aria-hidden="true"`: "Baixar route.ts". O botão de quebrar linhas leva `aria-pressed`, para o estado ser anunciado. O botão de mostrar mais leva `aria-expanded` e `aria-controls` com o `id` do `CodeBlockContent`. O tooltip nunca é o único nome.
+- **Contraste do realce de sintaxe:** as cores do `github-light` e do `github-dark` não dão 4,5:1 sobre o fundo do bloco (`muted`) nem sobre uma linha realçada (`border`). O `lib/highlighter.tsx` troca cada cor que falha por um tom mais escuro (claro) ou mais claro (escuro) da mesma matiz, e todas passam de 4,6:1 sobre o bloco, sobre a linha realçada e sobre a linha removida, nos dois modos. As trocas valem também para as cores ANSI, e o texto "dim" (`ESC[2m`) usa `muted-foreground` em vez do tom a 50%. Se os tokens `muted`, `border` ou `destructive` mudarem, confira de novo os números.
+- **Sentido além da cor:** as linhas do diff levam um marcador `+` ou `−` além do tom, e a variante `destructive` leva um título ("Erro") além da cor. O realce de linha (`highlighted`) é só um tom: se a linha importa para entender o texto em volta, diga qual é no próprio texto. Os números de linha são escondidos do leitor de tela.
+- **Direção:** o código é sempre `dir="ltr"`, mesmo numa página RTL.
+- **Contraste dos papéis:** o texto do bloco é `foreground` (17,7:1 sobre `muted` no claro, 14,3:1 no escuro) e o cabeçalho, `muted-foreground` (6,6:1 e 6,1:1). Na variante `destructive`, o texto usa `destructive-hover` sobre `muted` (5,9:1 e 7,8:1).
+- **Teclado nas ações flutuantes:** sem cabeçalho, a ação flutua no canto e aparece com o mouse e com o foco do teclado (`group-focus-within`), e fica sempre visível em telas de toque.
+
+<Source
+  language="tsx"
+  dark
+  code={`<CodeBlock>
+  <CodeBlockHeader>
+    <CodeBlockTitle id="logs-titulo">Logs</CodeBlockTitle>
+    <CodeBlockActions>
+      <CodeBlockCopyButton value={logs} aria-label="Copiar os logs" />
+    </CodeBlockActions>
+  </CodeBlockHeader>
+  <CodeBlockContent
+    role="region"
+    aria-labelledby="logs-titulo"
+    className="max-h-48"
+  >
+    {logs}
+  </CodeBlockContent>
+</CodeBlock>`}
+/>
+
+## Básico
+
+Passe uma string ao `CodeBlockContent`. Ela vira um só nó de texto, então fica barata enquanto a saída chega em streaming.
+
+<Canvas of={CodeBlockStories.Basico} />
+
+## Cabeçalho
+
+O `CodeBlockHeader` guarda um `CodeBlockTitle` e o `CodeBlockActions`. O `CodeBlockCopyButton` copia o `value`.
+
+<Canvas of={CodeBlockStories.Cabecalho} />
+
+Um título longo é truncado. Para ligar o título a um arquivo, envolva o `CodeBlockTitle` num link (`<a>`, que é navegação).
+
+<Source
+  language="tsx"
+  dark
+  code={`<CodeBlockHeader>
+  <a href="/arquivos/route.ts">
+    <CodeBlockTitle>app/api/chat/route.ts</CodeBlockTitle>
+  </a>
+</CodeBlockHeader>`}
+/>
+
+## Ações
+
+O `CodeBlockActions` guarda quantos botões você quiser. Para um botão de quebrar linhas, guarde o estado e passe-o para `wrap`. Use `aria-pressed` no botão.
+
+<Canvas of={CodeBlockStories.Acoes} />
+
+## Ações flutuantes
+
+Sem cabeçalho, ponha o `CodeBlockActions` direto dentro do `CodeBlock`. As ações flutuam no canto do fim e ficam escondidas até o bloco receber o mouse ou o foco. Em telas de toque, ficam sempre visíveis.
+
+<Canvas of={CodeBlockStories.AcoesFlutuantes} />
+
+## Números de linha
+
+Use `lineNumbers` no `CodeBlockContent`. Uma string é dividida em linhas, e os números não vão junto quando a pessoa seleciona e copia o código.
+
+<Canvas of={CodeBlockStories.NumerosDeLinha} />
+
+## Linha inicial
+
+Use `startLine` para numerar as linhas a partir de uma linha dada, para um trecho do meio de um arquivo. Só vale com `lineNumbers`. A coluna dos números cresce para caber o maior número.
+
+<Canvas of={CodeBlockStories.LinhaInicial} />
+
+## Quebra de linha
+
+As linhas longas rolam por padrão. Use `wrap` para quebrá-las, o que combina com a saída de ferramentas e com mensagens de erro. O primeiro bloco rola; o segundo quebra. Para a pessoa alternar, veja [Ações](#ações).
+
+<Canvas of={CodeBlockStories.Quebra} />
+
+## Linhas realçadas
+
+Renderize cada linha como um `CodeBlockLine` e use `variant="highlighted"` nas linhas a destacar.
+
+<Canvas of={CodeBlockStories.LinhasRealcadas} />
+
+## Diff
+
+Use `variant="added"` ou `variant="removed"` num `CodeBlockLine`. Cada um acrescenta um marcador `+` ou `−`, fora da seleção, além do tom, então a mudança não depende só da cor.
+
+<Canvas of={CodeBlockStories.Diff} />
+
+## Altura
+
+Limite a altura com uma classe `max-h-*` no `CodeBlockContent`. O conteúdo rola por dentro do bloco.
+
+<Canvas of={CodeBlockStories.Altura} />
+
+O `CodeBlockContent` esmaece as bordas com o utilitário `scroll-fade` enquanto rola: esquerda e direita por padrão, em cima e embaixo quando quebra linhas. Adicione `scroll-fade-y` a um bloco com altura limitada e sem quebra.
+
+## Mostrar mais
+
+O `CodeBlockFooter` é um espaço abaixo do conteúdo. Para o "Mostrar mais", limite a altura do conteúdo enquanto está recolhido e ponha um `Button` ghost `xs` no rodapé, com `aria-expanded` e `aria-controls` apontando para o `id` do conteúdo.
+
+<Canvas of={CodeBlockStories.MostrarMais} />
+
+### Altura máxima
+
+Para um bloco longo não tomar a página, aumente o limite em vez de tirá-lo. O conteúdo aberto rola, e as bordas esmaecem enquanto rola.
+
+<Canvas of={CodeBlockStories.AlturaMaxima} />
+
+## Tamanho
+
+Use `size="sm"` para a saída de ferramentas e de um Trace. Ele tem menos recuo e texto em `text-xs`.
+
+<Canvas of={CodeBlockStories.Tamanho} />
+
+## Destrutivo
+
+Use `variant="destructive"` para erros e saídas que falharam. Dê um título ao bloco: a cor não basta para dizer que é um erro.
+
+<Canvas of={CodeBlockStories.Destrutivo} />
+
+## Trace
+
+Ponha um `CodeBlock` com `size="sm"` no `TraceCollapsibleContent` para a saída de ferramentas e de terminal. Adicione `wrap` e uma classe `max-h-64` ao `CodeBlockContent`, para a saída longa quebrar e rolar por dentro do trace. O bloco define a própria cor de texto, então o `TraceCollapsibleContent` não a apaga.
+
+<Canvas of={CodeBlockStories.TraceExemplo} />
+
+## Abas
+
+Mostre vários arquivos com as [Tabs](?path=/docs/componentes-tabs--docs), com um `CodeBlock` em cada `TabsContent`. O exemplo usa um componente auxiliar (`ArquivoComRealce`), porque cada arquivo precisa chamar o hook de realce.
+
+<Canvas of={CodeBlockStories.Abas} />
+
+## Mensagem
+
+Ponha um `CodeBlock` entre parágrafos dentro de uma `Message`.
+
+<Canvas of={CodeBlockStories.Mensagem} />
+
+## Typeset
+
+Na página do shadcn, um `CodeBlock` dentro de um contêiner [`typeset`](https://ui.shadcn.com/docs/typeset) (a tipografia de texto longo do registro) mantém os próprios estilos e ganha o mesmo espaço acima que um parágrafo. O utilitário `typeset` não existe neste design system, então esse exemplo ficou de fora. O bloco define a própria cor, o próprio tamanho e a própria fonte, então se comporta do mesmo jeito dentro de qualquer texto.
+
+## RTL
+
+O código sempre lê da esquerda para a direita, e o cabeçalho segue a direção da página: o título fica à direita e as ações à esquerda. Os textos do exemplo seguem o do shadcn, em árabe. O exemplo usa um `div` com `dir` e `lang` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={CodeBlockStories.Rtl} />
+
+## Realce de sintaxe
+
+O `useHighlightedCode` realça com o [Shiki](https://shiki.style) e devolve um nó React por linha, para usar dentro de `CodeBlockLine`.
+
+<Canvas of={CodeBlockStories.RealceDeSintaxe} />
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useHighlightedCode } from "@workspace/ui/hooks/use-highlighted-code"
+
+const lines = useHighlightedCode(code, "json")
+
+<CodeBlock>
+  <CodeBlockContent>
+    {lines.map((line, index) => (
+      <CodeBlockLine key={index}>{line}</CodeBlockLine>
+    ))}
+  </CodeBlockContent>
+</CodeBlock>`}
+/>
+
+O Shiki usa o motor de regex em JavaScript, então não há WASM para carregar. O hook devolve linhas de texto simples até a primeira passada terminar: o realce aparece um instante depois.
+
+### Linguagens
+
+Cada linguagem carrega no primeiro uso. Edite a lista em `lib/highlighter.tsx`. Uma linguagem que não está na lista aparece como texto simples.
+
+<Canvas of={CodeBlockStories.Linguagens} />
+
+A lista traz `bash`, `css`, `diff`, `html`, `javascript`, `json`, `jsx`, `markdown`, `python`, `sql`, `tsx`, `typescript` e `yaml`, além de apelidos como `ts`, `js`, `sh` e `yml`.
+
+### Saída do terminal
+
+Passe `"ansi"` como linguagem para mostrar as cores da saída do terminal. Sem isso, os códigos de escape aparecem como texto.
+
+<Canvas of={CodeBlockStories.SaidaDoTerminal} />
+
+As cores ANSI não passam de uma linha para a próxima. Tire os códigos de escape do valor do botão de copiar, como no exemplo.
+
+### Renderização no servidor
+
+O `highlightCode` é assíncrono e funciona num Server Component, então o Shiki fica fora do bundle do cliente. Este projeto não tem Server Components: o trecho é só de referência.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { highlightCode } from "@/lib/highlighter"
+
+export async function ServerCode({ code }: { code: string }) {
+  const lines = (await highlightCode(code, "tsx")) ?? code.split("\\n")
+
+  return (
+    <CodeBlock>
+      <CodeBlockContent lineNumbers>
+        {lines.map((line, index) => (
+          <CodeBlockLine key={index}>{line}</CodeBlockLine>
+        ))}
+      </CodeBlockContent>
+    </CodeBlock>
+  )
+}`}
+/>
+
+Neste pacote, o `exports` do `package.json` mapeia `lib/*` para `.ts`, e o realce é um `.tsx`: um import como `@workspace/ui/lib/highlighter` não resolve. Por isso o hook importa o realce por caminho relativo.
+
+### Streaming
+
+Enquanto o código chega, o hook tokeniza só as linhas novas, a partir do estado da gramática onde a última parou. As linhas que não mudaram mantêm os mesmos nós, e o React as pula. O botão de copiar fica desabilitado até o bloco terminar.
+
+<Canvas of={CodeBlockStories.Streaming} />
+
+### Markdown
+
+Para renderizar uma mensagem em Markdown com o [Streamdown](https://streamdown.ai), mande o código entre cercas para um `CodeBlock` pela prop `components.code`. O Streamdown marca só o código em bloco com `data-block`, então o código em linha continua em linha. O `useIsCodeFenceIncomplete` devolve `true` até chegar a cerca de fechamento: use-o para desabilitar o botão de copiar enquanto o código está incompleto.
+
+O exemplo desta seção ficou de fora do Storybook: ele depende do Streamdown e do `@ai-sdk/react`, que não estão instalados neste projeto. O trecho é só de referência.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Streamdown components={{ code: MarkdownCode }} isAnimating={isStreaming}>
+  {text}
+</Streamdown>`}
+/>
+
+## Referência da API
+
+### CodeBlock
+
+A superfície que guarda o cabeçalho, o conteúdo e o rodapé. Aceita as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code>: o tom do bloco</td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code>: o <code>sm</code> tem menos recuo e código em <code>text-xs</code>, para saída de ferramentas</td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="code-block"`, `data-variant` e `data-size`.
+
+### CodeBlockHeader
+
+Uma linha acima do conteúdo, para um título e ações. Aceita as props de um `<div>`. Recebe `data-slot="code-block-header"`.
+
+### CodeBlockTitle
+
+Um nome de arquivo ou um rótulo, com um ícone opcional (`aria-hidden`). Trunca com reticências. Dê um `id` a ele para nomear o `CodeBlockContent`. Aceita as props de um `<div>`. Recebe `data-slot="code-block-title"`.
+
+### CodeBlockActions
+
+Guarda botões no fim do cabeçalho. Como filho direto do `CodeBlock`, ele flutua. Aceita as props de um `<div>`. Recebe `data-slot="code-block-actions"`.
+
+### CodeBlockCopyButton
+
+Um botão ghost só de ícone que copia o `value` para a área de transferência. Aceita as props do [Button](?path=/docs/componentes-button--docs). Recebe `data-slot="code-block-copy-button"` e `data-copied` por 2 segundos depois de copiar.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>string</code>: o texto a copiar (obrigatório)</td><td>—</td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: o nome do botão</td><td><code>{'"Copiar código"'}</code></td></tr>
+    <tr><td><code>variant</code></td><td><code>Button["variant"]</code></td><td><code>{'"ghost"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>Button["size"]</code></td><td><code>{'"icon-xs"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CodeBlockContent
+
+O `<pre>` que rola ou quebra. Aceita as props de um `<pre>`. Recebe `data-slot="code-block-content"`, e o `<code>` dentro dele, `data-slot="code-block-code"`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>children</code></td><td><code>React.ReactNode</code>: uma string ou uma lista de <code>CodeBlockLine</code></td><td>—</td></tr>
+    <tr><td><code>wrap</code></td><td><code>boolean</code>: quebra as linhas longas em vez de rolar</td><td><code>false</code></td></tr>
+    <tr><td><code>lineNumbers</code></td><td><code>boolean</code>: numera cada linha; uma string é dividida em linhas</td><td><code>false</code></td></tr>
+    <tr><td><code>startLine</code></td><td><code>number</code>: o número da primeira linha, com <code>lineNumbers</code></td><td><code>1</code></td></tr>
+    <tr><td><code>tabIndex</code></td><td><code>number</code>: deixa o conteúdo focável, para rolar pelo teclado</td><td><code>0</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code>, como <code>max-h-72</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CodeBlockLine
+
+Uma linha de código. Aceita as props de um `<span>`. Recebe `data-slot="code-block-line"` e `data-variant`, e o texto fica num `data-slot="code-block-line-content"`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "added" | "removed" | "highlighted"'}</code>: o estado da linha</td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### CodeBlockFooter
+
+Uma linha abaixo do conteúdo, por exemplo para um botão de "Mostrar mais". Aceita as props de um `<div>`. Recebe `data-slot="code-block-footer"`.
+
+### useHighlightedCode
+
+<Source
+  language="tsx"
+  dark
+  code={`const lines = useHighlightedCode(code, language)`}
+/>
+
+Devolve um nó React por linha. Devolve linhas de texto simples até a primeira passada terminar e, para sempre, para uma linguagem que não está na lista.
+
+<table>
+  <thead>
+    <tr><th>Argumento</th><th>Tipo</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>code</code></td><td><code>string</code></td><td>O código a realçar. Uma quebra de linha no fim é ignorada.</td></tr>
+    <tr><td><code>language</code></td><td><code>string</code></td><td>Uma linguagem ou apelido de <code>lib/highlighter.tsx</code>, ou <code>{'"ansi"'}</code>.</td></tr>
+  </tbody>
+</table>

@@ -1,6 +1,32 @@
 import * as React from "react"
 import { cn } from "cn"
 
+/*
+ * Message — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/message
+ * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - É só layout, sem primitivo e sem comportamento: a linha de uma mensagem
+ *   (avatar, conteúdo, cabeçalho e rodapé). Composição: Message >
+ *   MessageAvatar e MessageContent > MessageHeader, Bubble e MessageFooter;
+ *   MessageGroup empilha mensagens seguidas do mesmo autor. Todas as partes
+ *   expõem `data-slot`; o Message expõe `data-align` (`start` ou `end`).
+ * - Semântica: nenhuma parte tem papel. Quem monta a conversa dá a estrutura:
+ *   uma lista com nome (`role="list"` + `role="listitem"` em cada Message) ou,
+ *   numa conversa que cresce, o `MessageScrollerContent`, que já é
+ *   `role="log"`. Cada mensagem precisa dizer quem escreveu: o `MessageHeader`
+ *   com o nome, um `Avatar` com `role="img"` e `aria-label`, ou um texto
+ *   `sr-only` ("Você:") dentro do balão. Status que muda ("Maria está
+ *   digitando…") vai num `Marker role="status"`, fora da lista.
+ * - Botões do `MessageFooter` (copiar, repetir, curtir) são só ícone: cada um
+ *   precisa de `aria-label` específico, com o ícone `aria-hidden`.
+ * - Sem cor com opacidade (o registro não tinha). `MessageHeader` e
+ *   `MessageFooter` usam `muted-foreground` em `text-xs`: 7,4:1 no fundo e no
+ *   card, 6,6:1 sobre `muted` (claro); 8,1:1 / 6,1:1 no escuro. O avatar usa
+ *   `bg-muted`.
+ * - Direção: o `align="end"` usa `flex-row-reverse` e o rodapé usa
+ *   `justify-end`, que seguem o `dir`; os recuos são `px-*`, simétricos.
+ */
+
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

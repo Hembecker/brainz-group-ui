@@ -1,0 +1,573 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as MessageScrollerStories from "./message-scroller.stories";
+
+<Meta of={MessageScrollerStories} />
+
+# Message Scroller
+
+Um contêiner de rolagem para chat: ancora os turnos, abre conversas salvas, acompanha respostas em streaming, carrega o histórico sem pular e leva a qualquer mensagem.
+
+<Canvas of={MessageScrollerStories.Demo} />
+
+O exemplo principal do shadcn usa o AI SDK (`useChat`) e um campo de texto com menu. Aqui a conversa é simulada: "Enviar a mensagem" manda a próxima pergunta da fila e a resposta chega em streaming. Nada começa sozinho.
+
+## O que faz um bom chat com streaming
+
+Um chat antigo era simples: uma lista com um campo de texto, a mensagem entra embaixo, a resposta chega e a lista rola. O streaming quebra esse modelo, porque as mensagens chegam aos pedaços enquanto a pessoa ainda lê, rola ou olha para outro lugar. O desafio passa a ser **preservar o lugar de quem lê** enquanto a conversa muda. Se isso falha, a experiência fica pulando: a pessoa é puxada para o fim, perde o contexto e precisa achar o caminho de volta.
+
+Um bom chat com streaming deve:
+
+1. **Mover só quando a pessoa pediu.** Quem está lendo não é levado para outro lugar. A rolagem automática nunca é o padrão.
+2. **Seguir só enquanto ela segue.** No fim da conversa, mantém o streaming à vista. Se ela rola para longe, fica onde está.
+3. **Tratar todo gesto como sinal.** Selecionar texto, usar o teclado, abrir um link ou buscar também param o movimento, e não só a rolagem.
+4. **Começar um turno novo perto do topo.** O turno tem onde ser lido desde o começo.
+5. **Deixar a resposta crescer na tela**, e não empurrar tudo para longe de uma vez.
+6. **Manter parte da conversa anterior à vista**, para o pedido e a resposta continuarem ligados.
+7. **Deixar o conteúdo novo chegar fora da tela**, sem mudar o que a pessoa está olhando.
+8. **Mostrar o que acontece fora da vista**: se uma resposta ainda chega ou se há mensagens novas.
+9. **Facilitar a volta à resposta mais recente**, com uma ação "ir para o fim" que também retoma o acompanhamento.
+10. **Deixar ir a qualquer ponto**: links de mensagem, busca, marcadores de não lidas e navegação direta.
+11. **Reabrir onde a pessoa parou.** Uma conversa salva abre no último turno relevante, em geral a última mensagem dela, e não no fim absoluto.
+12. **Segurar o lugar quando o layout muda**: imagens que carregam, markdown que se expande, blocos de código e mensagens antigas que aparecem em cima.
+13. **Tratar interrupções sem roubar a posição**: parar, repetir, regenerar, ramificar ou errar não move a conversa.
+14. **Continuar rápido em conversas longas.**
+15. **Ser acessível sem ruído**: a transcrição navegável, o foco do teclado preservado e os eventos importantes anunciados num ritmo confortável.
+
+**Nunca mova a pessoa contra a intenção dela.**
+
+## MessageScroller
+
+O Message Scroller é um rolador de transcrição de chat feito para esses comportamentos. O `MessageScrollerProvider` guarda o estado de rolagem e o comportamento das linhas: posição de abertura, saída em streaming, ancoragem de turnos, histórico acrescentado em cima, visibilidade e controles de rolagem. O `MessageScroller` é o quadro estilizado que fica dentro dele.
+
+Ele cuida só da área de rolagem. Não é dono das mensagens, do estado da IA, do transporte, da persistência nem das ramificações: o código do seu produto continua montando mensagens, marcadores, ferramentas, anexos e campos de texto. E continua rápido em conversas longas, com markdown rico.
+
+## Instalação
+
+O comportamento vem do pacote `@shadcn/react` (o primitivo sem estilo), que já está nas dependências do `@workspace/ui` com a versão fixa. O estilo usa também o Button e o `lucide-react`.
+
+<Source language="bash" dark code="npx shadcn add message-scroller" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente e confira se o `package.json` não voltou a escrever `^`.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/message-scroller.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Message } from "@workspace/ui/components/message"
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from "@workspace/ui/components/message-scroller"
+
+<MessageScrollerProvider>
+  <MessageScroller>
+    <MessageScrollerViewport>
+      <MessageScrollerContent>
+        {messages.map((message) => (
+          <MessageScrollerItem
+            key={message.id}
+            messageId={message.id}
+            scrollAnchor={message.role === "user"}
+          >
+            <Message />
+          </MessageScrollerItem>
+        ))}
+      </MessageScrollerContent>
+    </MessageScrollerViewport>
+    <MessageScrollerButton />
+  </MessageScroller>
+</MessageScrollerProvider>`}
+/>
+
+O `MessageScroller` preenche o pai, então ponha-o dentro de um contêiner com altura definida.
+
+<Source
+  language="tsx"
+  dark
+  code={`<div className="flex h-screen flex-col">
+  <MessageScrollerProvider>
+    <MessageScroller className="flex-1">{/* conversa */}</MessageScroller>
+  </MessageScrollerProvider>
+</div>`}
+/>
+
+## Composição
+
+<Source
+  language="tsx"
+  dark
+  code={`<MessageScrollerProvider>
+  <MessageScroller>
+    <MessageScrollerViewport>
+      <MessageScrollerContent>
+        <MessageScrollerItem>
+          {/* uma mensagem, um marcador ou uma linha */}
+        </MessageScrollerItem>
+        <MessageScrollerItem />
+        <MessageScrollerItem />
+      </MessageScrollerContent>
+    </MessageScrollerViewport>
+    <MessageScrollerButton />
+  </MessageScroller>
+</MessageScrollerProvider>`}
+/>
+
+- **`MessageScrollerProvider`**: a raiz sem estilo. Guarda o estado de rolagem e as props de comportamento: posição de abertura, rolagem automática, ancoragem, comandos de rolagem e rastreamento de visibilidade.
+- **`MessageScroller`**: o quadro estilizado. Organiza a área de rolagem, o conteúdo e os controles dentro do provider.
+- **`MessageScrollerViewport`**: o elemento que rola. Recebe os eventos de rolagem e preserva a linha visível quando mensagens antigas entram em cima.
+- **`MessageScrollerContent`**: o contêiner da transcrição. Guarda as linhas e traz os padrões de região ao vivo para as mensagens novas.
+- **`MessageScrollerItem`**: o limite de cada linha. Envolva cada filho direto do conteúdo, para o scroller medir, ancorar, preservar a posição, acompanhar a visibilidade e levar até ela. Uma linha pode ser uma mensagem, um marcador, um indicador de digitação, um separador, um evento de entrada ou saída, ou uma linha "carregar anteriores".
+- **`MessageScrollerButton`**: o controle de rolagem. Leva ao início ou ao fim da transcrição e fica inerte enquanto não há conteúdo naquela direção.
+
+## Acessibilidade
+
+O Message Scroller mantém a área de rolagem alcançável pelo teclado e a transcrição anunciável, sem impor uma interface de mensagem.
+
+- **Área de rolagem alcançável pelo teclado:** o `MessageScrollerViewport` é uma região com nome e foco por padrão: `role="region"`, `aria-label="Mensagens"` e `tabIndex={0}`. O Tab chega nele, e as setas, o PageUp, o PageDown, o Home e o End rolam a conversa. Rolar assim solta o acompanhamento do fim (`autoScroll`), como qualquer gesto de quem lê. O rótulo padrão do primitivo é "Messages"; aqui o padrão é "Mensagens", e dá para trocar por `aria-label` ou `aria-labelledby` ("Conversa com a Lia").
+- **Foco visível:** a área ganha o anel sólido de 3px no `--ring` ao receber foco pelo teclado (`focus-visible`), desenhado para dentro (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de fora. O anel tem 3,5:1 no claro; no escuro, 7,6:1 contra o fundo e 6,7:1 contra um card.
+- **Mensagens novas anunciadas com educação:** o `MessageScrollerContent` é um `role="log"` com `aria-relevant="additions"`. O `log` é uma região ao vivo `polite` implícita: uma linha nova é anunciada sem interromper a leitura, mas o texto que cresce dentro de uma linha em streaming não é lido pedaço a pedaço. Não acrescente outro `aria-live`.
+- **Esperar a resposta completa:** passe `aria-busy` ao `MessageScrollerContent` enquanto um turno chega, se os anúncios devem esperar a linha pronta.
+- **Estado que muda fora da lista:** para "Respondendo…", use uma região `role="status"` (por exemplo um `Marker`) sempre montada, trocando só o texto. A região fica fora do `log`.
+- **Botão de rolar:** é um `<button>` de verdade, com o nome em texto `sr-only` ("Ir para o fim da conversa", "Ir para o início da conversa"), fixo em português, e o ícone `aria-hidden`. Quando não há para onde rolar, o primitivo põe `inert`, `tabIndex={-1}` e `data-active="false"`, então os controles inativos não criam paradas de foco.
+- **Autor de cada mensagem:** o Message Scroller não conhece o conteúdo das linhas. Cada mensagem precisa dizer quem escreveu: um `MessageHeader` com o nome, um avatar com `aria-label` ou um texto `sr-only` ("Você:") no balão. Os exemplos desta página usam o texto `sr-only`.
+- **Controles de fora da lista:** os botões que chamam `scrollToMessage`, `scrollToStart` e `scrollToEnd` são botões comuns, com nome específico ("Ir para o início"). Um resumo da conversa é uma `nav` com nome, e o item atual leva `aria-current="location"` (veja **Visibilidade**).
+- **Movimento:** a transição do botão e a entrada animada das linhas (veja **Animação**) usam só `transform` e `opacity`. Quem prefere menos movimento deve ver a mesma rolagem sem a animação (`motion-reduce:animate-none`).
+- **Zoom e teclado:** teste a conversa só com o teclado e com o zoom a 200%: a área continua rolável e o botão de rolar continua alcançável.
+
+<Source
+  language="tsx"
+  dark
+  code={`<MessageScrollerViewport aria-label="Conversa com a Lia">
+  <MessageScrollerContent aria-busy={status === "streaming"}>
+    {/* mensagens */}
+  </MessageScrollerContent>
+</MessageScrollerViewport>`}
+/>
+
+## Conceitos principais
+
+### Ancorar turnos
+
+Um turno é a parte da conversa que abre uma nova troca. Num chat de IA simples, é a mensagem da pessoa e a resposta que vem em seguida. A âncora é a linha que a área trata como o começo do turno. Marque essa linha com `scrollAnchor`. Quando uma âncora nova é acrescentada, a área a leva para perto do topo e deixa um trecho do item anterior à vista acima dela, para o turno novo não ficar solto do contexto.
+
+<Source
+  language="tsx"
+  dark
+  code={`// Diz ao scroller para ancorar a mensagem da pessoa no próximo turno.
+<MessageScrollerItem
+  messageId={message.id}
+  scrollAnchor={message.role === "user"}
+/>`}
+/>
+
+A âncora não depende do papel da mensagem: qualquer linha pode ser uma âncora, seja uma mensagem da pessoa, um marcador do sistema ou um evento de transferência. No exemplo abaixo, escolha qual papel ancora e envie mensagens para comparar onde cada turno para.
+
+<Canvas of={MessageScrollerStories.AncorarTurnos} />
+
+### Chat em grupo
+
+Num chat em grupo, o limite do turno é mais específico do que "a mensagem da pessoa": costuma ser a mensagem que pede uma resposta do modelo, ou um marcador como "Marcus entrou no chat". Indicadores de digitação e controles de histórico normalmente não ancoram. Como a ancoragem não depende do papel, dá para ancorar um marcador tão facilmente quanto uma mensagem.
+
+<Source
+  language="tsx"
+  dark
+  code={`<MessageScrollerItem messageId="marcus-entrou" scrollAnchor>
+  <Marker variant="separator">
+    <MarkerContent>Marcus entrou no chat</MarkerContent>
+  </Marker>
+</MessageScrollerItem>`}
+/>
+
+<Canvas of={MessageScrollerStories.ChatEmGrupo} />
+
+### Manter o contexto à vista
+
+Quando um turno novo começa, ele ainda deve parecer parte da mesma conversa. O `scrollPreviousItemPeek` mantém um pedaço do item anterior visível acima da âncora, para quem lê manter o contexto, e não sentir que a conversa recomeçou numa página em branco.
+
+<Source
+  language="tsx"
+  dark
+  code={`// Mantém 64px do turno anterior visíveis acima da linha recém-ancorada.
+<MessageScrollerProvider scrollPreviousItemPeek={64}>
+  <MessageScroller>{/* turnos ancorados */}</MessageScroller>
+</MessageScrollerProvider>`}
+/>
+
+Mude o trecho no exemplo abaixo e veja como afeta a conversa.
+
+<Canvas of={MessageScrollerStories.ContextoAnterior} />
+
+### Seguir o fim
+
+Quando a pessoa está no fim da conversa, porque ficou lá ou voltou para lá, o `autoScroll` mantém à vista as respostas em streaming enquanto crescem. Rolar para longe do fim solta o acompanhamento, seja por roda do mouse, toque, teclas de rolagem ou arrastando a barra. Um salto explícito para uma mensagem também solta. Os pedaços novos passam a chegar sem mover quem lê.
+
+O `autoScroll` combina com a ancoragem de turnos. Quando um turno novo ancora perto do topo, a tela fica parada enquanto a resposta cresce no espaço embaixo dele. Quando a resposta preenche a área, a pessoa volta ao fim e o acompanhamento assume a partir da âncora.
+
+<Source
+  language="tsx"
+  dark
+  code={`<MessageScrollerProvider autoScroll>
+  <MessageScroller>{/* turnos em streaming */}</MessageScroller>
+</MessageScrollerProvider>`}
+/>
+
+<Canvas of={MessageScrollerStories.Streaming} />
+
+Chamar `scrollToEnd`, ou apertar o `MessageScrollerButton`, reativa o acompanhamento quando o `autoScroll` está ligado: quem rolou para longe volta ao fim e continua seguindo. A raiz e a área de rolagem expõem `data-autoscrolling` enquanto essa rolagem programática até a última mensagem acontece, para você estilizar a transição.
+
+### Abrir conversas salvas
+
+Parece razoável reabrir uma conversa salva no fim absoluto, mas isso muitas vezes deixa a pessoa no meio da conversa sem contexto. Um padrão melhor é `"last-anchor"`: mostra o último turno relevante, como a última mensagem da pessoa, com a resposta embaixo. Assim ela vê o que perguntou, onde a resposta começa e continua dali, sem reconstruir a conversa a partir da borda de baixo.
+
+<Source
+  language="tsx"
+  dark
+  code={`<MessageScrollerProvider defaultScrollPosition="last-anchor">
+  <MessageScroller>{/* conversa */}</MessageScroller>
+</MessageScrollerProvider>`}
+/>
+
+<Canvas of={MessageScrollerStories.PosicaoDeAbertura} />
+
+O `"last-anchor"` depende do `scrollAnchor`, e não do papel da mensagem. Se não há âncora, ou se o último turno ancorado já cabe na área, ele cai no `"end"`. Use `"start"` para retomar no começo da conversa e `"end"` quando a mensagem mais recente é o lugar certo para pousar.
+
+### Evitar o flash ao recarregar
+
+Uma área de rolagem sempre abre no topo. O HTML não tem como definir `scrollTop`, então uma transcrição renderizada no servidor mostra primeiro as mensagens mais antigas. Depois que o JavaScript roda, o `defaultScrollPosition` move a tela, e você vê um salto.
+
+Quando o `defaultScrollPosition` é `"end"` ou `"last-anchor"`, a área de rolagem tem `data-pending-scroll` até a posição ser aplicada. A área estilizada fica escondida (`invisible`) enquanto o atributo existe: você vê o quadro, e não o salto. O `"start"` não precisa disso.
+
+Para o `"end"` aparecer certo já na primeira pintura, acrescente um script inline logo depois da área de rolagem. Dê um `id` à área, role-a até o fim e remova o `data-pending-scroll`.
+
+<Source
+  language="tsx"
+  dark
+  code={`const scrollToEndScript = \`(function () {
+  var viewport = document.getElementById("messages")
+  if (!viewport) {
+    return
+  }
+  viewport.scrollTop = viewport.scrollHeight
+  viewport.removeAttribute("data-pending-scroll")
+})()\`
+
+<MessageScroller>
+  <MessageScrollerViewport id="messages" suppressHydrationWarning>
+    <MessageScrollerContent>{/* conversa */}</MessageScrollerContent>
+  </MessageScrollerViewport>
+  <script dangerouslySetInnerHTML={{ __html: scrollToEndScript }} />
+  <MessageScrollerButton />
+</MessageScroller>`}
+/>
+
+Ponha o script na sua página, e não no scroller. Ele só funciona para o `"end"`, e só quando as mensagens já estão no HTML. Acrescente `suppressHydrationWarning` na área de rolagem. Se você usa uma Content Security Policy, passe um `nonce`. Não use este script com o `"last-anchor"`, e pule-o quando as mensagens carregam no cliente.
+
+Uma observação de acessibilidade: enquanto a área está `invisible`, o leitor de tela também não a encontra, o que dura só até a posição ser aplicada.
+
+### Carregar mensagens anteriores
+
+Carregar mensagens anteriores não deve mover a conversa que a pessoa já está olhando. Quando linhas antigas são acrescentadas acima da transcrição, o `MessageScrollerViewport` preserva a linha visível, e quem lê fica no mesmo lugar enquanto o histórico carrega em cima. Isso vem ligado por padrão, pela prop `preserveScrollOnPrepend`.
+
+<Canvas of={MessageScrollerStories.CarregarHistorico} />
+
+Use valores estáveis de `messageId` nas linhas de mensagem: assim o scroller tem uma linha específica para preservar, e não precisa adivinhar pelo pixel que estiver na borda da área. No exemplo, o botão "Carregar o histórico" fica fora da área de rolagem, e a conversa termina num marcador "Fim da conversa". Se o seu botão ficar dentro da lista (uma linha "carregar anteriores" no topo), ele é um `MessageScrollerItem` com um botão de verdade e um nome específico, mas a preservação da posição funciona melhor com os botões fora dela.
+
+### Animar mensagens novas
+
+O `MessageScrollerItem` pode ser animado diretamente. Mantenha o `messageId` e o `scrollAnchor` nele e use `transform` e `opacity` na entrada. Um padrão comum é animar a mensagem da pessoa quando ela é enviada, e deixar a resposta do assistente chegar numa linha comum embaixo. A linha da pessoa começa um pouco abaixo da posição final, e sobe do fim da área.
+
+O shadcn usa a biblioteca Motion. Aqui não há Motion, então o exemplo usa as classes `animate-in`, `fade-in` e `slide-in-from-bottom-4` do `tw-animate-css`, que já está no projeto.
+
+<Source
+  language="tsx"
+  dark
+  code={`<MessageScrollerItem
+  messageId={message.id}
+  scrollAnchor={message.role === "user"}
+  className="animate-in fade-in slide-in-from-bottom-4 duration-300 motion-reduce:animate-none"
+>
+  <Message />
+</MessageScrollerItem>`}
+/>
+
+<Canvas of={MessageScrollerStories.Animacao} />
+
+Evite animar altura, margem ou padding nas entradas de linha: essas mudanças brigam com o trabalho de posicionamento do scroller. Se a pessoa prefere menos movimento, pule a animação de entrada e mantenha o comportamento de rolagem igual (`motion-reduce:animate-none`).
+
+### Pular para mensagens
+
+Resultados de busca, links permanentes, itens de um índice e botões de barra de ferramentas muitas vezes precisam controlar a transcrição de fora da lista de mensagens. Use o `useMessageScroller` para esses controles. Como os hooks leem o `MessageScrollerProvider`, eles funcionam em qualquer componente dentro dele, inclusive controles fora do quadro do `MessageScroller`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useMessageScroller } from "@workspace/ui/components/message-scroller"
+
+const { scrollToMessage, scrollToEnd, scrollToStart } = useMessageScroller()`}
+/>
+
+<Canvas of={MessageScrollerStories.Comandos} />
+
+O `scrollToMessage` usa o `messageId` do `MessageScrollerItem`, então as linhas que precisam ser endereçáveis têm de ter ids estáveis. Ele devolve `false` quando o alvo não está montado e não dá para enfileirar.
+
+O `scrollToMessage` pode enfileirar um alvo antes de os itens existirem, o que cobre links permanentes resolvidos no cliente enquanto a transcrição monta. Depois que as linhas montaram, um id inexistente devolve `false`, em vez de iniciar tentativas às cegas. Um resultado `true` quer dizer que a rolagem rodou ou foi enfileirada, e não que a linha já está à vista.
+
+Um comando que abre um menu (como "Ir para…") segue as regras do menu: o gatilho é um botão com nome, e os itens ficam num `role="menu"` navegável por setas.
+
+### Acompanhar a posição de quem lê
+
+Use o `useMessageScrollerVisibility` para acompanhar a posição de quem lê na conversa. Um exemplo comum é um índice, ou um menu de pulo, que destaca o turno ancorado atual.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useMessageScrollerVisibility } from "@workspace/ui/components/message-scroller"
+
+const { currentAnchorId, visibleMessageIds } = useMessageScrollerVisibility()`}
+/>
+
+<Canvas of={MessageScrollerStories.Visibilidade} />
+
+O `currentAnchorId` responde "onde estou" informando o turno ancorado atual, e continua definido depois que essa âncora sai da área por cima. O `visibleMessageIds` responde "o que está na tela", em ordem de documento. O rastreamento só custa quando algo assina o hook, e as linhas precisam de um `messageId` para participar.
+
+No exemplo, o resumo da conversa é uma `nav` com nome, uma lista de botões, e o turno atual leva `aria-current="location"` além do destaque visual: a posição não é dada só pela cor. O exemplo do shadcn abre a lista num hover card; aqui a lista fica sempre visível, sem depender de hover.
+
+### Ler o estado de rolagem
+
+Use o `useMessageScrollerScrollable` quando precisar do estado de rolagem em JavaScript, como num indicador de status ou num controle próprio de "ir para o fim". Ele informa para quais bordas a área ainda pode rolar: "no início" e "no fim" são a negação (`!start` e `!end`), e "rolável de algum modo" é `start || end`. Para estilizar o próprio scroller, prefira o atributo `data-scrollable`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useMessageScrollerScrollable } from "@workspace/ui/components/message-scroller"
+
+const { start, end } = useMessageScrollerScrollable()`}
+/>
+
+<Canvas of={MessageScrollerStories.EstadoDeRolagem} />
+
+O texto do estado é só informação visível: não é uma região ao vivo, para não anunciar cada pequena mudança enquanto a pessoa rola.
+
+## Desempenho
+
+O `MessageScroller` é medido em transcrições grandes, com markdown e linhas de mensagem compostas. A meta é manter o caminho quente da rolagem fora do estado do React: sem re-renderizar as linhas, sem layout forçado a cada rolagem e o mínimo de trabalho de pintura fora da tela que o navegador conseguir evitar.
+
+A posição de rolagem, a ancoragem e o acompanhamento do fim são controlados de forma imperativa e refletidos na raiz e na área de rolagem por atributos `data-*`, então rolar e receber streaming não re-renderiza as linhas.
+
+O `MessageScrollerItem` estilizado também traz `content-visibility: auto` e `contain-intrinsic-size`. As linhas continuam no DOM para seleção, cópia, busca na página, renderização no servidor e tecnologia assistiva, mas o navegador pode pular o trabalho de renderizar as que estão longe da área visível. O rastreamento de visibilidade só custa quando algo assina o `useMessageScrollerVisibility`. É confortável para o intervalo esperado de um chat: centenas a poucos milhares de turnos, com markdown e componentes compostos.
+
+## Virtualização
+
+A virtualização fica de fora do primitivo de propósito. O `MessageScroller` renderiza linhas reais do DOM e continua rápido com milhares de turnos (veja **Desempenho**), então a maioria das transcrições nunca precisa dela.
+
+Quando uma transcrição é grande a ponto de precisar de virtualização, use o `MessageScrollerViewport` como o elemento que rola e deixe o virtualizador cuidar das linhas. O exemplo usa o `@tanstack/react-virtual`, que não é uma dependência do projeto: instale-o só se precisar.
+
+<Source
+  language="tsx"
+  dark
+  code={`import * as React from "react"
+import { useVirtualizer } from "@tanstack/react-virtual"
+
+function VirtualizedTranscript({
+  messages,
+}: {
+  messages: Array<{ id: string; content: React.ReactNode }>
+}) {
+  const viewportRef = React.useRef<HTMLDivElement>(null)
+
+  const virtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => viewportRef.current,
+    estimateSize: () => 86,
+    getItemKey: (index) => messages[index]?.id ?? index,
+    overscan: 8,
+  })
+
+  return (
+    <MessageScrollerProvider>
+      <MessageScroller>
+        <MessageScrollerViewport ref={viewportRef}>
+          <MessageScrollerContent className="block min-h-full">
+            <div
+              className="relative w-full"
+              style={{ height: virtualizer.getTotalSize() }}
+            >
+              {virtualizer.getVirtualItems().map((virtualItem) => {
+                const message = messages[virtualItem.index]
+
+                if (!message) {
+                  return null
+                }
+
+                return (
+                  <div
+                    key={virtualItem.key}
+                    ref={virtualizer.measureElement}
+                    data-index={virtualItem.index}
+                    className="absolute start-0 top-0 w-full"
+                    style={{
+                      transform: \`translateY(\${virtualItem.start}px)\`,
+                    }}
+                  >
+                    <Message>{message.content}</Message>
+                  </div>
+                )
+              })}
+            </div>
+          </MessageScrollerContent>
+        </MessageScrollerViewport>
+        <MessageScrollerButton />
+      </MessageScroller>
+    </MessageScrollerProvider>
+  )
+}`}
+/>
+
+Linhas virtualizadas saem do DOM, então o leitor de tela e a busca na página só encontram as que estão montadas. Pese isso antes de virtualizar.
+
+## Sem estilo
+
+O comportamento do `MessageScroller` vem do pacote `@shadcn/react`. Para usá-lo direto com o seu próprio markup e estilo, veja o [Message Scroller do @shadcn/react](https://ui.shadcn.com/docs/react/message-scroller).
+
+## Referência da API
+
+O comportamento é o do primitivo `@shadcn/react/message-scroller`, igual para o componente estilizado e para as partes sem estilo. As tabelas abaixo seguem os tipos do pacote (versão 0.3.1). Todas as partes expõem `data-slot`.
+
+### MessageScrollerProvider
+
+A raiz sem estilo. Não renderiza elemento: só o contexto.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>autoScroll</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>defaultScrollPosition</code></td><td><code>{'"start" | "end" | "last-anchor"'}</code></td><td><code>{'"end"'}</code></td></tr>
+    <tr><td><code>scrollEdgeThreshold</code></td><td><code>number</code></td><td><code>{'8'}</code></td></tr>
+    <tr><td><code>scrollPreviousItemPeek</code></td><td><code>number</code></td><td><code>{'64'}</code></td></tr>
+    <tr><td><code>scrollMargin</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+  </tbody>
+</table>
+
+- `autoScroll`: acompanha as respostas em streaming enquanto a pessoa está no fim.
+- `defaultScrollPosition`: onde a conversa abre (veja **Abrir conversas salvas**).
+- `scrollEdgeThreshold`: a distância, em pixels, da borda que ainda conta como "no fim" ou "no início".
+- `scrollPreviousItemPeek`: quantos pixels do item anterior ficam visíveis acima de uma âncora.
+- `scrollMargin`: a margem, em pixels, deixada acima da linha ao rolar até ela.
+
+### MessageScroller
+
+O quadro estilizado. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-scroller"` e, do primitivo, `data-scrollable` (`start`, `end` ou `start end`, para onde ainda dá para rolar), `data-autoscrolling` e `data-pending-scroll`.
+
+### MessageScrollerViewport
+
+O elemento que rola. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>preserveScrollOnPrepend</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Mensagens"'}</code></td></tr>
+    <tr><td><code>role</code></td><td><code>string</code></td><td><code>{'"region"'}</code></td></tr>
+    <tr><td><code>tabIndex</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-scroller-viewport"`, `data-scrollable`, `data-autoscrolling` e `data-pending-scroll`.
+
+### MessageScrollerContent
+
+O contêiner da transcrição. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>role</code></td><td><code>string</code></td><td><code>{'"log"'}</code></td></tr>
+    <tr><td><code>aria-relevant</code></td><td><code>string</code></td><td><code>{'"additions"'}</code></td></tr>
+    <tr><td><code>spacerClassName</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-scroller-content"`. Dentro dele há um espaçador `aria-hidden`, usado na ancoragem.
+
+### MessageScrollerItem
+
+O limite de uma linha da transcrição. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>messageId</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>scrollAnchor</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-scroller-item"`, `data-message-id` e `data-scroll-anchor`.
+
+### MessageScrollerButton
+
+O botão que rola ao início ou ao fim. Aceita as props de um `<button>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>direction</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"end"'}</code></td></tr>
+    <tr><td><code>behavior</code></td><td><code>ScrollBehavior</code></td><td><code>{'"smooth"'}</code></td></tr>
+    <tr><td><code>variant</code></td><td><code>Button variant</code></td><td><code>{'"secondary"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>Button size</code></td><td><code>{'"icon-sm"'}</code></td></tr>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code></td><td><code>{'<Button />'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-scroller-button"`, `data-direction`, `data-variant`, `data-size` e, do primitivo, `data-active` (`true` ou `false`). Sem `children`, mostra a seta e o texto `sr-only`.
+
+### Hooks
+
+<table>
+  <thead>
+    <tr><th>Hook</th><th>Devolve</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>useMessageScroller()</code></td><td><code>{'{ scrollToMessage, scrollToStart, scrollToEnd }'}</code></td></tr>
+    <tr><td><code>useMessageScrollerScrollable()</code></td><td><code>{'{ start: boolean; end: boolean }'}</code></td></tr>
+    <tr><td><code>useMessageScrollerVisibility()</code></td><td><code>{'{ currentAnchorId: string | null; visibleMessageIds: string[] }'}</code></td></tr>
+  </tbody>
+</table>
+
+- `scrollToMessage(messageId, options?)`: devolve `boolean`.
+- `scrollToStart(options?)` e `scrollToEnd(options?)`: devolvem `boolean`.
+- `options`: `{ align?: "start" | "center" | "end" | "nearest"; behavior?: ScrollBehavior; scrollMargin?: number }`.
+
+Os três hooks leem o `MessageScrollerProvider` e só funcionam dentro dele.

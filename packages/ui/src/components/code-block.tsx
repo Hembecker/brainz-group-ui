@@ -7,15 +7,58 @@ import { cn } from "cn"
 import { Button } from "@workspace/ui/components/button"
 import { CheckIcon, CopyIcon } from "lucide-react"
 
+/*
+ * CodeBlock — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/code-block
+ * As cores, o contraste e os raios são os da Big Brain. O realce de sintaxe
+ * (`useHighlightedCode`, `lib/highlighter.tsx`) usa o Shiki.
+ * - Composição: CodeBlock > CodeBlockHeader (Title e Actions com o
+ *   CopyButton), CodeBlockActions flutuante (sem cabeçalho), CodeBlockContent
+ *   (string ou lista de CodeBlockLine) e CodeBlockFooter. Todas as partes
+ *   expõem `data-slot`; o CodeBlock expõe `data-variant` e `data-size`.
+ * - Cores com opacidade, trocadas por papéis cheios:
+ *   - contorno: `ring-foreground/5 dark:ring-foreground/10` -> `ring-border`;
+ *   - linha `added` e `highlighted`: `bg-foreground/5` -> `bg-border` (é o
+ *     tom mais claro/escuro que o bloco aceita: `accent` é igual ao `muted`
+ *     do bloco, e a linha sumiria). O número da linha e o marcador "+" passam
+ *     a `foreground` nessas linhas, porque `muted-foreground` sobre
+ *     `border` no escuro dá só 4,4:1;
+ *   - hover dos botões do cabeçalho: `bg-foreground/5` e `/10` ->
+ *     `bg-border`;
+ *   - botão flutuante: `ring-foreground/10` -> `ring-border`;
+ *   - variante `destructive`: `bg-destructive/5 ring-destructive/15` ->
+ *     `bg-muted ring-destructive`, com o texto em `destructive-hover`
+ *     (5,9:1 no claro, 7,8:1 no escuro sobre `muted`), como pede o
+ *     "vermelho sobre muted".
+ *   Sem papel equivalente, ficou `bg-destructive/10` na linha `removed`: o
+ *   tom vermelho claro da linha removida não existe como papel cheio. O
+ *   marcador "−" e o texto não dependem dele (a linha carrega o "−", e o
+ *   realce de sintaxe tem 4,6:1 ou mais sobre esse fundo, nos dois modos).
+ * - Realce de sintaxe: as cores do github-light e do github-dark não davam
+ *   4,5:1 sobre o bloco e sobre as linhas realçadas. `lib/highlighter.tsx`
+ *   troca cada cor que falha por um tom mais escuro (claro) ou mais claro
+ *   (escuro) da mesma matiz, com 4,6:1 ou mais sobre `muted`, sobre
+ *   `border` e sobre o fundo vermelho da linha removida.
+ * - Rolagem pelo teclado: o `<pre>` tem `tabIndex={0}`, e o anel de foco vai
+ *   para o bloco todo (`has-[>…:focus-visible]`, `ring-ring` afastado 2px),
+ *   porque a máscara de `scroll-fade` cortaria um anel no próprio `<pre>`.
+ *   Um bloco que rola de verdade deve ganhar um nome (`role="region"` e
+ *   `aria-label` ou `aria-labelledby` no CodeBlockContent): veja a página Docs.
+ * - Botão de copiar: o nome é "Copiar código", fixo, em português (passe
+ *   `aria-label` para dizer o alvo). O nome não muda ao copiar: quem anuncia o
+ *   "Copiado" é a região `aria-live="polite"`, sempre montada, para o leitor
+ *   de tela não ler o mesmo aviso duas vezes. Quem enxerga vê o ícone virar
+ *   um check por 2 s.
+ * - O conteúdo é sempre `dir="ltr"`; o cabeçalho segue a direção da página
+ *   (`ms-auto`, `-me-1.5`, `end-3`).
+ */
 const codeBlockVariants = cva(
   "group/code-block relative flex w-full min-w-0 flex-col overflow-hidden rounded-2xl text-sm has-[>[data-slot=code-block-content]:focus-visible]:ring-3 has-[>[data-slot=code-block-content]:focus-visible]:ring-ring has-[>[data-slot=code-block-content]:focus-visible]:ring-offset-2 has-[>[data-slot=code-block-content]:focus-visible]:ring-offset-background data-[size=sm]:rounded-xl data-[size=sm]:text-xs",
   {
     variants: {
       variant: {
-        default:
-          "bg-muted text-foreground ring-1 ring-foreground/5 dark:ring-foreground/10",
-        destructive:
-          "bg-destructive/5 text-destructive ring-1 ring-destructive/15 dark:bg-destructive/10 dark:ring-destructive/20",
+        default: "bg-muted text-foreground ring-1 ring-border",
+        destructive: "bg-muted text-destructive-hover ring-1 ring-destructive",
       },
     },
     defaultVariants: {
@@ -47,7 +90,7 @@ function CodeBlockHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="code-block-header"
       className={cn(
-        "flex min-w-0 shrink-0 items-center gap-2 px-4 pt-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pt-3 group-data-[variant=destructive]/code-block:text-destructive *:has-[>[data-slot=code-block-title]]:min-w-0",
+        "flex min-w-0 shrink-0 items-center gap-2 px-4 pt-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pt-3 group-data-[variant=destructive]/code-block:text-destructive-hover *:has-[>[data-slot=code-block-title]]:min-w-0",
         className
       )}
       {...props}
@@ -60,7 +103,7 @@ function CodeBlockTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="code-block-title"
       className={cn(
-        "min-w-0 truncate font-sans text-sm font-medium text-foreground group-data-[size=sm]/code-block:text-xs group-data-[variant=destructive]/code-block:text-destructive [&_svg]:pointer-events-none [&_svg]:inline-block [&_svg]:align-middle [&_svg:not([class*='size-'])]:size-4 group-data-[size=sm]/code-block:[&_svg:not([class*='size-'])]:size-3.5 *:[svg]:me-1.5",
+        "min-w-0 truncate font-sans text-sm font-medium text-foreground group-data-[size=sm]/code-block:text-xs group-data-[variant=destructive]/code-block:text-destructive-hover [&_svg]:pointer-events-none [&_svg]:inline-block [&_svg]:align-middle [&_svg:not([class*='size-'])]:size-4 group-data-[size=sm]/code-block:[&_svg:not([class*='size-'])]:size-3.5 *:[svg]:me-1.5",
         className
       )}
       {...props}
@@ -76,7 +119,7 @@ function CodeBlockActions({
     <div
       data-slot="code-block-actions"
       className={cn(
-        "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-foreground/5 dark:*:data-[slot=button]:hover:bg-foreground/10 [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:end-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:end-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:ring-1 [[data-slot=code-block]>&]:*:[button]:ring-foreground/10",
+        "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-border [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:end-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:end-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:ring-1 [[data-slot=code-block]>&]:*:[button]:ring-border",
         className
       )}
       {...props}
@@ -110,11 +153,8 @@ function CodeBlockCopyButton({
         data-copied={copied || undefined}
         variant={variant}
         size={size}
-        aria-label={copied ? "Copied" : "Copy"}
-        className={cn(
-          "hover:bg-foreground/5 dark:hover:bg-foreground/10",
-          className
-        )}
+        aria-label="Copiar código"
+        className={cn("hover:bg-border", className)}
         onClick={(event) => {
           onClick?.(event)
           navigator.clipboard
@@ -125,15 +165,13 @@ function CodeBlockCopyButton({
         {...props}
       >
         {copied ? (
-          <CheckIcon
-          />
+          <CheckIcon aria-hidden="true" />
         ) : (
-          <CopyIcon
-          />
+          <CopyIcon aria-hidden="true" />
         )}
       </Button>
       <span aria-live="polite" className="sr-only">
-        {copied ? "Copied" : ""}
+        {copied ? "Copiado" : ""}
       </span>
     </>
   )
@@ -189,9 +227,11 @@ const codeBlockLineVariants = cva(
     variants: {
       variant: {
         default: "",
-        added: "bg-foreground/5 after:content-['+']",
-        removed: "bg-destructive/10 after:text-destructive after:content-['−']",
-        highlighted: "bg-foreground/5",
+        added:
+          "bg-border before:text-foreground after:text-foreground after:content-['+']",
+        removed:
+          "bg-destructive/10 after:text-destructive-hover after:content-['−']",
+        highlighted: "bg-border before:text-foreground",
       },
     },
     defaultVariants: {

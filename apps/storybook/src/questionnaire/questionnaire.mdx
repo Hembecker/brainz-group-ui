@@ -1,0 +1,424 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as QuestionnaireStories from "./questionnaire.stories";
+
+<Meta of={QuestionnaireStories} />
+
+# Questionnaire
+
+Um questionário em várias etapas, com perguntas de escolha única, de escolha múltipla, de resposta livre e que podem ser puladas.
+
+<Canvas of={QuestionnaireStories.Demo} />
+
+## Instalação
+
+O Questionnaire usa o `@shadcn/react` (o primitivo sem estilo, com o comportamento), o `Button` (para o estilo dos botões de navegação), o `cn` e o `CheckIcon` do `lucide-react`.
+
+<Source language="bash" dark code="npx shadcn add questionnaire" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/questionnaire.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Questionnaire,
+  QuestionnaireActions,
+  QuestionnaireChoice,
+  QuestionnaireChoices,
+  QuestionnaireDescription,
+  QuestionnaireError,
+  QuestionnaireInput,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireProgress,
+  QuestionnaireSkip,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+} from "@workspace/ui/components/questionnaire"`}
+/>
+
+Defina a coleção uma vez: passe-a ao `Questionnaire` (para o progresso, as ações e os atalhos) e mapeie-a nas partes.
+
+<Source
+  language="tsx"
+  dark
+  code={`const items = [
+  {
+    name: "direcao",
+    required: true,
+    prompt: "O que devemos prototipar a seguir?",
+    description: "Escolha uma direção ou escreva a sua.",
+    choices: [
+      {
+        value: "delegacao",
+        label: "Delegação",
+        description: "Mostra como o trabalho passa para um especialista.",
+      },
+      {
+        value: "perguntas",
+        label: "Perguntas ao usuário",
+        description: "Mostra as opções enquanto a interface espera.",
+      },
+      { value: "ambas", label: "As duas juntas" },
+    ],
+    input: { id: "outra-direcao", label: "Outra resposta", placeholder: "Escreva outra resposta…" },
+  },
+  {
+    name: "detalhe",
+    required: false,
+    prompt: "Quanto detalhe deve ter?",
+    description: "Pule esta pergunta se ainda não tiver certeza.",
+    choices: [
+      { value: "enxuto", label: "Enxuto" },
+      { value: "completo", label: "Fluxo completo" },
+    ],
+  },
+] as const`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<Questionnaire items={items} onSubmit={handleSubmit}>
+  <QuestionnaireProgress />
+  {items.map((pergunta) => (
+    <QuestionnaireItem
+      key={pergunta.name}
+      name={pergunta.name}
+      required={pergunta.required}
+    >
+      <QuestionnaireTitle>{pergunta.prompt}</QuestionnaireTitle>
+      <QuestionnaireDescription>{pergunta.description}</QuestionnaireDescription>
+      <QuestionnaireChoices>
+        {pergunta.choices.map((opcao) => (
+          <QuestionnaireChoice key={opcao.value} value={opcao.value}>
+            <span className="font-medium">{opcao.label}</span>
+            {"description" in opcao ? (
+              <span className="text-muted-foreground">{opcao.description}</span>
+            ) : null}
+          </QuestionnaireChoice>
+        ))}
+        {"input" in pergunta ? (
+          <div className="grid gap-2">
+            <Label htmlFor={pergunta.input.id}>{pergunta.input.label}</Label>
+            <QuestionnaireInput
+              id={pergunta.input.id}
+              placeholder={pergunta.input.placeholder}
+            />
+          </div>
+        ) : null}
+      </QuestionnaireChoices>
+      <QuestionnaireError />
+    </QuestionnaireItem>
+  ))}
+  <QuestionnaireActions>
+    <QuestionnairePrevious />
+    <QuestionnaireSkip />
+    <QuestionnaireNext />
+    <QuestionnaireSubmit />
+  </QuestionnaireActions>
+</Questionnaire>`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault()
+  const respostas = new FormData(event.currentTarget)
+  // respostas.get("direcao"); respostas.getAll("sinais") para um item com multiple.
+}`}
+/>
+
+O `onSubmit` só é chamado quando todos os itens obrigatórios estão respondidos. Os botões já vêm em português ("Anterior", "Pular", "Próxima" e "Enviar"); passe um `children` para trocar o texto, como "Salvar plano".
+
+## Composição
+
+Use esta composição para montar um questionário:
+
+<Source
+  language="text"
+  dark
+  code={`Questionnaire
+├── QuestionnaireProgress
+├── QuestionnaireItem
+│   ├── QuestionnaireTitle
+│   ├── QuestionnaireDescription
+│   ├── QuestionnaireChoices
+│   │   ├── QuestionnaireChoice
+│   │   └── QuestionnaireInput
+│   └── QuestionnaireError
+└── QuestionnaireActions
+    ├── QuestionnairePrevious
+    ├── QuestionnaireSkip
+    ├── QuestionnaireNext
+    └── QuestionnaireSubmit`}
+/>
+
+O Questionnaire cuida da lista ordenada de itens, do item ativo, do estado das respostas, da validação, do progresso e da navegação. A página, o card, o dialog ou o drawer que o contém cuida de fechar e cancelar, de guardar as respostas, do envio e das ramificações.
+
+## Renderização no servidor
+
+Passe `items` para renderizar no servidor o item ativo, o progresso, as ações e os atalhos das respostas. Com `shortcuts`, liste também as `choices` de cada item, na mesma ordem das opções renderizadas: o primitivo só dá atalho às opções que encontra em `items`. Ele avisa no console quando um nome, um `required` ou uma opção de `items` não bate com o que foi renderizado. O comportamento completo está na documentação do primitivo `@shadcn/react`.
+
+## Acessibilidade
+
+- **Estrutura:** a raiz é um `<form>`; cada `QuestionnaireItem` é um `fieldset` e o `QuestionnaireTitle` é a `legend` dele. As opções são `input` radio (ou checkbox, com `multiple`) nativos, então o teclado e o leitor de tela se comportam como em qualquer formulário. Os itens e os botões que não estão ativos ficam `hidden` e `inert`: só o item da vez está na árvore de acessibilidade e na ordem do Tab.
+- **Rótulo persistente e nome do grupo:** a pergunta é a `legend` e fica sempre visível. A `legend` só nomeia o `fieldset` quando é o primeiro filho dele. Quando o título fica dentro de um `CardHeader` ou `DialogHeader`, ou é trocado por `render` (como `render={<CardTitle />}`), dê um `id` ao título e `aria-labelledby` ao `QuestionnaireItem` (veja **Card**).
+- **Resposta livre com rótulo:** o `QuestionnaireInput` precisa de um nome por rótulo visível (`Label` com `htmlFor` e o `id` do campo), `aria-labelledby` ou `aria-label`. O placeholder não é rótulo. A página do shadcn usa só `aria-label` e placeholder; aqui o exemplo traz um rótulo visível.
+- **Descrição ligada ao item:** o `QuestionnaireDescription` entra no `aria-describedby` do item e é lido depois do nome do grupo.
+- **Obrigatório e inválido:** `required` no item exige uma resposta. Avançar sem responder marca o item (`aria-invalid` no `fieldset` e nas respostas, `data-invalid` na opção, borda `destructive`), mostra a mensagem do `QuestionnaireError` e leva o foco a uma resposta. Cor sozinha não basta: a mensagem é texto, e o padrão é "Escolha uma resposta para continuar." (ou "…ou pule esta pergunta." quando o item é opcional). Escreva uma mensagem que diga o que fazer.
+- **Mensagem de erro:** o `<p>` do erro fica sempre montado, `hidden` até o item ficar inválido, e então ganha `role="alert"`. Isso é diferente do `FieldError`, que é uma região `aria-live="polite"` sempre montada: o anúncio aqui é assertivo e acontece quando a pergunta falha. Não dá para mudar isso sem editar o primitivo. Para erros do host (veja **Validação personalizada**), passe `invalid` no item e o texto no `QuestionnaireError`.
+- **Progresso:** o `QuestionnaireProgress` é um `role="progressbar"` com `aria-live="polite"`, o nome "Progresso do questionário" e o `aria-valuetext` "Pergunta 2 de 3". O texto visível é o mesmo. Num indicador personalizado, os segmentos são decorativos (`aria-hidden="true"`) e o texto continua presente.
+- **Estado no texto:** o estado de cada resposta (marcada, inválida) também é exposto pelo próprio controle (`checked`, `aria-invalid`), e a opção marcada muda de fundo e de borda, não só de cor do indicador. A pergunta pulada fica sem resposta; o `onStatusChange` entrega `unanswered`, `answered` ou `skipped`.
+- **Teclado:** Tab entra no item. As setas para cima e para baixo movem entre as respostas (e marcam um radio). A seta para a esquerda volta uma pergunta e a seta para a direita avança, quando já há resposta e o foco não está num campo de texto. Enter numa resposta marcada avança; Ctrl ou Cmd mais Enter avança de qualquer ponto. Com `shortcuts`, uma letra ou um número escolhe a opção, enquanto o foco está dentro do questionário e fora do campo de texto; a tecla também fica em `aria-keyshortcuts` na resposta, e o ícone com a tecla é `aria-hidden`.
+- **Foco:** ao navegar, o foco vai para o item novo (um `fieldset` com `tabIndex={-1}`, que não é uma parada do Tab e não mostra anel). Se a validação falha, vai para uma resposta do item. O anel da opção e do campo é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo.
+- **Botões de navegação:** são `<button>` de verdade, com os mesmos estilos do Button. Têm no mínimo 44px de altura em telas pequenas. O nome é a ação ("Próxima"); passe um texto específico quando ajudar ("Salvar plano").
+- **Contraste:** o contorno da opção é `input` (4,6:1 no branco; 3,8:1 no escuro). A opção marcada usa borda `primary` e fundo `accent` (`card` no escuro, porque o indicador `primary` tem 3,4:1 sobre o `card` e só 2,9:1 sobre o `accent`). O texto da descrição é `muted-foreground` (6,6:1 sobre o `accent`). O erro é `destructive` (4,8:1 no branco e 6,8:1 no escuro; sobre `muted` ou `accent`, use `destructive-hover`).
+- **Movimento:** a animação de entrada dos itens (veja **Itens animados**) usa `motion-reduce:animate-none`.
+- **Testes:** percorra só com o teclado, rode o axe (addon-a11y) nos dois modos e em RTL (`npm run test` faz os três), use um leitor de tela e confira o zoom a 200%.
+
+<Source
+  language="tsx"
+  dark
+  code={`<QuestionnaireItem name="prazo" required>
+  <QuestionnaireTitle>Quando o trabalho deve começar?</QuestionnaireTitle>
+  <QuestionnaireDescription>Escolha quando começar.</QuestionnaireDescription>
+  <QuestionnaireChoices>
+    <QuestionnaireChoice value="agora">Agora</QuestionnaireChoice>
+    <QuestionnaireChoice value="backlog">Adicionar ao backlog</QuestionnaireChoice>
+  </QuestionnaireChoices>
+  <QuestionnaireError>Escolha uma opção para continuar.</QuestionnaireError>
+</QuestionnaireItem>`}
+/>
+
+## Seleção múltipla
+
+Use `multiple` no `QuestionnaireItem` para uma pergunta que aceita mais de uma resposta fixa. As opções viram checkboxes, e o envio traz todas pelo `FormData.getAll`.
+
+<Canvas of={QuestionnaireStories.SelecaoMultipla} />
+
+## Resposta livre
+
+Combine o `QuestionnaireInput` com opções fixas quando a pessoa pode dar outra resposta. O campo leva um rótulo visível ligado por `htmlFor` e `id`.
+
+<Canvas of={QuestionnaireStories.RespostaLivre} />
+
+## Pular explicitamente
+
+Acrescente o `QuestionnaireSkip` quando um item opcional pode ficar sem resposta de propósito. O botão só aparece nos itens sem `required`.
+
+<Canvas of={QuestionnaireStories.PularExplicitamente} />
+
+## Atalhos
+
+Atribua uma letra ou um número a cada resposta com `shortcuts`. Liste as `choices` em `items`, na mesma ordem das opções.
+
+<Canvas of={QuestionnaireStories.Atalhos} />
+
+O exemplo do shadcn tem um seletor para trocar o estilo do atalho (nenhum, letras ou números). Aqui o estilo é fixo: o exemplo usa letras, e o do **Card** usa números.
+
+## Validação personalizada
+
+Combine a navegação controlada com uma validação externa para voltar a um item inválido e mostrar o erro dele. O exemplo do shadcn usa o Zod; aqui a regra entre campos é escrita à mão (uma resposta pública pede a versão completa). O erro vai no `QuestionnaireError` e o item leva `invalid`.
+
+<Canvas of={QuestionnaireStories.ValidacaoPersonalizada} />
+
+## Controlado
+
+Controle o item ativo pelo estado do host, por exemplo para voltar a uma etapa inválida. Passe `item` e `onItemChange`.
+
+<Canvas of={QuestionnaireStories.Controlado} />
+
+## Retomar
+
+Restaure o item ativo e as respostas salvas com `defaultItem` e `defaultChecked` (ou `defaultValue` no campo), e desfaça as mudanças com um botão `type="reset"`: o questionário volta ao estado salvo.
+
+<Canvas of={QuestionnaireStories.Retomar} />
+
+## Itens condicionais
+
+Desabilite os itens que não se aplicam às respostas anteriores: use `disabled` no item e em `items`. O progresso passa a contar só os itens habilitados.
+
+<Canvas of={QuestionnaireStories.ItensCondicionais} />
+
+## Estado de navegação
+
+Leia o estado do item com `onStatusChange` para desabilitar a navegação e estilizar as ações. Um botão `disabled` sai do Tab; explique o motivo na descrição do item.
+
+<Canvas of={QuestionnaireStories.EstadoDeNavegacao} />
+
+## Progresso personalizado
+
+Use o estado do `render` do `QuestionnaireProgress` para montar um indicador próprio. Mantenha o texto "Pergunta 1 de 4" e esconda os segmentos decorativos com `aria-hidden="true"`. Num `render` seu, o texto padrão chega em `props.children` e o `aria-valuetext` em `props`.
+
+<Canvas of={QuestionnaireStories.ProgressoPersonalizado} />
+
+## Itens animados
+
+Anime o item ativo e mantenha o progresso e a navegação parados. Use `data-active:animate-in` e `motion-reduce:animate-none`.
+
+<Canvas of={QuestionnaireStories.ItensAnimados} />
+
+## Card
+
+Componha o Questionnaire com os slots do Card, mantendo o título e a descrição da pergunta semânticos. Como o título sai da `legend`, dê um `id` a ele e `aria-labelledby` ao item.
+
+<Canvas of={QuestionnaireStories.CardComQuestionnaire} />
+
+## Dialog
+
+Componha o Questionnaire dentro de um Dialog, deixando o cancelamento e o fechamento com o host. O Dialog tem um título fixo ("Esclarecimento sobre a tarefa") que o nomeia durante todo o fluxo; cada pergunta é uma `legend` (o primeiro filho do `fieldset`) e nomeia o próprio grupo. Não use um `DialogTitle` por pergunta (`render={<DialogTitle />}`): com vários títulos montados o Dialog pode ser nomeado por uma pergunta que não é a ativa. O `QuestionnaireProgress` fica fora dos itens, acima deles.
+
+<Canvas of={QuestionnaireStories.DialogComQuestionnaire} />
+
+## RTL
+
+A página do shadcn não tem uma seção de RTL. O Questionnaire usa paddings e margens lógicos (`ms-auto`, `text-start`), então funciona em RTL sem nenhuma prop, e os testes rodam todas as stories também com `dir="rtl"`. Atenção às setas do teclado: o primitivo liga a seta para a esquerda a "pergunta anterior" e a seta para a direita a "próxima" sem olhar a direção, então em RTL elas **não** são espelhadas (a seta para a esquerda continua voltando). As setas para cima e para baixo, o Enter e os atalhos de letra não dependem da direção. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas.
+
+## Referência da API
+
+### Questionnaire
+
+A raiz, um `<form>`. Aceita as props de um `<form>` nativo.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>items</code></td><td><code>{'readonly { name: string; required?: boolean; disabled?: boolean; choices?: readonly { value: string; disabled?: boolean }[] }[]'}</code></td><td>—</td></tr>
+    <tr><td><code>defaultItem</code></td><td><code>string</code>: o nome do item inicial</td><td>o primeiro habilitado</td></tr>
+    <tr><td><code>item</code></td><td><code>string</code>: o item ativo, controlado</td><td>—</td></tr>
+    <tr><td><code>onItemChange</code></td><td><code>{'(item: string) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>shortcuts</code></td><td><code>{'"letters" | "numbers"'}</code></td><td>—</td></tr>
+    <tr><td><code>onSubmit</code></td><td><code>{'React.FormEventHandler<HTMLFormElement>'}</code>: só roda com os itens válidos</td><td>—</td></tr>
+    <tr><td><code>onReset</code></td><td><code>{'React.FormEventHandler<HTMLFormElement>'}</code></td><td>—</td></tr>
+    <tr><td><code>noValidate</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### QuestionnaireProgress
+
+O progresso: um `role="progressbar"`. Texto padrão "Pergunta 1 de 3" e nome "Progresso do questionário"; o `children`, o `aria-label` e o `render` que você passar valem no lugar.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state: { current; total; first; last }) => ReactElement'}</code></td><td>—</td></tr>
+    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Pergunta X de Y"</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### QuestionnaireItem
+
+Um item (pergunta): um `fieldset`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>name</code></td><td><code>string</code>: o nome do campo no <code>FormData</code></td><td>obrigatório</td></tr>
+    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code>: tira o item do fluxo</td><td><code>false</code></td></tr>
+    <tr><td><code>invalid</code></td><td><code>boolean</code>: marca o item como inválido (erro do host)</td><td><code>false</code></td></tr>
+    <tr><td><code>onStatusChange</code></td><td><code>{'(status: "unanswered" | "answered" | "skipped") => void'}</code></td><td>—</td></tr>
+    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do título, quando a <code>legend</code> não é o primeiro filho</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### QuestionnaireTitle e QuestionnaireDescription
+
+O título é a `legend` do item; a descrição é um `<p>` ligado ao item por `aria-describedby`. Ambos aceitam `render` (por exemplo `render={<CardTitle />}`) e as props do elemento.
+
+### QuestionnaireChoices
+
+Agrupa as opções (e o campo livre). Aceita `render` e as props de um `div`.
+
+### QuestionnaireChoice
+
+Uma opção: um cartão de escolha (`label`) com um `input` radio ou checkbox por dentro.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>value</code></td><td><code>string</code></td><td>obrigatório</td></tr>
+    <tr><td><code>checked</code></td><td><code>boolean</code>: controlado</td><td>—</td></tr>
+    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>onChange</code></td><td><code>{'React.ChangeEventHandler<HTMLInputElement>'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### QuestionnaireChoiceDescription
+
+Um texto de apoio dentro da opção (um `span`).
+
+### QuestionnaireInput
+
+O campo de resposta livre, ligado ao item. Dê a ele um nome acessível (rótulo visível, `aria-labelledby` ou `aria-label`).
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td><code>{'"text" | "email" | "number" | "search" | "tel" | "url" | …'}</code></td><td><code>{'"text"'}</code></td></tr>
+    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### QuestionnaireError
+
+A mensagem de erro do item. Fica `hidden` até o item ficar inválido. Com `children` ausente, usa uma frase em português conforme o item seja obrigatório ou não.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Escolha uma resposta para continuar." (obrigatório) ou "Escolha uma resposta ou pule esta pergunta."</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### QuestionnaireActions
+
+O contêiner das ações, só de layout (uma grade com Anterior, Pular, Próxima e Enviar). Aceita as props de um `div`.
+
+### QuestionnairePrevious, QuestionnaireSkip, QuestionnaireNext e QuestionnaireSubmit
+
+Os botões de navegação. Cada um aparece conforme a pergunta ativa (os outros ficam `hidden` e `inert`): Anterior fora da primeira; Pular nos itens opcionais; Próxima fora da última; Enviar só na última. Aceitam as props de um `<button>` e `render`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>variant</code></td><td>as variantes do Button</td><td><code>{'"outline"'}</code> (Anterior e Pular) ou <code>{'"default"'}</code> (Próxima e Enviar)</td></tr>
+    <tr><td><code>size</code></td><td>os tamanhos do Button</td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Anterior", "Pular", "Próxima" ou "Enviar"</td></tr>
+    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Cada parte recebe um `data-slot` (`questionnaire`, `questionnaire-progress`, `questionnaire-item`, `questionnaire-title`, `questionnaire-description`, `questionnaire-choices`, `questionnaire-choice`, `questionnaire-choice-description`, `questionnaire-input`, `questionnaire-error`, `questionnaire-actions` e os botões). Os botões expõem `data-variant` e `data-size`.

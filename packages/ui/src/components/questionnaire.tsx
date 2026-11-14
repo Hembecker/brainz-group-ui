@@ -1,11 +1,68 @@
 "use client"
 
 import * as React from "react"
+import { mergeProps } from "@base-ui/react/merge-props"
 import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire"
 import { cn } from "cn"
 
 import { buttonVariants, type Button } from "@workspace/ui/components/button"
 import { CheckIcon } from "lucide-react"
+
+/*
+ * Questionnaire: estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/questionnaire
+ * As cores, o contraste e os tamanhos são os da Big Brain. O comportamento
+ * (itens, resposta ativa, validação, progresso, navegação e atalhos) vem do
+ * pacote `@shadcn/react` (primitivo sem estilo, versão fixa): este arquivo só
+ * dá o estilo e traduz os textos fixos.
+ * - Semântica do primitivo: o `<form>` é a raiz; cada `QuestionnaireItem` é um
+ *   `fieldset` e o `QuestionnaireTitle` é a `legend` dele; as opções são
+ *   `input` radio (ou checkbox, com `multiple`) nativos; o progresso é um
+ *   `role="progressbar"` com `aria-live="polite"`; os itens e os botões
+ *   inativos ficam `hidden` e `inert`. Ao navegar, o foco vai para o item
+ *   novo; se a validação falha, vai para uma resposta do item.
+ * - Nome do grupo: a `legend` só nomeia o `fieldset` quando é o primeiro filho
+ *   dele. Quando o título fica dentro de um `CardHeader` ou `DialogHeader`
+ *   (ou é trocado por `render`, como `render={<CardTitle />}`), dê um `id` ao
+ *   título e `aria-labelledby` ao `QuestionnaireItem`.
+ * - Textos fixos em português: "Anterior", "Pular", "Próxima" e "Enviar" nos
+ *   botões; "Pergunta 1 de 3" e o nome "Progresso do questionário" no
+ *   progresso; e as mensagens padrão do erro. O primitivo os escreve em
+ *   inglês, então o `QuestionnaireProgress` e o `QuestionnaireError` os
+ *   trocam por padrões em português (o `children`, o `aria-label` e o
+ *   `render` que você passar valem no lugar deles). O `QuestionnaireError`
+ *   sabe se o item é obrigatório por um contexto do `QuestionnaireItem`.
+ * - Erro: o primitivo monta o `<p>` do erro sempre, mas `hidden` até o item
+ *   ficar inválido, e então põe `role="alert"`. Não é a região
+ *   `aria-live="polite"` sempre montada do `FieldError`: o anúncio é
+ *   assertivo e acontece quando a pergunta falha (navegar sem responder). Não
+ *   dá para mudar isso sem editar o primitivo. Escreva a mensagem dizendo o
+ *   que fazer ("Escolha uma opção para continuar").
+ * - Opção (cartão de escolha): as mesmas regras do cartão do `Field`. Com o
+ *   mouse em cima e marcada, o fundo é `accent` (mist 100 no claro, 800 no
+ *   escuro); no escuro, marcada, é `card` (mist 900), porque a bolinha
+ *   marcada (`primary`) tem 3,4:1 sobre o `card` e só 2,9:1 sobre o `accent`.
+ *   A borda marcada é `primary` cheia. O registro usava `hover:bg-input/40`,
+ *   `bg-primary/10` e `border-primary/40`, e `bg-input/90` na bolinha
+ *   (agora `bg-input` cheio: 4,6:1 no branco; 3,8:1 no escuro). O atalho
+ *   (letra ou número) usava `border-primary/10 bg-background/80` e agora usa
+ *   `border-border bg-background`. Inválida (`data-invalid`): borda
+ *   `destructive` cheia.
+ * - Campo livre (`QuestionnaireInput`): o mesmo do Input (papel `field`,
+ *   sem borda, anel sólido `ring`; inválido com borda e anel `destructive`
+ *   cheios, no lugar de `ring-destructive/20` e das variantes `/50` e `/40`
+ *   do escuro). Precisa de nome acessível por rótulo visível (`Label`
+ *   com `htmlFor`), `aria-labelledby` ou `aria-label`: o placeholder não é
+ *   rótulo. O texto digitado é `text-foreground`.
+ * - Foco: o anel da opção e do campo é sólido, 3px, `ring`, afastado 2px pela
+ *   cor do fundo. O item (`fieldset`, `tabIndex=-1`) recebe o foco por
+ *   código ao navegar e não mostra anel: não é um ponto de Tab.
+ * - Escala rhea: campo e botões em 32px (`h-8`) e `rounded-2xl`; em telas
+ *   pequenas, opções, campo e botões têm no mínimo 44px de altura.
+ * - Paddings e margens lógicos (`ms-auto`, `text-start`): funciona em RTL.
+ */
+
+const QuestionnaireItemContext = React.createContext({ required: false })
 
 function Questionnaire({
   className,
@@ -21,34 +78,59 @@ function Questionnaire({
 }
 
 function QuestionnaireProgress({
+  children,
   className,
+  render,
   ...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Progress>) {
   return (
     <QuestionnairePrimitive.Progress
       data-slot="questionnaire-progress"
+      aria-label="Progresso do questionário"
       className={cn(
         "min-h-[1lh] w-fit min-w-[14ch] text-xs font-medium text-muted-foreground tabular-nums",
         className
       )}
       {...props}
+      render={(renderProps, state) => {
+        // Sem itens (total 0), o primitivo não mostra texto: mantém assim.
+        const texto = state.total
+          ? `Pergunta ${state.current} de ${state.total}`
+          : undefined
+        const merged = {
+          ...renderProps,
+          "aria-valuetext": texto,
+          children: children ?? texto,
+        }
+        if (typeof render === "function") return render(merged, state)
+        if (render)
+          return React.cloneElement(
+            render,
+            mergeProps(merged, render.props as React.ComponentProps<"div">)
+          )
+        return <div {...merged} />
+      }}
     />
   )
 }
 
 function QuestionnaireItem({
   className,
+  required,
   ...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Item>) {
   return (
-    <QuestionnairePrimitive.Item
-      data-slot="questionnaire-item"
-      className={cn(
-        "flex min-w-0 flex-col gap-5 border-0 p-0 outline-none",
-        className
-      )}
-      {...props}
-    />
+    <QuestionnaireItemContext.Provider value={{ required: !!required }}>
+      <QuestionnairePrimitive.Item
+        data-slot="questionnaire-item"
+        required={required}
+        className={cn(
+          "flex min-w-0 flex-col gap-5 border-0 p-0 outline-none",
+          className
+        )}
+        {...props}
+      />
+    </QuestionnaireItemContext.Provider>
   )
 }
 
@@ -106,7 +188,7 @@ function QuestionnaireChoice({
     <QuestionnairePrimitive.Choice
       data-slot="questionnaire-choice"
       className={cn(
-        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-3 rounded-2xl border border-input px-4 py-3 text-start text-sm transition-colors outline-none select-none hover:bg-input/40 has-[>input:focus-visible]:border-ring has-[>input:focus-visible]:ring-3 has-[>input:focus-visible]:ring-ring has-[>input:focus-visible]:ring-offset-2 has-[>input:focus-visible]:ring-offset-background data-invalid:border-destructive data-checked:border-primary/40 data-checked:bg-primary/10",
+        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-3 rounded-2xl border border-input px-4 py-3 text-start text-sm transition-colors outline-none select-none hover:bg-accent has-[>input:focus-visible]:border-ring has-[>input:focus-visible]:ring-3 has-[>input:focus-visible]:ring-ring has-[>input:focus-visible]:ring-offset-2 has-[>input:focus-visible]:ring-offset-background data-invalid:border-destructive data-checked:border-primary data-checked:bg-accent dark:data-checked:bg-card dark:data-checked:hover:bg-card",
         "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className
       )}
@@ -119,7 +201,7 @@ function QuestionnaireChoice({
       <span
         aria-hidden="true"
         data-slot="questionnaire-choice-indicator"
-        className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[5px] border border-transparent bg-input/90 group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground dark:group-data-checked/questionnaire-choice:bg-primary"
+        className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[5px] border border-transparent bg-input group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground dark:group-data-checked/questionnaire-choice:bg-primary"
       >
         <span
           data-slot="questionnaire-choice-indicator-dot"
@@ -135,7 +217,7 @@ function QuestionnaireChoice({
       </QuestionnairePrimitive.ChoiceLabel>
       <QuestionnairePrimitive.ChoiceShortcut
         data-slot="questionnaire-choice-shortcut"
-        className="pointer-events-none ms-auto hidden size-5 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-full border border-primary/10 bg-background/80 font-mono text-[0.625rem] leading-none font-medium text-muted-foreground group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[shortcut]/questionnaire-choice:inline-flex"
+        className="pointer-events-none ms-auto hidden size-5 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-full border border-border bg-background font-mono text-[0.625rem] leading-none font-medium text-muted-foreground group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[shortcut]/questionnaire-choice:inline-flex"
       />
     </QuestionnairePrimitive.Choice>
   )
@@ -166,7 +248,7 @@ function QuestionnaireInput({
       <QuestionnairePrimitive.Input
         data-slot="questionnaire-input"
         className={cn(
-          "h-8 min-h-11 w-full min-w-0 rounded-2xl border border-transparent bg-field px-2.5 py-1 text-base transition-[color,box-shadow,background-color] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 sm:min-h-0 md:text-sm dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+          "h-8 min-h-11 w-full min-w-0 rounded-2xl border border-transparent bg-field px-2.5 py-1 text-base text-foreground transition-[color,box-shadow,background-color] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive sm:min-h-0 md:text-sm",
           "selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground",
           className
         )}
@@ -177,15 +259,23 @@ function QuestionnaireInput({
 }
 
 function QuestionnaireError({
+  children,
   className,
   ...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Error>) {
+  const { required } = React.useContext(QuestionnaireItemContext)
+
   return (
     <QuestionnairePrimitive.Error
       data-slot="questionnaire-error"
       className={cn("mt-2 text-sm text-destructive", className)}
       {...props}
-    />
+    >
+      {children ??
+        (required
+          ? "Escolha uma resposta para continuar."
+          : "Escolha uma resposta ou pule esta pergunta.")}
+    </QuestionnairePrimitive.Error>
   )
 }
 
@@ -225,7 +315,7 @@ function QuestionnairePrevious({
       )}
       {...props}
     >
-      {children ?? "Previous"}
+      {children ?? "Anterior"}
     </QuestionnairePrimitive.Previous>
   )
 }
@@ -250,7 +340,7 @@ function QuestionnaireSkip({
       )}
       {...props}
     >
-      {children ?? "Skip"}
+      {children ?? "Pular"}
     </QuestionnairePrimitive.Skip>
   )
 }
@@ -275,7 +365,7 @@ function QuestionnaireNext({
       )}
       {...props}
     >
-      {children ?? "Next"}
+      {children ?? "Próxima"}
     </QuestionnairePrimitive.Next>
   )
 }
@@ -300,7 +390,7 @@ function QuestionnaireSubmit({
       )}
       {...props}
     >
-      {children ?? "Submit"}
+      {children ?? "Enviar"}
     </QuestionnairePrimitive.Submit>
   )
 }

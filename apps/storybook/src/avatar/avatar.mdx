@@ -77,7 +77,7 @@ Monte um `AvatarGroup` com esta composição:
 - **Grupo:** dê ao `AvatarGroup` `role="group"` e um `aria-label` ("Equipe do projeto"). Cada avatar do grupo tem o próprio nome.
 - **Contagem:** o `AvatarGroupCount` é um `<div>` com "+3". Esconda o texto visual com `aria-hidden="true"` e acrescente um texto `sr-only` ("e mais 3 pessoas"). Se a contagem tiver ícone, o ícone leva `aria-hidden="true"` e o texto `sr-only` diz o que ele representa.
 - **Ícones decorativos:** o ícone do selo e o da contagem levam `aria-hidden="true"`.
-- **Avatar que abre algo:** o avatar não é um controle. Para abrir um menu ou ir ao perfil, use um `<Button>` (ação) ou um `<a>` (navegação) em volta, com o nome da ação em `aria-label` ("Menu da conta"), e deixe o avatar com `alt=""`. Veja **Dropdown**.
+- **Avatar que abre algo:** o avatar não é um controle. Para abrir um menu ou ir ao perfil, use um `<Button>` (ação) ou um `<a>` (navegação) em volta, com o nome da ação em `aria-label`, e deixe o avatar com `alt=""`. Enquanto a imagem carrega, as iniciais do fallback ficam visíveis dentro do botão: o nome precisa contê-las ("CN, menu da conta"), senão o axe reprova (`label-content-name-mismatch`). Veja **Dropdown**.
 - **Foco:** o Avatar não recebe foco. O anel de foco é o do `Button` que o envolve.
 - **Contraste:** o fallback usa `muted-foreground` sobre `muted` (6,6:1 no claro). O contorno e o anel do grupo são decorativos.
 

@@ -1,0 +1,739 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as SidebarStories from "./sidebar.stories";
+
+<Meta of={SidebarStories} />
+
+# Sidebar
+
+Uma barra lateral composável, com tema e personalizável.
+
+<Canvas of={SidebarStories.Demo} />
+
+Uma barra lateral que recolhe para ícones. O exemplo principal do shadcn tem um seletor de equipe, menus que abrem e fecham, projetos com ações e o menu do usuário. Aqui a equipe do seletor não muda de verdade (o exemplo do shadcn guarda a escolha num `useState`; as stories deste projeto são JSX literal, sem estado).
+
+A Sidebar é um dos componentes mais complexos: ela fica no centro de quase todo aplicativo e tem muitas partes. Use o botão da barra de ferramentas para ver cada story no claro, no escuro e em RTL.
+
+## Instalação
+
+A Sidebar usa o `@base-ui/react`, o `lucide-react`, o `class-variance-authority` e o `cn`, além do Button, do Input, do Separator, do Sheet, do Skeleton e do Tooltip do pacote. Ela também usa o hook `useIsMobile`, de `@workspace/ui/hooks/use-mobile`.
+
+<Source language="bash" dark code="npx shadcn add sidebar" />
+
+Ela já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/sidebar.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@workspace/ui/components/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        {children}
+      </main>
+    </SidebarProvider>
+  )
+}`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+} from "@workspace/ui/components/sidebar"
+
+export function AppSidebar() {
+  return (
+    <Sidebar>
+      <SidebarHeader />
+      <SidebarContent>
+        <SidebarGroup />
+        <SidebarGroup />
+      </SidebarContent>
+      <SidebarFooter />
+    </Sidebar>
+  )
+}`}
+/>
+
+## Composição
+
+Monte um layout com `Sidebar` com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`SidebarProvider
+├── Sidebar
+│   ├── SidebarHeader
+│   ├── SidebarContent
+│   │   ├── SidebarGroup
+│   │   │   ├── SidebarGroupLabel
+│   │   │   ├── SidebarGroupAction
+│   │   │   ├── SidebarGroupContent
+│   │   │   └── SidebarMenu
+│   │   │       ├── SidebarMenuItem
+│   │   │       │   ├── SidebarMenuButton
+│   │   │       │   ├── SidebarMenuAction
+│   │   │       │   └── SidebarMenuBadge
+│   │   │       └── SidebarMenuItem
+│   │   │           ├── SidebarMenuButton
+│   │   │           └── SidebarMenuSub
+│   │   │               ├── SidebarMenuSubItem
+│   │   │               └── SidebarMenuSubItem
+│   │   └── SidebarGroup
+│   │       └── SidebarMenu
+│   │           ├── SidebarMenuItem
+│   │           └── SidebarMenuItem
+│   ├── SidebarFooter
+│   └── SidebarRail
+├── SidebarInset
+└── SidebarTrigger`}
+/>
+
+## Acessibilidade
+
+- **Ponto de referência e nome:** a `Sidebar` é um `div`, não um ponto de referência. Ponha um `<nav aria-label="…">` em volta de cada `SidebarMenu` de navegação, dentro do `SidebarGroup`, e dê um nome diferente a cada `<nav>` da página ("Plataforma", "Projetos"). Assim o leitor de tela lista as navegações e distingue uma da outra. Um menu que só tem ações (como o seletor de equipe) não é navegação e não leva `<nav>`.
+- **Link é `<a>`, ação é `<button>`:** o `SidebarMenuButton` é um `<button>` por padrão. Para navegar, passe um `<a href>` pela prop `render` (ou o `Link` do seu roteador), sem `div` envolvendo. O mesmo vale para o `SidebarMenuSubButton`, que já é um `<a>`. O `SidebarMenuAction` e o `SidebarGroupAction` são `<button>`.
+- **Página atual:** use `isActive` só no link da página atual. O componente põe `data-active` (o destaque, o fundo `sidebar-accent` e o peso da fonte) e `aria-current="page"` (o que o leitor de tela lê), porque a cor sozinha não basta. Um `aria-current` que você passar prevalece sobre o do componente. Os dois são conferidos no teste das stories **SidebarMenuButton** e **SidebarMenuSub**.
+- **Gatilho de recolher:** o `SidebarTrigger` é um botão só com ícone, então o nome vem do texto `sr-only` ("Alternar barra lateral"), e o ícone é `aria-hidden`. Ele expõe `aria-expanded` (`true` com a barra aberta): o nome é fixo e o estado fica no atributo, nunca nos dois. No celular o estado é o do Sheet (`openMobile`). Um gatilho próprio, feito com `useSidebar`, precisa do mesmo: nome e `aria-expanded`.
+- **Atalho de teclado:** **Ctrl+B** (**⌘+B** no Mac) alterna a barra, no desktop e no celular. Ele funciona de qualquer lugar da página, inclusive dentro de um campo de texto, e chama `preventDefault`: num editor de texto, onde Ctrl+B é negrito, troque a tecla em `SIDEBAR_KEYBOARD_SHORTCUT` (no `sidebar.tsx`) ou tire o atalho. O atalho tem um modificador, então não cai na regra de atalhos de uma tecla só (WCAG 2.1.4).
+- **A `SidebarRail`:** a faixa fina na borda da barra recolhe e expande com o clique do mouse. Ela é um `<button>` com nome ("Alternar barra lateral"), mas fica fora da ordem do Tab (`tabIndex={-1}`): quem usa o teclado tem o `SidebarTrigger` e o Ctrl+B. Ela não redimensiona a barra, só alterna (a página do shadcn diz "resize handle", mas o código só chama `toggleSidebar`).
+- **Barra recolhida em ícones:** o nome de cada botão continua sendo o texto do `<span>`, que só fica escondido pelo corte do `overflow` e pela largura de 3rem. Por isso o `<span>` com o texto é obrigatório, e o ícone leva `aria-hidden`. O `tooltip` do `SidebarMenuButton` mostra o nome ao passar o mouse e ao focar com o teclado, mas só com a barra recolhida em ícones: é um complemento, nunca o único nome (e, como o do Tooltip, o leitor de tela não o lê).
+- **Barra offcanvas recolhida:** o painel sai da tela, e o registro do shadcn o deixava focável: o Tab entrava em links invisíveis. Aqui os filhos da barra ficam `invisible` quando ela recolhe (menos a `SidebarRail`), com a transição de `visibility` do mesmo tempo da animação. O teste da story **Recolhível: offcanvas** confere que o Tab nunca cai dentro dela.
+- **Celular:** abaixo de 768px a `Sidebar` vira um Sheet: `role="dialog"`, chamado "Barra lateral", com a descrição "Exibe a barra lateral no celular" (os dois textos fixos, em português, `sr-only`). O foco fica preso, o resto da página fica inerte, e Esc fecha e devolve o foco ao gatilho. O botão de fechar do Sheet fica escondido (como no registro): feche com Esc, com o gatilho ou tocando fora. O teste da story **Celular (Sheet)** confere o nome, o foco preso, o Esc e o Ctrl+B. A 200% de zoom, uma janela de 1280px passa a ter 640px de largura e cai nesse modo.
+- **Menus e ações só com ícone:** o gatilho do menu do projeto, o `SidebarMenuAction` e o `SidebarGroupAction` têm só um ícone: o nome vem de um texto `sr-only` específico ("Mais opções de Viagens", "Adicionar projeto"). Com `showOnHover` o botão fica invisível até o mouse passar, mas aparece quando ele ou o item recebe o foco (`group-focus-within`), então o teclado o encontra. A classe só vale a partir de `md` (768px): abaixo disso o botão fica sempre visível.
+- **Selo e esqueleto:** o `SidebarMenuBadge` é um `div`: o número é lido depois do nome do link, sem contexto. Ponha o número em `aria-hidden` e um texto `sr-only` ao lado ("24 não lidas"). No esqueleto, o contêiner leva `aria-busy="true"` e um `role="status"` sempre montado com o texto ("Carregando o menu…"): os blocos não são anunciados.
+- **Grupo e submenu que abrem e fecham:** o `CollapsibleTrigger` expõe `aria-expanded` e `aria-controls`. Para manter a lista válida (`ul` > `li`), use `render={<SidebarMenuItem />}` na raiz do `Collapsible` (o `Collapsible` sozinho é um `div`, e um `div` dentro do `ul` reprova a regra `list` do axe). A seta que gira usa `group-data-panel-open/menu-button` (no botão) e `group-data-panel-open/label` (no rótulo): o Base UI põe `data-panel-open` no gatilho, e não o `data-state` do Radix.
+- **Foco visível:** os botões, as ações e o rótulo usam o anel sólido do papel `sidebar-ring` (`focus-visible:ring-3`), sem afastamento: 3,4:1 contra a `sidebar` no claro e 6,7:1 no escuro. O anel é desenhado por fora do botão, então a `SidebarContent` (que rola) precisa do recuo do `SidebarGroup` (`p-2`) para não cortá-lo.
+- **Contraste:** o texto usa `sidebar-foreground` sobre `sidebar` (19,0:1 no claro e 16,7:1 no escuro) e, no item ativo ou em destaque, `sidebar-accent-foreground` sobre `sidebar-accent` (15,6:1 e 14,2:1). O rótulo do grupo usa `muted-foreground` (o registro usava `sidebar-foreground` a 70%, que não tem contraste anotado): 7,1:1 sobre a `sidebar` nos dois modos e 6,6:1 e 6,1:1 sobre a `sidebar-accent`. O bloco do logotipo usa `sidebar-primary` com `sidebar-primary-foreground` (5,2:1). A borda (`sidebar-border`) é decorativa.
+- **Portais e RTL:** os menus e o Sheet vão para um portal no `body`: a classe `dark` e o `dir` do `<html>` chegam a eles, mas um `dir` num ancestral não. Veja **RTL**.
+- **Testes:** os menus e o Sheet fechados não existem para o axe, então os `play` da **Demo**, de **Celular (Sheet)** e de **RTL** deixam um aberto. Cada story roda no claro, no escuro e em RTL. Todas, menos a do celular, rodam com a janela larga; a do celular fixa 320px de largura.
+
+## Estrutura
+
+- **SidebarProvider:** guarda o estado de aberto e recolhido e o repassa às outras partes.
+- **Sidebar:** o painel principal, que recolhe.
+- **SidebarHeader:** fica fixo no topo. Use para a marca, o título ou o seletor de equipe.
+- **SidebarFooter:** fica fixo no fim. Use para o menu do usuário, as configurações ou ações.
+- **SidebarContent:** a região entre o cabeçalho e o rodapé. Ela rola.
+- **SidebarGroup:** agrupa a navegação relacionada, com rótulo, ação e conteúdo opcionais.
+- **SidebarMenu** e **SidebarMenuItem:** a estrutura de links, selos, ações e submenus.
+- **SidebarRail:** a faixa na borda da barra que recolhe e expande com o mouse (não redimensiona).
+- **SidebarInset:** envolve o conteúdo principal. Ele é um `<main>`, e é obrigatório com a variante `inset`.
+- **SidebarTrigger:** o botão que recolhe e expande a barra.
+
+A página do shadcn mostra duas imagens da estrutura. Elas não estão neste projeto, e a lista acima diz o mesmo.
+
+## SidebarProvider
+
+O `SidebarProvider` guarda o contexto da barra para a `Sidebar` e as outras partes. Envolva sempre o seu aplicativo (ou o layout) com ele. Ele é um `div` (`data-slot="sidebar-wrapper"`), com `min-h-svh` e `w-full`.
+
+### Largura
+
+Para uma barra só, mude `SIDEBAR_WIDTH` (16rem) e `SIDEBAR_WIDTH_MOBILE` (18rem) no `sidebar.tsx`. Para várias barras, ou só para esta, sobrescreva `--sidebar-width` no `style` do provedor. A largura do celular só muda pela constante: o componente não lê `--sidebar-width-mobile` (a página do shadcn cita essa variável, mas o código não a usa).
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarProvider
+  style={
+    {
+      "--sidebar-width": "20rem",
+    } as React.CSSProperties
+  }
+>
+  <Sidebar />
+</SidebarProvider>`}
+/>
+
+### Atalho de teclado
+
+**Ctrl+B** (**⌘+B** no Mac) alterna a barra. Para trocar a tecla, mude a constante no `sidebar.tsx`. Veja os cuidados em **Acessibilidade**.
+
+<Source
+  language="tsx"
+  dark
+  code={`const SIDEBAR_KEYBOARD_SHORTCUT = "b"`}
+/>
+
+### Estado guardado
+
+O provedor grava o estado num cookie (`sidebar_state`, por 7 dias), para o servidor poder ler o estado inicial e passar `defaultOpen`.
+
+## Sidebar
+
+O componente principal, que renderiza uma barra que recolhe.
+
+### Variante
+
+`variant` aceita `sidebar` (padrão), `floating` e `inset`. Na `inset`, envolva o conteúdo principal num `SidebarInset`.
+
+<Canvas of={SidebarStories.Flutuante} />
+
+<Canvas of={SidebarStories.Inset} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarProvider>
+  <Sidebar variant="inset" />
+  <SidebarInset>
+    <main>{children}</main>
+  </SidebarInset>
+</SidebarProvider>`}
+/>
+
+Na variante `inset`, a margem do `SidebarInset` é lógica (`ms-0`): com `side` contrário à direção da página, ela fica do lado errado.
+
+### Recolhível
+
+`collapsible` define como a barra recolhe:
+
+- `offcanvas` (padrão): a barra desliza para fora da tela. Recolhida, nada dentro dela recebe foco.
+- `icon`: a barra recolhe para uma faixa de ícones (3rem). Cada botão precisa do `<span>` com o texto e, de preferência, do `tooltip`.
+- `none`: a barra não recolhe.
+
+<Canvas of={SidebarStories.Offcanvas} />
+
+<Canvas of={SidebarStories.Icone} />
+
+<Canvas of={SidebarStories.SemRecolher} />
+
+### Lado
+
+`side` é `left` (padrão) ou `right`. Os dois são lados **físicos**, como no Sheet: em RTL a barra não troca de lado sozinha. Veja **RTL**.
+
+<Canvas of={SidebarStories.LadoDireito} />
+
+## useSidebar
+
+O hook `useSidebar` controla a barra. Só funciona dentro de um `SidebarProvider`.
+
+<Canvas of={SidebarStories.Hook} />
+
+<table>
+  <thead>
+    <tr><th>Propriedade</th><th>Tipo</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>state</code></td><td><code>{'"expanded" | "collapsed"'}</code></td><td>O estado atual da barra.</td></tr>
+    <tr><td><code>open</code></td><td><code>boolean</code></td><td>Se a barra está aberta.</td></tr>
+    <tr><td><code>setOpen</code></td><td><code>{'(open: boolean) => void'}</code></td><td>Define o estado de aberta.</td></tr>
+    <tr><td><code>openMobile</code></td><td><code>boolean</code></td><td>Se a barra está aberta no celular.</td></tr>
+    <tr><td><code>setOpenMobile</code></td><td><code>{'(open: boolean) => void'}</code></td><td>Define o estado de aberta no celular.</td></tr>
+    <tr><td><code>isMobile</code></td><td><code>boolean</code></td><td>Se a tela é de celular (menos de 768px).</td></tr>
+    <tr><td><code>toggleSidebar</code></td><td><code>{'() => void'}</code></td><td>Alterna a barra, no desktop e no celular.</td></tr>
+  </tbody>
+</table>
+
+## SidebarHeader
+
+Use o `SidebarHeader` para pôr um cabeçalho fixo na barra. O seletor de equipe da **Demo** é um `DropdownMenu` cujo gatilho é um `SidebarMenuButton` (pela prop `render`).
+
+<Source
+  language="tsx"
+  dark
+  code={`<Sidebar>
+  <SidebarHeader>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger render={<SidebarMenuButton />}>
+            Selecionar equipe
+            <ChevronDownIcon aria-hidden="true" className="ms-auto" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-(--anchor-width)">
+            <DropdownMenuItem>
+              <span>Acme Inc</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  </SidebarHeader>
+</Sidebar>`}
+/>
+
+No Base UI o menu aberto marca o gatilho com `data-popup-open` (e não `data-state="open"`, do Radix) e expõe a largura do gatilho em `--anchor-width` (e não `--radix-dropdown-menu-trigger-width`). A **Demo** usa os dois, e `side="inline-end"` para o menu abrir no fim da linha.
+
+## SidebarFooter
+
+Use o `SidebarFooter` para pôr um rodapé fixo na barra.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Sidebar>
+  <SidebarFooter>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton>
+          <UserIcon aria-hidden="true" /> Maria Souza
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  </SidebarFooter>
+</Sidebar>`}
+/>
+
+Um avatar só com as iniciais, dentro de um botão que já tem o nome em texto, leva `aria-hidden="true"`: do contrário o leitor de tela repete o nome.
+
+## SidebarContent
+
+O `SidebarContent` envolve o conteúdo da barra: é onde ficam os `SidebarGroup`. Ele rola.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Sidebar>
+  <SidebarContent>
+    <SidebarGroup />
+    <SidebarGroup />
+  </SidebarContent>
+</Sidebar>`}
+/>
+
+## SidebarGroup
+
+Use o `SidebarGroup` para criar uma seção dentro da barra. Um grupo tem um `SidebarGroupLabel`, um `SidebarGroupContent` e, se quiser, um `SidebarGroupAction`.
+
+<Canvas of={SidebarStories.Grupo} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarGroup>
+  <SidebarGroupLabel>Aplicação</SidebarGroupLabel>
+  <SidebarGroupAction>
+    <PlusIcon aria-hidden="true" />
+    <span className="sr-only">Adicionar projeto</span>
+  </SidebarGroupAction>
+  <SidebarGroupContent></SidebarGroupContent>
+</SidebarGroup>`}
+/>
+
+Para um `SidebarGroup` que abre e fecha, envolva-o num `Collapsible` e use o rótulo como gatilho.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Collapsible defaultOpen className="group/collapsible">
+  <SidebarGroup>
+    <SidebarGroupLabel
+      className="group/label w-full"
+      render={<CollapsibleTrigger />}
+    >
+      Ajuda
+      <ChevronDownIcon
+        aria-hidden="true"
+        className="ms-auto transition-transform group-data-panel-open/label:rotate-180"
+      />
+    </SidebarGroupLabel>
+    <CollapsibleContent>
+      <SidebarGroupContent />
+    </CollapsibleContent>
+  </SidebarGroup>
+</Collapsible>`}
+/>
+
+## SidebarMenu
+
+O `SidebarMenu` monta um menu dentro de um `SidebarGroup`. Ele é um `<ul>`, e cada `SidebarMenuItem` é um `<li>`.
+
+<Source
+  language="tsx"
+  dark
+  code={`<nav aria-label="Projetos">
+  <SidebarMenu>
+    <SidebarMenuItem>
+      <SidebarMenuButton render={<a href="/engenharia" />}>
+        <FrameIcon aria-hidden="true" />
+        <span>Engenharia de design</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+    <SidebarMenuItem>
+      <SidebarMenuButton render={<a href="/viagens" />}>
+        <MapIcon aria-hidden="true" />
+        <span>Viagens</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  </SidebarMenu>
+</nav>`}
+/>
+
+## SidebarMenuButton
+
+O `SidebarMenuButton` renderiza o botão de um `SidebarMenuItem`. Por padrão é um `<button>`; para navegar, use a prop `render` com um `<a>` ou o `Link` do seu roteador. Use `isActive` para marcar a página atual: o componente põe `data-active` e `aria-current="page"`. Há as variantes `default` e `outline` e os tamanhos `sm`, `default` e `lg`. Com `tooltip`, o nome aparece num tooltip quando a barra está recolhida em ícones (o `<span>` com o texto continua sendo o nome).
+
+<Canvas of={SidebarStories.BotaoDeMenu} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarMenuButton render={<a href="/inicio" />} isActive tooltip="Início">
+  <HomeIcon aria-hidden="true" />
+  <span>Início</span>
+</SidebarMenuButton>`}
+/>
+
+O contorno da variante `outline` usava `hsl(var(--sidebar-border))`, que não gerava nada com os tokens em `oklch`. Agora ele é `var(--sidebar-border)`.
+
+## SidebarMenuAction
+
+O `SidebarMenuAction` renderiza uma ação dentro de um `SidebarMenuItem`. Ele é um `<button>` só com ícone: dê um nome específico em texto `sr-only`. Com `showOnHover` ele só aparece com o mouse ou o foco.
+
+<Canvas of={SidebarStories.AcaoDeMenu} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarMenuItem>
+  <SidebarMenuButton render={<a href="/inicio" />}>
+    <HomeIcon aria-hidden="true" />
+    <span>Início</span>
+  </SidebarMenuButton>
+  <SidebarMenuAction>
+    <PlusIcon aria-hidden="true" />
+    <span className="sr-only">Adicionar projeto</span>
+  </SidebarMenuAction>
+</SidebarMenuItem>`}
+/>
+
+## SidebarMenuSub
+
+O `SidebarMenuSub` renderiza um submenu dentro de um `SidebarMenu`. Os itens são `SidebarMenuSubItem` com um `SidebarMenuSubButton` (um `<a>`, com `isActive` e `size="sm"` ou `"md"`).
+
+<Canvas of={SidebarStories.SubMenu} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarMenuItem>
+  <SidebarMenuButton />
+  <SidebarMenuSub>
+    <SidebarMenuSubItem>
+      <SidebarMenuSubButton render={<a href="/geral" />} />
+    </SidebarMenuSubItem>
+  </SidebarMenuSub>
+</SidebarMenuItem>`}
+/>
+
+## SidebarMenuBadge
+
+O `SidebarMenuBadge` renderiza um selo dentro de um `SidebarMenuItem`.
+
+<Canvas of={SidebarStories.SeloDeMenu} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarMenuItem>
+  <SidebarMenuButton />
+  <SidebarMenuBadge>
+    <span aria-hidden="true">24</span>
+    <span className="sr-only">24 não lidas</span>
+  </SidebarMenuBadge>
+</SidebarMenuItem>`}
+/>
+
+## SidebarMenuSkeleton
+
+O `SidebarMenuSkeleton` renderiza um esqueleto para um `SidebarMenu`, enquanto o menu carrega. A largura do texto é sorteada entre 50% e 90% a cada montagem, e `showIcon` mostra um bloco para o ícone.
+
+<Canvas of={SidebarStories.Esqueleto} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarGroup aria-busy="true">
+  <SidebarMenu>
+    <SidebarMenuItem>
+      <SidebarMenuSkeleton showIcon />
+    </SidebarMenuItem>
+    <SidebarMenuItem>
+      <SidebarMenuSkeleton showIcon />
+    </SidebarMenuItem>
+  </SidebarMenu>
+  <p role="status" className="sr-only">
+    Carregando o menu…
+  </p>
+</SidebarGroup>`}
+/>
+
+## SidebarTrigger
+
+Use o `SidebarTrigger` para renderizar um botão que alterna a barra. Ele tem o nome "Alternar barra lateral" e expõe `aria-expanded`. Para um gatilho próprio, use o `toggleSidebar` do `useSidebar` (veja a story **useSidebar**), com nome e `aria-expanded`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useSidebar } from "@workspace/ui/components/sidebar"
+
+export function CustomTrigger() {
+  const { toggleSidebar, isMobile, open, openMobile } = useSidebar()
+
+  return (
+    <button
+      type="button"
+      aria-expanded={isMobile ? openMobile : open}
+      onClick={toggleSidebar}
+    >
+      Alternar barra lateral
+    </button>
+  )
+}`}
+/>
+
+## SidebarRail
+
+O `SidebarRail` renderiza uma faixa dentro da `Sidebar`. Clicar nela alterna a barra, mas ela não redimensiona. Fica fora da ordem do Tab.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Sidebar>
+  <SidebarHeader />
+  <SidebarContent>
+    <SidebarGroup />
+  </SidebarContent>
+  <SidebarFooter />
+  <SidebarRail />
+</Sidebar>`}
+/>
+
+## Barra controlada
+
+Use `open` e `onOpenChange` para controlar a barra. O Ctrl+B e o `SidebarTrigger` também passam por `onOpenChange`.
+
+<Canvas of={SidebarStories.Controlada} />
+
+## Celular
+
+Abaixo de 768px a `Sidebar` vira um Sheet. Para ver, abra a story **Celular (Sheet)** no painel lateral do Storybook (ela abre com 320px de largura) ou estreite a janela. O Sheet tem o nome "Barra lateral", prende o foco e fecha com Esc. Na página de documentação não há como mostrá-la inline: a largura vem da janela, e não de um contêiner.
+
+<Source of={SidebarStories.Mobile} dark />
+
+## Tema
+
+A barra usa os papéis `sidebar-*`, com o mesmo par de superfície e texto do resto do sistema. Os valores são os do `globals.css`, com os contrastes anotados lá:
+
+<Source
+  language="css"
+  dark
+  code={`:root {
+  --sidebar: oklch(0.987 0.002 197.1);              /* mist 50 */
+  --sidebar-foreground: oklch(0.148 0.004 228.8);   /* 19,0:1 */
+  --sidebar-primary: var(--bb-primary-600);
+  --sidebar-primary-foreground: oklch(1 0 0);       /* 5,2:1 */
+  --sidebar-accent: oklch(0.963 0.002 197.1);
+  --sidebar-accent-foreground: oklch(0.218 0.008 223.9); /* 15,6:1 */
+  --sidebar-border: oklch(0.925 0.005 214.3);
+  --sidebar-ring: var(--bb-primary-500);            /* 3,4:1 na sidebar */
+}
+
+.dark {
+  --sidebar: oklch(0.218 0.008 223.9);              /* mist 900 */
+  --sidebar-foreground: oklch(0.987 0.002 197.1);   /* 16,7:1 */
+  --sidebar-primary: var(--bb-primary-600);         /* 3,4:1 contra a sidebar */
+  --sidebar-primary-foreground: oklch(1 0 0);       /* 5,2:1 */
+  --sidebar-accent: oklch(0.275 0.011 216.9);
+  --sidebar-accent-foreground: oklch(0.987 0.002 197.1); /* 14,2:1 */
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: var(--bb-primary-400);            /* 6,7:1 na sidebar */
+}`}
+/>
+
+Se mudar algum valor, confira de novo os contrastes: o axe só mede texto.
+
+## Estilização
+
+Algumas dicas para estilizar a barra conforme o estado. Os atributos `data-state`, `data-collapsible`, `data-variant` e `data-side` ficam no elemento `group` da barra (`data-slot="sidebar"`), e o `data-active` fica em cada botão ativo.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Sidebar collapsible="icon">
+  <SidebarContent>
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden" />
+  </SidebarContent>
+</Sidebar>`}
+/>
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarMenuItem>
+  <SidebarMenuButton />
+  <SidebarMenuAction className="peer-data-active/menu-button:opacity-100" />
+</SidebarMenuItem>`}
+/>
+
+O `isActive` põe `data-active` no botão (não `data-active="true"`): a classe é `peer-data-active/menu-button`, a mesma que o componente usa. A página do shadcn escreve `peer-data-[active=true]/menu-button`, que não casa com este atributo.
+
+## RTL
+
+Os recuos, as margens e os cantos são lógicos (`ps`, `pe`, `ms`, `me`, `rounded-s`), e o ícone do `SidebarTrigger` gira em RTL (`rtl:rotate-180`). A posição da barra é **física**: `side="left"` é a borda esquerda, em LTR e em RTL. Em RTL a barra não troca de lado sozinha: passe `side="right"` e `dir="rtl"`, como no exemplo do shadcn. O `dir` só chega ao Sheet do celular; no desktop a direção vem do ancestral.
+
+A borda da barra voltada para a página é física (`border-r` na esquerda, `border-l` na direita), no lugar do `border-e` e `border-s` do registro, que em RTL iam para a borda da tela.
+
+Os menus abrem num portal no `body`: passe `dir` e `lang` ao `DropdownMenuContent`, e `side="inline-end"` para ele abrir no fim da linha. Com a barra à direita, o tooltip da barra recolhida também precisa de `side: "left"` (o padrão dele é `right`):
+
+<Source
+  language="tsx"
+  dark
+  code={`<SidebarMenuButton tooltip={{ children: "ملعب", side: "left" }} />`}
+/>
+
+Para ver a página inteira em RTL, use o seletor **Direção** da barra de ferramentas: as stories que não passam `side="right"` ficam com a barra na esquerda e o conteúdo por baixo dela, como descrito acima. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+
+<Canvas of={SidebarStories.Rtl} />
+
+## Referência da API
+
+Todas as partes repassam as props do elemento que renderizam (o `SidebarInput` e o `SidebarSeparator`, as do `Input` e do `Separator`). As que têm `render` (`SidebarGroupLabel`, `SidebarGroupAction`, `SidebarMenuButton`, `SidebarMenuAction` e `SidebarMenuSubButton`) usam o `useRender` do Base UI. O `SidebarInput` e o `SidebarSeparator` não têm story, porque a página do shadcn não os exemplifica.
+
+### SidebarProvider
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+    <tr><td><code>open</code></td><td><code>boolean</code></td><td>—</td></tr>
+    <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>style</code></td><td><code>React.CSSProperties</code> (aceita <code>--sidebar-width</code>)</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### Sidebar
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>side</code></td><td><code>{'"left" | "right"'}</code> (físico)</td><td><code>{'"left"'}</code></td></tr>
+    <tr><td><code>variant</code></td><td><code>{'"sidebar" | "floating" | "inset"'}</code></td><td><code>{'"sidebar"'}</code></td></tr>
+    <tr><td><code>collapsible</code></td><td><code>{'"offcanvas" | "icon" | "none"'}</code></td><td><code>{'"offcanvas"'}</code></td></tr>
+    <tr><td><code>dir</code></td><td><code>{'"ltr" | "rtl"'}</code> (só chega ao Sheet do celular)</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### SidebarMenuButton
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>— (<code>{'<button>'}</code>)</td></tr>
+    <tr><td><code>isActive</code></td><td><code>boolean</code> (põe <code>data-active</code> e <code>aria-current="page"</code>)</td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    <tr><td><code>tooltip</code></td><td><code>{'string | TooltipContentProps'}</code> (só com a barra recolhida em ícones)</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### SidebarMenuSubButton
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>— (<code>{'<a>'}</code>)</td></tr>
+    <tr><td><code>isActive</code></td><td><code>boolean</code> (põe <code>data-active</code> e <code>aria-current="page"</code>)</td><td><code>{'false'}</code></td></tr>
+    <tr><td><code>size</code></td><td><code>{'"sm" | "md"'}</code></td><td><code>{'"md"'}</code></td></tr>
+  </tbody>
+</table>
+
+### SidebarMenuAction
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>— (<code>{'<button>'}</code>)</td></tr>
+    <tr><td><code>showOnHover</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### SidebarGroupLabel e SidebarGroupAction
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>— (<code>{'<div>'}</code> no rótulo, <code>{'<button>'}</code> na ação)</td></tr>
+  </tbody>
+</table>
+
+### SidebarMenuSkeleton
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>showIcon</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+  </tbody>
+</table>
+
+### SidebarTrigger e SidebarInput
+
+O `SidebarTrigger` aceita as props do `Button` (`variant="ghost"` e `size="icon-sm"` por padrão). O `SidebarInput` aceita as props do `Input` e usa o papel `field`.
+
+<table>
+  <thead>
+    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>SidebarProvider</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-wrapper</code></td></tr>
+    <tr><td><code>Sidebar</code></td><td><code>{'<div>'}</code> (no celular, o <code>{'<div role="dialog">'}</code> do Sheet)</td><td><code>sidebar</code> (e <code>sidebar-container</code> no desktop)</td></tr>
+    <tr><td><code>SidebarTrigger</code></td><td><code>{'<button>'}</code></td><td><code>sidebar-trigger</code></td></tr>
+    <tr><td><code>SidebarRail</code></td><td><code>{'<button>'}</code></td><td><code>sidebar-rail</code></td></tr>
+    <tr><td><code>SidebarInset</code></td><td><code>{'<main>'}</code></td><td><code>sidebar-inset</code></td></tr>
+    <tr><td><code>SidebarInput</code></td><td><code>{'<input>'}</code></td><td><code>sidebar-input</code></td></tr>
+    <tr><td><code>SidebarHeader</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-header</code></td></tr>
+    <tr><td><code>SidebarFooter</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-footer</code></td></tr>
+    <tr><td><code>SidebarSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>sidebar-separator</code></td></tr>
+    <tr><td><code>SidebarContent</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-content</code></td></tr>
+    <tr><td><code>SidebarGroup</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-group</code></td></tr>
+    <tr><td><code>SidebarGroupLabel</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-group-label</code></td></tr>
+    <tr><td><code>SidebarGroupAction</code></td><td><code>{'<button>'}</code></td><td><code>sidebar-group-action</code></td></tr>
+    <tr><td><code>SidebarGroupContent</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-group-content</code></td></tr>
+    <tr><td><code>SidebarMenu</code></td><td><code>{'<ul>'}</code></td><td><code>sidebar-menu</code></td></tr>
+    <tr><td><code>SidebarMenuItem</code></td><td><code>{'<li>'}</code></td><td><code>sidebar-menu-item</code></td></tr>
+    <tr><td><code>SidebarMenuButton</code></td><td><code>{'<button>'}</code></td><td><code>sidebar-menu-button</code></td></tr>
+    <tr><td><code>SidebarMenuAction</code></td><td><code>{'<button>'}</code></td><td><code>sidebar-menu-action</code></td></tr>
+    <tr><td><code>SidebarMenuBadge</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-menu-badge</code></td></tr>
+    <tr><td><code>SidebarMenuSkeleton</code></td><td><code>{'<div>'}</code></td><td><code>sidebar-menu-skeleton</code></td></tr>
+    <tr><td><code>SidebarMenuSub</code></td><td><code>{'<ul>'}</code></td><td><code>sidebar-menu-sub</code></td></tr>
+    <tr><td><code>SidebarMenuSubItem</code></td><td><code>{'<li>'}</code></td><td><code>sidebar-menu-sub-item</code></td></tr>
+    <tr><td><code>SidebarMenuSubButton</code></td><td><code>{'<a>'}</code></td><td><code>sidebar-menu-sub-button</code></td></tr>
+  </tbody>
+</table>

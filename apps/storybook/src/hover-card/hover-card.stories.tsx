@@ -39,7 +39,16 @@ async function abrirPorTeclado(
     await userEvent.tab()
   }
   await expect(link).toHaveFocus()
-  const conteudo = await screen.findByText(texto)
+  // Stories that open several cards with the same text wait for the previous
+  // one to finish closing (closeDelay), so only one match is left.
+  const conteudo = await waitFor(
+    () => {
+      const achados = screen.getAllByText(texto)
+      expect(achados).toHaveLength(1)
+      return achados[0]
+    },
+    { timeout: 3000 }
+  )
   await Promise.allSettled(
     document.getAnimations().map((animation) => animation.finished)
   )

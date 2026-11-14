@@ -1,0 +1,443 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as TraceStories from "./trace.stories";
+
+<Meta of={TraceStories} />
+
+# Trace
+
+O bloco de construção para raciocínio, chamadas de ferramenta, fontes e mais.
+
+<Canvas of={TraceStories.Demo} />
+
+O `Trace` é uma lista de linhas. Cada linha tem um ícone, um título e, se quiser, uma descrição e um estado. Uma linha pode expandir para mostrar mais detalhe, apontar para uma página ou abrir um Dialog ou Sheet.
+
+Toda linha tem o mesmo formato, então o raciocínio, as chamadas de ferramenta, as fontes e os planos montados com `Trace` parecem e se comportam do mesmo jeito.
+
+Use o `Trace` para os passos de um agente, como chamar uma ferramenta, rodar um subagente ou editar um arquivo. Para a resposta dele, use o Message; para notas e divisores entre turnos, use o Marker.
+
+O exemplo principal do shadcn simula um chat com o AI SDK (`useChat`), que não é uma dependência deste projeto. Os exemplos desta página mantêm as mesmas linhas e a mesma lógica de abrir e fechar, com estado local e sem a transmissão em tempo real. A tabela "Built with Trace" da página original aponta para padrões do AI Elements que não existem aqui, então ficou de fora.
+
+## Instalação
+
+O Trace usa o `Collapsible` (`@base-ui/react/collapsible`), o `cn` e um ícone do `lucide-react`.
+
+<Source language="bash" dark code="npx shadcn add trace" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/trace.tsx`.
+
+## Uso
+
+Use um `TraceLine` para um passo simples:
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Trace,
+  TraceIcon,
+  TraceLine,
+  TraceTitle,
+} from "@workspace/ui/components/trace"
+
+<Trace role="group" aria-label="Etapas da busca">
+  <TraceLine>
+    <TraceIcon>
+      <SearchIcon />
+    </TraceIcon>
+    <TraceTitle>Pesquisou por minimumReleaseAge</TraceTitle>
+  </TraceLine>
+</Trace>`}
+/>
+
+Envolva a linha num `TraceCollapsible` para mostrar mais detalhe quando ela expandir:
+
+<Source
+  language="tsx"
+  dark
+  code={`import {
+  Trace,
+  TraceCollapsible,
+  TraceCollapsibleContent,
+  TraceCollapsibleTrigger,
+  TraceIcon,
+  TraceLine,
+  TraceTitle,
+} from "@workspace/ui/components/trace"
+
+<Trace role="group" aria-label="Comandos executados">
+  <TraceCollapsible>
+    <TraceCollapsibleTrigger>
+      <TraceLine>
+        <TraceIcon>
+          <TerminalIcon />
+        </TraceIcon>
+        <TraceTitle>Executou node --version</TraceTitle>
+      </TraceLine>
+    </TraceCollapsibleTrigger>
+    <TraceCollapsibleContent>v24.18.0</TraceCollapsibleContent>
+  </TraceCollapsible>
+</Trace>`}
+/>
+
+## Composição
+
+Use esta composição para montar uma linha:
+
+<Source
+  language="text"
+  dark
+  code={`Trace
+└── TraceLine
+    ├── TraceIcon
+    ├── TraceTitle
+    ├── TraceDescription
+    └── TraceIcon`}
+/>
+
+Envolva a linha num `TraceCollapsible` para mostrar mais detalhe quando ela expandir:
+
+<Source
+  language="text"
+  dark
+  code={`Trace
+└── TraceCollapsible
+    ├── TraceCollapsibleTrigger
+    │   └── TraceLine
+    └── TraceCollapsibleContent`}
+/>
+
+O `TraceLine` é sempre a linha. Para a linha fazer alguma coisa, envolva-a no gatilho dessa coisa.
+
+## Recursos
+
+- Uma mesma linha para raciocínio, chamadas de ferramenta, fontes, planos e tarefas.
+- Linhas que expandem, apontam para um link ou abrem um Dialog, Sheet, Drawer ou Popover.
+- Os estados `running`, `error` e `pending`, com brilho animado enquanto roda.
+- Linhas aninhadas: um resumo expande em passos, e um passo em sua saída.
+- Teclado e leitor de tela vêm do gatilho que envolve cada linha.
+- Estilo ajustável pela prop `className` de cada parte.
+
+## Acessibilidade
+
+O `Trace` não cria papéis por conta própria: cada linha herda a semântica do elemento que a envolve.
+
+- **Nome acessível:** o `TraceIcon` é `aria-hidden`, então o `TraceTitle` é o nome da linha. Escreva-o como uma frase que diz o que aconteceu, como "Editou trace.tsx", e não só "trace.tsx". Um gatilho, um link ou um botão de Dialog leva esse título como nome. Quando um link abre uma nova aba, acrescente "(abre em uma nova aba)" ao título com `sr-only`, e use o ícone de seta para cima e para a direita (`ArrowUpRightIcon`, com `rtl:-scale-x-100` para espelhar em RTL).
+- **Nome do grupo:** o `Trace` é um `div`, não uma lista de verdade (veja a nota abaixo). Dê um nome a ele com `role="group"` e `aria-label` ("Etapas da investigação"), para o leitor de tela anunciar o conjunto ao entrar.
+- **Estado em texto, não só por cor ou ícone:** `status` pinta a linha e anima o título, mas cor e movimento não bastam. O `TraceLine` acrescenta, depois do conteúdo, um texto `sr-only` com o estado: "(em andamento)", "(com erro)" ou "(pendente)". Escreva também o estado no título, no tempo certo: "Executando pnpm build" enquanto roda e "Falhou ao executar pnpm build" quando dá erro. O texto oculto cobre sobretudo a linha pendente, cujo título é só a ação ("Executar pnpm test").
+- **Ícones decorativos:** o `TraceIcon` já leva `aria-hidden="true"`. O ícone de estado (um círculo, um alerta, o spinner) é só reforço visual.
+- **Gatilho e semântica:** uma linha sozinha é um `span`: é lida como texto e não é parada do Tab. Dentro de um `TraceCollapsibleTrigger` ela vira um `button` com `aria-expanded` e `aria-controls`. Dentro de um `<a>`, ou do gatilho de um Dialog ou Sheet, ela segue o teclado e o foco desse elemento. Use `<button>` para ação e `<a>` para navegação.
+- **Teclado:** Tab vai de gatilho em gatilho e de link em link; Enter e Espaço abrem e fecham uma linha; no Dialog e no Sheet, Esc fecha e devolve o foco à linha que os abriu.
+- **Foco visível:** o gatilho e os links ou gatilhos dentro do `Trace` mostram o anel sólido de 3px no `--ring`, afastado 2px pela cor do fundo, como no Button.
+- **Contraste:** o texto da linha é `muted-foreground` (7,4:1 no branco e 8,1:1 no fundo escuro), o erro é `destructive` (4,8:1 e 6,8:1) e a descrição usa `muted-foreground` cheio. O registro apagava a linha pendente com `opacity-60` (~3:1) e a descrição com `/70`; as duas foram trocadas, e a linha pendente se distingue pelo ícone e pelo texto. O detalhe aberto também é `muted-foreground`: um bloco com fundo próprio dentro dele precisa definir a cor do texto (o `CodeBlock` já faz isso). Para texto vermelho sobre um fundo `muted`, use `destructive-hover`.
+- **Movimento:** o brilho do título em execução para quando a pessoa pede menos movimento (`prefers-reduced-motion`), e o spinner dos exemplos usa `motion-reduce:animate-none`. O título continua dizendo o que está acontecendo. A faixa do brilho usa `foreground` (`--shimmer-color`), e não o `currentColor` a 20% do utilitário original, que apagaria o texto sob a faixa: o contraste nunca cai abaixo do da linha parada. O axe não mede esse texto (ele tem `background-clip: text`), então vale conferir a olho.
+- **Seta em RTL:** a seta do gatilho aponta para a esquerda quando a linha está fechada em RTL (`rtl:rotate-180`) e gira para baixo ao abrir. As setas de link e de Dialog dos exemplos também levam `rtl:rotate-180`.
+- **Limite conhecido:** o `Trace` não é uma lista de verdade (não tem `role="list"` nem `<li>`). As linhas são `span`, `a`, `button` e `div` soltos, e o seletor que dá foco e forma a quem envolve uma linha só enxerga filhos diretos do `Trace`. Uma lista real pediria um `<li>` em volta de cada linha, o que muda a estrutura do componente. Por isso o nome vem do `role="group"`.
+- **Mudanças dinâmicas:** dentro de um Message Scroller, cada linha é anunciada uma vez, quando é adicionada. Para uma linha que muda de estado, mantenha o elemento montado e troque só o texto do título e o `status`.
+- **Testes:** percorra só com o teclado, rode o axe (addon-a11y) nos dois modos e em RTL (`npm run test` faz os três), use um leitor de tela e confira o zoom a 200%.
+
+<Source
+  language="tsx"
+  dark
+  code={`<Trace role="group" aria-label="Etapas da investigação">
+  <TraceCollapsible>
+    <TraceCollapsibleTrigger>
+      <TraceLine status="error">
+        <TraceIcon>
+          <CircleAlertIcon />
+        </TraceIcon>
+        <TraceTitle>Falhou ao executar pnpm lint</TraceTitle>
+      </TraceLine>
+    </TraceCollapsibleTrigger>
+    <TraceCollapsibleContent>…</TraceCollapsibleContent>
+  </TraceCollapsible>
+  <a href="https://docs.astro.build" target="_blank" rel="noreferrer">
+    <TraceLine>
+      <TraceIcon>
+        <GlobeIcon />
+      </TraceIcon>
+      <TraceTitle>
+        Instalar o Astro
+        <span className="sr-only"> (abre em uma nova aba)</span>
+      </TraceTitle>
+      <TraceIcon>
+        <ArrowUpRightIcon className="rtl:-scale-x-100" />
+      </TraceIcon>
+    </TraceLine>
+  </a>
+</Trace>`}
+/>
+
+## Linha
+
+Use um `TraceLine` sozinho para um passo sem detalhe para mostrar. Ele é lido como texto simples.
+
+<Canvas of={TraceStories.Linha} />
+
+## Status
+
+Use `status` no `TraceLine` quando um passo está rodando, falhou ou ainda não começou.
+
+<Canvas of={TraceStories.Status} />
+
+<table>
+  <thead>
+    <tr><th>Status</th><th>Use para</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>nenhum</td><td>Trabalho concluído: "Executou pnpm install".</td></tr>
+    <tr><td><code>{'"error"'}</code></td><td>Trabalho que falhou. Diga isso no título: "Falhou ao executar pnpm lint".</td></tr>
+    <tr><td><code>{'"running"'}</code></td><td>Trabalho em andamento. Escreva o título no gerúndio: "Executando pnpm build".</td></tr>
+    <tr><td><code>{'"pending"'}</code></td><td>Trabalho que não começou, como o passo de um plano: "Executar pnpm test".</td></tr>
+  </tbody>
+</table>
+
+## Descrição
+
+Ponha um texto secundário, como uma contagem de linhas, uma duração ou um total, num `TraceDescription` depois do `TraceTitle`. Ele não é truncado.
+
+<Canvas of={TraceStories.Descricao} />
+
+## Recolhível
+
+Envolva a linha num `TraceCollapsible` para mostrar mais detalhe quando ela expandir. Ponha o `TraceLine` dentro do `TraceCollapsibleTrigger` e o detalhe no `TraceCollapsibleContent`. O gatilho é um `button` com `aria-expanded`; fechado, o painel sai da árvore de acessibilidade.
+
+<Canvas of={TraceStories.Recolhivel} />
+
+## Estado aberto
+
+As linhas começam fechadas. Use `defaultOpen` no `TraceCollapsible` para começar aberta, ou `open` com `onOpenChange` para controlar a linha.
+
+<Canvas of={TraceStories.EstadoAberto} />
+
+Para abrir uma linha enquanto o conteúdo chega e deixar o clique da pessoa vencer, passe `open ?? running`. O estado `undefined` significa "a pessoa ainda não mexeu".
+
+<Source
+  language="tsx"
+  dark
+  code={`const [open, setOpen] = React.useState<boolean>()
+
+<TraceCollapsible open={open ?? running} onOpenChange={setOpen}>
+  <TraceCollapsibleTrigger>
+    <TraceLine status={running ? "running" : undefined}>…</TraceLine>
+  </TraceCollapsibleTrigger>
+  <TraceCollapsibleContent>{texto}</TraceCollapsibleContent>
+</TraceCollapsible>`}
+/>
+
+## Link
+
+Envolva o `TraceLine` num `<a>`. Para uma nova aba, use o ícone de seta para cima e para a direita e o texto `sr-only` "(abre em uma nova aba)" no título. Num link para a mesma página ou para o app, o ícone é um `ChevronRightIcon`.
+
+<Canvas of={TraceStories.Link} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<a href="https://docs.astro.build" target="_blank" rel="noreferrer">
+  <TraceLine>
+    <TraceTitle>
+      Instalar o Astro
+      <span className="sr-only"> (abre em uma nova aba)</span>
+    </TraceTitle>
+    <TraceIcon>
+      <ArrowUpRightIcon className="rtl:-scale-x-100" />
+    </TraceIcon>
+  </TraceLine>
+</a>`}
+/>
+
+## Dialog
+
+Envolva o `TraceLine` no gatilho do Dialog. O próprio Dialog cuida do estado aberto, do Esc e da devolução do foco. O nome do botão é o título da linha.
+
+<Canvas of={TraceStories.DialogoComTrace} />
+
+<Source
+  language="tsx"
+  dark
+  code={`<Dialog>
+  <DialogTrigger>
+    <TraceLine>
+      <TraceTitle>Pesquisou na web por chaves de cache</TraceTitle>
+      <TraceIcon>
+        <ChevronRightIcon className="rtl:rotate-180" />
+      </TraceIcon>
+    </TraceLine>
+  </DialogTrigger>
+  <DialogContent>…</DialogContent>
+</Dialog>`}
+/>
+
+## Sheet
+
+O mesmo formato do Dialog. O Drawer e o Popover funcionam do mesmo jeito.
+
+<Canvas of={TraceStories.PainelLateral} />
+
+## Grupo
+
+Ponha as linhas que ficam lado a lado num `Trace`. Ele também estiliza qualquer gatilho ou link que envolva um `TraceLine`. Dê um nome ao grupo por `role="group"` e `aria-label`.
+
+<Canvas of={TraceStories.Grupo} />
+
+## Fontes
+
+Uma linha recolhível cujo detalhe é um `Trace` de linhas de link.
+
+<Canvas of={TraceStories.Fontes} />
+
+## Cadeia de pensamento
+
+Uma cadeia de pensamento é uma linha recolhível com linhas de passos dentro. Defina o estado e o título do pai a partir dos filhos. Use `keepMounted` no conteúdo para que as linhas aninhadas mantenham o estado aberto ao fechar o pai.
+
+<Canvas of={TraceStories.CadeiaDePensamento} />
+
+Os domínios consultados são `Badge` (`variant="secondary"`), como no exemplo do shadcn.
+
+## Commit
+
+Um commit é uma linha recolhível com uma linha para cada arquivo alterado. Diga o que mudou no título (Adicionou, Editou ou Removeu) e ponha a contagem de linhas na descrição. Cada arquivo abre o diff num Sheet, e o Sheet leva o caminho do arquivo no título.
+
+<Canvas of={TraceStories.Commit} />
+
+## Turno completo
+
+Três níveis: o turno, um resumo e as linhas. O texto entre os passos fica entre duas listas `Trace`.
+
+<Canvas of={TraceStories.TurnoCompleto} />
+
+## Raciocínio
+
+Mostre uma parte de raciocínio. A linha é só um `TraceLine` até o primeiro texto chegar, e depois vira recolhível, aberta enquanto roda. Veja **Estado aberto**. O exemplo usa estado local no lugar do AI SDK.
+
+<Canvas of={TraceStories.Raciocinio} />
+
+## Ferramentas
+
+Mostre as chamadas de ferramenta. Uma chamada com saída vira recolhível; uma que ainda roda, ou que foi negada, é só uma linha de texto. O estado vai no título e no texto oculto do `status`.
+
+<Canvas of={TraceStories.Ferramentas} />
+
+## RTL
+
+A página do shadcn não tem uma seção de RTL e o componente não precisa de uma story própria: a linha usa margens, paddings e bordas lógicos (`ms-`, `ps-`, `pe-`, `border-s`) e o alinhamento `text-start`. Os testes rodam todas as stories também com `dir="rtl"`. A seta do gatilho e as setas dos exemplos giram em RTL (`rtl:rotate-180`; a de link externo usa `rtl:-scale-x-100`). Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas.
+
+## Referência da API
+
+### Trace
+
+Uma lista de linhas. Também estiliza qualquer gatilho ou link que envolva um `TraceLine`. É um `div` e aceita as props dele.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>role</code></td><td><code>string</code>: use <code>{'"group"'}</code> com <code>aria-label</code></td><td>—</td></tr>
+    <tr><td><code>aria-label</code></td><td><code>string</code>: nome do grupo de linhas</td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TraceLine
+
+Uma linha: um ícone e um título. É um `span`, então não é um botão nem uma parada do Tab. Envolva-a num gatilho ou num link para ela fazer alguma coisa.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>status</code></td><td><code>{'"running" | "error" | "pending"'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+Com `status`, o `TraceLine` acrescenta um texto `sr-only` com o estado ("em andamento", "com erro" ou "pendente") e expõe `data-status`. O `running` anima o título com um brilho que respeita `prefers-reduced-motion`.
+
+### TraceIcon
+
+Um espaço decorativo para um ícone, escondido da tecnologia assistiva (`aria-hidden="true"`). Antes do título ele nomeia a ação; depois, é o indicador.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TraceTitle
+
+Uma frase em uma linha. É truncado e brilha enquanto a linha está `running`. É o nome acessível da linha.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TraceDescription
+
+Texto secundário depois do título, como uma contagem ou uma duração. Não é truncado.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TraceCollapsible
+
+Uma linha que expande. Aceita as props do `Collapsible`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>open</code></td><td><code>boolean</code>: estado aberto controlado, junto com <code>onOpenChange</code></td><td>—</td></tr>
+    <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TraceCollapsibleTrigger
+
+O botão que abre e fecha a linha. Ponha um `TraceLine` dentro dele. Ele acrescenta uma seta depois da linha, que gira ao abrir.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+### TraceCollapsibleContent
+
+O detalhe de uma linha que expande.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>keepMounted</code></td><td><code>boolean</code>: mantém o detalhe montado fechado, para as linhas aninhadas guardarem o estado aberto</td><td><code>false</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code>: aplicada ao bloco interno do detalhe</td><td>—</td></tr>
+  </tbody>
+</table>
+
+Cada parte recebe um `data-slot` (`trace`, `trace-line`, `trace-icon`, `trace-title`, `trace-description`, `trace-collapsible`, `trace-collapsible-trigger` e `trace-collapsible-content`).

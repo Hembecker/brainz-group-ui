@@ -1,0 +1,261 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as MessageStories from "./message.stories";
+
+<Meta of={MessageStories} />
+
+# Message
+
+Mostra uma mensagem de uma conversa, com avatar, cabeçalho, rodapé e alinhamento opcionais.
+
+<Canvas of={MessageStories.Demo} />
+
+O `Message` monta a linha de uma mensagem numa conversa. Ele cuida do avatar, do alinhamento, do cabeçalho e do rodapé em volta da superfície da mensagem.
+
+Em apps de IA, dá para mostrar etapas de raciocínio, chamadas de ferramentas e respostas do assistente com o `Message`.
+
+## Instalação
+
+O Message não tem dependências além do `cn`. Os exemplos usam também o Bubble, o Avatar, o Marker, o Attachment e o Button.
+
+<Source language="bash" dark code="npx shadcn add message" />
+
+Ele já está no pacote, mas, para reinstalar, rode o comando dentro de `packages/ui`. O CLI usa o `shadcn` local (versão fixa) e sobrescreve o arquivo com o estilo do preset: depois, reaplique as decisões anotadas no comentário do topo do componente.
+
+O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/message.tsx`.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
+import { Bubble, BubbleContent } from "@workspace/ui/components/bubble"
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+} from "@workspace/ui/components/message"
+
+<Message>
+  <MessageAvatar>
+    <Avatar role="img" aria-label="Rafael">
+      <AvatarFallback>RA</AvatarFallback>
+    </Avatar>
+  </MessageAvatar>
+  <MessageContent>
+    <Bubble>
+      <BubbleContent>Como posso ajudar você hoje?</BubbleContent>
+    </Bubble>
+  </MessageContent>
+</Message>`}
+/>
+
+**Observação:** o `Message` cuida do layout da linha: avatar, alinhamento, cabeçalho e rodapé. A superfície visível da mensagem vai dentro dele, com o [`Bubble`](?path=/docs/componentes-bubble--docs). Para o contêiner de rolagem em volta de uma conversa, use o [`MessageScroller`](?path=/docs/componentes-message-scroller--docs).
+
+## Composição
+
+Monte uma mensagem com esta composição:
+
+<Source
+  language="text"
+  dark
+  code={`Message
+├── MessageAvatar
+└── MessageContent
+    ├── MessageHeader
+    ├── Bubble
+    └── MessageFooter`}
+/>
+
+Use o `MessageGroup` para empilhar mensagens seguidas do mesmo autor:
+
+<Source
+  language="text"
+  dark
+  code={`MessageGroup
+├── Message
+└── Message`}
+/>
+
+## Recursos
+
+- Alinhamento no início e no fim, para as linhas de quem envia e de quem recebe, pela prop `align`.
+- Espaço do avatar preso à base da mensagem, fora do caminho do rodapé.
+- Espaços de cabeçalho e rodapé, para o nome de quem escreve, o status e as ações da mensagem.
+- O rodapé acompanha o lado da mensagem: as ações ficam alinhadas em `align="end"`.
+- Um `MessageGroup` para empilhar mensagens seguidas do mesmo autor.
+- Estilo ajustável pela prop `className` em todas as partes.
+
+## Acessibilidade
+
+O `Message` é só um contêiner de layout, sem papel nem comportamento. A acessibilidade vem do conteúdo que você coloca dentro dele e da estrutura em volta.
+
+- **Estrutura da lista:** uma conversa é uma lista de mensagens. Num trecho estático, dê ao contêiner `role="list"` e um nome (`aria-label="Conversa com o Rafael"`), e a cada `Message` o `role="listitem"`. Numa conversa que cresce, o `MessageScrollerContent` já é um `role="log"`, que anuncia as linhas novas de forma `polite`. Um `MessageGroup` também pode ser a lista (`role="list"` nele, `role="listitem"` em cada `Message`).
+- **Autor de cada mensagem:** o leitor de tela precisa saber quem escreveu. Use um destes: o `MessageHeader` com o nome; um `Avatar` com `role="img"` e `aria-label` com o nome (só com iniciais, sem foto); ou um texto `sr-only` dentro do balão (`<span className="sr-only">Você: </span>`). Com foto, o nome é o `alt` do `AvatarImage`. Quando uma mensagem agrupada deixa o `MessageAvatar` vazio, o nome tem de estar no balão ou na mensagem que tem o avatar.
+- **Ações só com ícone:** os botões do `MessageFooter` (copiar, curtir, tentar de novo) são só ícone. Cada um precisa de `aria-label` específico ("Copiar a resposta", não "Copiar"), com o ícone `aria-hidden="true"`. Não use o atributo `title` para repetir o nome.
+- **Estado que muda:** use um `Marker` com `role="status"` para o que está em andamento ("Oliver está digitando…"). O `status` é uma região `polite`: a região fica sempre montada e só o texto muda. Ele fica fora da lista (`role="list"` só pode ter itens de lista dentro).
+- **Foco visível:** os botões do rodapé têm o anel sólido do Button, com afastamento de 2px. Confira o anel contra o fundo da conversa nos dois modos.
+- **Contraste:** o cabeçalho e o rodapé usam `muted-foreground` em texto pequeno: 7,4:1 no fundo e no card e 6,6:1 sobre `muted` no claro; 8,1:1 no fundo e 6,1:1 sobre `muted` no escuro. Um texto de erro no rodapé usa `text-destructive` (4,8:1 no claro, 6,8:1 no escuro) e não se apoia só na cor: diga o que houve ("Falha ao enviar").
+- **Anexos e imagens:** uma imagem que informa algo leva `alt` com a informação; o botão do anexo ("Baixar painel-de-vendas.pdf") leva `aria-label` com a ação e o alvo.
+
+<Source
+  language="tsx"
+  dark
+  code={`<div role="list" aria-label="Conversa com o Rafael">
+  <Message role="listitem">
+    <MessageContent>
+      <MessageHeader>Rafael</MessageHeader>
+      <Bubble variant="muted">
+        <BubbleContent>Posso olhar isso agora.</BubbleContent>
+      </Bubble>
+      <MessageFooter>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Copiar a resposta"
+        >
+          <CopyIcon aria-hidden="true" />
+        </Button>
+      </MessageFooter>
+    </MessageContent>
+  </Message>
+</div>
+<Marker role="status">
+  <MarkerContent>Oliver está digitando…</MarkerContent>
+</Marker>`}
+/>
+
+## Avatar
+
+Use o `MessageAvatar` para mostrar um avatar ao lado da mensagem. Com `align="end"` no `Message`, o avatar vai para o fim, do lado do balão.
+
+<Canvas of={MessageStories.Avatares} />
+
+<table>
+  <thead>
+    <tr><th>align</th><th>Descrição</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>start</code></td><td>Alinha a mensagem ao início da conversa.</td></tr>
+    <tr><td><code>end</code></td><td>Alinha a mensagem ao fim da conversa.</td></tr>
+  </tbody>
+</table>
+
+## Grupo
+
+Use o `MessageGroup` para empilhar mensagens seguidas do mesmo autor. Ponha um `MessageAvatar` vazio nas mensagens anteriores, para elas ficarem alinhadas com o avatar da última.
+
+<Canvas of={MessageStories.Grupo} />
+
+## Cabeçalho e rodapé
+
+Use o `MessageHeader` para o nome de quem escreve e o `MessageFooter` para metadados, como o status de entrega ou de leitura.
+
+<Canvas of={MessageStories.CabecalhoERodape} />
+
+## Ações
+
+Ponha as ações da mensagem no `MessageFooter`, como copiar, tentar de novo ou dar feedback.
+
+<Canvas of={MessageStories.Acoes} />
+
+## Anexo
+
+Um anexo (o `Attachment`) entra no `MessageContent`, antes ou depois do balão. O exemplo usa o logo da marca no lugar da foto de exemplo do shadcn.
+
+<Canvas of={MessageStories.Anexo} />
+
+## Referência da API
+
+### Message
+
+A linha da mensagem. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message"` e `data-align`.
+
+### MessageGroup
+
+Agrupa mensagens seguidas do mesmo autor. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-group"`.
+
+### MessageAvatar
+
+O espaço do avatar, alinhado à base da mensagem. Quando a mensagem tem um `MessageFooter`, o avatar sobe para ficar alinhado com a superfície da mensagem, e não com o rodapé. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-avatar"`.
+
+### MessageContent
+
+Envolve o cabeçalho, a superfície da mensagem e o rodapé. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-content"`.
+
+### MessageHeader
+
+Mostra conteúdo acima da mensagem, como o nome de quem escreve. Fica no início, qualquer que seja o `align`. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-header"`.
+
+### MessageFooter
+
+Mostra conteúdo abaixo da mensagem, como status ou ações. Acompanha o lado da mensagem. Aceita todas as props de um `<div>`.
+
+<table>
+  <thead>
+    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+O elemento recebe `data-slot="message-footer"`.

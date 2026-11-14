@@ -208,7 +208,7 @@ export const Tamanho: Story = {
 export const Menu: Story = {
   name: "Dropdown",
   play: async ({ canvasElement }) => {
-    await abrirMenu(canvasElement, "Menu da conta")
+    await abrirMenu(canvasElement, "CN, menu da conta")
   },
   render: () => (
     <DropdownMenu>
@@ -218,7 +218,7 @@ export const Menu: Story = {
             variant="ghost"
             size="icon"
             className="rounded-full"
-            aria-label="Menu da conta"
+            aria-label="CN, menu da conta"
           />
         }
       >

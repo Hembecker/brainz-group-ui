@@ -23,6 +23,59 @@ import {
 } from "@workspace/ui/components/tooltip"
 import { PanelLeftIcon } from "lucide-react"
 
+/*
+ * Sidebar — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/sidebar
+ * As cores, o contraste e os tamanhos são os da Big Brain (papéis `sidebar-*`
+ * do globals.css, com os contrastes anotados lá).
+ * - Composição: SidebarProvider > Sidebar (Header, Content > Group > Menu >
+ *   MenuItem > MenuButton/MenuAction/MenuBadge/MenuSub, Footer, Rail) e
+ *   SidebarInset, mais o SidebarTrigger. Todas as partes expõem `data-slot`.
+ *   Os gatilhos e botões recebem o elemento pela prop `render` (um `<a>` para
+ *   navegar, o `CollapsibleTrigger`, o `DropdownMenuTrigger`), sem `div`.
+ * - Nenhuma parte é um ponto de referência: a `Sidebar` é um `div`. Ponha um
+ *   `<nav aria-label="…">` (um nome diferente por `<nav>`) em volta de cada
+ *   `SidebarMenu` de navegação. A página atual leva `isActive`: o componente
+ *   põe `data-active` (o destaque) e `aria-current="page"` (o que o leitor de
+ *   tela lê), porque a cor sozinha não basta. Use `isActive` só no link da
+ *   página atual. Um `aria-current` passado por você prevalece (o `mergeProps`
+ *   dá a vez às props do usuário).
+ * - Textos fixos em português, como o "Fechar" do Sheet: o gatilho e a
+ *   `SidebarRail` se chamam "Alternar barra lateral"; no celular o painel é um
+ *   Sheet chamado "Barra lateral". O `SidebarTrigger` expõe `aria-expanded`
+ *   (`open` no desktop, `openMobile` no celular). O ícone dele é `aria-hidden`.
+ * - Atalho: Ctrl+B (⌘+B no Mac) alterna a barra, no desktop e no celular. A
+ *   tecla é `SIDEBAR_KEYBOARD_SHORTCUT`, aqui no arquivo.
+ * - Celular (< 768px, `useIsMobile`): a `Sidebar` vira um Sheet (modal, foco
+ *   preso, Esc fecha). O botão de fechar do Sheet fica escondido (como no
+ *   registro): feche com Esc, com o gatilho ou tocando fora.
+ * - Larguras: `SIDEBAR_WIDTH` (16rem), `SIDEBAR_WIDTH_MOBILE` (18rem) e
+ *   `SIDEBAR_WIDTH_ICON` (3rem) são constantes do arquivo. Para uma sidebar
+ *   diferente, sobrescreva `--sidebar-width` no `style` do SidebarProvider (o
+ *   do celular só muda pela constante: `--sidebar-width-mobile` não é lido).
+ * - `side` é FÍSICO (`left` ou `right`), como no Sheet. Em RTL a barra NÃO
+ *   troca de lado sozinha: passe `side="right"` e `dir="rtl"`. O `dir` só
+ *   chega ao Sheet do celular; no desktop a direção vem do ancestral.
+ * - Offcanvas recolhido: o painel sai da tela, mas o registro o deixava
+ *   focável. Aqui os filhos da barra (menos a `SidebarRail`, que é o que
+ *   reabre com o mouse) ficam `invisible` quando recolhidos, com a transição de
+ *   `visibility` do mesmo tempo da animação: o foco do teclado não entra nele.
+ * - Cores com opacidade trocadas por papéis cheios: o rótulo do grupo
+ *   (`text-sidebar-foreground/70`) virou `text-muted-foreground` (7,1:1 no
+ *   claro e 7,1:1 no escuro sobre a sidebar). O contorno da variante
+ *   `outline` do botão de menu usava `hsl(var(--sidebar-border))`, que não
+ *   gerava nada (os tokens são `oklch`): agora é `var(--sidebar-border)`.
+ * - Bordas físicas: a borda da barra voltada para a página usa `border-r` e
+ *   `border-l` no lugar de `border-e`/`border-s` do registro, que em RTL
+ *   iam para a borda da tela (como no Sheet).
+ * - Anel de foco: `ring-sidebar-ring` sólido com `focus-visible:ring-3`
+ *   (3,4:1 na sidebar no claro e 6,7:1 no escuro), sem afastamento: a barra
+ *   tem fundo próprio. Não troque pelo padrão `ring-ring`.
+ * - Limite conhecido: na variante `inset`, a margem do `SidebarInset` é
+ *   lógica (`ms-0`), então com `side` contrário à direção ela fica do lado
+ *   errado.
+ */
+
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
@@ -194,8 +247,8 @@ function Sidebar({
           side={side}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>Barra lateral</SheetTitle>
+            <SheetDescription>Exibe a barra lateral no celular.</SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>
@@ -232,7 +285,7 @@ function Sidebar({
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
-            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-e group-data-[side=right]:border-s",
+            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l",
           className
         )}
         {...props}
@@ -240,7 +293,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-2xl group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-2xl group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border group-data-[collapsible=offcanvas]:[&>:not([data-slot=sidebar-rail])]:invisible [&>:not([data-slot=sidebar-rail])]:transition-[visibility] [&>:not([data-slot=sidebar-rail])]:duration-200"
         >
           {children}
         </div>
@@ -254,7 +307,7 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, isMobile, open, openMobile } = useSidebar()
 
   return (
     <Button
@@ -263,14 +316,15 @@ function SidebarTrigger({
       variant="ghost"
       size="icon-sm"
       className={cn(className)}
+      aria-expanded={isMobile ? openMobile : open}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeftIcon className="rtl:rotate-180" />
-      <span className="sr-only">Toggle Sidebar</span>
+      <PanelLeftIcon aria-hidden="true" className="rtl:rotate-180" />
+      <span className="sr-only">Alternar barra lateral</span>
     </Button>
   )
 }
@@ -282,10 +336,10 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
     <button
       data-sidebar="rail"
       data-slot="sidebar-rail"
-      aria-label="Toggle Sidebar"
+      aria-label="Alternar barra lateral"
       tabIndex={-1}
       onClick={toggleSidebar}
-      title="Toggle Sidebar"
+      title="Alternar barra lateral"
       className={cn(
         "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
         "in-data-[side=left]:cursor-w-resize rtl:in-data-[side=left]:cursor-e-resize in-data-[side=right]:cursor-e-resize rtl:in-data-[side=right]:cursor-w-resize",
@@ -401,7 +455,7 @@ function SidebarGroupLabel({
     props: mergeProps<"div">(
       {
         className: cn(
-          "flex h-8 shrink-0 items-center rounded-xl px-3 text-xs font-medium text-sidebar-foreground/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-3 [&>svg]:size-4 [&>svg]:shrink-0",
+          "flex h-8 shrink-0 items-center rounded-xl px-3 text-xs font-medium text-muted-foreground ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-3 [&>svg]:size-4 [&>svg]:shrink-0",
           className
         ),
       },
@@ -482,7 +536,7 @@ const sidebarMenuButtonVariants = cva(
       variant: {
         default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         outline:
-          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+          "bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]",
       },
       size: {
         default: "h-8 text-sm",
@@ -516,6 +570,7 @@ function SidebarMenuButton({
     props: mergeProps<"button">(
       {
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
+        "aria-current": isActive ? "page" : undefined,
       },
       props
     ),
@@ -679,6 +734,7 @@ function SidebarMenuSubButton({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
+        "aria-current": isActive ? "page" : undefined,
         className: cn(
           "flex h-7 min-w-0 -translate-x-px rtl:translate-x-px items-center gap-2 overflow-hidden rounded-xl px-3 text-sidebar-foreground ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
           className

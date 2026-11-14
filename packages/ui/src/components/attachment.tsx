@@ -6,8 +6,40 @@ import { cn } from "cn"
 
 import { Button } from "@workspace/ui/components/button"
 
+/*
+ * Attachment — estrutura e API do shadcn/ui (versão Base UI):
+ * https://ui.shadcn.com/docs/components/base/attachment
+ * As cores, o contraste e os raios são os da Big Brain.
+ * - Composição: Attachment > AttachmentMedia, AttachmentContent (Title e
+ *   Description), AttachmentActions (Action) e AttachmentTrigger.
+ *   AttachmentGroup agrupa vários numa linha com rolagem. Todas as partes
+ *   expõem `data-slot`; o Attachment expõe `data-state`, `data-size` e
+ *   `data-orientation`, e a mídia expõe `data-variant`.
+ * - Cores com opacidade, trocadas por papéis cheios:
+ *   - hover do card clicável: `bg-muted/50` -> `bg-muted`;
+ *   - borda do erro: `border-destructive/30` -> `border-destructive`;
+ *   - mídia do erro: `bg-destructive/10 text-destructive` -> `bg-muted
+ *     text-destructive-hover` (o ícone vermelho sobre `muted` precisa do
+ *     `destructive-hover`, 5,9:1 no claro);
+ *   - descrição do erro: `text-destructive/80` -> `text-destructive-hover`
+ *     (6,4:1 no card claro; mais de 9:1 no escuro).
+ *   Ficou o `opacity-60` da imagem enviando (é a opacidade do elemento, não
+ *   de uma cor de texto) e o `opacity` volta a 100% em `done` e `idle`.
+ * - O estado de erro não depende da cor: a razão da falha vai na
+ *   AttachmentDescription (veja a página Docs).
+ * - Foco: o card inteiro ganha o anel do projeto quando qualquer parte
+ *   recebe foco (`focus-within`, com afastamento de 2px pela cor do fundo);
+ *   o AttachmentTrigger tira o outline e usa esse anel. Os botões de ação têm
+ *   o próprio anel do Button.
+ * - AttachmentTrigger fica atrás das ações (`z-10` contra `z-20`): as duas
+ *   coisas continuam focáveis e clicáveis. Um <button> nativo por padrão, ou o
+ *   elemento de `render` (um <a>, ou um DialogTrigger).
+ * - O texto fixo do componente não existe: o nome de cada ação é de quem usa
+ *   ("Remover relatorio.pdf").
+ * - Margens e posições lógicas (`end-3`): funciona em RTL.
+ */
 const attachmentVariants = cva(
-  "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-2xl border bg-card text-card-foreground transition-colors focus-within:ring-3 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background has-[>a,>button]:hover:bg-muted/50 data-[state=error]:border-destructive/30 data-[state=idle]:border-dashed",
+  "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-2xl border bg-card text-card-foreground transition-colors focus-within:ring-3 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background has-[>a,>button]:hover:bg-muted data-[state=error]:border-destructive data-[state=idle]:border-dashed",
   {
     variants: {
       size: {
@@ -47,7 +79,7 @@ function Attachment({
 }
 
 const attachmentMediaVariants = cva(
-  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-foreground group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-md group-data-[state=error]/attachment:bg-destructive/10 group-data-[state=error]/attachment:text-destructive group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6! [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5",
+  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-foreground group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-md group-data-[state=error]/attachment:text-destructive-hover group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6! [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5",
   {
     variants: {
       variant: {
@@ -117,7 +149,7 @@ function AttachmentDescription({
     <span
       data-slot="attachment-description"
       className={cn(
-        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
+        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive-hover",
         "max-w-full",
         className
       )}
@@ -134,7 +166,7 @@ function AttachmentActions({
     <div
       data-slot="attachment-actions"
       className={cn(
-        "relative z-20 flex shrink-0 items-center group-data-[orientation=vertical]/attachment:absolute group-data-[orientation=vertical]/attachment:top-3 group-data-[orientation=vertical]/attachment:end-3 group-data-[orientation=vertical]/attachment:gap-1",
+        "relative z-20 flex shrink-0 items-center group-data-[orientation=vertical]/attachment:absolute group-data-[orientation=vertical]/attachment:end-3 group-data-[orientation=vertical]/attachment:top-3 group-data-[orientation=vertical]/attachment:gap-1",
         className
       )}
       {...props}
