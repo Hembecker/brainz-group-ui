@@ -19,7 +19,7 @@ Presets anteriores, só registrados: `b1auh2PQm` (zinc, raio `default`) e `b1auh
 
 Para trocar de preset, só registre o código aqui e mude à mão o que valer a pena, mantendo os tokens e as regras de acessibilidade.
 
-O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **só referência**. Não altere nada nele.
+O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi apagado a pedido do usuário em 2026-11-15: o conteúdo foi para a Lixeira do Windows. O histórico dele continua na branch `legacy/design-system`.
 
 ## Fontes da verdade
 - **Estrutura e lógica dos componentes: shadcn/ui, versão Base UI.**
@@ -144,7 +144,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) é **
 - O cache global do npm desta máquina está corrompido (`ENOENT … Invalid response body`). Nas instalações, use um cache privado com `$env:npm_config_cache = '<pasta temporária>'` antes do `npm.cmd`. Não rode `npm cache clean --force` sem perguntar ao usuário.
 
 ## Storybook pelo app
-- `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**. A 6006 fica para o Storybook do projeto antigo.
+- `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**, a única do Storybook. A 6006 não é mais usada (era a do projeto antigo).
 
 ## Estado (2026-11-13)
 - **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), publicados. **Sem push** (o usuário escolheu só commitar): `bf3da8a` (tema da Brainz Group), `0436c87` (`add --all`), `477f6e0` (escala rhea, `field`, foco), `4a3c1d1` (modelos Input e Dialog), `ba6a149`, `ac66a3f`, `01a0331` e `95bf988` (as quatro ondas de revisão) e o commit de fechamento.
