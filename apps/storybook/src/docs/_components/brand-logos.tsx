@@ -12,7 +12,7 @@ import { DocsSurface } from "./color-scale"
 /** De onde vem o logo oficial de cada marca e como ele usa as cores. */
 const logoNotes: Record<BrandId, string> = {
   brainz:
-    'gerado do SVG oficial (brand/brainz-group-logo.svg). "BRAINZ" usa currentColor; "GROUP" usa a Primária 500 e o símbolo, um gradiente da Primária 500 a #305BA3, como no arquivo.',
+    'gerado do SVG oficial (brand/brainz-group-logo.svg). "BRAINZ" usa currentColor; "GROUP" usa a Primária 500. O símbolo (brand/brainz-group-icon.svg) tem duas formas: uma com o gradiente da Primária 500 a #305BA3 e uma contornada na Primária 500.',
   sesi: 'gerado dos componentes oficiais do SI Design System (brand/sesi-logo.svg e brand/sesi-simbolo.svg). No claro, as cores do arquivo: "SESI" em #164194, o ponto do "I" na Pure #52AE32 e a assinatura em #575756. No escuro, a versão oficial Branco, em currentColor. O símbolo é o favicon oficial e mantém as cores nos dois modos.',
 }
 
