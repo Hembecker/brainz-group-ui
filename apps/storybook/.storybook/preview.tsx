@@ -118,7 +118,7 @@ const preview: Preview = {
         icon: "paintbrush",
         items: [
           { value: "brainz", title: "Brainz Group" },
-          { value: "sesi", title: "SESI (ilustrativo)" },
+          { value: "sesi", title: "SESI" },
         ],
         dynamicTitle: true,
       },

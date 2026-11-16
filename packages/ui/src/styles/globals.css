@@ -166,7 +166,8 @@
  *   Pure, 2,8:1). Decisões do usuário em 2026-11-16: anel rosa, como o foco do
  *   SI DS, no tom 600 da escala Highlights (o #F673AD oficial tem 2,6:1);
  *   borda do campo #DFDFDF, a oficial (1,33:1, aceita como a do campo da
- *   Brainz); fundo da página Background/SESI/500 (#F9FFF9).
+ *   Brainz); fundo da página branco, como na Brainz (o Background/SESI/500
+ *   #F9FFF9 do SI DS foi testado e removido a pedido do usuário).
  * - Fonte: Inter, a do SI DS. Raio: 4px nos campos e nos botões (decisão do
  *   usuário): 0.1389rem dá 4px no rounded-2xl dos controles (× 1,8); como o
  *   raio é um só, o Card fica com ~5,8px (× 2,6) e os popups acompanham. A
@@ -335,23 +336,23 @@
  * Os papéis que não aparecem aqui seguem os do :root e do .dark.
  *
  * Claro (`:not(.dark)`, para não vazar para o escuro, que tem especificidade
- * menor): neutros e vermelho do SI DS (Neutral e Feedback/Error), fundo
- * esverdeado do SI DS e campo branco contornado com a borda oficial #DFDFDF.
- * A11Y: a borda tem 1,33:1 no branco e 1,31:1 no fundo, abaixo dos 3:1 de um
- * limite de campo: escolha do usuário em 2026-11-16, como o limite do campo
- * da Brainz (1,25:1). Os números abaixo são medidos no fundo #F9FFF9.
+ * menor): neutros e vermelho do SI DS (Neutral e Feedback/Error) e campo
+ * branco contornado com a borda oficial #DFDFDF. O fundo da página continua
+ * o branco do :root.
+ * A11Y: a borda tem 1,33:1 no branco, abaixo dos 3:1 de um limite de campo:
+ * escolha do usuário em 2026-11-16, como o limite do campo da Brainz
+ * (1,25:1). Os números abaixo são medidos no fundo branco.
  */
 :root[data-brand="sesi"]:not(.dark) {
-  --background: #f9fff9; /* Background/SESI/500 */
-  --foreground: #262626; /* Neutral/900: 14,9:1 no fundo; 15,1:1 no card */
+  --foreground: #262626; /* Neutral/900: 15,1:1 no fundo e no card */
   --card-foreground: #262626;
   --popover-foreground: #262626;
   --muted: #f2f2f2; /* Neutral/200 */
-  --muted-foreground: #646464; /* Neutral/600: 5,8:1 no fundo; 5,3:1 na muted */
+  --muted-foreground: #646464; /* Neutral/600: 5,9:1 no fundo; 5,3:1 na muted */
   --accent: #f2f2f2;
   --accent-foreground: #262626; /* 13,5:1 */
   --border: #dfdfdf; /* Neutral/300: 1,33:1, decorativa (a borda do SI DS) */
-  /* Borda de controle (Button outline, Toggle, InputOTP): Neutral/600, 5,8:1
+  /* Borda de controle (Button outline, Toggle, InputOTP): Neutral/600, 5,9:1
      no fundo. Fica mais escura que a borda do campo. */
   --input: #646464;
   --field: #ffffff; /* o campo do SI DS não tem preenchimento */
@@ -361,8 +362,8 @@
   --primary: var(--bb-primary-700); /* 6,17:1 com branco */
   --primary-hover: var(--bb-primary-800); /* 8,46:1 */
   --primary-pressed: var(--bb-primary-900); /* 10,52:1 */
-  /* Anel rosa (Highlights/600), como o foco do SI DS: 3,92:1 no fundo e
-     3,98:1 no card e no campo brancos. */
+  /* Anel rosa (Highlights/600), como o foco do SI DS: 3,98:1 no fundo, no
+     card e no campo, todos brancos. */
   --ring: #ca588a;
   --link: var(--bb-primary-700); /* 6,17:1 */
   --link-hover: var(--bb-primary-900); /* 10,52:1 */

@@ -9,7 +9,12 @@
 import * as React from "react"
 
 import { Badge } from "@workspace/ui/components/badge"
-import { brandList, brands, type BrandId } from "@workspace/ui/brand/brands"
+import {
+  brandList,
+  brands,
+  defaultBrandId,
+  type BrandId,
+} from "@workspace/ui/brand/brands"
 import { useBrand } from "@workspace/ui/brand/use-brand"
 import { cn } from "@workspace/ui/lib/utils"
 
@@ -217,11 +222,12 @@ export function BrandScales() {
                 <code className="font-mono text-xs text-muted-foreground">
                   data-brand="{brand.id}"
                 </code>
+                {brand.id === defaultBrandId ? (
+                  <Badge variant="secondary">Padrão</Badge>
+                ) : null}
                 {brand.illustrative ? (
                   <Badge variant="outline">Ilustrativo</Badge>
-                ) : (
-                  <Badge variant="secondary">Padrão</Badge>
-                )}
+                ) : null}
               </div>
               <p className="text-sm text-muted-foreground">
                 {brand.description}

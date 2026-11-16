@@ -11,7 +11,7 @@
 import * as React from "react"
 
 import { BrainzLogo, BrainzMark } from "./brainz-logo"
-import { createExampleLogo, createExampleMark } from "./example-logo"
+import { SesiLogo, SesiMark } from "./sesi-logo"
 
 export type BrandId = "brainz" | "sesi"
 
@@ -49,10 +49,10 @@ export const brands: Record<BrandId, BrandDefinition> = {
     id: "sesi",
     name: "SESI",
     description:
-      "Tokens oficiais do SI Design System (Sistema Indústria): uma cor só, o verde (Pure #52AE32), neutros, vermelho de erro, Inter, raio de 4px e o fundo #F9FFF9. O logo é de exemplo, por isso a marca segue marcada como ilustrativa.",
-    illustrative: true,
-    Logo: createExampleLogo("S", "SESI"),
-    Mark: createExampleMark("S"),
+      "Tokens oficiais do SI Design System (Sistema Indústria): uma cor só, o verde (Pure #52AE32), neutros, vermelho de erro, Inter e raio de 4px. O logo e o símbolo são os oficiais do SI DS (brand/sesi-logo.svg e brand/sesi-simbolo.svg).",
+    illustrative: false,
+    Logo: SesiLogo,
+    Mark: SesiMark,
   },
 }
 

@@ -16,7 +16,7 @@ npm.cmd install
 npm.cmd run storybook
 ```
 
-O Storybook abre em http://localhost:6007. Na barra de ferramentas, o seletor **Marca** alterna entre Brainz Group e SESI (ilustrativo), o seletor **Modo** alterna entre claro e escuro, e o seletor **Direção** alterna entre LTR e RTL.
+O Storybook abre em http://localhost:6007. Na barra de ferramentas, o seletor **Marca** alterna entre Brainz Group e SESI, o seletor **Modo** alterna entre claro e escuro, e o seletor **Direção** alterna entre LTR e RTL.
 
 Na raiz, os scripts rodam pelo Turbo em todos os workspaces:
 

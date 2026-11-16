@@ -190,7 +190,7 @@ export const sesiRoleOverrides: RoleMapping[] = [
     light: "rosa Highlights/600 (#CA588A)",
     dark: "rosa Highlights/300 (#FCC0DA)",
     usage:
-      "Rosa, como o foco do SI DS (o #F673AD oficial tem 2,63:1). No claro, 3,92:1 no fundo e 3,98:1 no card; no escuro, 12,9:1 no fundo e 11,3:1 no card.",
+      "Rosa, como o foco do SI DS (o #F673AD oficial tem 2,63:1). No claro, 3,98:1 no fundo e no card; no escuro, 12,9:1 no fundo e 11,3:1 no card.",
   },
   {
     token: "--link / --link-hover",
@@ -210,8 +210,7 @@ export const sesiRoleOverrides: RoleMapping[] = [
       "--foreground, --card-foreground, --popover-foreground, --accent-foreground, --sidebar-foreground, --sidebar-accent-foreground",
     light: "Neutral 900 (#262626)",
     dark: "—",
-    usage:
-      "Texto principal: 14,9:1 no fundo; 15,1:1 no card; 13,5:1 na Neutral 200.",
+    usage: "Texto principal: 15,1:1 no fundo e no card; 13,5:1 na Neutral 200.",
   },
   {
     token: "--muted, --accent, --sidebar-accent",
@@ -223,19 +222,13 @@ export const sesiRoleOverrides: RoleMapping[] = [
     token: "--muted-foreground",
     light: "Neutral 600 (#646464)",
     dark: "—",
-    usage: "Texto de apoio e placeholder: 5,8:1 no fundo; 5,3:1 na muted.",
+    usage: "Texto de apoio e placeholder: 5,9:1 no fundo; 5,3:1 na muted.",
   },
   {
     token: "--border, --sidebar-border",
     light: "Neutral 300 (#DFDFDF)",
     dark: "—",
     usage: "Bordas decorativas (1,33:1), como no SI DS.",
-  },
-  {
-    token: "--background",
-    light: "Background/SESI/500 (#F9FFF9)",
-    dark: "—",
-    usage: "O fundo esverdeado do SI DS; card, popover e campo seguem brancos.",
   },
   {
     token: "--field / --field-border",
@@ -249,7 +242,7 @@ export const sesiRoleOverrides: RoleMapping[] = [
     light: "Neutral 600 (#646464)",
     dark: "—",
     usage:
-      "Borda de controle (Button outline, Toggle, InputOTP): 5,8:1 no fundo.",
+      "Borda de controle (Button outline, Toggle, InputOTP): 5,9:1 no fundo.",
   },
   {
     token: "--destructive / --destructive-hover",
@@ -514,6 +507,6 @@ export const contrastPairs: ContrastPair[] = [
     label: "borda do campo (o limite quando o campo não tem preenchimento)",
     status: "escolha do usuário (A11Y)",
     notes:
-      "transparente nos dois modos (SESI claro: 1,31:1, escolha do usuário)",
+      "transparente nos dois modos (SESI claro: 1,33:1, escolha do usuário)",
   },
 ]

@@ -916,7 +916,7 @@ export const MarcaEConta: Story = {
     const tela = within(canvasElement)
 
     // The `brand` prop replaces the active brand (name, subtitle, logo), so
-    // "Marca ilustrativa" never shows, not even with SESI.
+    // "Marca ilustrativa" never shows, whatever the active brand.
     const marca = tela.getByRole("link", { name: /Portal do Cliente/ })
     await expect(marca).toHaveAttribute("href", "#inicio")
     await expect(within(marca).getByText("Ambiente de testes")).toBeVisible()

@@ -29,8 +29,9 @@ function Initial({ initial }: { initial: string }) {
 
 /**
  * Símbolo genérico (inicial num quadrado na Primária 600, texto branco: 5,2:1
- * na Brainz Group, 3,96:1 no SESI, a única marca que o usa hoje; é logotipo,
- * isento do 1.4.3 da WCAG).
+ * na Brainz Group; é logotipo, isento do 1.4.3 da WCAG). Nenhuma marca
+ * instalada o usa hoje: é o ponto de partida de uma marca nova, enquanto o
+ * logo oficial não chega.
  */
 export function createExampleMark(initial: string) {
   return function ExampleMark({ title, ...props }: LogoProps) {
