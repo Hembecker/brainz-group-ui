@@ -10,6 +10,14 @@ Um caminho só: criar um app Vite **dentro deste monorepo**, na pasta `apps/`, c
 
 O pacote `@workspace/ui` é um pacote do workspace: privado e não publicado no npm. Hoje um app só consegue usá-lo se estiver no mesmo repositório, como pasta de `apps/`. O npm workspaces liga o pacote ao app, e o Tailwind lê as classes do app e as do pacote (veja [Como o Tailwind encontra as classes](#como-o-tailwind-encontra-as-classes)). A seção [Fora do monorepo](#fora-do-monorepo) explica o que ainda falta para usar o design system em outros repositórios.
 
+## O que o app recebe
+
+O design system chega ao app em três partes, e nenhuma delas é um comando de instalação de tema:
+
+- **Componentes e blocos:** vêm do pacote `@workspace/ui`, importados pelo caminho de cada um ([Como importar](#como-importar)).
+- **Tema (os tokens):** vem inteiro num import só, o `@workspace/ui/globals.css` ([passo 5](#5-estilos-e-entrada)). Ele traz as cores, a fonte, o raio e os papéis de **todas** as marcas, no claro e no escuro. Não há `shadcn init` nem tema do shadcn para instalar, e o `shadcn apply` não deve ser usado.
+- **Marca e modo:** são escolhidos no `<html>` do app, pelo atributo `data-brand` e pela classe `dark` ([passo 6](#6-escolher-a-marca-e-o-modo)). Sem o atributo, vale a Brainz Group.
+
 Nesta página o app novo se chama `meu-app`. Troque o nome da pasta e o `name` do `package.json` pelo nome do seu projeto. Os comandos são do PowerShell, no Windows, e rodam na raiz do repositório.
 
 ## Pré-requisitos
@@ -37,7 +45,7 @@ npm.cmd ci`}
 
 O `npm ci` instala tudo pelo `package-lock.json`: as dependências de todos os pacotes ficam em `node_modules/`, na raiz, e o `@workspace/ui` vira um link para `packages/ui`.
 
-Rode o `npm ci` **antes** de criar o app. Depois que a pasta nova existe, o `package-lock.json` ainda não a conhece, e o `npm ci` recusa um lock fora de sincronia. O passo 6 registra o app novo.
+Rode o `npm ci` **antes** de criar o app. Depois que a pasta nova existe, o `package-lock.json` ainda não a conhece, e o `npm ci` recusa um lock fora de sincronia. O passo 7 registra o app novo.
 
 ## 2. Criar a pasta e copiar a configuração
 
@@ -289,7 +297,61 @@ O Tailwind 4 só gera as classes que encontra nos arquivos que ele lê. Elas vê
 
 O `globals.css` tem mais duas linhas `@source`, presentes desde o primeiro commit do repositório: `"../../../apps/**/*.{ts,tsx,mdx}"` e `"../../../components/**/*.{ts,tsx}"`. Relativas ao `globals.css`, elas apontam para `packages/apps` e `packages/components`, pastas que não existem, e hoje não cobrem nada. Por isso cada app gera só as classes dele: uma classe usada só no Storybook não entra no CSS do `apps/web`.
 
-## 6. Registrar o app no workspace
+## 6. Escolher a marca e o modo
+
+O `globals.css` já tem os tokens de todas as marcas. O app só diz qual vale, no `<html>`:
+
+<ScrollTable label="Marcas disponíveis">
+  <table>
+    <thead>
+      <tr>
+        <th>Marca</th>
+        <th>
+          Valor de <code>data-brand</code>
+        </th>
+        <th>Tokens</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Brainz Group (padrão)</td>
+        <td>
+          <code>brainz</code>, ou sem o atributo
+        </td>
+        <td>Escala Primária da Brainz Group.</td>
+      </tr>
+      <tr>
+        <td>SESI</td>
+        <td>
+          <code>sesi</code>
+        </td>
+        <td>Tokens oficiais do SI Design System (cores, neutros, raio e fundo da página).</td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+**Um app de uma marca só** fixa o atributo no `index.html` e não precisa de código:
+
+<Source
+  language="html"
+  dark
+  code={`<html lang="pt-BR" data-brand="sesi">`}
+/>
+
+**Um app que troca de marca** chama o `setBrand`, que grava o atributo no `<html>`. Os componentes não mudam: só os tokens trocam, e os blocos leem o logo da marca ativa pelo `useBrand()`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { setBrand } from "@workspace/ui/brand/use-brand"
+
+setBrand("sesi")   // ou "brainz"`}
+/>
+
+**O modo** é a classe `dark` no `<html>`. O `ThemeProvider` copiado no passo 2 põe a classe sozinho, seguindo o sistema operacional. Os detalhes de cada um estão em [Modo escuro](#modo-escuro) e [Marca](#marca); a página [Temas](?path=/docs/temas--docs) mostra os tokens de cada marca e como adicionar uma nova.
+
+## 7. Registrar o app no workspace
 
 Volte à raiz e rode o `npm install`:
 
@@ -301,7 +363,7 @@ Volte à raiz e rode o `npm install`:
 
 O `workspaces` da raiz (`apps/*` e `packages/*`) já inclui a pasta nova. O `npm install` registra o `meu-app` no `package-lock.json` e liga as dependências dele. As versões são as mesmas do `apps/web`, que já estão no lock. **O `package-lock.json` muda**: faça o commit dele junto com o app.
 
-## 7. Rodar
+## 8. Rodar
 
 <Source
   language="powershell"
