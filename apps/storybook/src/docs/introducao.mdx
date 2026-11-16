@@ -6,7 +6,7 @@ import { Meta, Source } from "@storybook/addon-docs/blocks";
 
 A base de interface da Brainz Group: componentes, blocos de aplicação e temas de marca, documentados e prontos para reaproveitar nos projetos do grupo.
 
-O Big Brain UI é o design system da Big Brain, com a marca **Brainz Group** (é assim que o logo e o material da marca escrevem o nome). Ele é uma **base comum** para os projetos do grupo e é **independente dos produtos**: nenhuma paleta de produto entra aqui. Cada projeto usa os mesmos componentes e troca só o que é dele: a marca, a navegação, o conteúdo e as imagens.
+O Brainz Group UI é o design system da Big Brain, com a marca **Brainz Group** (é assim que o logo e o material da marca escrevem o nome). Ele é uma **base comum** para os projetos do grupo e é **independente dos produtos**: nenhuma paleta de produto entra aqui. Cada projeto usa os mesmos componentes e troca só o que é dele: a marca, a navegação, o conteúdo e as imagens.
 
 Esta documentação segue a organização da [documentação do shadcn/ui](https://ui.shadcn.com/docs): uma introdução, a instalação, o catálogo de componentes, os blocos de aplicação e os temas.
 
@@ -29,7 +29,7 @@ Os componentes nunca usam a paleta direto. Por isso, trocar de marca é trocar a
 
 ### Acessibilidade
 
-As regras do artigo [Making your website accessible with shadcn/ui](https://shadcnstudio.com/blog/making-your-website-accessible-with-shadcn-ui/) valem para todo componente, e cada página tem uma seção **Acessibilidade** que as aplica:
+Todo componente segue as mesmas regras de acessibilidade, e cada página tem uma seção **Acessibilidade** que as aplica ao componente:
 
 1. **Nome acessível:** todo controle tem um nome específico, com a ação e, quando ajudar, o alvo ("Excluir fatura"). Um botão só com ícone recebe o nome por `aria-label` ou por texto `sr-only`. O tooltip nunca é o único nome.
 2. **Ícones decorativos:** levam `aria-hidden="true"`.
@@ -37,7 +37,7 @@ As regras do artigo [Making your website accessible with shadcn/ui](https://shad
 4. **Gatilhos de primitivos:** recebem o elemento pela prop `render`, sem um `div` em volta. `<button>` serve para ação e `<a>` para navegação.
 5. **Formulários:** o rótulo é persistente, nunca só o placeholder. A descrição e o erro ficam ligados ao campo, e o estado inválido aparece na tela (`data-invalid`) e para a tecnologia assistiva (`aria-invalid`).
 6. **Mudanças dinâmicas:** a região `aria-live="polite"` fica sempre montada, e só o texto dela muda. `assertive` só para erros críticos.
-7. **Testes:** teclado, axe nos dois modos e em RTL, leitor de tela e zoom a 200%.
+7. **Testes:** o axe roda em todas as stories no claro, no escuro, em RTL e na marca SESI; a navegação só pelo teclado e o reflow a 320px e a 200% de zoom são conferidos nas páginas.
 
 Cada story é também um teste: o `npm.cmd run test` roda o axe em todas as stories no claro, no escuro e em RTL, e qualquer violação reprova.
 

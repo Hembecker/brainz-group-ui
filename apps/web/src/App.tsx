@@ -30,7 +30,7 @@ export function App() {
         : path === "/cadastro"
           ? "Criar conta"
           : (demoPages[path]?.title ?? "Página não encontrada")
-    document.title = `${title} · Big Brain UI`
+    document.title = `${title} · Brainz Group UI`
 
     const previous = previousPath.current
     previousPath.current = path

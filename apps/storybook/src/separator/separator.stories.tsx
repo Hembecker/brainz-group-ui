@@ -26,7 +26,7 @@ export const Demo: Story = {
   render: () => (
     <div className="flex max-w-sm flex-col gap-4 text-sm">
       <div className="flex flex-col gap-1.5">
-        <div className="leading-none font-medium">Big Brain UI</div>
+        <div className="leading-none font-medium">Brainz Group UI</div>
         <div className="text-muted-foreground">
           A base do design system da Brainz Group
         </div>

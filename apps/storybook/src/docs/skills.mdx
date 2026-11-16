@@ -166,7 +166,7 @@ Os scripts abaixo estão nos `package.json` do monorepo. Rode-os da raiz, com `n
       <tr><th>Comando</th><th>O que faz</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>npm.cmd run storybook</code></td><td>Abre esta documentação em <code>http://localhost:6007</code>, a única porta do Storybook. No app do Claude, a configuração <code>big-brain-ui-storybook</code> do <code>.claude/launch.json</code> faz o mesmo.</td></tr>
+      <tr><td><code>npm.cmd run storybook</code></td><td>Abre esta documentação em <code>http://localhost:6007</code>, a única porta do Storybook. No app do Claude, a configuração <code>brainz-group-ui-storybook</code> do <code>.claude/launch.json</code> faz o mesmo.</td></tr>
       <tr><td><code>npm.cmd run test</code></td><td>Cada story vira um teste no Chromium, com o axe como erro: qualquer violação reprova. Roda três vezes: claro, escuro e RTL.</td></tr>
       <tr><td><code>npm.cmd run test:light -w @workspace/storybook</code></td><td>Só o modo claro. Há também <code>test:dark</code> e <code>test:rtl</code>.</td></tr>
       <tr><td><code>npm.cmd run test:sesi -w @workspace/storybook</code></td><td>A mesma bateria com a marca SESI, no claro e no escuro, para conferir que todo componente mantém o contraste com outra marca.</td></tr>

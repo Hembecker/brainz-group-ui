@@ -13,7 +13,8 @@ const config: StorybookConfig = {
     "@chromatic-com/storybook",
   ],
   // brand/ (logo e paleta) servido na raiz, para os exemplos com imagem.
-  staticDirs: ["../../../brand"],
+  // brand/ (o material da marca, servido na raiz) e public/ (o favicon).
+  staticDirs: ["../../../brand", "../public"],
   core: { disableTelemetry: true },
   // Desempenho (2026-11-16): no `storybook dev`, o Vite pré-transforma todas
   // as stories e MDX ao subir o servidor, e a primeira visita a cada arquivo

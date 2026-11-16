@@ -60,7 +60,7 @@ React 19.3.1, Vite 8, Tailwind 4, TypeScript 6, Turbo, `@base-ui/react`, class-v
 ## Fontes da verdade
 
 - **Estrutura e lógica:** cada componente segue a página dele no [shadcn/ui, versão Base UI](https://ui.shadcn.com/docs/components/base/button), com a mesma API e as mesmas seções de documentação. As cores e o contraste vêm dos nossos tokens.
-- **Acessibilidade:** as regras do guia [shadcn/ui Accessibility](https://shadcnstudio.com/blog/making-your-website-accessible-with-shadcn-ui/). Cada página Docs tem uma seção **Acessibilidade** que aplica essas regras ao componente.
+- **Acessibilidade:** regras comuns a todos os componentes: nome acessível em todo controle, ícones decorativos ocultos, foco visível no token `--ring`, gatilhos sem `div` em volta, rótulo, descrição e erro ligados ao campo, regiões vivas sempre montadas e o axe em todas as stories (claro, escuro, RTL e SESI). Cada página Docs tem uma seção **Acessibilidade** que aplica essas regras ao componente.
 
 ## Tokens
 

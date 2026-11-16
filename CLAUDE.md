@@ -1,4 +1,4 @@
-# Big Brain UI
+# Brainz Group UI
 
 Design System da Big Brain (marca Brainz Group), num monorepo shadcn/ui (Vite, Turbo e npm workspaces). É um projeto **independente** dos produtos: nenhuma paleta de produto (Sync Flow S1/S3/S5 etc.) entra aqui.
 
@@ -28,7 +28,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
   - Cada componente segue a página dele em `https://ui.shadcn.com/docs/components/base/<nome>`: a mesma API, a mesma composição e as mesmas seções de documentação.
   - Daqui saem a estrutura e o comportamento. As cores, o contraste e os tamanhos vêm dos tokens da Big Brain.
   - O código-fonte vem do CLI (`npx.cmd shadcn add <nome>` dentro de `packages/ui`). Para ler o código de um exemplo do site (por exemplo, a seção RTL), abra a página e clique em **View Code**. Não chute URLs do registro.
-- **Acessibilidade: o artigo https://shadcnstudio.com/blog/making-your-website-accessible-with-shadcn-ui/.** As regras dele valem para todo componente:
+- **Acessibilidade: o artigo https://shadcnstudio.com/blog/making-your-website-accessible-with-shadcn-ui/.** As regras dele valem para todo componente. É referência interna: nas páginas publicadas (Storybook e README) não cite nem linke o artigo; descreva só o que o projeto cobre (pedido do usuário em 2026-11-16):
   1. **Nome acessível:**
      - todo controle tem nome, e o nome é específico (ação e, quando ajudar, o alvo: "Excluir fatura");
      - um botão só com ícone recebe o nome por `aria-label` ou por texto `sr-only`;
@@ -84,6 +84,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
 - `packages/ui/src/blocks/` (`@workspace/ui/blocks/*`): os templates `dashboard.tsx` (sidebar-08), `auth-layout.tsx`, `login.tsx` (login-02) e `signup.tsx` (signup-02), só com props (marca, navegação, conteúdo, imagem, `labels`), sem dados nem regra de negócio. Os arquivos que o `shadcn add` gerou foram portados e apagados; o `add` dos blocos sobrescreveu 13 primitivos e eles foram restaurados com `git checkout` (repita isso se rodar o `add` de um bloco de novo).
 - `apps/storybook/src/docs/`: as páginas Introdução, Instalação, Componentes (visão geral), Componentes de IA (planejados marcados), Temas, Tipografia e Skills; `src/blocks/`: Blocks (visão geral, Dashboard, Login, Cadastro). A ordem da barra vem do `storySort` do `preview.tsx` com o `manager.ts` (`showRoots: false`). Os ids das páginas mantêm os acentos (`?path=/docs/introdução--docs`).
 - `apps/web`: a demo usa os blocos com rotas por hash (`#/`, `#/login`, `#/cadastro`) e dados de exemplo em `src/data/`. O atalho de tema é Alt+Shift+D.
+- **Nome e favicon** (2026-11-16): o projeto se chama Brainz Group UI (`brainz-group-ui` nos identificadores; era Big Brain UI). O favicon é o símbolo da Brainz Group com o gradiente oficial, gerado do `brand/brainz-group-logo.svg`, em `apps/storybook/public/favicon.svg` (o `public/` é um `staticDirs` do `main.ts`) e `apps/web/public/favicon.svg` (`<link rel="icon">` no `index.html`). O `manager.ts` põe `brandTitle: "Brainz Group UI"` no topo da barra, com o `themes.normal` (segue o claro/escuro do sistema). O sufixo "⋅ Storybook" do título da aba é fixo do Storybook. "Big Brain" nos comentários é a empresa e continua.
 - `brand/`: o material da marca. O Storybook serve esta pasta na raiz (`staticDirs`), então os exemplos usam `src="brainz-group-logo.svg"`.
 
 ## Convenção de cada componente
@@ -175,13 +176,13 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
 
 ## Storybook pelo app
 
-- `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**, a única do Storybook. A 6006 não é mais usada (era a do projeto antigo).
+- `.claude/launch.json` tem a configuração `brainz-group-ui-storybook`, na porta **6007**, a única do Storybook. A 6006 não é mais usada (era a do projeto antigo).
 
 ## Estado (2026-11-13)
 
 - **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), publicados. **Sem push** (o usuário escolheu só commitar): `bf3da8a` (tema da Brainz Group), `0436c87` (`add --all`), `477f6e0` (escala rhea, `field`, foco), `4a3c1d1` (modelos Input e Dialog), `ba6a149`, `ac66a3f`, `01a0331` e `95bf988` (as quatro ondas de revisão) e o commit de fechamento.
-- **Remoto:** `origin` = https://github.com/Hembecker/big-brain-ui (privado). A branch `legacy/design-system` não foi enviada.
-- **Vercel:** projeto `big-brain-ui` no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://big-brain-ui.vercel.app. O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
+- **Remoto:** `origin` = https://github.com/Hembecker/brainz-group-ui (privado; era `big-brain-ui` até 2026-11-16, e o GitHub redireciona o endereço antigo). Descrição e site (o Storybook no Vercel) definidos pelo `gh repo edit`. A branch `legacy/design-system` não foi enviada.
+- **Vercel:** projeto `brainz-group-ui` (era `big-brain-ui` até 2026-11-16; o Vercel não tem campo de descrição) no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://brainz-group-ui.vercel.app (o domínio antigo `big-brain-ui.vercel.app` foi removido a pedido do usuário). O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
 - **Histórico do projeto antigo:** a branch `legacy/design-system` tem os 4 commits dele (`07e12db` a `9e46818`). É só arquivo: não faça merge dela na `master`.
 - **Decisões da migração:**
   - stories e MDX em `apps/storybook`, componentes planos em `packages/ui`;
