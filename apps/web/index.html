@@ -1,10 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vite-monorepo</title>
+    <title>Big Brain UI</title>
+    <script>
+      // Põe a classe do tema no <html> antes da primeira pintura, para o modo
+      // escuro guardado não piscar claro. Repete a regra do ThemeProvider
+      // (chave "theme", padrão "system"), que cuida das trocas depois.
+      ;(function () {
+        var theme = null
+        try {
+          theme = window.localStorage.getItem("theme")
+        } catch (error) {
+          // Armazenamento bloqueado: vale o padrão.
+        }
+        if (theme !== "dark" && theme !== "light") theme = "system"
+        if (theme === "system") {
+          theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
+        }
+        document.documentElement.classList.add(theme)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

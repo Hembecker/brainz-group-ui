@@ -25,10 +25,12 @@ import { CheckIcon, CopyIcon } from "lucide-react"
  *     `border` no escuro dá só 4,4:1;
  *   - hover dos botões do cabeçalho: `bg-foreground/5` e `/10` ->
  *     `bg-border`;
- *   - botão flutuante: `ring-foreground/10` -> `ring-border`;
+ *   - botão flutuante: `ring-foreground/10` -> `ring-border`, só fora do
+ *     foco (`not-focus-visible:`): com o foco, vale o anel sólido do Button
+ *     (`ring-3 ring-ring`, afastado 2px), que o contorno cobriria;
  *   - variante `destructive`: `bg-destructive/5 ring-destructive/15` ->
  *     `bg-muted ring-destructive`, com o texto em `destructive-hover`
- *     (5,9:1 no claro, 7,8:1 no escuro sobre `muted`), como pede o
+ *     (5,8:1 no claro, 7,7:1 no escuro sobre `muted`), como pede o
  *     "vermelho sobre muted".
  *   Sem papel equivalente, ficou `bg-destructive/10` na linha `removed`: o
  *   tom vermelho claro da linha removida não existe como papel cheio. O
@@ -48,7 +50,8 @@ import { CheckIcon, CopyIcon } from "lucide-react"
  *   `aria-label` para dizer o alvo). O nome não muda ao copiar: quem anuncia o
  *   "Copiado" é a região `aria-live="polite"`, sempre montada, para o leitor
  *   de tela não ler o mesmo aviso duas vezes. Quem enxerga vê o ícone virar
- *   um check por 2 s.
+ *   um check por 2 s. Sem a API de área de transferência (origem sem HTTPS,
+ *   alguns webviews) ou com o acesso negado, a cópia falha em silêncio.
  * - O conteúdo é sempre `dir="ltr"`; o cabeçalho segue a direção da página
  *   (`ms-auto`, `-me-1.5`, `end-3`).
  */
@@ -119,7 +122,7 @@ function CodeBlockActions({
     <div
       data-slot="code-block-actions"
       className={cn(
-        "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-border [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:end-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:end-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:ring-1 [[data-slot=code-block]>&]:*:[button]:ring-border",
+        "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-border [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:end-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:end-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:not-focus-visible:ring-1 [[data-slot=code-block]>&]:*:[button]:not-focus-visible:ring-border",
         className
       )}
       {...props}
@@ -157,10 +160,16 @@ function CodeBlockCopyButton({
         className={cn("hover:bg-border", className)}
         onClick={(event) => {
           onClick?.(event)
-          navigator.clipboard
-            .writeText(value)
-            .then(() => setCopied(true))
-            .catch(() => {})
+          // Without the Clipboard API (non-secure origin, some webviews) or
+          // when access is denied, the copy fails silently.
+          try {
+            navigator.clipboard
+              ?.writeText(value)
+              .then(() => setCopied(true))
+              .catch(() => {})
+          } catch {
+            // Ignored on purpose, see above.
+          }
         }}
         {...props}
       >

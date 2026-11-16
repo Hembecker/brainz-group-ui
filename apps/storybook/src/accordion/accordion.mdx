@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as AccordionStories from "./accordion.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={AccordionStories} />
 
@@ -64,7 +65,7 @@ Monte um `Accordion` com esta composição:
 - **Estado exposto:** o gatilho tem `aria-expanded` (`true` ou `false`) e, com o painel aberto, `aria-controls` apontando para ele. O estado nunca depende só do ícone: a seta que troca de sentido é decorativa (`aria-hidden="true"`).
 - **Teclado:** o Base UI 1.9 não tem foco itinerante (mudança do guia APG): cada gatilho é uma parada do Tab, e Enter ou Espaço abre e fecha o item. Não há setas, Home nem End. O RTL não muda nada aqui, porque a pilha é vertical.
 - **Cabeçalhos:** cada gatilho fica dentro de um heading (`<h3>`), o que deixa a lista de seções navegável pelo leitor de tela. Dentro de um `Card`, ponha o título do card num `<h3>` também, como nos exemplos.
-- **Foco visível:** o gatilho tem o anel sólido de 3px no token `--ring`, desenhado por dentro (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de fora. O registro do shadcn deixava `outline-none` sem substituto. O anel tem 3,5:1 no branco e 3,2:1 sobre o fundo do item aberto, no claro, e 7,6:1 e 5,7:1 no escuro.
+- **Foco visível:** o gatilho tem o anel sólido de 3px no token `--ring`, desenhado por dentro (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de fora. O registro do shadcn deixava `outline-none` sem substituto. O anel tem 5,2:1 no branco e 4,7:1 sobre o fundo do item aberto, no claro, e 7,6:1 e 5,7:1 no escuro.
 - **Contraste:** o item aberto usa o papel `muted`, no lugar do `bg-muted/50` do registro. O texto tem 17,7:1 sobre ele no claro e 14,3:1 no escuro, e a seta, 6,6:1 e 6,1:1.
 - **Desabilitado:** `disabled` num `AccordionItem` apaga o gatilho a 50% e o tira da ordem do Tab. Informe o motivo no texto da página.
 - **Painel fechado:** o conteúdo fechado sai do DOM (não é lido). Para a busca da página (Ctrl+F) achar o texto, use `hiddenUntilFound` no `Accordion`.
@@ -124,36 +125,40 @@ O Accordion é o do Base UI. Veja a [documentação do Base UI](https://base-ui.
 
 A raiz. Expõe `data-slot="accordion"`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>defaultValue</code></td><td><code>string[]</code></td><td>—</td></tr>
-    <tr><td><code>value</code></td><td><code>string[]</code></td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: string[]) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>hiddenUntilFound</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>keepMounted</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Accordion">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>defaultValue</code></td><td><code>string[]</code></td><td>—</td></tr>
+      <tr><td><code>value</code></td><td><code>string[]</code></td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: string[]) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>hiddenUntilFound</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>keepMounted</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AccordionItem
 
 Um item. Precisa de um `value`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Accordion: AccordionItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AccordionTrigger
 
@@ -163,14 +168,16 @@ O botão que abre e fecha o item, dentro de um heading. Leva a seta decorativa. 
 
 O painel do item. Aceita as props do painel do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Accordion</code></td><td><code>{'<div>'}</code></td><td><code>accordion</code></td></tr>
-    <tr><td><code>AccordionItem</code></td><td><code>{'<div>'}</code></td><td><code>accordion-item</code></td></tr>
-    <tr><td><code>AccordionTrigger</code></td><td><code>{'<button>'}</code></td><td><code>accordion-trigger</code></td></tr>
-    <tr><td><code>AccordionContent</code></td><td><code>{'<div>'}</code></td><td><code>accordion-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Accordion: AccordionContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Accordion</code></td><td><code>{'<div>'}</code></td><td><code>accordion</code></td></tr>
+      <tr><td><code>AccordionItem</code></td><td><code>{'<div>'}</code></td><td><code>accordion-item</code></td></tr>
+      <tr><td><code>AccordionTrigger</code></td><td><code>{'<button>'}</code></td><td><code>accordion-trigger</code></td></tr>
+      <tr><td><code>AccordionContent</code></td><td><code>{'<div>'}</code></td><td><code>accordion-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

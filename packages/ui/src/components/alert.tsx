@@ -7,7 +7,8 @@ import { cn } from "cn"
  * https://ui.shadcn.com/docs/components/base/alert
  * As cores, o contraste e o raio são os da Big Brain.
  * - Composição: Alert > ícone, AlertTitle, AlertDescription e AlertAction.
- *   Todas as partes são <div> e expõem `data-slot`.
+ *   Todas as partes são <div> e expõem `data-slot`; o Alert expõe também
+ *   `data-variant` com a variante resolvida (`default` ou `destructive`).
  * - O Alert estático NÃO é uma região viva: o registro fixava `role="alert"`
  *   em todo Alert, o que faz o leitor de tela interromper a fala para
  *   anunciar até um aviso comum, e ainda no carregamento da página. Aqui o
@@ -21,6 +22,9 @@ import { cn } from "cn"
  *   claro e 16,7:1 no escuro; descrição (`muted-foreground`) 7,4:1 e 7,1:1;
  *   destrutivo (título e descrição) red 600 4,8:1 no claro e red 400 6,0:1 no
  *   escuro. O contorno (`border`) é decorativo.
+ * - Links no título e na descrição: sublinhados, com o anel de foco do projeto
+ *   (`ring-3 ring-ring ring-offset-2 ring-offset-background`, `rounded-sm`) no
+ *   lugar do outline do navegador.
  * - Fundo `card` (o mesmo do Card). Cantos e recuos lógicos (`pe`, `end`,
  *   `text-start`): funciona em RTL. O `AlertAction` fica no canto do fim.
  */
@@ -42,12 +46,13 @@ const alertVariants = cva(
 
 function Alert({
   className,
-  variant,
+  variant = "default",
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
   return (
     <div
       data-slot="alert"
+      data-variant={variant}
       className={cn(alertVariants({ variant }), className)}
       {...props}
     />
@@ -59,7 +64,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="alert-title"
       className={cn(
-        "font-medium group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground",
+        "font-medium group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}
@@ -75,7 +80,7 @@ function AlertDescription({
     <div
       data-slot="alert-description"
       className={cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background [&_p:not(:last-child)]:mb-4",
         className
       )}
       {...props}

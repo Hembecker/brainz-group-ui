@@ -261,10 +261,10 @@ export const CabecalhoERodape: Story = {
       </Message>
       <Message role="listitem" align="end">
         <MessageContent>
+          <MessageHeader>Você</MessageHeader>
           <Bubble>
             <BubbleContent>
-              <span className="sr-only">Você: </span>Mande o relatório para o
-              time. Chame a Ana se precisar de ajuda.
+              Mande o relatório para o time. Chame a Ana se precisar de ajuda.
             </BubbleContent>
           </Bubble>
           <MessageFooter>

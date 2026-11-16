@@ -22,6 +22,7 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from "@workspace/ui/components/combobox"
+import { DirectionProvider } from "@workspace/ui/components/direction"
 import {
   Field,
   FieldDescription,
@@ -124,50 +125,52 @@ function ChipsRtl() {
   const anchor = useComboboxAnchor()
 
   return (
-    <div dir="rtl" lang="ar">
-      <Field className="w-full max-w-xs">
-        <FieldLabel htmlFor="rtl-categorias">الفئات</FieldLabel>
-        <Combobox
-          multiple
-          autoHighlight
-          items={[
-            "التكنولوجيا",
-            "التصميم",
-            "الأعمال",
-            "التسويق",
-            "التعليم",
-            "الصحة",
-          ]}
-          defaultValue={["التكنولوجيا"]}
-        >
-          <ComboboxChips ref={anchor}>
-            <ComboboxValue>
-              {(values: string[]) => (
-                <React.Fragment>
-                  {values.map((value) => (
-                    <ComboboxChip key={value}>{value}</ComboboxChip>
-                  ))}
-                  <ComboboxChipsInput
-                    id="rtl-categorias"
-                    placeholder="أضف فئات"
-                  />
-                </React.Fragment>
-              )}
-            </ComboboxValue>
-          </ComboboxChips>
-          <ComboboxContent anchor={anchor} dir="rtl" lang="ar">
-            <ComboboxEmpty>لم يتم العثور على فئات.</ComboboxEmpty>
-            <ComboboxList>
-              {(item: string) => (
-                <ComboboxItem key={item} value={item}>
-                  {item}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      </Field>
-    </div>
+    <DirectionProvider direction="rtl">
+      <div dir="rtl" lang="ar">
+        <Field className="w-full max-w-xs">
+          <FieldLabel htmlFor="rtl-categorias">الفئات</FieldLabel>
+          <Combobox
+            multiple
+            autoHighlight
+            items={[
+              "التكنولوجيا",
+              "التصميم",
+              "الأعمال",
+              "التسويق",
+              "التعليم",
+              "الصحة",
+            ]}
+            defaultValue={["التكنولوجيا"]}
+          >
+            <ComboboxChips ref={anchor}>
+              <ComboboxValue>
+                {(values: string[]) => (
+                  <React.Fragment>
+                    {values.map((value) => (
+                      <ComboboxChip key={value}>{value}</ComboboxChip>
+                    ))}
+                    <ComboboxChipsInput
+                      id="rtl-categorias"
+                      placeholder="أضف فئات"
+                    />
+                  </React.Fragment>
+                )}
+              </ComboboxValue>
+            </ComboboxChips>
+            <ComboboxContent anchor={anchor} dir="rtl" lang="ar">
+              <ComboboxEmpty>لم يتم العثور على فئات.</ComboboxEmpty>
+              <ComboboxList>
+                {(item: string) => (
+                  <ComboboxItem key={item} value={item}>
+                    {item}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </Field>
+      </div>
+    </DirectionProvider>
   )
 }
 
@@ -752,6 +755,17 @@ export const GrupoDeInput: Story = {
 export const Rtl: Story = {
   name: "RTL",
   play: async ({ canvasElement }) => {
+    // With the DirectionProvider, → (not ←) in the empty chips input moves
+    // focus to the last chip, which sits on its right in RTL.
+    const canvas = within(canvasElement)
+    const campo = await canvas.findByRole("combobox", { name: "الفئات" })
+    campo.focus()
+    await userEvent.keyboard("{ArrowRight}")
+    await waitFor(() =>
+      expect(
+        canvas.getByText("التكنولوجيا").closest("[data-slot=combobox-chip]")
+      ).toHaveFocus()
+    )
     await abrirLista(canvasElement, "الفئات")
   },
   parameters: {
@@ -761,50 +775,52 @@ export const Rtl: Story = {
   const anchor = useComboboxAnchor()
 
   return (
-    <div dir="rtl" lang="ar">
-      <Field className="w-full max-w-xs">
-        <FieldLabel htmlFor="rtl-categorias">الفئات</FieldLabel>
-        <Combobox
-          multiple
-          autoHighlight
-          items={[
-            "التكنولوجيا",
-            "التصميم",
-            "الأعمال",
-            "التسويق",
-            "التعليم",
-            "الصحة",
-          ]}
-          defaultValue={["التكنولوجيا"]}
-        >
-          <ComboboxChips ref={anchor}>
-            <ComboboxValue>
-              {(values: string[]) => (
-                <React.Fragment>
-                  {values.map((value) => (
-                    <ComboboxChip key={value}>{value}</ComboboxChip>
-                  ))}
-                  <ComboboxChipsInput
-                    id="rtl-categorias"
-                    placeholder="أضف فئات"
-                  />
-                </React.Fragment>
-              )}
-            </ComboboxValue>
-          </ComboboxChips>
-          <ComboboxContent anchor={anchor} dir="rtl" lang="ar">
-            <ComboboxEmpty>لم يتم العثور على فئات.</ComboboxEmpty>
-            <ComboboxList>
-              {(item: string) => (
-                <ComboboxItem key={item} value={item}>
-                  {item}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      </Field>
-    </div>
+    <DirectionProvider direction="rtl">
+      <div dir="rtl" lang="ar">
+        <Field className="w-full max-w-xs">
+          <FieldLabel htmlFor="rtl-categorias">الفئات</FieldLabel>
+          <Combobox
+            multiple
+            autoHighlight
+            items={[
+              "التكنولوجيا",
+              "التصميم",
+              "الأعمال",
+              "التسويق",
+              "التعليم",
+              "الصحة",
+            ]}
+            defaultValue={["التكنولوجيا"]}
+          >
+            <ComboboxChips ref={anchor}>
+              <ComboboxValue>
+                {(values: string[]) => (
+                  <React.Fragment>
+                    {values.map((value) => (
+                      <ComboboxChip key={value}>{value}</ComboboxChip>
+                    ))}
+                    <ComboboxChipsInput
+                      id="rtl-categorias"
+                      placeholder="أضف فئات"
+                    />
+                  </React.Fragment>
+                )}
+              </ComboboxValue>
+            </ComboboxChips>
+            <ComboboxContent anchor={anchor} dir="rtl" lang="ar">
+              <ComboboxEmpty>لم يتم العثور على فئات.</ComboboxEmpty>
+              <ComboboxList>
+                {(item: string) => (
+                  <ComboboxItem key={item} value={item}>
+                    {item}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </Field>
+      </div>
+    </DirectionProvider>
   )
 }`,
       },

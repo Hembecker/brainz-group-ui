@@ -70,6 +70,13 @@ export const Demo: Story = {
     await expect(barra).toHaveAttribute("aria-valuemin", "0")
     await expect(barra).toHaveAttribute("aria-valuemax", "100")
     await expect(barra).toHaveAttribute("aria-valuetext", "66%")
+
+    // The bar is not a control: Tab never stops on the track (an
+    // `overflow-y: auto` track would be a focusable scroller in Chromium).
+    await userEvent.tab()
+    await expect(
+      barra.querySelector('[data-slot="progress-track"]')
+    ).not.toHaveFocus()
   },
   render: () => (
     <Progress value={66} aria-label="Progresso do envio" className="w-[60%]" />

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as CommandStories from "./command.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={CommandStories} />
 
@@ -148,100 +149,114 @@ Veja a documentação do [cmdk](https://github.com/dip/cmdk) para o comportament
 
 ### Command
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>label</code></td><td><code>string</code></td><td>— (obrigatória na prática: é o nome do campo)</td></tr>
-    <tr><td><code>shouldFilter</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
-    <tr><td><code>filter</code></td><td><code>{'(value: string, search: string, keywords?: string[]) => number'}</code></td><td>filtro padrão do cmdk</td></tr>
-    <tr><td><code>value</code> / <code>onValueChange</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>loop</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Command">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>label</code></td><td><code>string</code></td><td>— (obrigatória na prática: é o nome do campo)</td></tr>
+      <tr><td><code>shouldFilter</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+      <tr><td><code>filter</code></td><td><code>{'(value: string, search: string, keywords?: string[]) => number'}</code></td><td>filtro padrão do cmdk</td></tr>
+      <tr><td><code>value</code> / <code>onValueChange</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>loop</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CommandDialog
 
 Um `Dialog` com o `Command` dentro. Aceita as props do `Dialog` (`open`, `onOpenChange`, `defaultOpen`…).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>title</code></td><td><code>string</code></td><td><code>{'"Paleta de comandos"'}</code></td></tr>
-    <tr><td><code>description</code></td><td><code>string</code></td><td><code>{'"Procure um comando para executar..."'}</code></td></tr>
-    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Command: CommandDialog">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>title</code></td><td><code>string</code></td><td><code>{'"Paleta de comandos"'}</code></td></tr>
+      <tr><td><code>description</code></td><td><code>string</code></td><td><code>{'"Procure um comando para executar..."'}</code></td></tr>
+      <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CommandList
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>label</code></td><td><code>string</code></td><td><code>{'"Resultados"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Command: CommandList">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>label</code></td><td><code>string</code></td><td><code>{'"Resultados"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CommandGroup
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>heading</code></td><td><code>ReactNode</code></td><td>—</td></tr>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Command: CommandGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>heading</code></td><td><code>ReactNode</code></td><td>—</td></tr>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CommandItem
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>o texto do item</td></tr>
-    <tr><td><code>keywords</code></td><td><code>string[]</code></td><td>—</td></tr>
-    <tr><td><code>onSelect</code></td><td><code>{'(value: string) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Command: CommandItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>o texto do item</td></tr>
+      <tr><td><code>keywords</code></td><td><code>string[]</code></td><td>—</td></tr>
+      <tr><td><code>onSelect</code></td><td><code>{'(value: string) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CommandSeparator
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>alwaysRender</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Command: CommandSeparator">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>alwaysRender</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Command</code></td><td><code>{'<div>'}</code></td><td><code>command</code></td></tr>
-    <tr><td>região de status (dentro do <code>Command</code>)</td><td><code>{'<div role="status">'}</code></td><td><code>command-status</code></td></tr>
-    <tr><td><code>CommandDialog</code></td><td>o <code>Dialog</code>, com o <code>DialogContent</code></td><td><code>dialog</code>, <code>dialog-content</code></td></tr>
-    <tr><td><code>CommandInput</code></td><td><code>{'<input role="combobox">'}</code> num <code>InputGroup</code></td><td><code>command-input</code> (o invólucro é <code>command-input-wrapper</code>)</td></tr>
-    <tr><td><code>CommandList</code></td><td><code>{'<div role="listbox">'}</code></td><td><code>command-list</code></td></tr>
-    <tr><td><code>CommandEmpty</code></td><td><code>{'<div aria-hidden="true">'}</code></td><td><code>command-empty</code></td></tr>
-    <tr><td><code>CommandGroup</code></td><td><code>{'<div role="presentation">'}</code> com <code>{'<div role="group">'}</code></td><td><code>command-group</code></td></tr>
-    <tr><td><code>CommandItem</code></td><td><code>{'<div role="option">'}</code></td><td><code>command-item</code></td></tr>
-    <tr><td><code>CommandShortcut</code></td><td><code>{'<span>'}</code></td><td><code>command-shortcut</code></td></tr>
-    <tr><td><code>CommandSeparator</code></td><td><code>{'<div role="presentation">'}</code></td><td><code>command-separator</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Command: Referência da API, CommandSeparator">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Command</code></td><td><code>{'<div>'}</code></td><td><code>command</code></td></tr>
+      <tr><td>região de status (dentro do <code>Command</code>)</td><td><code>{'<div role="status">'}</code></td><td><code>command-status</code></td></tr>
+      <tr><td><code>CommandDialog</code></td><td>o <code>Dialog</code>, com o <code>DialogContent</code></td><td><code>dialog</code>, <code>dialog-content</code></td></tr>
+      <tr><td><code>CommandInput</code></td><td><code>{'<input role="combobox">'}</code> num <code>InputGroup</code></td><td><code>command-input</code> (o invólucro é <code>command-input-wrapper</code>)</td></tr>
+      <tr><td><code>CommandList</code></td><td><code>{'<div role="listbox">'}</code></td><td><code>command-list</code></td></tr>
+      <tr><td><code>CommandEmpty</code></td><td><code>{'<div aria-hidden="true">'}</code></td><td><code>command-empty</code></td></tr>
+      <tr><td><code>CommandGroup</code></td><td><code>{'<div role="presentation">'}</code> com <code>{'<div role="group">'}</code></td><td><code>command-group</code></td></tr>
+      <tr><td><code>CommandItem</code></td><td><code>{'<div role="option">'}</code></td><td><code>command-item</code></td></tr>
+      <tr><td><code>CommandShortcut</code></td><td><code>{'<span>'}</code></td><td><code>command-shortcut</code></td></tr>
+      <tr><td><code>CommandSeparator</code></td><td><code>{'<div role="presentation">'}</code></td><td><code>command-separator</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

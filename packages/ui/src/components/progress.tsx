@@ -25,6 +25,11 @@ import { cn } from "cn"
  *     `background`, também dentro de um card (o fundo mais escuro que o card).
  *   Com `bg-muted` no escuro o preenchimento daria só 2,9:1 contra o trilho.
  *   A borda tira 2px da altura útil do preenchimento (h-2 = 8px, 6px livres).
+ *   O Indicator do Base UI tem `height: inherit` e passa desses 6px, então o
+ *   trilho corta os dois eixos (`overflow-hidden`): com só `overflow-x-hidden`
+ *   o eixo vertical virava `auto` e o Chromium punha o trilho no Tab, sem nome.
+ * - Movimento: a largura do preenchimento anima (`transition-all`) e para com
+ *   movimento reduzido (`motion-reduce:transition-none`).
  * - O texto do ProgressValue usa `muted-foreground` (7,4:1 no branco, 8,1:1 no
  *   fundo escuro). Posição lógica: `ms-auto` e a barra cresce a partir do
  *   início, que em RTL é a direita. Para os números seguirem o idioma, passe
@@ -55,7 +60,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       className={cn(
-        "relative flex h-2 w-full items-center overflow-x-hidden rounded-2xl border border-input bg-background",
+        "relative flex h-2 w-full items-center overflow-hidden rounded-2xl border border-input bg-background",
         className
       )}
       data-slot="progress-track"
@@ -71,7 +76,10 @@ function ProgressIndicator({
   return (
     <ProgressPrimitive.Indicator
       data-slot="progress-indicator"
-      className={cn("h-full bg-primary transition-all", className)}
+      className={cn(
+        "h-full bg-primary transition-all motion-reduce:transition-none",
+        className
+      )}
       {...props}
     />
   )

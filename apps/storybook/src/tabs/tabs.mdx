@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as TabsStories from "./tabs.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={TabsStories} />
 
@@ -66,7 +67,7 @@ Monte um `Tabs` com esta composição:
 - **Foco visível:** as abas e o painel têm o anel sólido de 3px no `--ring`. Nas abas horizontais ele é desenhado por dentro (`ring-inset`), porque a lista rola e cortaria um anel por fora; nas verticais e no painel, ele fica afastado 2px pelo fundo. O painel entra na ordem do Tab, e o registro o deixava com `outline-none` sem anel.
 - **Rolagem na barra:** quando a lista horizontal não cabe na largura (numa tela de 320px ou com zoom de 400%), ela rola na horizontal dentro da própria barra, em vez de empurrar a página para o lado. A barra de rolagem fica escondida e a dica de que há mais itens é o `scroll-fade-x` do shadcn: a borda que tem itens escondidos se dissolve, e o fade some quando não há o que rolar. Ele segue a direção da leitura em RTL. Nos navegadores sem animações guiadas pela rolagem (o Firefox, por exemplo), vale o fallback do shadcn: as duas pontas ficam sempre esmaecidas, mesmo quando a barra cabe, e a dica continua lá. Pelo teclado, o item focado sempre vem para dentro da barra e para a 40px da borda, fora da zona do fade (`scroll-px-10` e um `onFocus` que chama `scrollIntoView`, porque o `focus()` do navegador não rola um item que já aparece em parte).
   Na variante `line`, o sublinhado da aba ativa fica dentro da lista (a `-3px` da aba, e não a `-5px` do registro), para a rolagem não o cortar.
-- **Contraste:** as abas inativas usam `muted-foreground`, no lugar do `text-foreground/60` do registro: 6,6:1 sobre a lista `muted` e 7,4:1 sobre o fundo no claro, e 6,1:1 e 8,1:1 no escuro. A ativa usa `foreground` sobre `background` (19,7:1 no claro e 19,0:1 no escuro). A aba ativa se distingue pelo texto mais escuro e pelo fundo; na variante `line`, também pelo sublinhado. A diferença de fundo entre a aba ativa e a lista não chega a 3:1: a informação não depende só dela, porque o `aria-selected` e o contraste do texto a repetem.
+- **Contraste:** as abas inativas usam `muted-foreground`, no lugar do `text-foreground/60` do registro: 6,6:1 sobre a lista `muted` e 7,4:1 sobre o fundo no claro, e 6,1:1 e 8,1:1 no escuro. A ativa usa `foreground` sobre `background` no claro (19,7:1); no escuro, o fundo dela é o `bg-input/30` (branco a 12%) por cima da lista `muted`, e o texto fica com 9,7:1. Na variante `line`, a aba ativa não tem fundo: o texto fica sobre o fundo da página (19,7:1 no claro e 19,0:1 no escuro). A aba ativa se distingue pelo texto de mais contraste e pelo fundo; na variante `line`, também pelo sublinhado. A diferença de fundo entre a aba ativa e a lista não chega a 3:1: a informação não depende só dela, porque o `aria-selected` e o contraste do texto a repetem.
 - **Painéis:** só o painel ativo é exibido, e o Base UI dá a ele `tabIndex={0}`: depois da lista, o próximo Tab entra no painel (por isso o anel de foco dele importa), e quem usa o teclado consegue rolar um painel longo.
 
 <Source
@@ -126,34 +127,38 @@ O Tabs é o do Base UI. Veja a [documentação do Base UI](https://base-ui.com/r
 
 A raiz. Expõe `data-slot="tabs"` e `data-orientation`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>defaultValue</code></td><td><code>string | number</code></td><td><code>0</code> (a primeira aba)</td></tr>
-    <tr><td><code>value</code></td><td><code>string | number</code></td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: string | number) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Tabs">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>defaultValue</code></td><td><code>string | number</code></td><td><code>0</code> (a primeira aba)</td></tr>
+      <tr><td><code>value</code></td><td><code>string | number</code></td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: string | number) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TabsList
 
 A lista de abas. Expõe `data-slot="tabs-list"` e `data-variant`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "line"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>activateOnFocus</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>loopFocus</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Tabs: TabsList">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "line"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>activateOnFocus</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>loopFocus</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 A função `tabsListVariants` também é exportada, para dar o estilo da lista a outro elemento.
 
@@ -165,14 +170,16 @@ A aba. Precisa de um `value`. Aceita `disabled`. Expõe `data-slot="tabs-trigger
 
 O painel da aba. Precisa do mesmo `value` da aba. Expõe `data-slot="tabs-content"`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Tabs</code></td><td><code>{'<div>'}</code></td><td><code>tabs</code></td></tr>
-    <tr><td><code>TabsList</code></td><td><code>{'<div role="tablist">'}</code></td><td><code>tabs-list</code></td></tr>
-    <tr><td><code>TabsTrigger</code></td><td><code>{'<button role="tab">'}</code></td><td><code>tabs-trigger</code></td></tr>
-    <tr><td><code>TabsContent</code></td><td><code>{'<div role="tabpanel">'}</code></td><td><code>tabs-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Tabs: TabsContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Tabs</code></td><td><code>{'<div>'}</code></td><td><code>tabs</code></td></tr>
+      <tr><td><code>TabsList</code></td><td><code>{'<div role="tablist">'}</code></td><td><code>tabs-list</code></td></tr>
+      <tr><td><code>TabsTrigger</code></td><td><code>{'<button role="tab">'}</code></td><td><code>tabs-trigger</code></td></tr>
+      <tr><td><code>TabsContent</code></td><td><code>{'<div role="tabpanel">'}</code></td><td><code>tabs-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

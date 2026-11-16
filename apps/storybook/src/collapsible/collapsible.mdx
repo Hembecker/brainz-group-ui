@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as CollapsibleStories from "./collapsible.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={CollapsibleStories} />
 
@@ -59,7 +60,7 @@ Monte um `Collapsible` com esta composição:
 - **Teclado:** Tab chega ao gatilho; Enter e Espaço abrem e fecham. Não há setas.
 - **Foco visível:** o `Button` já traz o anel sólido de 3px no `--ring`, afastado 2px pelo fundo. O `CollapsibleTrigger` sozinho não tem estilo nenhum: se usá-lo sem o `Button`, dê a ele o anel (`focus-visible:ring-3 focus-visible:ring-ring`).
 - **Contraste:** o componente não pinta nada. O `data-open:bg-muted` do exemplo básico usa o papel cheio, com texto `foreground` (17,7:1 no claro, 14,3:1 no escuro).
-- **Conteúdo com campos:** quando o painel tem campos, cada um precisa do próprio rótulo e de um `id` único (veja **Painel de configurações**). Um painel aberto não muda a ordem do Tab: o conteúdo novo entra logo depois do gatilho.
+- **Conteúdo com campos:** quando o painel tem campos, cada um precisa do próprio rótulo e de um `id` único (veja **Painel de configurações**). A ordem do Tab segue a ordem do DOM: o conteúdo aberto entra no Tab onde está no markup. Em **Painel de configurações**, os campos novos ficam antes do gatilho, então, depois de abrir, Shift+Tab volta a eles. Para que o Tab chegue ao conteúdo logo depois do gatilho, ponha o `CollapsibleContent` depois do gatilho no markup.
 
 <Source
   language="tsx"
@@ -109,18 +110,20 @@ O Collapsible é o do Base UI. Veja a [documentação do Base UI](https://base-u
 
 A raiz. Expõe `data-slot="collapsible"`, e `data-open` quando aberto.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>open</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Collapsible">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>open</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CollapsibleTrigger
 
@@ -130,13 +133,15 @@ O botão que alterna o painel. Aceita `render` para trocar o elemento (um `Butto
 
 O painel. Aceita `keepMounted` (mantém o conteúdo no DOM quando fechado) e `hiddenUntilFound` (a busca da página abre o painel). Expõe `data-slot="collapsible-content"`, `data-open` e `data-closed`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Collapsible</code></td><td><code>{'<div>'}</code></td><td><code>collapsible</code></td></tr>
-    <tr><td><code>CollapsibleTrigger</code></td><td><code>{'<button>'}</code></td><td><code>collapsible-trigger</code></td></tr>
-    <tr><td><code>CollapsibleContent</code></td><td><code>{'<div>'}</code></td><td><code>collapsible-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Collapsible: CollapsibleContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Collapsible</code></td><td><code>{'<div>'}</code></td><td><code>collapsible</code></td></tr>
+      <tr><td><code>CollapsibleTrigger</code></td><td><code>{'<button>'}</code></td><td><code>collapsible-trigger</code></td></tr>
+      <tr><td><code>CollapsibleContent</code></td><td><code>{'<div>'}</code></td><td><code>collapsible-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

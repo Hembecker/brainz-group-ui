@@ -1,0 +1,252 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CadastroStories from "./cadastro/cadastro.stories";
+import * as DashboardStories from "./dashboard/dashboard.stories";
+import * as LoginStories from "./login/login.stories";
+import { ScrollTable } from "../docs/_components/token-table";
+
+<Meta title="Blocks/Visão geral" />
+
+# Blocks
+
+Modelos de aplicação prontos: o layout da área logada, a tela de login e a tela de cadastro. Cada projeto começa por eles e troca só a marca, a navegação, o conteúdo e as imagens.
+
+Os blocos são **modelos**, e não telas de negócio. Eles não têm dados, não chamam API e não guardam regras do projeto: tudo o que aparece chega por props, e o que acontece depois de um clique ou de um envio fica com o app. Os exemplos desta documentação e do `apps/web` só existem nas stories e no app de demonstração.
+
+<ScrollTable label="Blocks: visão geral dos blocos">
+  <table>
+    <thead>
+      <tr>
+        <th>Bloco</th>
+        <th>Origem no shadcn/ui</th>
+        <th>Importação</th>
+        <th>Para quê</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dashboard</td>
+        <td>
+          <code>sidebar-08</code>
+        </td>
+        <td>
+          <code>@workspace/ui/blocks/dashboard</code>
+        </td>
+        <td>Layout padrão de aplicação: barra lateral no início da linha e conteúdo ao lado.</td>
+      </tr>
+      <tr>
+        <td>Login</td>
+        <td>
+          <code>login-02</code>
+        </td>
+        <td>
+          <code>@workspace/ui/blocks/login</code>
+        </td>
+        <td>Layout padrão de autenticação: formulário no início e marca ou imagem no fim.</td>
+      </tr>
+      <tr>
+        <td>Cadastro</td>
+        <td>
+          <code>signup-02</code>
+        </td>
+        <td>
+          <code>@workspace/ui/blocks/signup</code>
+        </td>
+        <td>Cadastro, nos projetos que precisam dele, com o mesmo layout do Login.</td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+Login e Cadastro compartilham o `AuthLayout` (`@workspace/ui/blocks/auth-layout`), que também serve para montar outras telas de autenticação, como a de recuperar a senha.
+
+## Dashboard
+
+O layout de qualquer aplicação com área logada: painéis, sistemas internos, áreas do cliente. A barra lateral tem a marca, a navegação principal com subitens, os projetos, a navegação secundária e a conta; o cabeçalho tem o gatilho da barra, a trilha e as ações da página. A barra recolhe por clique ou por **Ctrl+B** e, abaixo de 768px, vira um painel sobreposto.
+
+<Canvas of={DashboardStories.Demo} />
+
+Esta prévia fica numa caixa de altura fixa, que faz o papel da tela. O Ctrl+B vale para a janela inteira; para testar o teclado, abra a [story Demo](?path=/story/blocks-dashboard--demo) sozinha. A página [Dashboard](?path=/docs/blocks-dashboard--docs) tem os outros exemplos (recolhida em ícones, com conteúdo, celular e RTL) e a referência das props.
+
+## Login
+
+A tela de entrada de qualquer projeto com conta de usuário. O formulário de e-mail e senha fica no início; no fim, a partir de 1024px, uma coluna com o painel da marca, uma imagem de capa ou um conteúdo próprio.
+
+<Canvas of={LoginStories.Demo} />
+
+As prévias de Login e Cadastro ficam numa caixa com altura mínima fixa e seguem a barra de ferramentas. A coluna lateral aparece a partir de 1024px (`lg`) de largura da janela da documentação; numa janela menor, elas mostram o layout de tablet e celular. Para ver o bloco na tela inteira, abra a [story Demo do Login](?path=/story/blocks-login--demo) ou a [story Com imagem](?path=/story/blocks-login--com-imagem). A página [Login](?path=/docs/blocks-login--docs) tem os estados (erro, enviando, sem coluna lateral) e a referência das props.
+
+## Cadastro
+
+A tela de criar conta, para os projetos que precisam de cadastro. Tem o mesmo layout do Login, com nome, e-mail, senha e confirmação, e a regra de tamanho mínimo da senha configurável.
+
+<Canvas of={CadastroStories.Demo} />
+
+Para ver as duas colunas, abra a [story Demo do Cadastro](?path=/story/blocks-cadastro--demo) numa janela com mais de 1024px. A página [Cadastro](?path=/docs/blocks-cadastro--docs) tem os estados e a referência das props.
+
+## Quando usar cada um
+
+- **Dashboard:** em toda aplicação com área logada e navegação de até dois níveis. Não use em páginas públicas nem de autenticação.
+- **Login:** em todo projeto com conta de usuário. É o layout padrão: comece por ele.
+- **Cadastro:** só quando o projeto permite que a pessoa crie a própria conta. Ligue as duas telas com `signupHref` (no Login) e `loginHref` (no Cadastro).
+- **Nenhum deles:** quando a tela precisa de outra estrutura. Monte-a com os componentes do [catálogo](?path=/docs/componentes-visão-geral--docs), como a [Sidebar](?path=/docs/componentes-sidebar--docs) e o [Field](?path=/docs/componentes-field--docs), ou com as partes exportadas dos blocos (`DashboardSidebar`, `DashboardHeader`, `AuthLayout`, `AuthField`…).
+
+## Como configurar
+
+Tudo o que muda de um projeto para outro entra por props. Nenhum bloco precisa ser copiado ou editado.
+
+<ScrollTable label="Blocks: Como configurar">
+  <table>
+    <thead>
+      <tr>
+        <th>O quê</th>
+        <th>Dashboard</th>
+        <th>Login e Cadastro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Marca</td>
+        <td>
+          <code>brand</code> (<code>name</code>, <code>subtitle</code>, <code>logo</code>, <code>href</code>). Cada campo que faltar vem da marca ativa.
+        </td>
+        <td>
+          <code>brand</code> (<code>name</code> obrigatório, <code>logo</code>, <code>href</code>). Sem a prop, o símbolo e o nome da marca ativa. Com a prop, nada vem da marca ativa: sem <code>logo</code>, fica só o nome.
+        </td>
+      </tr>
+      <tr>
+        <td>Navegação</td>
+        <td>
+          <code>navMain</code>, <code>projects</code>, <code>navSecondary</code>, <code>breadcrumbs</code>, <code>userMenu</code>, <code>moreProjectsUrl</code>
+        </td>
+        <td>
+          <code>forgotPasswordHref</code>, <code>signupHref</code>, <code>loginHref</code>
+        </td>
+      </tr>
+      <tr>
+        <td>Conteúdo</td>
+        <td>
+          <code>children</code> (a página), <code>headerActions</code>, <code>user</code>
+        </td>
+        <td>
+          <code>title</code>, <code>description</code>, <code>socialProviders</code>, <code>footer</code>, <code>defaultValues</code>
+        </td>
+      </tr>
+      <tr>
+        <td>Imagens</td>
+        <td>
+          <code>user.avatar</code>, <code>brand.logo</code>
+        </td>
+        <td>
+          <code>image</code> (<code>src</code>, <code>alt</code>, <code>dimInDark</code>) ou <code>aside</code> (um conteúdo próprio, ou <code>false</code> para tirar a coluna)
+        </td>
+      </tr>
+      <tr>
+        <td>Textos fixos</td>
+        <td>
+          <code>labels</code> (nomes dos menus e das regiões), <code>navMainLabel</code>
+        </td>
+        <td>
+          <code>labels</code> (rótulos, botões e mensagens de erro)
+        </td>
+      </tr>
+      <tr>
+        <td>Comportamento</td>
+        <td>
+          <code>collapsible</code> (<code>"offcanvas"</code> ou <code>"icon"</code>), <code>defaultOpen</code>, <code>open</code>, <code>onOpenChange</code>, <code>renderLink</code>
+        </td>
+        <td>
+          <code>onSubmit</code>, <code>pending</code>, <code>error</code>, <code>errors</code>, <code>minPasswordLength</code> (Cadastro)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+Os blocos não criam controles sem função: um link só aparece quando a prop dele chega (sem `forgotPasswordHref` não há "Esqueceu a senha?"; sem `userMenu` a conta é só texto; sem `brand.href` a marca não é link).
+
+## Tema e marca
+
+Os blocos usam **só os papéis semânticos** do tema, pelas classes do Tailwind: `bg-sidebar`, `text-sidebar-foreground`, `bg-primary`, `bg-secondary`, `text-muted-foreground`, `ring-ring`, `text-link`… Nunca usam hex nem a paleta `--bb-*`. Por isso eles seguem sozinhos o modo escuro (a classe `dark`) e a marca ativa (o atributo `data-brand` no `<html>`).
+
+O que o CSS não troca, como o logo, vem do registro de marcas: sem a prop `brand`, os blocos leem a marca ativa com o `useBrand()` e mostram o `Mark` e o nome dela. Uma marca marcada como ilustrativa (hoje o SESI, por causa do logo de exemplo) ganha o subtítulo "Marca ilustrativa" no Dashboard. Troque **Marca** e **Modo** na barra de ferramentas para ver as prévias desta página mudarem. A página [Temas](?path=/docs/temas--docs) mostra os papéis e como adicionar uma marca.
+
+## De onde vêm
+
+Os três blocos vêm dos blocos oficiais do shadcn/ui, versão Base UI:
+
+<Source
+  language="powershell"
+  dark
+  code={`npx.cmd shadcn add sidebar-08   # Dashboard
+npx.cmd shadcn add login-02     # Login
+npx.cmd shadcn add signup-02    # Cadastro`}
+/>
+
+Os comandos rodam dentro de `packages/ui`, com o CLI local de versão fixa (não o `shadcn@latest`)). Não rode de novo: o CLI sobrescreve as primitivas ajustadas.
+
+O CLI escreve o bloco como arquivos soltos no app (`app-sidebar`, `nav-main`, `login-form`, `signup-form`…), em inglês, com dados de exemplo, `href="#"` e as cores com opacidade do registro. Ele também **sobrescreve as primitivas já ajustadas** de que o bloco depende no `packages/ui` com a versão do registro, e desfaz as decisões de cor, foco e texto. Os comandos foram rodados uma vez para trazer o código de origem; as primitivas foram restauradas, e as versões reutilizáveis dos blocos ficam em `packages/ui/src/blocks/`.
+
+**Não rode esses comandos de novo** para atualizar um bloco. Compare o código novo da página do bloco com o arquivo em `packages/ui/src/blocks/` e traga as mudanças à mão, mantendo as decisões registradas no comentário do topo de cada arquivo.
+
+## Implementação
+
+### Rotas
+
+O Dashboard renderiza `<a href>` por padrão. Para usar o roteador do projeto, passe `renderLink`: ele devolve o elemento de link, e o bloco o entrega à prop `render` do Base UI, que junta a classe, os filhos e o `aria-current`. Vale para todos os links do bloco: navegação, projetos, trilha, marca e itens de menu com `href`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Link, Outlet } from "@tanstack/react-router"
+import { DashboardLayout } from "@workspace/ui/blocks/dashboard"
+
+<DashboardLayout
+  renderLink={({ href }) => <Link to={href} />}
+  navMain={navMain}
+  user={user}
+>
+  <Outlet />
+</DashboardLayout>`}
+/>
+
+Marque a página atual com `isActive` no item, no subitem ou no projeto, a partir da rota atual. O bloco põe `aria-current="page"` e abre o grupo que contém a página. Login e Cadastro só têm links simples (`forgotPasswordHref`, `signupHref`, `loginHref`), sempre como `<a>`.
+
+### Formulários
+
+Login e Cadastro validam só o preenchimento (campos obrigatórios, formato do e-mail, tamanho e confirmação da senha) e chamam o `onSubmit` com os valores já válidos. A autenticação, as regras do projeto e o redirecionamento ficam com o app:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { LoginPage } from "@workspace/ui/blocks/login"
+
+export function Entrar() {
+  const [pending, setPending] = React.useState(false)
+  const [error, setError] = React.useState<string>()
+
+  return (
+    <LoginPage
+      signupHref="/cadastro"
+      pending={pending}
+      error={error}
+      onSubmit={async ({ email, password }) => {
+        setPending(true)
+        setError(undefined)
+        const resposta = await api.entrar(email, password) // API do projeto
+        setPending(false)
+        if (!resposta.ok) setError("E-mail ou senha incorretos.")
+        else navigate("/")
+      }}
+    />
+  )
+}`}
+/>
+
+- `pending` desabilita o botão e mostra o Spinner enquanto a resposta não chega.
+- `error` mostra um erro do formulário inteiro; `errors` mostra erros por campo, como um e-mail já cadastrado.
+- Sem `onSubmit`, o formulário válido segue o envio nativo do `<form>` (`action` e `method`).
+
+### No app de demonstração
+
+O `apps/web` usa os três blocos com dados de exemplo e navegação por hash, sem roteador: `#/` abre o Dashboard, `#/login` o Login e `#/cadastro` o Cadastro. Os dados ficam em `apps/web/src/data/sample.ts` e as páginas em `apps/web/src/pages/`. Rode com `npm.cmd run dev -w web`. A [Instalação](?path=/docs/instalação--docs) mostra como criar um app novo com a mesma configuração.

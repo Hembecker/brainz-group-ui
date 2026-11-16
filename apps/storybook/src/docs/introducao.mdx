@@ -1,0 +1,99 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+
+<Meta title="Introdução" />
+
+# Introdução
+
+A base de interface da Brainz Group: componentes, blocos de aplicação e temas de marca, documentados e prontos para reaproveitar nos projetos do grupo.
+
+O Big Brain UI é o design system da Big Brain, com a marca **Brainz Group** (é assim que o logo e o material da marca escrevem o nome). Ele é uma **base comum** para os projetos do grupo e é **independente dos produtos**: nenhuma paleta de produto entra aqui. Cada projeto usa os mesmos componentes e troca só o que é dele: a marca, a navegação, o conteúdo e as imagens.
+
+Esta documentação segue a organização da [documentação do shadcn/ui](https://ui.shadcn.com/docs): uma introdução, a instalação, o catálogo de componentes, os blocos de aplicação e os temas.
+
+## Fundamentos
+
+### shadcn/ui, versão Base UI
+
+Cada componente segue a página dele no [shadcn/ui, versão Base UI](https://ui.shadcn.com/docs/components/base/button): a mesma API, a mesma composição e as mesmas seções de documentação. O comportamento (teclado, foco, ARIA, portais) vem dos primitivos do [Base UI](https://base-ui.com) (`@base-ui/react`). As cores, o contraste e a escala vêm dos tokens da Big Brain.
+
+Como no shadcn, o código é aberto: os componentes ficam em `packages/ui/src/components/<nome>.tsx`, cada um com um comentário no topo que registra a página de origem e as decisões tomadas (cores, contraste, textos em português).
+
+### Tokens em duas camadas
+
+Os tokens ficam em `packages/ui/src/styles/globals.css` e são expostos ao Tailwind 4 pelo `@theme inline`.
+
+1. **Primitivas da marca** (`--bb-primary-100` a `--bb-primary-900`, a fonte e o gradiente): os valores brutos de cada marca. Cada marca tem uma cor só; na Brainz Group, a Primária 500 é `#4787F0`.
+2. **Papéis semânticos** (`--primary`, `--foreground`, `--muted`, `--ring`, `--sidebar-*`…): o que os componentes usam, em classes como `bg-primary` e `text-muted-foreground`. Cada papel aponta para uma primitiva, no claro e no escuro.
+
+Os componentes nunca usam a paleta direto. Por isso, trocar de marca é trocar as primitivas e, quando a marca pede (neutros, campo, borda, raio, fonte) ou a escala oficial não cumpre o contrato de contraste, sobrescrever papéis no bloco da marca: nenhum componente muda. A ação primária usa a Primária **600**, e não a 500, porque texto branco na 500 dá 3,5:1, abaixo dos 4,5:1. Os contrastes estão anotados no `globals.css`. A página [Temas](?path=/docs/temas--docs) mostra as escalas, os papéis e a troca de marca.
+
+### Acessibilidade
+
+As regras do artigo [Making your website accessible with shadcn/ui](https://shadcnstudio.com/blog/making-your-website-accessible-with-shadcn-ui/) valem para todo componente, e cada página tem uma seção **Acessibilidade** que as aplica:
+
+1. **Nome acessível:** todo controle tem um nome específico, com a ação e, quando ajudar, o alvo ("Excluir fatura"). Um botão só com ícone recebe o nome por `aria-label` ou por texto `sr-only`. O tooltip nunca é o único nome.
+2. **Ícones decorativos:** levam `aria-hidden="true"`.
+3. **Foco visível:** um anel sólido de 3px no token `--ring`, por `focus-visible`, afastado 2px pela cor do fundo. Ele é conferido contra todo fundo vizinho, nos dois modos.
+4. **Gatilhos de primitivos:** recebem o elemento pela prop `render`, sem um `div` em volta. `<button>` serve para ação e `<a>` para navegação.
+5. **Formulários:** o rótulo é persistente, nunca só o placeholder. A descrição e o erro ficam ligados ao campo, e o estado inválido aparece na tela (`data-invalid`) e para a tecnologia assistiva (`aria-invalid`).
+6. **Mudanças dinâmicas:** a região `aria-live="polite"` fica sempre montada, e só o texto dela muda. `assertive` só para erros críticos.
+7. **Testes:** teclado, axe nos dois modos e em RTL, leitor de tela e zoom a 200%.
+
+Cada story é também um teste: o `npm.cmd run test` roda o axe em todas as stories no claro, no escuro e em RTL, e qualquer violação reprova.
+
+### Claro, escuro e RTL
+
+- **Modo escuro:** a classe `.dark` num ancestral (no app, no `<html>`). Todos os papéis têm um valor no claro e outro no escuro.
+- **Direção:** os componentes usam espaçamentos e cantos lógicos (`ps`/`pe`, `ms`/`me`, `rounded-s`/`rounded-e`), então funcionam da direita para a esquerda. O [Direction](?path=/docs/componentes-direction--docs) (`DirectionProvider`) faz os primitivos seguirem a direção também no teclado.
+- **Marca:** o atributo `data-brand` no `<html>` escolhe as primitivas. Sem ele, vale a Brainz Group.
+
+## Como usar nos projetos
+
+O repositório é um monorepo do shadcn/ui com Vite, Turbo e npm workspaces:
+
+<Source
+  language="bash"
+  dark
+  code={`brand/              material da marca (paleta, logo)
+packages/ui/        @workspace/ui: componentes, blocos, marcas e tokens
+apps/storybook/     esta documentação (Storybook 10)
+apps/web/           app de referência em Vite`}
+/>
+
+O pacote `@workspace/ui` é um pacote do workspace (privado, não publicado no npm). O `exports` do `package.json` dele define o que um app importa:
+
+<Source
+  language="tsx"
+  dark
+  code={`import "@workspace/ui/globals.css"                          // tokens, Tailwind e fonte
+import { Button } from "@workspace/ui/components/button"   // componentes
+import { useBrand } from "@workspace/ui/brand/use-brand"    // marca ativa e logos
+// @workspace/ui/blocks/*   blocos de aplicação
+// @workspace/ui/hooks/*    hooks
+// @workspace/ui/lib/*      utilitários`}
+/>
+
+O `apps/web` é o app de referência em Vite: ele importa o `globals.css` e os componentes do pacote, como um projeto novo faria. A página [Instalação](?path=/docs/instalação--docs) descreve o caminho completo: dependências, estilos, aliases e configuração.
+
+## Como esta documentação está organizada
+
+- [Instalação](?path=/docs/instalação--docs): o caminho de configuração com Vite.
+- [Componentes](?path=/docs/componentes-visão-geral--docs): o catálogo dos 63 componentes, por categoria, com exemplos, variantes, estados e código para copiar.
+- [Componentes de IA](?path=/docs/componentes-de-ia--docs): atalhos para os componentes de conversa e de agentes, e o que ainda está planejado.
+- **Blocks:** os modelos de aplicação, com a marca, a navegação e o conteúdo configuráveis.
+  - [Dashboard](?path=/docs/blocks-dashboard--docs): o layout padrão de aplicação (bloco sidebar-08), com a barra lateral no início da linha e o conteúdo ao lado.
+  - [Login](?path=/docs/blocks-login--docs): o layout padrão de autenticação (bloco login-02), com o formulário de um lado e a marca ou uma imagem do outro.
+  - [Cadastro](?path=/docs/blocks-cadastro--docs): o layout de cadastro (bloco signup-02), para os projetos que precisam dele.
+- [Temas](?path=/docs/temas--docs): as marcas instaladas, a escala de cor de cada uma, os papéis semânticos e a troca de marca.
+- [Tipografia](?path=/docs/tipografia--docs): famílias, pesos, tamanhos, alturas de linha e exemplos.
+- [Skills](?path=/docs/skills--docs): como trabalhar no design system com um assistente de IA: os skills do shadcn, o CLI e os fluxos do repositório, só com o que foi conferido aqui.
+
+## A barra de ferramentas
+
+A barra no topo do Storybook muda todos os exemplos ao mesmo tempo, inclusive nas páginas Docs:
+
+- **Marca:** Brainz Group (padrão) ou SESI. O SESI usa os tokens oficiais do SI Design System e um logo de exemplo: ele mostra a troca de tema com uma marca real, sem mudar nenhum componente.
+- **Modo:** claro ou escuro.
+- **Direção:** LTR (da esquerda para a direita) ou RTL (da direita para a esquerda).
+
+Abaixo de cada exemplo, o botão **Show code** mostra o JSX do exemplo, pronto para copiar e colar.

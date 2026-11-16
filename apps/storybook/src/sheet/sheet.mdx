@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as SheetStories from "./sheet.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={SheetStories} />
 
@@ -125,37 +126,41 @@ O rótulo do X ("Fechar") é fixo em português: no exemplo em árabe, ele conti
 
 ## Referência da API
 
-O `Sheet` é construído sobre o [Dialog do Base UI](https://base-ui.com/react/components/dialog#api-reference): `Sheet`, `SheetTrigger`, `SheetPortal`, `SheetClose`, `SheetOverlay`, `SheetTitle` e `SheetDescription` repassam as props do Base UI (por exemplo `open`, `defaultOpen`, `onOpenChange` e `modal` no `Sheet`, e `render` no gatilho e no `SheetClose`).
+O `Sheet` é construído sobre o [Dialog do Base UI](https://base-ui.com/react/components/dialog#api-reference): `Sheet`, `SheetTrigger`, `SheetClose`, `SheetTitle` e `SheetDescription` repassam as props do Base UI (por exemplo `open`, `defaultOpen`, `onOpenChange` e `modal` no `Sheet`, e `render` no gatilho e no `SheetClose`). O portal e o véu (`SheetPortal` e `SheetOverlay`) são partes internas que o `SheetContent` renderiza: o pacote não os exporta.
 
 ### SheetContent
 
 O popup, com o véu e o portal. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "right" | "bottom" | "left"'}</code></td><td><code>{'"right"'}</code></td></tr>
-    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Sheet: SheetContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "right" | "bottom" | "left"'}</code></td><td><code>{'"right"'}</code></td></tr>
+      <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Sheet</code></td><td>nenhum (só o contexto)</td><td><code>sheet</code></td></tr>
-    <tr><td><code>SheetTrigger</code></td><td><code>{'<button>'}</code></td><td><code>sheet-trigger</code></td></tr>
-    <tr><td><code>SheetPortal</code></td><td>portal no <code>body</code></td><td><code>sheet-portal</code></td></tr>
-    <tr><td><code>SheetOverlay</code></td><td><code>{'<div>'}</code></td><td><code>sheet-overlay</code></td></tr>
-    <tr><td><code>SheetContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>sheet-content</code></td></tr>
-    <tr><td><code>SheetClose</code></td><td><code>{'<button>'}</code></td><td><code>sheet-close</code></td></tr>
-    <tr><td><code>SheetHeader</code></td><td><code>{'<div>'}</code></td><td><code>sheet-header</code></td></tr>
-    <tr><td><code>SheetFooter</code></td><td><code>{'<div>'}</code></td><td><code>sheet-footer</code></td></tr>
-    <tr><td><code>SheetTitle</code></td><td><code>{'<h2>'}</code></td><td><code>sheet-title</code></td></tr>
-    <tr><td><code>SheetDescription</code></td><td><code>{'<p>'}</code></td><td><code>sheet-description</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Sheet: Referência da API, SheetContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Sheet</code></td><td>nenhum (só o contexto)</td><td><code>sheet</code></td></tr>
+      <tr><td><code>SheetTrigger</code></td><td><code>{'<button>'}</code></td><td><code>sheet-trigger</code></td></tr>
+      <tr><td><code>SheetPortal</code> (interno do <code>SheetContent</code>, não exportado)</td><td>portal no <code>body</code></td><td><code>sheet-portal</code></td></tr>
+      <tr><td><code>SheetOverlay</code> (interno do <code>SheetContent</code>, não exportado)</td><td><code>{'<div>'}</code></td><td><code>sheet-overlay</code></td></tr>
+      <tr><td><code>SheetContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>sheet-content</code></td></tr>
+      <tr><td><code>SheetClose</code></td><td><code>{'<button>'}</code></td><td><code>sheet-close</code></td></tr>
+      <tr><td><code>SheetHeader</code></td><td><code>{'<div>'}</code></td><td><code>sheet-header</code></td></tr>
+      <tr><td><code>SheetFooter</code></td><td><code>{'<div>'}</code></td><td><code>sheet-footer</code></td></tr>
+      <tr><td><code>SheetTitle</code></td><td><code>{'<h2>'}</code></td><td><code>sheet-title</code></td></tr>
+      <tr><td><code>SheetDescription</code></td><td><code>{'<p>'}</code></td><td><code>sheet-description</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

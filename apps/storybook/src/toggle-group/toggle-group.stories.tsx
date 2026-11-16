@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect, userEvent, waitFor, within } from "storybook/test"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
+import { DirectionProvider } from "@workspace/ui/components/direction"
 import {
   Field,
   FieldDescription,
@@ -151,6 +152,22 @@ export const Espacamento: Story = {
 }
 
 export const Vertical: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const grupo = await canvas.findByRole("group", {
+      name: "Formatação do texto, na vertical",
+    })
+    const negrito = within(grupo).getByRole("button", { name: "Negrito" })
+    const italico = within(grupo).getByRole("button", { name: "Itálico" })
+
+    // Vertical: up and down move the focus, in any direction (LTR or RTL).
+    await userEvent.tab()
+    await expect(negrito).toHaveFocus()
+    await userEvent.keyboard("{ArrowDown}")
+    await waitFor(() => expect(italico).toHaveFocus())
+    await userEvent.keyboard("{ArrowUp}")
+    await waitFor(() => expect(negrito).toHaveFocus())
+  },
   render: () => (
     <ToggleGroup
       multiple
@@ -326,19 +343,34 @@ export const Personalizado: Story = {
 
 export const Rtl: Story = {
   name: "RTL",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const lista = await canvas.findByRole("button", { name: "قائمة" })
+    const grade = canvas.getByRole("button", { name: "شبكة" })
+
+    // In RTL the arrows swap: ArrowLeft goes to the next item (visually to
+    // the left, where the next one is), ArrowRight to the previous.
+    await userEvent.tab()
+    await expect(lista).toHaveFocus()
+    await userEvent.keyboard("{ArrowLeft}")
+    await waitFor(() => expect(grade).toHaveFocus())
+    await userEvent.keyboard("{ArrowRight}")
+    await waitFor(() => expect(lista).toHaveFocus())
+  },
   render: () => (
-    <div dir="rtl" lang="ar">
-      <ToggleGroup
-        variant="outline"
-        defaultValue={["list"]}
-        dir="rtl"
-        aria-label="طريقة العرض"
-      >
-        <ToggleGroupItem value="list">قائمة</ToggleGroupItem>
-        <ToggleGroupItem value="grid">شبكة</ToggleGroupItem>
-        <ToggleGroupItem value="cards">بطاقات</ToggleGroupItem>
-      </ToggleGroup>
-    </div>
+    <DirectionProvider direction="rtl">
+      <div dir="rtl" lang="ar">
+        <ToggleGroup
+          variant="outline"
+          defaultValue={["list"]}
+          aria-label="طريقة العرض"
+        >
+          <ToggleGroupItem value="list">قائمة</ToggleGroupItem>
+          <ToggleGroupItem value="grid">شبكة</ToggleGroupItem>
+          <ToggleGroupItem value="cards">بطاقات</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+    </DirectionProvider>
   ),
 }
 

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as TraceStories from "./trace.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={TraceStories} />
 
@@ -45,7 +46,7 @@ Use um `TraceLine` para um passo simples:
 <Trace role="group" aria-label="Etapas da busca">
   <TraceLine>
     <TraceIcon>
-      <SearchIcon />
+      <SearchIcon aria-hidden="true" />
     </TraceIcon>
     <TraceTitle>Pesquisou por minimumReleaseAge</TraceTitle>
   </TraceLine>
@@ -72,7 +73,7 @@ Envolva a linha num `TraceCollapsible` para mostrar mais detalhe quando ela expa
     <TraceCollapsibleTrigger>
       <TraceLine>
         <TraceIcon>
-          <TerminalIcon />
+          <TerminalIcon aria-hidden="true" />
         </TraceIcon>
         <TraceTitle>Executou node --version</TraceTitle>
       </TraceLine>
@@ -146,7 +147,7 @@ O `Trace` não cria papéis por conta própria: cada linha herda a semântica do
     <TraceCollapsibleTrigger>
       <TraceLine status="error">
         <TraceIcon>
-          <CircleAlertIcon />
+          <CircleAlertIcon aria-hidden="true" />
         </TraceIcon>
         <TraceTitle>Falhou ao executar pnpm lint</TraceTitle>
       </TraceLine>
@@ -156,14 +157,14 @@ O `Trace` não cria papéis por conta própria: cada linha herda a semântica do
   <a href="https://docs.astro.build" target="_blank" rel="noreferrer">
     <TraceLine>
       <TraceIcon>
-        <GlobeIcon />
+        <GlobeIcon aria-hidden="true" />
       </TraceIcon>
       <TraceTitle>
         Instalar o Astro
         <span className="sr-only"> (abre em uma nova aba)</span>
       </TraceTitle>
       <TraceIcon>
-        <ArrowUpRightIcon className="rtl:-scale-x-100" />
+        <ArrowUpRightIcon className="rtl:-scale-x-100" aria-hidden="true" />
       </TraceIcon>
     </TraceLine>
   </a>
@@ -182,17 +183,19 @@ Use `status` no `TraceLine` quando um passo está rodando, falhou ou ainda não 
 
 <Canvas of={TraceStories.Status} />
 
-<table>
-  <thead>
-    <tr><th>Status</th><th>Use para</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>nenhum</td><td>Trabalho concluído: "Executou pnpm install".</td></tr>
-    <tr><td><code>{'"error"'}</code></td><td>Trabalho que falhou. Diga isso no título: "Falhou ao executar pnpm lint".</td></tr>
-    <tr><td><code>{'"running"'}</code></td><td>Trabalho em andamento. Escreva o título no gerúndio: "Executando pnpm build".</td></tr>
-    <tr><td><code>{'"pending"'}</code></td><td>Trabalho que não começou, como o passo de um plano: "Executar pnpm test".</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: Status">
+  <table>
+    <thead>
+      <tr><th>Status</th><th>Use para</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>nenhum</td><td>Trabalho concluído: "Executou pnpm install".</td></tr>
+      <tr><td><code>{'"error"'}</code></td><td>Trabalho que falhou. Diga isso no título: "Falhou ao executar pnpm lint".</td></tr>
+      <tr><td><code>{'"running"'}</code></td><td>Trabalho em andamento. Escreva o título no gerúndio: "Executando pnpm build".</td></tr>
+      <tr><td><code>{'"pending"'}</code></td><td>Trabalho que não começou, como o passo de um plano: "Executar pnpm test".</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ## Descrição
 
@@ -243,7 +246,7 @@ Envolva o `TraceLine` num `<a>`. Para uma nova aba, use o ícone de seta para ci
       <span className="sr-only"> (abre em uma nova aba)</span>
     </TraceTitle>
     <TraceIcon>
-      <ArrowUpRightIcon className="rtl:-scale-x-100" />
+      <ArrowUpRightIcon className="rtl:-scale-x-100" aria-hidden="true" />
     </TraceIcon>
   </TraceLine>
 </a>`}
@@ -263,7 +266,7 @@ Envolva o `TraceLine` no gatilho do Dialog. O próprio Dialog cuida do estado ab
     <TraceLine>
       <TraceTitle>Pesquisou na web por chaves de cache</TraceTitle>
       <TraceIcon>
-        <ChevronRightIcon className="rtl:rotate-180" />
+        <ChevronRightIcon className="rtl:rotate-180" aria-hidden="true" />
       </TraceIcon>
     </TraceLine>
   </DialogTrigger>
@@ -331,30 +334,34 @@ A página do shadcn não tem uma seção de RTL e o componente não precisa de u
 
 Uma lista de linhas. Também estiliza qualquer gatilho ou link que envolva um `TraceLine`. É um `div` e aceita as props dele.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>role</code></td><td><code>string</code>: use <code>{'"group"'}</code> com <code>aria-label</code></td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: nome do grupo de linhas</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Trace">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>role</code></td><td><code>string</code>: use <code>{'"group"'}</code> com <code>aria-label</code></td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: nome do grupo de linhas</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TraceLine
 
 Uma linha: um ícone e um título. É um `span`, então não é um botão nem uma parada do Tab. Envolva-a num gatilho ou num link para ela fazer alguma coisa.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>status</code></td><td><code>{'"running" | "error" | "pending"'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceLine">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>status</code></td><td><code>{'"running" | "error" | "pending"'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Com `status`, o `TraceLine` acrescenta um texto `sr-only` com o estado ("em andamento", "com erro" ou "pendente") e expõe `data-status`. O `running` anima o título com um brilho que respeita `prefers-reduced-motion`.
 
@@ -362,82 +369,94 @@ Com `status`, o `TraceLine` acrescenta um texto `sr-only` com o estado ("em anda
 
 Um espaço decorativo para um ícone, escondido da tecnologia assistiva (`aria-hidden="true"`). Antes do título ele nomeia a ação; depois, é o indicador.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceIcon">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TraceTitle
 
 Uma frase em uma linha. É truncado e brilha enquanto a linha está `running`. É o nome acessível da linha.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceTitle">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TraceDescription
 
 Texto secundário depois do título, como uma contagem ou uma duração. Não é truncado.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceDescription">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TraceCollapsible
 
 Uma linha que expande. Aceita as props do `Collapsible`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>open</code></td><td><code>boolean</code>: estado aberto controlado, junto com <code>onOpenChange</code></td><td>—</td></tr>
-    <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceCollapsible">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>open</code></td><td><code>boolean</code>: estado aberto controlado, junto com <code>onOpenChange</code></td><td>—</td></tr>
+      <tr><td><code>defaultOpen</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>onOpenChange</code></td><td><code>{'(open: boolean) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TraceCollapsibleTrigger
 
 O botão que abre e fecha a linha. Ponha um `TraceLine` dentro dele. Ele acrescenta uma seta depois da linha, que gira ao abrir.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceCollapsibleTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TraceCollapsibleContent
 
 O detalhe de uma linha que expande.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>keepMounted</code></td><td><code>boolean</code>: mantém o detalhe montado fechado, para as linhas aninhadas guardarem o estado aberto</td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code>: aplicada ao bloco interno do detalhe</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Trace: TraceCollapsibleContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>keepMounted</code></td><td><code>boolean</code>: mantém o detalhe montado fechado, para as linhas aninhadas guardarem o estado aberto</td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code>: aplicada ao bloco interno do detalhe</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Cada parte recebe um `data-slot` (`trace`, `trace-line`, `trace-icon`, `trace-title`, `trace-description`, `trace-collapsible`, `trace-collapsible-trigger` e `trace-collapsible-content`).

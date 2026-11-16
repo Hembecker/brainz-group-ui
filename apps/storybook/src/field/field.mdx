@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as FieldStories from "./field.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={FieldStories} />
 
@@ -296,57 +297,65 @@ Redimensione a janela do Storybook (ou o contêiner do exemplo) para ver a troca
 
 O contêiner que renderiza um `<fieldset>` semântico, com espaçamento. Aceita todas as props de um `<fieldset>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldSet">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldLegend
 
 A legenda de um `FieldSet`. A variante `label` usa o tamanho de um rótulo, útil em `FieldSet` aninhados. Aceita todas as props de uma `<legend>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"legend" | "label"'}</code></td><td><code>{'"legend"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldLegend">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"legend" | "label"'}</code></td><td><code>{'"legend"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldGroup
 
 O layout que empilha os `Field` e habilita as consultas de contêiner para as orientações responsivas. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### Field
 
 O contêiner de um único campo. Define a orientação, o estilo do estado inválido e o espaçamento. Tem `role="group"` e aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>orientation</code></td><td><code>{'"vertical" | "horizontal" | "responsive"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
-    <tr><td><code>data-invalid</code></td><td><code>boolean</code>: pinta o rótulo e o erro de vermelho</td><td>—</td></tr>
-    <tr><td><code>data-disabled</code></td><td><code>boolean</code>: apaga o rótulo e o título</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Field">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>orientation</code></td><td><code>{'"vertical" | "horizontal" | "responsive"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
+      <tr><td><code>data-invalid</code></td><td><code>boolean</code>: pinta o rótulo e o erro de vermelho</td><td>—</td></tr>
+      <tr><td><code>data-disabled</code></td><td><code>boolean</code>: apaga o rótulo e o título</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="field"` e `data-orientation`.
 
@@ -354,102 +363,116 @@ O elemento recebe `data-slot="field"` e `data-orientation`.
 
 Uma coluna que agrupa o controle e as descrições quando o rótulo fica ao lado do controle. Não é necessário se o campo não tem descrição.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldLabel
 
 O rótulo para controles diretos e para `Field` aninhados (choice card). Aceita as props de um `<label>`; use `htmlFor` para ligá-lo ao controle.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>htmlFor</code></td><td><code>string</code>: o <code>id</code> do controle</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldLabel">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>htmlFor</code></td><td><code>string</code>: o <code>id</code> do controle</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldTitle
 
 Um título com o estilo de um rótulo, dentro de um `FieldContent`. É um `<div>`: não liga a um controle. Fica na cor normal mesmo num campo inválido.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldTitle">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldDescription
 
 O texto de ajuda. Equilibra as linhas longas nos layouts horizontais e fica na cor `muted-foreground`. Dê um `id` e cite-o no `aria-describedby` do controle.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldDescription">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>id</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldSeparator
 
 Um divisor visual entre as seções de um `FieldGroup`. Aceita um conteúdo no meio da linha.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>children</code></td><td><code>React.ReactNode</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldSeparator">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>children</code></td><td><code>React.ReactNode</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### FieldError
 
 O contêiner acessível do erro. Aceita filhos ou um array `errors` (por exemplo, do React Hook Form). É uma região `aria-live="polite"` sempre montada: sem texto, fica vazia e fora do fluxo. Com vários erros diferentes em `errors`, renderiza uma lista.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>errors</code></td><td><code>{'Array<{ message?: string } | undefined>'}</code></td><td>—</td></tr>
-    <tr><td><code>id</code></td><td><code>string</code>: cite no <code>aria-errormessage</code> e no <code>aria-describedby</code></td><td>—</td></tr>
-    <tr><td><code>aria-live</code></td><td><code>{'"polite" | "assertive" | "off"'}</code>: use <code>assertive</code> só para erros críticos</td><td><code>{'"polite"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: FieldError">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>errors</code></td><td><code>{'Array<{ message?: string } | undefined>'}</code></td><td>—</td></tr>
+      <tr><td><code>id</code></td><td><code>string</code>: cite no <code>aria-errormessage</code> e no <code>aria-describedby</code></td><td>—</td></tr>
+      <tr><td><code>aria-live</code></td><td><code>{'"polite" | "assertive" | "off"'}</code>: use <code>assertive</code> só para erros críticos</td><td><code>{'"polite"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="field-error"`, `aria-live="polite"` e `aria-atomic="true"`, e não tem `role`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>FieldSet</code></td><td><code>{'<fieldset>'}</code></td><td><code>field-set</code></td></tr>
-    <tr><td><code>FieldLegend</code></td><td><code>{'<legend>'}</code></td><td><code>field-legend</code></td></tr>
-    <tr><td><code>FieldGroup</code></td><td><code>{'<div>'}</code></td><td><code>field-group</code></td></tr>
-    <tr><td><code>Field</code></td><td><code>{'<div role="group">'}</code></td><td><code>field</code></td></tr>
-    <tr><td><code>FieldContent</code></td><td><code>{'<div>'}</code></td><td><code>field-content</code></td></tr>
-    <tr><td><code>FieldLabel</code></td><td><code>{'<label>'}</code></td><td><code>field-label</code></td></tr>
-    <tr><td><code>FieldTitle</code></td><td><code>{'<div>'}</code></td><td><code>field-label</code></td></tr>
-    <tr><td><code>FieldDescription</code></td><td><code>{'<p>'}</code></td><td><code>field-description</code></td></tr>
-    <tr><td><code>FieldSeparator</code></td><td><code>{'<div>'}</code></td><td><code>field-separator</code></td></tr>
-    <tr><td><code>FieldError</code></td><td><code>{'<div>'}</code></td><td><code>field-error</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Field: Referência da API, FieldError">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>FieldSet</code></td><td><code>{'<fieldset>'}</code></td><td><code>field-set</code></td></tr>
+      <tr><td><code>FieldLegend</code></td><td><code>{'<legend>'}</code></td><td><code>field-legend</code></td></tr>
+      <tr><td><code>FieldGroup</code></td><td><code>{'<div>'}</code></td><td><code>field-group</code></td></tr>
+      <tr><td><code>Field</code></td><td><code>{'<div role="group">'}</code></td><td><code>field</code></td></tr>
+      <tr><td><code>FieldContent</code></td><td><code>{'<div>'}</code></td><td><code>field-content</code></td></tr>
+      <tr><td><code>FieldLabel</code></td><td><code>{'<label>'}</code></td><td><code>field-label</code></td></tr>
+      <tr><td><code>FieldTitle</code></td><td><code>{'<div>'}</code></td><td><code>field-label</code></td></tr>
+      <tr><td><code>FieldDescription</code></td><td><code>{'<p>'}</code></td><td><code>field-description</code></td></tr>
+      <tr><td><code>FieldSeparator</code></td><td><code>{'<div>'}</code></td><td><code>field-separator</code></td></tr>
+      <tr><td><code>FieldError</code></td><td><code>{'<div>'}</code></td><td><code>field-error</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

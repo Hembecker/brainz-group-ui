@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ProgressStories from "./progress.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ProgressStories} />
 
@@ -72,7 +73,7 @@ Use o `ProgressLabel` e o `ProgressValue` para mostrar um rótulo e o valor.
 - **Valor além da cor:** o trecho preenchido se distingue do vazio pela cor e pelo contorno do trilho. Se o número exato importa, mostre-o em texto com o `ProgressValue`, como no exemplo **Rótulo**.
 - **Mudança dinâmica:** o leitor de tela não anuncia cada mudança do valor. Para avisar uma etapa ou o fim, mantenha uma região `aria-live="polite"` sempre montada e troque só o texto dela ("Envio concluído"). Use `assertive` só para um erro crítico.
 - **Números no idioma:** o valor segue o idioma do navegador. Para fixar outro (como o árabe do Egito, no exemplo **RTL**), passe `locale` ao `Progress`.
-- **Movimento:** a largura do preenchimento anima (`transition-all`). Para quem pede menos movimento, acrescente `motion-reduce:transition-none` ao `ProgressIndicator`.
+- **Movimento:** a largura do preenchimento anima (`transition-all`), e o `ProgressIndicator` já tira a transição para quem pede menos movimento (`motion-reduce:transition-none`).
 
 <Source
   language="tsx"
@@ -133,34 +134,38 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` 
 
 O `Progress` é o `Progress.Root` do Base UI. Veja a [documentação do Progress do Base UI](https://base-ui.com/react/components/progress#api-reference) para a lista completa. As props mais usadas:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>{'number | null'}</code></td><td>obrigatório</td></tr>
-    <tr><td><code>min</code></td><td><code>number</code></td><td><code>0</code></td></tr>
-    <tr><td><code>max</code></td><td><code>number</code></td><td><code>100</code></td></tr>
-    <tr><td><code>locale</code></td><td><code>Intl.LocalesArgument</code></td><td>o do navegador</td></tr>
-    <tr><td><code>format</code></td><td><code>Intl.NumberFormatOptions</code></td><td>porcentagem</td></tr>
-    <tr><td><code>getAriaValueText</code></td><td><code>{'(formattedValue: string, value: number | null) => string'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Progress: Referência da API">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>{'number | null'}</code></td><td>obrigatório</td></tr>
+      <tr><td><code>min</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+      <tr><td><code>max</code></td><td><code>number</code></td><td><code>100</code></td></tr>
+      <tr><td><code>locale</code></td><td><code>Intl.LocalesArgument</code></td><td>o do navegador</td></tr>
+      <tr><td><code>format</code></td><td><code>Intl.NumberFormatOptions</code></td><td>porcentagem</td></tr>
+      <tr><td><code>getAriaValueText</code></td><td><code>{'(formattedValue: string, value: number | null) => string'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="progress"`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Descrição</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>ProgressLabel</code></td><td>O rótulo, ligado à barra por <code>aria-labelledby</code>.</td><td><code>progress-label</code></td></tr>
-    <tr><td><code>ProgressValue</code></td><td>O valor em texto, <code>aria-hidden</code>. Aceita uma função como filho.</td><td><code>progress-value</code></td></tr>
-    <tr><td><code>ProgressTrack</code></td><td>O trilho. O <code>Progress</code> já o inclui.</td><td><code>progress-track</code></td></tr>
-    <tr><td><code>ProgressIndicator</code></td><td>O preenchimento. O <code>Progress</code> já o inclui.</td><td><code>progress-indicator</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Progress: Referência da API 2">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Descrição</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ProgressLabel</code></td><td>O rótulo, ligado à barra por <code>aria-labelledby</code>.</td><td><code>progress-label</code></td></tr>
+      <tr><td><code>ProgressValue</code></td><td>O valor em texto, <code>aria-hidden</code>. Aceita uma função como filho.</td><td><code>progress-value</code></td></tr>
+      <tr><td><code>ProgressTrack</code></td><td>O trilho. O <code>Progress</code> já o inclui.</td><td><code>progress-track</code></td></tr>
+      <tr><td><code>ProgressIndicator</code></td><td>O preenchimento. O <code>Progress</code> já o inclui.</td><td><code>progress-indicator</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 <Canvas of={ProgressStories.Playground} />

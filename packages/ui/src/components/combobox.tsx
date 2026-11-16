@@ -33,18 +33,26 @@ import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
  *   Dialog): o gatilho do `ComboboxInput` é "Mostrar opções", o
  *   `ComboboxClear` é "Limpar seleção" e o `ComboboxChip` remove com "Remover
  *   <texto do chip>" (o nome junta o "Remover" ao texto do chip por
- *   `aria-labelledby`, por isso o conteúdo do chip fica num `span`). O
- *   gatilho e o `ComboboxClear` aceitam `aria-label` para outro idioma; o do
- *   chip é fixo (use `showRemove={false}` e o seu `ChipRemove`). O gatilho do
- *   modo popup não leva nome fixo: o nome vem do rótulo.
+ *   `aria-labelledby`, por isso o conteúdo do chip fica num `span`). Esses
+ *   três nomes são fixos: o `ComboboxInput` não repassa props à seta nem ao
+ *   limpar, e o `ComboboxClear` não é exportado (como no shadcn). Para outro
+ *   idioma, use `showTrigger={false}` / `showClear={false}` e ponha os seus
+ *   botões nos filhos do `ComboboxInput`, num `InputGroupAddon`: um
+ *   `ComboboxTrigger` com o seu `aria-label` e `tabIndex={-1}` e um
+ *   `ComboboxPrimitive.Clear` com o seu `aria-label`; no chip, use
+ *   `showRemove={false}` e o seu `ChipRemove`. O gatilho do modo popup não
+ *   leva nome fixo: o nome vem do rótulo (um `ComboboxTrigger` avulso aceita
+ *   `aria-label`).
  * - A seta, o limpar e o remover do chip têm `tabIndex={-1}`: o campo é a
  *   parada do teclado (como no combobox editável do WAI-ARIA) e, com a lista
  *   aberta, o Base UI marca esses botões como `aria-hidden`; focáveis, eles
  *   reprovariam no axe (`aria-hidden-focus`). Pelo teclado, apague o texto do
- *   campo para limpar; nos chips, ← no campo vazio foca o último chip e
- *   Delete o remove.
- * - Campo preenchido, sem borda, com o papel `field`, como o Input (o
- *   `ComboboxInput` usa o `InputGroup`); `ComboboxChips` tem a mesma pele e
+ *   campo para limpar; nos chips, ← (→ em RTL, com o `DirectionProvider`) no
+ *   campo vazio foca o último chip e Delete o remove.
+ * - Campo preenchido com o papel `field` e a borda `--field-border`, como o
+ *   Input (o `ComboboxInput` usa o `InputGroup`): a borda é transparente na
+ *   Brainz Group (claro e escuro) e no SESI escuro, e contornada no SESI
+ *   claro (`#DFDFDF`, 1,33:1 no branco: escolha do usuário). `ComboboxChips` tem a mesma pele e
  *   altura mínima `h-8`, `rounded-2xl`.
  * - Anel de foco sólido, 3px, no `ring`, afastado 2px pela cor do fundo
  *   (`focus-within:` nos chips), como no Input. Nunca o `ring/30`.
@@ -53,8 +61,7 @@ import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
  *   `has-aria-invalid:`). O registro usava `ring-destructive/20` e, no escuro,
  *   `border-destructive/50` e `ring-destructive/40`; foram trocados por papéis
  *   cheios. Ligue a mensagem por `aria-describedby` e `aria-errormessage`. No
- *   `ComboboxInput` a borda e o anel vêm do `InputGroup` (que não é desta
- *   revisão e ainda tem `ring-destructive/20`).
+ *   `ComboboxInput` a borda e o anel vêm do `InputGroup`.
  * - O texto digitado e o placeholder dos chips são `text-foreground` e
  *   `text-muted-foreground` (5,9:1 e 6,1:1 sobre o `field`): dentro de um
  *   `Field` com `data-invalid` o texto herdaria o vermelho do erro.
@@ -287,7 +294,7 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex min-h-8 flex-wrap items-center gap-1 rounded-2xl border border-transparent bg-field bg-clip-padding px-2.5 py-1 text-sm transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background has-aria-invalid:border-destructive has-aria-invalid:ring-destructive has-data-[slot=combobox-chip]:px-1",
+        "flex min-h-8 flex-wrap items-center gap-1 rounded-2xl border border-field-border bg-field bg-clip-padding px-2.5 py-1 text-sm transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background has-aria-invalid:border-destructive has-aria-invalid:ring-destructive has-data-[slot=combobox-chip]:px-1",
         className
       )}
       {...props}

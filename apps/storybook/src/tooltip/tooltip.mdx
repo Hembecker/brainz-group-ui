@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as TooltipStories from "./tooltip.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={TooltipStories} />
 
@@ -76,7 +77,7 @@ Monte um `Tooltip` com esta composição:
 - **Botão desabilitado:** ele não recebe o mouse nem, por padrão, o foco. Embrulhe-o num `span` como gatilho e dê `focusableWhenDisabled` ao botão: ele fica com `aria-disabled`, recebe o foco por Tab (o foco sobe até o `span`, que abre o tooltip) e o mouse passa a atingir o `span`. Veja **Botão desabilitado**.
 - **Foco visível:** o botão usa o anel sólido `ring-ring` com afastamento de 2px. O balão não recebe foco.
 - **Toque:** quem usa toque não tem hover. Não dependa do tooltip em telas sensíveis ao toque.
-- **Portal e RTL:** o conteúdo vai para um portal no `body`: a classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
+- **Portal e RTL:** o conteúdo vai para um portal no `body`: a classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Os lados `inline-start` e `inline-end` seguem o `DirectionProvider`. Veja **RTL**.
 - **Testes:** o tooltip fechado não existe para o axe. Por isso cada story tem um `play` que abre o tooltip por teclado e espera a animação de entrada terminar; o axe roda depois, com o tooltip aberto, no claro, no escuro e em RTL.
 
 <Source
@@ -120,7 +121,12 @@ Mostre um tooltip num botão desabilitado embrulhando-o num `span`, e dê `focus
 
 ## RTL
 
-O balão e a seta têm posições lógicas (`inline-start`, `inline-end`), então o tooltip segue a direção do `<html>`. Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um tooltip isolado, como no exemplo, passe `dir` e `lang` ao próprio `TooltipContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+O tooltip aceita os lados lógicos `inline-start` e `inline-end`. Quem decide de que lado eles ficam é o `DirectionProvider`, e não o `dir` do DOM: em RTL, `inline-start` abre à direita do gatilho e `inline-end` à esquerda. Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho também não chega a ele: o texto e a seta seguem o `dir` do `<html>` ou o do próprio `TooltipContent`.
+
+- **Num app em RTL:** coloque `dir="rtl"` e o `lang` no `<html>` e um `DirectionProvider direction="rtl"` na raiz.
+- **Num tooltip RTL isolado**, como no exemplo: envolva-o num `DirectionProvider direction="rtl"`, para os lados lógicos, e passe `dir` e `lang` ao próprio `TooltipContent`, para o texto e a seta.
+
+O teste do exemplo confere que `inline-start` abre à direita do gatilho e `inline-end` à esquerda, em qualquer direção global. Numa tela estreita sem espaço do lado pedido, o Base UI troca o lado do balão. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={TooltipStories.Rtl} />
 
@@ -132,42 +138,48 @@ O `Tooltip` é construído sobre o [Tooltip do Base UI](https://base-ui.com/reac
 
 Compartilha os atrasos entre os tooltips filhos. Aceita as props do Provider do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>delay</code></td><td><code>number</code> (ms)</td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>closeDelay</code></td><td><code>number</code> (ms)</td><td>—</td></tr>
-    <tr><td><code>timeout</code></td><td><code>number</code> (ms)</td><td><code>{'400'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Tooltip: TooltipProvider">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>delay</code></td><td><code>number</code> (ms)</td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>closeDelay</code></td><td><code>number</code> (ms)</td><td>—</td></tr>
+      <tr><td><code>timeout</code></td><td><code>number</code> (ms)</td><td><code>{'400'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TooltipContent
 
 O balão, com o portal, o posicionador e a seta. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"top"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Tooltip: TooltipContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"top"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>TooltipProvider</code></td><td>nenhum (só o contexto)</td><td><code>tooltip-provider</code></td></tr>
-    <tr><td><code>Tooltip</code></td><td>nenhum (só o contexto)</td><td><code>tooltip</code></td></tr>
-    <tr><td><code>TooltipTrigger</code></td><td><code>{'<button>'}</code></td><td><code>tooltip-trigger</code></td></tr>
-    <tr><td><code>TooltipContent</code></td><td><code>{'<div>'}</code> em um portal no <code>body</code></td><td><code>tooltip-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Tooltip: Referência da API, TooltipContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>TooltipProvider</code></td><td>nenhum (só o contexto)</td><td><code>tooltip-provider</code></td></tr>
+      <tr><td><code>Tooltip</code></td><td>nenhum (só o contexto)</td><td><code>tooltip</code></td></tr>
+      <tr><td><code>TooltipTrigger</code></td><td><code>{'<button>'}</code></td><td><code>tooltip-trigger</code></td></tr>
+      <tr><td><code>TooltipContent</code></td><td><code>{'<div>'}</code> em um portal no <code>body</code></td><td><code>tooltip-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

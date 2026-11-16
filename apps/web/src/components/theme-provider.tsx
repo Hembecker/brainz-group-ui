@@ -30,6 +30,25 @@ function isTheme(value: string | null): value is Theme {
   return THEME_VALUES.includes(value as Theme)
 }
 
+// O `localStorage` pode lançar erro (dados do site bloqueados, iframes com
+// sandbox, alguns modos privados). Sem ele, vale o `defaultTheme`, e a escolha
+// só dura enquanto a página fica aberta.
+function readStoredTheme(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+function writeStoredTheme(key: string, value: Theme) {
+  try {
+    window.localStorage.setItem(key, value)
+  } catch {
+    // Armazenamento indisponível: o tema vale só nesta sessão.
+  }
+}
+
 function getSystemTheme(): ResolvedTheme {
   if (window.matchMedia(COLOR_SCHEME_QUERY).matches) {
     return "dark"
@@ -84,7 +103,7 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
-    const storedTheme = localStorage.getItem(storageKey)
+    const storedTheme = readStoredTheme(storageKey)
     if (isTheme(storedTheme)) {
       return storedTheme
     }
@@ -94,7 +113,7 @@ export function ThemeProvider({
 
   const setTheme = React.useCallback(
     (nextTheme: Theme) => {
-      localStorage.setItem(storageKey, nextTheme)
+      writeStoredTheme(storageKey, nextTheme)
       setThemeState(nextTheme)
     },
     [storageKey]
@@ -138,13 +157,21 @@ export function ThemeProvider({
     }
   }, [theme, applyTheme])
 
+  // Atalho Alt+Shift+D (Option+Shift+D no Mac). Uma tecla de caractere
+  // sozinha ("d") dispararia com a entrada por voz e não pode ser desligada
+  // (WCAG 2.1.4); por isso o atalho exige modificadores. `event.code` porque
+  // o Alt muda o `event.key` (no Mac, Option+Shift+D dá "Î").
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.repeat) {
         return
       }
 
-      if (event.metaKey || event.ctrlKey || event.altKey) {
+      if (event.metaKey || event.ctrlKey) {
+        return
+      }
+
+      if (!event.altKey || !event.shiftKey || event.code !== "KeyD") {
         return
       }
 
@@ -152,23 +179,20 @@ export function ThemeProvider({
         return
       }
 
-      if (event.key.toLowerCase() !== "d") {
-        return
-      }
+      event.preventDefault()
 
-      setThemeState((currentTheme) => {
-        const nextTheme =
-          currentTheme === "dark"
-            ? "light"
-            : currentTheme === "light"
-              ? "dark"
-              : getSystemTheme() === "dark"
-                ? "light"
-                : "dark"
+      // A gravação fica fora do updater do setState, que precisa ser puro
+      // (o StrictMode o chama duas vezes).
+      const nextTheme: Theme =
+        theme === "dark"
+          ? "light"
+          : theme === "light"
+            ? "dark"
+            : getSystemTheme() === "dark"
+              ? "light"
+              : "dark"
 
-        localStorage.setItem(storageKey, nextTheme)
-        return nextTheme
-      })
+      setTheme(nextTheme)
     }
 
     window.addEventListener("keydown", handleKeyDown)
@@ -176,7 +200,7 @@ export function ThemeProvider({
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [storageKey])
+  }, [theme, setTheme])
 
   React.useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {

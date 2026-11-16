@@ -14,7 +14,8 @@ import { Slider } from "@workspace/ui/components/slider"
  * the story name: the Docs page renders all stories in the same document.
  *
  * `SliderControlado` exists only because the Controlado story needs state:
- * a story's `render` cannot call hooks. The MDX shows the full code.
+ * a story's `render` cannot call hooks. Its `parameters.docs.source.code`
+ * gives "Show code" the full, copyable example (as Progress Controlado does).
  */
 const meta = {
   title: "Componentes/Slider",
@@ -77,6 +78,17 @@ export const Demo: Story = {
 }
 
 export const Intervalo: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const [inicio, fim] = await canvas.findAllByRole("slider", {
+      name: "Faixa de preço",
+    })
+
+    // The two thumbs share the label's name; the value text tells them
+    // apart in Portuguese (Base UI's default is "25 start range").
+    await expect(inicio).toHaveAttribute("aria-valuetext", "25 (início)")
+    await expect(fim).toHaveAttribute("aria-valuetext", "50 (fim)")
+  },
   render: () => (
     <div className="mx-auto grid w-full max-w-xs gap-3">
       <Label id="intervalo-preco">Faixa de preço</Label>
@@ -135,6 +147,30 @@ export const Vertical: Story = {
 }
 
 export const Controlado: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: `const [valor, setValor] = React.useState([0.3, 0.7])
+
+<div className="mx-auto grid w-full max-w-xs gap-3">
+  <div className="flex items-center justify-between gap-2">
+    <Label id="temperatura">Temperatura</Label>
+    <span aria-hidden="true" className="text-sm text-muted-foreground">
+      {valor.join(", ")}
+    </span>
+  </div>
+  <Slider
+    aria-labelledby="temperatura"
+    value={valor}
+    onValueChange={(novo) => setValor(novo as number[])}
+    min={0}
+    max={1}
+    step={0.1}
+  />
+</div>`,
+      },
+    },
+  },
   render: () => <SliderControlado />,
 }
 

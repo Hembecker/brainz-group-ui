@@ -1,0 +1,82 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CardStories from "../card/card.stories";
+import * as InputStories from "../input/input.stories";
+import {
+  FontFamilyCard,
+  HeadingSpecimen,
+  TextRolesSpecimen,
+  TypeScaleTable,
+  WeightSpecimen,
+} from "./_components/type-specimen";
+
+<Meta title="Tipografia" />
+
+# Tipografia
+
+A família, os pesos e os tamanhos de texto usados pelos componentes, com exemplos de títulos, corpo, rótulos e texto de apoio. As amostras desta página usam a fonte da marca ativa: troque **Marca** na barra de ferramentas do Storybook para ver a troca.
+
+## Família
+
+A fonte de texto é um token de marca, `--bb-font-sans`, na camada de marca do `globals.css`. O `@theme inline` expõe esse token como `--font-sans` e `--font-heading`, então as classes `font-sans` e `font-heading` (e o `body`) seguem a marca ativa:
+
+<Source
+  language="css"
+  dark
+  code={`@theme inline {
+  --font-heading: var(--bb-font-sans);
+  --font-sans: var(--bb-font-sans);
+}`}
+/>
+
+- **Brainz Group:** Inter Variable, carregada pelo pacote `@fontsource-variable/inter` no `globals.css`. É a fonte do preset do shadcn e é **PROVISÓRIA** até a marca definir a fonte oficial.
+- **SESI:** Inter Variable também, a fonte do SI Design System (tokens de tipografia do Figma do Sistema Indústria).
+
+<FontFamilyCard />
+
+Como a família vem do token, trocar a marca troca a fonte de todos os componentes, sem editar nenhum. Para instalar a fonte de uma marca nova, veja o passo 1 do exemplo na página [Temas](?path=/docs/temas--docs).
+
+O código usa `font-mono`, a pilha monoespaçada padrão do Tailwind (`ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas…`). Ela **não** muda com a marca.
+
+## Pesos
+
+A Inter Variable tem todos os pesos de 100 a 900 num arquivo só. Os componentes usam três (400, 500 e 600), e os blocos de login e cadastro acrescentam o bold (700) no título.
+
+<WeightSpecimen />
+
+O `font-medium` (500) é de longe o mais usado: rótulos, botões e títulos de Card, Dialog, Sheet e Drawer. O h1 de página, mais abaixo, usa `font-extrabold` (800), que existe na Inter Variable.
+
+## Tamanhos e alturas de linha
+
+Os tamanhos são a escala padrão do Tailwind 4, sem mudanças. Cada classe `text-*` já traz a altura de linha dela. Os componentes usam só de `text-xs` a `text-lg`, e `text-sm` (14px) é o padrão. Os tamanhos maiores ficam para títulos de página e dos blocos de aplicação.
+
+<TypeScaleTable />
+
+Para uma altura de linha diferente da padrão, combine com `leading-*`: `leading-none` (1) nos rótulos, `leading-normal` (1,5) nas descrições, `leading-7` (28px) no corpo de texto longo.
+
+## Títulos
+
+Os componentes usam títulos pequenos, com `font-heading` e `font-medium`: `text-base` no Card, no Dialog, no Sheet e no Drawer; `text-lg` no AlertDialog e no Empty. Os títulos de página seguem a página Typography do shadcn:
+
+<HeadingSpecimen />
+
+Use o elemento certo para cada nível (`<h1>` a `<h4>`, sem pular níveis) e aplique as classes nele. O tamanho visual não define o nível: o `CardTitle`, por exemplo, recebe um `<h3>` dentro dele quando o cartão é uma seção da página.
+
+<Canvas of={CardStories.Demo} />
+
+## Corpo, rótulos e texto de apoio
+
+<TextRolesSpecimen />
+
+- **Corpo:** `text-sm` nos componentes; `text-base` com `leading-7` em texto longo.
+- **Rótulo:** o [Label](?path=/docs/componentes-label--docs) usa `text-sm leading-none font-medium`; o `FieldLabel`, o mesmo com `leading-snug`, para rótulos de mais de uma linha. O rótulo é sempre visível, nunca só o placeholder.
+- **Texto de apoio:** `text-sm text-muted-foreground`, como no `FieldDescription` e no `CardDescription`. No claro, o `muted-foreground` tem **7,4:1** no branco e 6,6:1 sobre `muted` na Brainz Group (a mist 600, um ajuste de acessibilidade no lugar da mist 500 do tema, que dava 4,1:1 sobre `muted`) e 5,9:1 e 5,3:1 no SESI (`#646464`); no escuro, nas duas marcas, 8,1:1 no fundo e 6,1:1 sobre `muted`. Todos passam dos 4,5:1 de texto, então ele serve para texto pequeno.
+- **Código:** `font-mono`; em linha, sobre `bg-muted`.
+
+O campo abaixo vem da página do Input, com o rótulo e a descrição ligada ao campo por `aria-describedby`:
+
+<Canvas of={InputStories.Campo} />
+
+## Zoom e leitura
+
+Os tamanhos estão em `rem`, então acompanham o tamanho de fonte escolhido no navegador. Confira as páginas com zoom de 200%: o texto precisa refluir sem rolagem lateral e sem cortes.

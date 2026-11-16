@@ -29,8 +29,9 @@ import { cn } from "cn"
  *   texto sobre ele tem ~14:1. É a única cor com opacidade aqui.
  * - Um único anel de foco para todas as variantes: sólido, 3px, no `ring`,
  *   afastado 2px pela cor do fundo. Nunca o `ring/30` do preset. O `ring` é a
- *   Primária 500 no claro (3,5:1 no branco) e 400 no escuro (7,6:1 no fundo).
- *   No escuro ele tem 2,0:1 contra a primária, e o afastamento os separa.
+ *   Primária 600 no claro (5,2:1 no branco) e 400 no escuro (7,6:1 no fundo).
+ *   No claro ele tem a mesma cor do preenchimento primário; no escuro, 2,0:1
+ *   contra ele. Nos dois, o afastamento de 2px os separa.
  * - `data-variant` e `data-size` expõem a variante e o tamanho resolvidos,
  *   para testes e estilos de contexto (o ButtonGroup usa `data-variant`).
  * - Nunca coloque um elemento interativo dentro de um botão.

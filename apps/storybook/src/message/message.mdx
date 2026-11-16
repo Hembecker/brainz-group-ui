@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as MessageStories from "./message.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={MessageStories} />
 
@@ -83,7 +84,7 @@ Use o `MessageGroup` para empilhar mensagens seguidas do mesmo autor:
 - Alinhamento no início e no fim, para as linhas de quem envia e de quem recebe, pela prop `align`.
 - Espaço do avatar preso à base da mensagem, fora do caminho do rodapé.
 - Espaços de cabeçalho e rodapé, para o nome de quem escreve, o status e as ações da mensagem.
-- O rodapé acompanha o lado da mensagem: as ações ficam alinhadas em `align="end"`.
+- O cabeçalho e o rodapé acompanham o lado da mensagem: em `align="end"`, o nome e as ações ficam no fim, junto do balão.
 - Um `MessageGroup` para empilhar mensagens seguidas do mesmo autor.
 - Estilo ajustável pela prop `className` em todas as partes.
 
@@ -133,15 +134,17 @@ Use o `MessageAvatar` para mostrar um avatar ao lado da mensagem. Com `align="en
 
 <Canvas of={MessageStories.Avatares} />
 
-<table>
-  <thead>
-    <tr><th>align</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>start</code></td><td>Alinha a mensagem ao início da conversa.</td></tr>
-    <tr><td><code>end</code></td><td>Alinha a mensagem ao fim da conversa.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message: Avatar">
+  <table>
+    <thead>
+      <tr><th>align</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>start</code></td><td>Alinha a mensagem ao início da conversa.</td></tr>
+      <tr><td><code>end</code></td><td>Alinha a mensagem ao fim da conversa.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ## Grupo
 
@@ -151,7 +154,7 @@ Use o `MessageGroup` para empilhar mensagens seguidas do mesmo autor. Ponha um `
 
 ## Cabeçalho e rodapé
 
-Use o `MessageHeader` para o nome de quem escreve e o `MessageFooter` para metadados, como o status de entrega ou de leitura.
+Use o `MessageHeader` para o nome de quem escreve e o `MessageFooter` para metadados, como o status de entrega ou de leitura. Em `align="end"`, os dois ficam no fim, do lado do balão.
 
 <Canvas of={MessageStories.CabecalhoERodape} />
 
@@ -173,15 +176,17 @@ Um anexo (o `Attachment`) entra no `MessageContent`, antes ou depois do balão. 
 
 A linha da mensagem. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Message">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message"` e `data-align`.
 
@@ -189,14 +194,16 @@ O elemento recebe `data-slot="message"` e `data-align`.
 
 Agrupa mensagens seguidas do mesmo autor. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message: MessageGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-group"`.
 
@@ -204,14 +211,16 @@ O elemento recebe `data-slot="message-group"`.
 
 O espaço do avatar, alinhado à base da mensagem. Quando a mensagem tem um `MessageFooter`, o avatar sobe para ficar alinhado com a superfície da mensagem, e não com o rodapé. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message: MessageAvatar">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-avatar"`.
 
@@ -219,29 +228,33 @@ O elemento recebe `data-slot="message-avatar"`.
 
 Envolve o cabeçalho, a superfície da mensagem e o rodapé. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message: MessageContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-content"`.
 
 ### MessageHeader
 
-Mostra conteúdo acima da mensagem, como o nome de quem escreve. Fica no início, qualquer que seja o `align`. Aceita todas as props de um `<div>`.
+Mostra conteúdo acima da mensagem, como o nome de quem escreve. Acompanha o lado da mensagem, como o resto do `MessageContent`: em `align="end"`, fica no fim. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message: MessageHeader">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-header"`.
 
@@ -249,13 +262,15 @@ O elemento recebe `data-slot="message-header"`.
 
 Mostra conteúdo abaixo da mensagem, como status ou ações. Acompanha o lado da mensagem. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message: MessageFooter">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-footer"`.

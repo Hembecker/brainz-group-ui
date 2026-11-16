@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as InputStories from "./input.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={InputStories} />
 
@@ -41,8 +42,8 @@ O `Input` é só o campo. O rótulo, a descrição e a mensagem de erro vêm do 
 - **Obrigatório:** use o atributo `required`, que a tecnologia assistiva já anuncia. O asterisco visual leva `aria-hidden="true"`, para não ser lido como "asterisco", e a página deve explicar o que ele significa, por exemplo "* campo obrigatório".
 - **Desabilitado:** `disabled` tira o campo da ordem do Tab e apaga o campo todo em 50%. Campos desabilitados não precisam cumprir contraste, mas informe o motivo numa descrição. Para mostrar um valor que a pessoa pode ler e copiar, mas não editar, use `readOnly`, que continua focável.
 - **Tipo e preenchimento automático:** use o `type` certo (`email`, `tel`, `url`, `search`, `password`) e o `autoComplete` do dado pedido (`name`, `email`, `given-name`, `tel`…). Isso abre o teclado correto no celular e deixa o navegador preencher, o que ajuda quem tem dificuldade para digitar.
-- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. Não remova o anel.
-- **Contraste:** o texto digitado é sempre `foreground`, inclusive dentro de um `Field` inválido. O placeholder tem 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo, e a borda de erro tem 3,8:1 e 5,1:1.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O fundo vem do papel `field` e a borda em repouso vem do token `--field-border`: transparente na Brainz Group, nos dois modos (o campo é preenchido e o limite dele tem 1,25:1 no claro e 1,33:1 no escuro, escolha registrada nos tokens, então o foco e o estado inválido são o que o destacam), e `#DFDFDF` no SESI claro, sobre o campo branco (1,33:1, escolha do usuário). O foco (`ring`) e o inválido (`destructive`) ficam por cima dessa borda. Os valores de cada marca estão em [Temas](?path=/docs/temas--docs). Não remova o anel.
+- **Contraste:** o texto digitado é sempre `foreground`, inclusive dentro de um `Field` inválido. Na Brainz Group, o placeholder tem 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo, e a borda de erro tem 3,8:1 e 5,1:1.
 - **Dentro de formulários:** um campo de seleção também precisa de rótulo (veja **Formulário**), e os campos devem seguir a ordem natural de leitura, sem `tabIndex` positivo.
 
 <Source
@@ -81,7 +82,7 @@ Use `Field`, `FieldLabel` e `FieldDescription` para criar um campo com rótulo e
 
 ## Grupo de campos
 
-Use `FieldGroup` para mostrar vários blocos `Field` e montar formulários.
+Use `FieldGroup` para mostrar vários blocos `Field` e montar formulários. O exemplo fica dentro de um `<form>`, para o "Limpar" (`type="reset"`) esvaziar os campos e o "Enviar" (`type="submit"`) enviar; o `onSubmit` com `preventDefault` só evita que o exemplo recarregue esta página.
 
 <Canvas of={InputStories.GrupoDeCampos} />
 
@@ -157,20 +158,22 @@ O `Input` usa paddings simétricos e o texto segue a direção do campo, então 
 
 O `Input` envolve o `<input>` do Base UI e aceita todas as props de um `<input>` nativo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>type</code></td><td><code>React.HTMLInputTypeAttribute</code></td><td><code>{'"text"'}</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Input">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>type</code></td><td><code>React.HTMLInputTypeAttribute</code></td><td><code>{'"text"'}</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="input"`. O `Input` não tem variantes nem tamanhos: tem 32px de altura (`h-8`) e `rounded-2xl`.
 

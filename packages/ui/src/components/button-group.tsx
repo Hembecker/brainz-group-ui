@@ -15,6 +15,12 @@ import { cn } from "cn"
  * - O filho focado sobe (`z-10`), para o anel de foco não ficar atrás do
  *   vizinho.
  * - Raio `rounded-2xl` (~13px), o mesmo do Button.
+ * - Campos (Input, InputGroup, SelectTrigger) dentro do grupo mantêm a borda,
+ *   o foco e o estado inválido deles (`border-field-border`,
+ *   `focus-visible:border-ring`, `aria-invalid:border-destructive`). O grupo
+ *   não força mais o `border-border` do registro ao lado de um botão outline:
+ *   ele trocava a borda do campo da marca (1,33:1 no SESI) e escondia o
+ *   vermelho do inválido.
  * - O separador usa `bg-muted-foreground` (6,1:1 sobre o secundário no claro,
  *   4,5:1 no escuro), e não o `bg-input` do shadcn, que com o input na mist 200
  *   quase some entre botões secundários.
@@ -22,7 +28,7 @@ import { cn } from "cn"
  * - Só para ações. Botões que ligam e desligam um estado pedem um ToggleGroup.
  */
 const buttonGroupVariants = cva(
-  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[>[data-variant=outline]]:*:data-[slot=input-group]:border-border has-[>[data-variant=outline]]:*:data-[slot=select-trigger]:border-border has-[>[data-variant=outline]]:[&>[data-slot=input-group]:has(:focus-visible)]:border-ring has-[>[data-variant=outline]]:[&>[data-slot=select-trigger]:focus-visible]:border-ring has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-e-2xl [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 has-[>[data-variant=outline]]:[&>input]:border-border has-[>[data-variant=outline]]:[&>input:focus-visible]:border-ring",
+  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-e-2xl [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
   {
     variants: {
       orientation: {

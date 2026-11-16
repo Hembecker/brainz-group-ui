@@ -20,7 +20,7 @@ import { cn } from "cn"
  *   círculo tem 5,2:1 no branco e 4,2:1 sobre o `field` no claro; no escuro
  *   tem 3,8:1 no fundo e 3,4:1 no card. O ponto é `size-2` e, no escuro,
  *   `size-2.5`, como no registro.
- * - Anel de foco sólido, 3px, no `ring` (3,5:1 no branco; 7,6:1 no fundo
+ * - Anel de foco sólido, 3px, no `ring` (5,2:1 no branco; 7,6:1 no fundo
  *   escuro), afastado 2px pela cor do fundo, como no Button. Dentro de um
  *   `FieldLabel` que envolve o `Field` (cartão de escolha), quem mostra o foco
  *   é o rótulo.
@@ -32,13 +32,15 @@ import { cn } from "cn"
  *   erro, porque a cor sozinha não basta.
  * - Desabilitado: `disabled:opacity-50`, fora do Tab (no grupo, `disabled`
  *   desabilita todos os itens).
- * - Cartão de escolha (`FieldLabel` do `field.tsx`, que usa `bg-accent` no
- *   hover e marcado): o círculo desmarcado tem 4,2:1 sobre a `accent` no claro e
- *   3,6:1 no escuro; marcado (`primary`) tem 4,7:1 no claro e 2,9:1 no
- *   escuro. PENDÊNCIA: este último fica abaixo de 3:1 (`primary` sobre
- *   `accent` mist 800); a correção seria no `field.tsx`, não editado aqui.
- * - Escala do estilo rhea: `size-4` e `rounded-2xl` (círculo). O ponto usa
- *   `start-1/2` e `rtl:translate-x-1/2`, então fica centrado em RTL.
+ * - Cartão de escolha (`FieldLabel` do `field.tsx`): usa `bg-accent` no hover
+ *   e marcado no claro, e `bg-card` (mist 900) marcado no escuro, inclusive
+ *   com o mouse em cima. O círculo desmarcado tem 4,2:1 sobre a `accent` no
+ *   claro e 3,6:1 no escuro; marcado (`primary`) tem 4,7:1 sobre a `accent`
+ *   no claro e 3,4:1 sobre o `card` no escuro (Brainz). No SESI escuro a
+ *   primária é a Pure 500 com ponto escuro: 6,17:1 sobre o `card`.
+ * - Escala do estilo rhea: `size-4` e `rounded-full`, um círculo em qualquer
+ *   marca (o `rounded-2xl` do rhea só era círculo com o raio grande da
+ *   Brainz). O ponto usa `start-1/2` e `rtl:translate-x-1/2`, então fica centrado em RTL.
  */
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
@@ -55,7 +57,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
     <RadioPrimitive.Root
       data-slot="radio-group-item"
       className={cn(
-        "group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-2xl border border-transparent bg-input outline-none group-has-[:focus-visible]/field-label:border-transparent group-has-[:focus-visible]/field-label:ring-0 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
+        "group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-full border border-transparent bg-input outline-none group-has-[:focus-visible]/field-label:border-transparent group-has-[:focus-visible]/field-label:ring-0 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
         className
       )}
       {...props}

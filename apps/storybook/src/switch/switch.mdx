@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as SwitchStories from "./switch.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={SwitchStories} />
 
@@ -101,28 +102,30 @@ O polegar anda para o lado certo sozinho: o componente já traz as classes `rtl:
 
 O `Switch` envolve o `Switch.Root` do Base UI e repassa todas as props dele. Veja a [referência do Base UI Switch](https://base-ui.com/react/components/switch#api-reference) para a lista completa. As principais:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>checked</code></td><td><code>boolean</code>: estado controlado</td><td>—</td></tr>
-    <tr><td><code>defaultChecked</code></td><td><code>boolean</code>: estado inicial, sem controle</td><td><code>false</code></td></tr>
-    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>readOnly</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>name</code></td><td><code>string</code>: nome do campo no formulário</td><td>—</td></tr>
-    <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há rótulo visível</td><td>—</td></tr>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Switch">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>checked</code></td><td><code>boolean</code>: estado controlado</td><td>—</td></tr>
+      <tr><td><code>defaultChecked</code></td><td><code>boolean</code>: estado inicial, sem controle</td><td><code>false</code></td></tr>
+      <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>readOnly</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>name</code></td><td><code>string</code>: nome do campo no formulário</td><td>—</td></tr>
+      <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há rótulo visível</td><td>—</td></tr>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="switch"` e `data-size`, e o polegar recebe `data-slot="switch-thumb"`. O estado fica em `data-checked` ou `data-unchecked`, e `data-disabled` quando desabilitado.
 

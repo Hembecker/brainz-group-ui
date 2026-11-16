@@ -36,6 +36,9 @@ import { MinusIcon } from "lucide-react"
  * - `defaultValue` é guardado aqui, e a biblioteca recebe só `value`: o
  *   `input-otp` repassava `defaultValue` e `value` juntos ao <input>, e o React
  *   avisava no console (controlado e não controlado ao mesmo tempo).
+ * - `InputOTPSeparator`: o `className` de quem usa é mesclado às classes base
+ *   por `cn`. No registro ele as substituía (um `className="mx-2"` tirava o
+ *   `flex` e o ícone crescia para 24px).
  */
 
 function InputOTP({
@@ -111,11 +114,17 @@ function InputOTPSlot({
   )
 }
 
-function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
+function InputOTPSeparator({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="input-otp-separator"
-      className="flex items-center [&_svg:not([class*='size-'])]:size-4"
+      className={cn(
+        "flex items-center [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
       role="separator"
       {...props}
     >

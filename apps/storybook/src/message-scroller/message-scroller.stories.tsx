@@ -533,7 +533,12 @@ export function ConversaEmGrupo({
                       <Bubble
                         variant={item.autor === currentUser ? "muted" : "tinted"}
                       >
-                        <BubbleContent>{item.texto}</BubbleContent>
+                        <BubbleContent>
+                          {item.autor === currentUser ? (
+                            <span className="sr-only">Você: </span>
+                          ) : null}
+                          {item.texto}
+                        </BubbleContent>
                       </Bubble>
                     </MessageContent>
                   </Message>
@@ -1107,9 +1112,7 @@ function ComChatEmGrupo() {
               setEtapa((atual) => (atual === "inicio" ? "entrada" : "resposta"))
             }
           >
-            {etapa === "inicio"
-              ? "Adicionar o Rocky"
-              : "Enviar mensagem como Rocky"}
+            {etapa === "inicio" ? "Adicionar o Rocky" : "Enviar como Rocky"}
           </Button>
         }
       >

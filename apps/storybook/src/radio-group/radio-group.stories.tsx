@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect, userEvent, waitFor, within } from "storybook/test"
 
+import { DirectionProvider } from "@workspace/ui/components/direction"
 import {
   Field,
   FieldContent,
@@ -113,14 +115,13 @@ export const CartaoDeEscolha: Story = {
         <Field orientation="horizontal">
           <FieldContent>
             <FieldTitle>Plus</FieldTitle>
-            <FieldDescription id="cartao-plus-texto">
+            <FieldDescription>
               Para pessoas e equipes pequenas.
             </FieldDescription>
           </FieldContent>
           <RadioGroupItem
             value="plus"
             id="cartao-plus"
-            aria-describedby="cartao-plus-texto"
           />
         </Field>
       </FieldLabel>
@@ -128,14 +129,13 @@ export const CartaoDeEscolha: Story = {
         <Field orientation="horizontal">
           <FieldContent>
             <FieldTitle>Pro</FieldTitle>
-            <FieldDescription id="cartao-pro-texto">
+            <FieldDescription>
               Para empresas em crescimento.
             </FieldDescription>
           </FieldContent>
           <RadioGroupItem
             value="pro"
             id="cartao-pro"
-            aria-describedby="cartao-pro-texto"
           />
         </Field>
       </FieldLabel>
@@ -143,14 +143,13 @@ export const CartaoDeEscolha: Story = {
         <Field orientation="horizontal">
           <FieldContent>
             <FieldTitle>Enterprise</FieldTitle>
-            <FieldDescription id="cartao-enterprise-texto">
+            <FieldDescription>
               Para grandes equipes e corporações.
             </FieldDescription>
           </FieldContent>
           <RadioGroupItem
             value="enterprise"
             id="cartao-enterprise"
-            aria-describedby="cartao-enterprise-texto"
           />
         </Field>
       </FieldLabel>
@@ -225,6 +224,7 @@ export const Invalido: Story = {
       </FieldDescription>
       <RadioGroup
         defaultValue="email"
+        aria-invalid
         aria-describedby="invalido-descricao invalido-erro"
         aria-errormessage="invalido-erro"
       >
@@ -256,63 +256,77 @@ export const Invalido: Story = {
 
 export const Rtl: Story = {
   name: "RTL",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const confortavel = await canvas.findByRole("radio", { name: "مريح" })
+    const compacto = canvas.getByRole("radio", { name: "مضغوط" })
+
+    // In RTL the horizontal axis is mirrored: ArrowLeft goes to the next item.
+    confortavel.focus()
+    await userEvent.keyboard("{ArrowLeft}")
+    await waitFor(() =>
+      expect(compacto).toHaveAttribute("aria-checked", "true")
+    )
+  },
   render: () => (
-    <div dir="rtl" lang="ar">
-      <RadioGroup
-        defaultValue="confortavel"
-        aria-label="الكثافة"
-        className="w-fit"
-        dir="rtl"
-      >
-        <Field orientation="horizontal">
-          <RadioGroupItem
-            value="padrao"
-            id="rtl-padrao"
-            aria-describedby="rtl-padrao-texto"
-            dir="rtl"
-          />
-          <FieldContent>
-            <FieldLabel htmlFor="rtl-padrao" dir="rtl">
-              افتراضي
-            </FieldLabel>
-            <FieldDescription id="rtl-padrao-texto" dir="rtl">
-              تباعد قياسي لمعظم حالات الاستخدام.
-            </FieldDescription>
-          </FieldContent>
-        </Field>
-        <Field orientation="horizontal">
-          <RadioGroupItem
-            value="confortavel"
-            id="rtl-confortavel"
-            aria-describedby="rtl-confortavel-texto"
-            dir="rtl"
-          />
-          <FieldContent>
-            <FieldLabel htmlFor="rtl-confortavel" dir="rtl">
-              مريح
-            </FieldLabel>
-            <FieldDescription id="rtl-confortavel-texto" dir="rtl">
-              مساحة أكبر بين العناصر.
-            </FieldDescription>
-          </FieldContent>
-        </Field>
-        <Field orientation="horizontal">
-          <RadioGroupItem
-            value="compacto"
-            id="rtl-compacto"
-            aria-describedby="rtl-compacto-texto"
-            dir="rtl"
-          />
-          <FieldContent>
-            <FieldLabel htmlFor="rtl-compacto" dir="rtl">
-              مضغوط
-            </FieldLabel>
-            <FieldDescription id="rtl-compacto-texto" dir="rtl">
-              تباعد أدنى للتخطيطات الكثيفة.
-            </FieldDescription>
-          </FieldContent>
-        </Field>
-      </RadioGroup>
-    </div>
+    <DirectionProvider direction="rtl">
+      <div dir="rtl" lang="ar">
+        <RadioGroup
+          defaultValue="confortavel"
+          aria-label="الكثافة"
+          className="w-fit"
+          dir="rtl"
+        >
+          <Field orientation="horizontal">
+            <RadioGroupItem
+              value="padrao"
+              id="rtl-padrao"
+              aria-describedby="rtl-padrao-texto"
+              dir="rtl"
+            />
+            <FieldContent>
+              <FieldLabel htmlFor="rtl-padrao" dir="rtl">
+                افتراضي
+              </FieldLabel>
+              <FieldDescription id="rtl-padrao-texto" dir="rtl">
+                تباعد قياسي لمعظم حالات الاستخدام.
+              </FieldDescription>
+            </FieldContent>
+          </Field>
+          <Field orientation="horizontal">
+            <RadioGroupItem
+              value="confortavel"
+              id="rtl-confortavel"
+              aria-describedby="rtl-confortavel-texto"
+              dir="rtl"
+            />
+            <FieldContent>
+              <FieldLabel htmlFor="rtl-confortavel" dir="rtl">
+                مريح
+              </FieldLabel>
+              <FieldDescription id="rtl-confortavel-texto" dir="rtl">
+                مساحة أكبر بين العناصر.
+              </FieldDescription>
+            </FieldContent>
+          </Field>
+          <Field orientation="horizontal">
+            <RadioGroupItem
+              value="compacto"
+              id="rtl-compacto"
+              aria-describedby="rtl-compacto-texto"
+              dir="rtl"
+            />
+            <FieldContent>
+              <FieldLabel htmlFor="rtl-compacto" dir="rtl">
+                مضغوط
+              </FieldLabel>
+              <FieldDescription id="rtl-compacto-texto" dir="rtl">
+                تباعد أدنى للتخطيطات الكثيفة.
+              </FieldDescription>
+            </FieldContent>
+          </Field>
+        </RadioGroup>
+      </div>
+    </DirectionProvider>
   ),
 }

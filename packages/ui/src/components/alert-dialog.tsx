@@ -12,9 +12,12 @@ import { Button } from "@workspace/ui/components/button"
  *   foco preso, resto da página inerte e Esc para fechar, devolvendo o foco ao
  *   gatilho. Diferente do Dialog, clicar fora NÃO fecha: a pessoa precisa
  *   responder. `AlertDialogTrigger` recebe o elemento pela prop `render`.
- * - Foco inicial: o do Base UI, no primeiro controle do popup. Como o
- *   `AlertDialogCancel` vem antes do `AlertDialogAction` no rodapé, o foco
- *   começa no Cancelar e a ação destrutiva nunca é a padrão (padrão do shadcn).
+ * - Foco inicial: o do Base UI (e do shadcn), no primeiro elemento focável do
+ *   popup (aberto por toque, o próprio popup). Sem link no título nem na
+ *   descrição, é o Cancelar, porque o `AlertDialogCancel` vem antes do
+ *   `AlertDialogAction` no rodapé; com um link na descrição, é o link. Nos
+ *   dois casos a ação destrutiva nunca é a padrão. Para outro alvo, passe
+ *   `initialFocus` (do Popup do Base UI) ao `AlertDialogContent`.
  * - Nome e descrição: o Base UI liga o `AlertDialogTitle` e o
  *   `AlertDialogDescription` ao popup. O título diz a ação ("Excluir chat?").
  * - `AlertDialogAction` é um `Button` comum (aceita `variant="destructive"`);
@@ -32,7 +35,9 @@ import { Button } from "@workspace/ui/components/button"
  *   para um portal no `body`: num diálogo RTL isolado, passe `dir` e `lang` ao
  *   `AlertDialogContent`.
  * - Anel de foco: o popup não tem anel (`outline-none`); os botões usam o anel
- *   sólido deles.
+ *   sólido deles. Os links da descrição ganharam o anel sólido do projeto
+ *   (3px, `ring`, afastado 2px pelo fundo, `rounded-sm`); o registro deixava
+ *   o outline padrão do navegador.
  */
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
@@ -162,7 +167,7 @@ function AlertDialogDescription({
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
       className={cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground *:[a]:rounded-sm *:[a]:outline-none *:[a]:focus-visible:ring-3 *:[a]:focus-visible:ring-ring *:[a]:focus-visible:ring-offset-2 *:[a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}

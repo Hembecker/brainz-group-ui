@@ -25,12 +25,20 @@ import { XIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Load
  *   erro que o usuário precisa ver já; os demais são educados (`polite`).
  * - Teclado: F6 leva o foco ao viewport, Tab percorre os avisos e seus
  *   botões, Esc fecha o aviso focado e o foco volta ao elemento anterior.
+ *   Limitação do Base UI 1.9.0: depois do primeiro F6, enquanto houver aviso
+ *   aberto, o Tab que sairia do último elemento antes do viewport volta ao
+ *   elemento que tinha o foco no F6; Shift+Tab ou F6 saem desse ciclo, e ele
+ *   acaba quando os avisos fecham.
  * - Tempo: cada aviso some depois de 5000 ms (`timeout` do Base UI). Passar o
  *   mouse, focar um aviso ou tirar o foco da janela pausa a contagem, e ela
  *   recomeça depois. Mude por aviso (`toast.add({ timeout })`) ou para todos
  *   (`<Toaster timeout />`); `timeout: 0` mantém o aviso até ser fechado.
  *   Avisos com ação, ou de leitura demorada, devem usar tempo maior ou 0. O
  *   `loading` do `toast.promise` não expira.
+ * - O ícone do `loading` para de girar com movimento reduzido
+ *   (`motion-reduce:animate-none`), como o Spinner. Ele continua um ícone
+ *   decorativo, e não o `Spinner`, cujo `role="status"` criaria um segundo
+ *   anúncio dentro da região viva.
  * - Botão de fechar: o nome "Fechar aviso" é fixo, em português; o ícone é
  *   `aria-hidden`. Para outro idioma, passe `aria-label` ao `ToastClose`.
  * - Nome acessível: o aviso é `role="dialog"` nomeado pelo título. Todo aviso
@@ -194,7 +202,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "loading") {
     icon = (
-      <Loader2Icon className="animate-spin" aria-hidden="true" />
+      <Loader2Icon className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
     )
   }
 

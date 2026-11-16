@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as LabelStories from "./label.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={LabelStories} />
 
@@ -39,7 +40,7 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/lab
 - **Um rótulo por controle:** não use o mesmo `id` em dois controles, e lembre que o Docs renderiza todas as stories na mesma página, então os `id`s dos exemplos levam o nome da story como prefixo.
 - **Clique e toque:** o rótulo ligado ao controle também é uma área de clique: clicar nele foca o campo ou marca a caixa de seleção. Isso ajuda quem tem dificuldade de acertar o controle.
 - **Contraste:** o texto herda a cor do contexto: `foreground`, 19,7:1 sobre o fundo no claro e 19,0:1 no escuro, e 15,8:1 e 14,3:1 sobre o fundo de um campo. Nenhuma cor com opacidade.
-- **Desabilitado:** o rótulo apaga em 50% quando o controle vem logo antes dele e está desabilitado (`peer-disabled`), ou quando um ancestral tem `data-disabled` (`group-data-[disabled=true]`). Texto desabilitado não precisa cumprir contraste, mas explique o motivo numa descrição.
+- **Desabilitado:** o rótulo apaga em 50% quando o controle vem logo antes dele e está desabilitado: um controle nativo pelo `:disabled` (`peer-disabled`) e o `Checkbox`, o `Switch` ou o `RadioGroupItem`, cuja raiz do Base UI é um `<span>` com `data-disabled`, por `peer-data-disabled`. Também apaga quando um ancestral tem `data-disabled` (`group-data-[disabled=true]`). Texto desabilitado não precisa cumprir contraste, mas explique o motivo numa descrição.
 - **Rótulo com várias linhas:** o `Label` usa `leading-none`, que aperta as linhas. Para rótulos longos, use o `FieldLabel`, que usa `leading-snug`.
 - **Dentro do Field:** use o `FieldLabel`. Ele acrescenta o vermelho do estado inválido (`data-invalid` no `Field`), mas a mensagem do erro continua sendo o que explica o problema: cor sozinha não basta.
 
@@ -75,14 +76,16 @@ O `Label` usa `flex`, `gap` e `items-center`, então segue a direção de um anc
 
 O `Label` é um `<label>` nativo e aceita todas as props dele. A página do shadcn remete à API do Label do Base UI, mas o componente do registro, e o deste pacote, não usa um primitivo do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>htmlFor</code></td><td><code>string</code>: o <code>id</code> do controle</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Label: Referência da API">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>htmlFor</code></td><td><code>string</code>: o <code>id</code> do controle</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="label"`.

@@ -1037,15 +1037,27 @@ export const LadoDireito: Story = {
     ).toBeLessThan(3)
     await expect(getComputedStyle(container).borderLeftWidth).toBe("1px")
     await expect(getComputedStyle(container).borderRightWidth).toBe("0px")
+
+    // The in-flow gap follows the physical side (flex `order`), so the page
+    // never sits under the bar: the inset ends where the bar starts, in LTR and
+    // in RTL, and the trigger is the element under its own centre.
+    const inset = pegar(canvasElement, "[data-slot=sidebar-inset]")
+    await expect(inset.getBoundingClientRect().right).toBeLessThanOrEqual(
+      container.getBoundingClientRect().left + 2
+    )
+    const gatilho = pegar(canvasElement, "[data-slot=sidebar-trigger]")
+    const centro = gatilho.getBoundingClientRect()
+    await expect(
+      gatilho.contains(
+        document.elementFromPoint(
+          centro.left + centro.width / 2,
+          centro.top + centro.height / 2
+        )
+      )
+    ).toBe(true)
   },
   render: () => (
     <SidebarProvider>
-      <SidebarInset>
-        <header className="flex h-12 items-center gap-2 px-4">
-          <SidebarTrigger />
-          <h1 className="text-base font-medium">Início</h1>
-        </header>
-      </SidebarInset>
       <Sidebar side="right">
         <SidebarHeader>
           <span className="px-2 py-1 text-sm font-medium">Acme Inc</span>
@@ -1073,111 +1085,14 @@ export const LadoDireito: Story = {
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
+      <SidebarInset>
+        <header className="flex h-12 items-center gap-2 px-4">
+          <SidebarTrigger />
+          <h1 className="text-base font-medium">Início</h1>
+        </header>
+      </SidebarInset>
     </SidebarProvider>
   ),
-}
-
-function SidebarControlada() {
-  const [open, setOpen] = React.useState(true)
-
-  return (
-    <SidebarProvider open={open} onOpenChange={setOpen}>
-      <Sidebar>
-        <SidebarHeader>
-          <span className="px-2 py-1 text-sm font-medium">Acme Inc</span>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Aplicação</SidebarGroupLabel>
-            <nav aria-label="Aplicação (controlada)">
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton render={<a href="#" />} isActive>
-                    <HomeIcon aria-hidden="true" />
-                    <span>Início</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton render={<a href="#" />}>
-                    <InboxIcon aria-hidden="true" />
-                    <span>Caixa de entrada</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </nav>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <div className="flex flex-col items-start gap-3 p-4">
-          <Button
-            variant="outline"
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-          >
-            Alternar barra de fora
-          </Button>
-          <p role="status" className="text-sm">
-            A barra lateral está {open ? "aberta" : "recolhida"}.
-          </p>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}
-
-export const Controlada: Story = {
-  name: "Barra controlada",
-  parameters: {
-    docs: {
-      source: {
-        code: `import * as React from "react"
-
-export function Exemplo() {
-  const [open, setOpen] = React.useState(true)
-
-  return (
-    <SidebarProvider open={open} onOpenChange={setOpen}>
-      <Sidebar>{/* … */}</Sidebar>
-      <SidebarInset>
-        <Button
-          variant="outline"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          Alternar barra de fora
-        </Button>
-        <p role="status">
-          A barra lateral está {open ? "aberta" : "recolhida"}.
-        </p>
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}`,
-      },
-    },
-  },
-  play: async ({ canvasElement }) => {
-    conferirDesktop()
-    await conferirContido(canvasElement)
-    const canvas = within(canvasElement)
-    const barra = pegar(canvasElement, "[data-slot=sidebar]")
-    const botao = canvas.getByRole("button", { name: "Alternar barra de fora" })
-    await expect(canvas.getByRole("status")).toHaveTextContent("aberta")
-
-    // The state lives in the story: the outside button and Ctrl+B change it.
-    await userEvent.click(botao)
-    await waitFor(() =>
-      expect(barra).toHaveAttribute("data-state", "collapsed")
-    )
-    await expect(canvas.getByRole("status")).toHaveTextContent("recolhida")
-    await expect(botao).toHaveAttribute("aria-expanded", "false")
-    await alternarComTeclado()
-    await waitFor(() => expect(barra).toHaveAttribute("data-state", "expanded"))
-    await expect(canvas.getByRole("status")).toHaveTextContent("aberta")
-    await esperarAnimacoes()
-  },
-  render: () => <SidebarControlada />,
 }
 
 function EstadoDaBarra() {
@@ -1274,91 +1189,6 @@ function EstadoDaBarra() {
       </Sidebar>
       <SidebarInset>
         <EstadoDaBarra />
-      </SidebarInset>
-    </SidebarProvider>
-  ),
-}
-
-export const Mobile: Story = {
-  name: "Celular (Sheet)",
-  globals: { viewport: { value: "mobile1", isRotated: false } },
-  play: async ({ canvasElement }) => {
-    // 320px wide: useIsMobile is true and the Sidebar is a Sheet.
-    expect(window.matchMedia("(max-width: 767px)").matches).toBe(true)
-    const gatilho = pegar(canvasElement, "[data-slot=sidebar-trigger]")
-    await expect(gatilho).toHaveAttribute("aria-expanded", "false")
-
-    // Opens: a modal dialog named "Barra lateral", focus inside.
-    await userEvent.click(gatilho)
-    const dialogo = await screen.findByRole("dialog", {
-      name: "Barra lateral",
-    })
-    await esperarAnimacoes()
-    await waitFor(() => expect(dialogo).toBeVisible())
-    await expect(gatilho).toHaveAttribute("aria-expanded", "true")
-    await waitFor(() =>
-      expect(dialogo).toContainElement(document.activeElement as HTMLElement)
-    )
-
-    // The focus is trapped.
-    for (let i = 0; i < 6; i++) {
-      await userEvent.tab()
-      await waitFor(() =>
-        expect(dialogo).toContainElement(document.activeElement as HTMLElement)
-      )
-    }
-
-    // Esc closes and gives the focus back to the trigger.
-    await userEvent.keyboard("{Escape}")
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
-    await waitFor(() => expect(gatilho).toHaveFocus())
-    await expect(gatilho).toHaveAttribute("aria-expanded", "false")
-
-    // Ctrl+B opens it again and it stays open, for axe.
-    await alternarComTeclado()
-    const aberto = await screen.findByRole("dialog", { name: "Barra lateral" })
-    await esperarAnimacoes()
-    await waitFor(() => expect(aberto).toBeVisible())
-  },
-  render: () => (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <span className="px-2 py-1 text-sm font-medium">Acme Inc</span>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Aplicação</SidebarGroupLabel>
-            <nav aria-label="Aplicação (celular)">
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton render={<a href="#" />} isActive>
-                    <HomeIcon aria-hidden="true" />
-                    <span>Início</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton render={<a href="#" />}>
-                    <InboxIcon aria-hidden="true" />
-                    <span>Caixa de entrada</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton render={<a href="#" />}>
-                    <CalendarIcon aria-hidden="true" />
-                    <span>Calendário</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </nav>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-12 items-center gap-2 px-4">
-          <SidebarTrigger />
-          <h1 className="text-base font-medium">Início</h1>
-        </header>
       </SidebarInset>
     </SidebarProvider>
   ),
@@ -1705,6 +1535,194 @@ export const Esqueleto: Story = {
   ),
 }
 
+function SidebarControlada() {
+  const [open, setOpen] = React.useState(true)
+
+  return (
+    <SidebarProvider open={open} onOpenChange={setOpen}>
+      <Sidebar>
+        <SidebarHeader>
+          <span className="px-2 py-1 text-sm font-medium">Acme Inc</span>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Aplicação</SidebarGroupLabel>
+            <nav aria-label="Aplicação (controlada)">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton render={<a href="#" />} isActive>
+                    <HomeIcon aria-hidden="true" />
+                    <span>Início</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton render={<a href="#" />}>
+                    <InboxIcon aria-hidden="true" />
+                    <span>Caixa de entrada</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </nav>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarInset>
+        <div className="flex flex-col items-start gap-3 p-4">
+          <Button
+            variant="outline"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+          >
+            Alternar barra de fora
+          </Button>
+          <p role="status" className="text-sm">
+            A barra lateral está {open ? "aberta" : "recolhida"}.
+          </p>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
+
+export const Controlada: Story = {
+  name: "Barra controlada",
+  parameters: {
+    docs: {
+      source: {
+        code: `import * as React from "react"
+
+export function Exemplo() {
+  const [open, setOpen] = React.useState(true)
+
+  return (
+    <SidebarProvider open={open} onOpenChange={setOpen}>
+      <Sidebar>{/* … */}</Sidebar>
+      <SidebarInset>
+        <Button
+          variant="outline"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          Alternar barra de fora
+        </Button>
+        <p role="status">
+          A barra lateral está {open ? "aberta" : "recolhida"}.
+        </p>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}`,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    conferirDesktop()
+    await conferirContido(canvasElement)
+    const canvas = within(canvasElement)
+    const barra = pegar(canvasElement, "[data-slot=sidebar]")
+    const botao = canvas.getByRole("button", { name: "Alternar barra de fora" })
+    await expect(canvas.getByRole("status")).toHaveTextContent("aberta")
+
+    // The state lives in the story: the outside button and Ctrl+B change it.
+    await userEvent.click(botao)
+    await waitFor(() =>
+      expect(barra).toHaveAttribute("data-state", "collapsed")
+    )
+    await expect(canvas.getByRole("status")).toHaveTextContent("recolhida")
+    await expect(botao).toHaveAttribute("aria-expanded", "false")
+    await alternarComTeclado()
+    await waitFor(() => expect(barra).toHaveAttribute("data-state", "expanded"))
+    await expect(canvas.getByRole("status")).toHaveTextContent("aberta")
+    await esperarAnimacoes()
+  },
+  render: () => <SidebarControlada />,
+}
+
+export const Mobile: Story = {
+  name: "Celular (Sheet)",
+  globals: { viewport: { value: "mobile1", isRotated: false } },
+  play: async ({ canvasElement }) => {
+    // 320px wide: useIsMobile is true and the Sidebar is a Sheet.
+    expect(window.matchMedia("(max-width: 767px)").matches).toBe(true)
+    const gatilho = pegar(canvasElement, "[data-slot=sidebar-trigger]")
+    await expect(gatilho).toHaveAttribute("aria-expanded", "false")
+
+    // Opens: a modal dialog named "Barra lateral", focus inside.
+    await userEvent.click(gatilho)
+    const dialogo = await screen.findByRole("dialog", {
+      name: "Barra lateral",
+    })
+    await esperarAnimacoes()
+    await waitFor(() => expect(dialogo).toBeVisible())
+    await expect(gatilho).toHaveAttribute("aria-expanded", "true")
+    await waitFor(() =>
+      expect(dialogo).toContainElement(document.activeElement as HTMLElement)
+    )
+
+    // The focus is trapped.
+    for (let i = 0; i < 6; i++) {
+      await userEvent.tab()
+      await waitFor(() =>
+        expect(dialogo).toContainElement(document.activeElement as HTMLElement)
+      )
+    }
+
+    // Esc closes and gives the focus back to the trigger.
+    await userEvent.keyboard("{Escape}")
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+    await waitFor(() => expect(gatilho).toHaveFocus())
+    await expect(gatilho).toHaveAttribute("aria-expanded", "false")
+
+    // Ctrl+B opens it again and it stays open, for axe.
+    await alternarComTeclado()
+    const aberto = await screen.findByRole("dialog", { name: "Barra lateral" })
+    await esperarAnimacoes()
+    await waitFor(() => expect(aberto).toBeVisible())
+  },
+  render: () => (
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader>
+          <span className="px-2 py-1 text-sm font-medium">Acme Inc</span>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Aplicação</SidebarGroupLabel>
+            <nav aria-label="Aplicação (celular)">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton render={<a href="#" />} isActive>
+                    <HomeIcon aria-hidden="true" />
+                    <span>Início</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton render={<a href="#" />}>
+                    <InboxIcon aria-hidden="true" />
+                    <span>Caixa de entrada</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton render={<a href="#" />}>
+                    <CalendarIcon aria-hidden="true" />
+                    <span>Calendário</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </nav>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarInset>
+        <header className="flex h-12 items-center gap-2 px-4">
+          <SidebarTrigger />
+          <h1 className="text-base font-medium">Início</h1>
+        </header>
+      </SidebarInset>
+    </SidebarProvider>
+  ),
+}
+
 export const Rtl: Story = {
   name: "RTL",
   play: async ({ canvasElement }) => {
@@ -1729,6 +1747,15 @@ export const Rtl: Story = {
     await expect(getComputedStyle(container).borderLeftWidth).toBe("1px")
     await expect(getComputedStyle(container).borderRightWidth).toBe("0px")
 
+    // The controls are named in Arabic, like the rest of the example (the rail
+    // has the same name, so the query is scoped to the trigger).
+    await expect(
+      pegar(canvasElement, "[data-slot=sidebar-trigger]")
+    ).toHaveAccessibleName("تبديل الشريط الجانبي")
+    await expect(
+      pegar(canvasElement, "[data-slot=sidebar-rail]")
+    ).toHaveAccessibleName("تبديل الشريط الجانبي")
+
     // The user menu opens and stays open, for axe.
     await userEvent.click(
       within(canvasElement).getByRole("button", { name: /shadcn/ })
@@ -1742,7 +1769,12 @@ export const Rtl: Story = {
     <div dir="rtl" lang="ar">
       <DirectionProvider direction="rtl">
         <SidebarProvider>
-          <Sidebar dir="rtl" collapsible="icon">
+          <Sidebar
+            dir="rtl"
+            collapsible="icon"
+            mobileTitle="الشريط الجانبي"
+            mobileDescription="يعرض الشريط الجانبي على الهاتف."
+          >
             <SidebarHeader>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -1921,12 +1953,15 @@ export const Rtl: Story = {
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarFooter>
-            <SidebarRail />
+            <SidebarRail
+              aria-label="تبديل الشريط الجانبي"
+              title="تبديل الشريط الجانبي"
+            />
           </Sidebar>
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
               <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
+                <SidebarTrigger label="تبديل الشريط الجانبي" />
                 <h1 className="text-base font-medium">لوحة التحكم</h1>
               </div>
             </header>

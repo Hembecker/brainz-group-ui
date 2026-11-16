@@ -3,6 +3,7 @@ import { PencilIcon, SaveIcon, Trash2Icon } from "lucide-react"
 import { expect, screen, userEvent, waitFor, within } from "storybook/test"
 
 import { Button } from "@workspace/ui/components/button"
+import { DirectionProvider } from "@workspace/ui/components/direction"
 import { Kbd } from "@workspace/ui/components/kbd"
 import {
   Tooltip,
@@ -56,6 +57,18 @@ async function abrirPorTeclado(
   return { botao, conteudo }
 }
 
+// The only open tooltip, on the expected side. All the Rtl tooltips share the
+// same text, and the previous one may still be animating out.
+function balaoAberto(lado: string) {
+  const abertos = document.querySelectorAll<HTMLElement>(
+    '[data-slot="tooltip-content"][data-open]'
+  )
+  expect(abertos).toHaveLength(1)
+  const balao = abertos[0]!
+  expect(balao).toHaveAttribute("data-side", lado)
+  return balao
+}
+
 export const Demo: Story = {
   play: async ({ canvasElement }) => {
     const texto = "Adicionar à biblioteca"
@@ -79,6 +92,10 @@ export const Demo: Story = {
     // Leaves and comes back with the keyboard, and stays open for axe.
     botao.blur()
     await abrirPorTeclado(canvasElement, "Passe o mouse", texto)
+
+    // Base UI does not link the popup to the trigger by aria-describedby: the
+    // trigger has no accessible description while the tooltip is open.
+    await expect(botao).toHaveAccessibleDescription("")
   },
   render: () => (
     <Tooltip>
@@ -253,49 +270,95 @@ export const BotaoDesabilitado: Story = {
 export const Rtl: Story = {
   name: "RTL",
   play: async ({ canvasElement }) => {
-    await abrirPorTeclado(canvasElement, "يسار", "إضافة إلى المكتبة")
-    await abrirPorTeclado(canvasElement, "أعلى", "إضافة إلى المكتبة")
-    await abrirPorTeclado(canvasElement, "بداية السطر", "إضافة إلى المكتبة")
-    await abrirPorTeclado(canvasElement, "نهاية السطر", "إضافة إلى المكتبة")
+    const texto = "إضافة إلى المكتبة"
+    await abrirPorTeclado(canvasElement, "يسار", texto)
+    await abrirPorTeclado(canvasElement, "أعلى", texto)
+    await abrirPorTeclado(canvasElement, "أسفل", texto)
+    await abrirPorTeclado(canvasElement, "يمين", texto)
+
+    // The popup is in a portal: the `dir` on the wrapper does not reach it,
+    // and Base UI resolves `inline-*` sides from the DirectionProvider. In
+    // RTL, `inline-start` is the right side of the trigger and `inline-end`
+    // the left side, whatever the global direction of the page.
+    const { botao: inicio } = await abrirPorTeclado(
+      canvasElement,
+      "بداية السطر",
+      texto
+    )
+    await waitFor(() => {
+      const balao = balaoAberto("inline-start")
+      expect(balao.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+        inicio.getBoundingClientRect().right - 1
+      )
+    })
+    const { botao: fim } = await abrirPorTeclado(
+      canvasElement,
+      "نهاية السطر",
+      texto
+    )
+    await waitFor(() => {
+      const balao = balaoAberto("inline-end")
+      expect(balao.getBoundingClientRect().right).toBeLessThanOrEqual(
+        fim.getBoundingClientRect().left + 1
+      )
+    })
   },
   render: () => (
-    <div dir="rtl" lang="ar" className="grid gap-4 px-40 py-16">
-      <div className="flex flex-wrap justify-center gap-2">
-        <Tooltip>
-          <TooltipTrigger render={<Button variant="outline" />}>
-            يسار
-          </TooltipTrigger>
-          <TooltipContent side="left" dir="rtl" lang="ar">
-            إضافة إلى المكتبة
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger render={<Button variant="outline" />}>
-            أعلى
-          </TooltipTrigger>
-          <TooltipContent side="top" dir="rtl" lang="ar">
-            إضافة إلى المكتبة
-          </TooltipContent>
-        </Tooltip>
+    <DirectionProvider direction="rtl">
+      <div dir="rtl" lang="ar" className="grid gap-4 px-40 py-16">
+        <div className="flex flex-wrap justify-center gap-2">
+          <Tooltip>
+            <TooltipTrigger render={<Button variant="outline" />}>
+              يسار
+            </TooltipTrigger>
+            <TooltipContent side="left" dir="rtl" lang="ar">
+              إضافة إلى المكتبة
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger render={<Button variant="outline" />}>
+              أعلى
+            </TooltipTrigger>
+            <TooltipContent side="top" dir="rtl" lang="ar">
+              إضافة إلى المكتبة
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger render={<Button variant="outline" />}>
+              أسفل
+            </TooltipTrigger>
+            <TooltipContent side="bottom" dir="rtl" lang="ar">
+              إضافة إلى المكتبة
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger render={<Button variant="outline" />}>
+              يمين
+            </TooltipTrigger>
+            <TooltipContent side="right" dir="rtl" lang="ar">
+              إضافة إلى المكتبة
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2">
+          <Tooltip>
+            <TooltipTrigger render={<Button variant="outline" />}>
+              بداية السطر
+            </TooltipTrigger>
+            <TooltipContent side="inline-start" dir="rtl" lang="ar">
+              إضافة إلى المكتبة
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger render={<Button variant="outline" />}>
+              نهاية السطر
+            </TooltipTrigger>
+            <TooltipContent side="inline-end" dir="rtl" lang="ar">
+              إضافة إلى المكتبة
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
-      <div className="flex flex-wrap justify-center gap-2">
-        <Tooltip>
-          <TooltipTrigger render={<Button variant="outline" />}>
-            بداية السطر
-          </TooltipTrigger>
-          <TooltipContent side="inline-start" dir="rtl" lang="ar">
-            إضافة إلى المكتبة
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger render={<Button variant="outline" />}>
-            نهاية السطر
-          </TooltipTrigger>
-          <TooltipContent side="inline-end" dir="rtl" lang="ar">
-            إضافة إلى المكتبة
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    </div>
+    </DirectionProvider>
   ),
 }

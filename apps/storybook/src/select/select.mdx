@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as SelectStories from "./select.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={SelectStories} />
 
@@ -90,7 +91,7 @@ Monte um `Select` com esta composição:
 - **Rótulo persistente:** o gatilho é um `<button role="combobox">` e precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do `SelectTrigger`. O texto do `SelectValue` (o placeholder, ou o item escolhido) não é o rótulo: ele some ou muda quando a pessoa escolhe. Todas as seções abaixo seguem esse padrão.
 - **Nome específico:** o rótulo diz o que a pessoa vai escolher ("Fuso horário", "Fruta"), não só "Selecione".
 - **Teclado:** Enter, Espaço ou ↓ abrem a lista; as setas, Home e End movem o destaque; digitar uma letra vai para o item que começa com ela; Enter escolhe; Esc fecha e devolve o foco ao gatilho. O teste da story **Demo** confere que o foco entra na lista e que o Esc o devolve ao gatilho.
-- **Foco visível:** o anel do gatilho é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Button e no Input. O campo não tem borda visível em repouso (o limite dele tem 1,25:1 no claro e 1,33:1 no escuro, escolha registrada nos tokens), então o foco e o estado inválido são o que o destacam. Dentro da lista, o item destacado usa `bg-accent`, sem anel.
+- **Foco visível:** o anel do gatilho é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Button e no Input. Na Brainz Group o campo não tem borda visível em repouso (`--field-border` transparente; o limite do preenchimento tem 1,25:1 no claro e 1,33:1 no escuro, escolha registrada nos tokens), então o foco e o estado inválido são o que o destacam. Uma marca de campo contornado troca só o `--field-border` (SESI claro: campo branco com borda Neutral/300, 1,33:1). O foco e o estado inválido continuam por cima. Dentro da lista, o item destacado usa `bg-accent`, sem anel.
 - **Estado inválido:** marque o gatilho com `aria-invalid` (a assistiva) e o `Field` com `data-invalid` (o visual, que pinta o rótulo de vermelho). A borda e o anel de foco passam a `destructive`. Cor sozinha não basta: explique o problema num `FieldError` com `id` e ligue-o ao gatilho por `aria-errormessage` e também por `aria-describedby`, junto com a descrição. O texto do gatilho continua `foreground`, para manter o contraste.
 - **Desabilitado:** `disabled` no `Select` tira o gatilho do Tab e apaga o campo em 50%. Um `SelectItem disabled` continua visível na lista, mas não recebe destaque nem pode ser escolhido. Informe o motivo numa descrição.
 - **Portal e RTL:** a lista vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ela, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
@@ -160,76 +161,86 @@ O `Select` e as suas partes envolvem os primitivos do Base UI. Veja a [documenta
 
 ### Select
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>items</code></td><td><code>{'Array<{ label: ReactNode; value: Value }> | Record<string, ReactNode>'}</code>: faz o <code>SelectValue</code> mostrar o rótulo do item escolhido</td><td>—</td></tr>
-    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>Value</code></td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: Value, details) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>name</code></td><td><code>string</code>: nome do campo enviado no formulário</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Select">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>items</code></td><td><code>{'Array<{ label: ReactNode; value: Value }> | Record<string, ReactNode>'}</code>: faz o <code>SelectValue</code> mostrar o rótulo do item escolhido</td><td>—</td></tr>
+      <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>Value</code></td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: Value, details) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>name</code></td><td><code>string</code>: nome do campo enviado no formulário</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### SelectTrigger
 
 O `SelectTrigger` renderiza um `<button role="combobox">` e aceita as props dele.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code>: altura de 32px ou 28px</td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Select: SelectTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code>: altura de 32px ou 28px</td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### SelectValue
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>placeholder</code></td><td><code>ReactNode</code>: mostrado enquanto nada foi escolhido e não há item com <code>value</code> nulo</td><td>—</td></tr>
-    <tr><td><code>children</code></td><td><code>{'ReactNode | (value) => ReactNode'}</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Select: SelectValue">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>placeholder</code></td><td><code>ReactNode</code>: mostrado enquanto nada foi escolhido e não há item com <code>value</code> nulo</td><td>—</td></tr>
+      <tr><td><code>children</code></td><td><code>{'ReactNode | (value) => ReactNode'}</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### SelectContent
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>4</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>0</code></td></tr>
-    <tr><td><code>alignItemWithTrigger</code></td><td><code>boolean</code>: alinha o item escolhido ao gatilho</td><td><code>true</code></td></tr>
-    <tr><td><code>dir</code> / <code>lang</code></td><td><code>string</code>: necessários num exemplo RTL isolado, porque a lista está num portal</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Select: SelectContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>4</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+      <tr><td><code>alignItemWithTrigger</code></td><td><code>boolean</code>: alinha o item escolhido ao gatilho</td><td><code>true</code></td></tr>
+      <tr><td><code>dir</code> / <code>lang</code></td><td><code>string</code>: necessários num exemplo RTL isolado, porque a lista está num portal</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### SelectItem
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>Value</code> (use <code>null</code> para o item de "texto de exemplo")</td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Select: SelectItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>Value</code> (use <code>null</code> para o item de "texto de exemplo")</td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 `SelectGroup`, `SelectLabel`, `SelectSeparator`, `SelectScrollUpButton` e `SelectScrollDownButton` aceitam `className` e as props do primitivo. Os elementos recebem `data-slot` (`select-trigger`, `select-value`, `select-content`, `select-item`, `select-group`, `select-label`, `select-separator`…). O `SelectTrigger` também expõe `data-size`.

@@ -69,9 +69,9 @@ O Carousel segue o padrão de carrossel do WAI-ARIA.
 
 - **Região com nome:** o contêiner é uma região com `aria-roledescription="carousel"`. Ele **precisa de um nome**, que o componente não tem como adivinhar: passe `aria-label` ou `aria-labelledby` ("Destaques da semana"). Com vários carrosséis na página, cada um leva um nome diferente.
 - **Slides com nome:** cada `CarouselItem` é um grupo com `aria-roledescription="slide"` e o nome automático "1 de 5", calculado pela posição e pelo total (os itens contam como filhos diretos, em arrays ou em Fragments; um item escondido dentro de outro componente não é contado, e então leva um `aria-label` próprio). Para um nome mais específico ("Plano Pro"), passe `aria-label` no item: ele tem preferência.
-- **Botões com nome:** "Slide anterior" e "Próximo slide" (texto `sr-only`), e as setas levam `aria-hidden="true"`. O nome é fixo em português; para outro idioma, passe `aria-label` no botão (veja **RTL**). No primeiro slide o anterior fica desabilitado, e no último, o próximo (a menos que use `loop`).
-- **Teclado:** `Tab` chega aos botões, e as setas ← e → trocam de slide quando o foco está dentro do carrossel. Em RTL as setas espelham (← avança). O anel de foco é o do Button: sólido, no token `--ring`, afastado 2px pela cor do fundo.
-- **Sem reprodução automática:** o conteúdo que se move sozinho precisa de um controle para pausar (WCAG 2.2.2). O padrão é não ter autoplay. Se usar o plugin de autoplay (veja **Plugins**), ofereça um botão de pausar e pare a rolagem quando o foco ou o mouse entrar no carrossel.
+- **Botões com nome:** "Slide anterior" e "Próximo slide" (texto `sr-only`), e as setas levam `aria-hidden="true"`. O nome é fixo em português; para outro idioma, passe `aria-label` no botão (veja **RTL**). No primeiro slide o anterior fica desabilitado, e no último, o próximo (a menos que use `loop`). O botão desabilitado continua focável (`focusableWhenDisabled`): recebe `aria-disabled="true"` e `data-disabled`, no lugar do `disabled` nativo, e fica na ordem do `Tab`. Assim, quem avança pelo teclado até o último slide continua no botão, o foco não cai no `<body>` e as setas continuam funcionando.
+- **Teclado:** `Tab` chega aos botões, e as setas ← e → trocam de slide quando o foco está dentro do carrossel. Em RTL as setas espelham (← avança). Quando o foco está num campo ou num widget que já usa as setas dentro de um slide (texto, select, slider, grupo de rádio, lista, menu, grade), as setas ficam com ele e não trocam de slide. O anel de foco é o do Button: sólido, no token `--ring`, afastado 2px pela cor do fundo.
+- **Sem reprodução automática:** o conteúdo que se move sozinho precisa de um controle para pausar (WCAG 2.2.2). O padrão é não ter autoplay. Se usar o plugin de autoplay (veja **Plugins**), ofereça um botão de pausar, pare a rolagem quando o foco ou o mouse entrar no carrossel e comece pausado com `prefers-reduced-motion: reduce`. Mantenha o `aria-live` do conteúdo em `off` enquanto gira e em `polite` quando parado.
 - **Mudanças dinâmicas:** quem usa a API para mostrar "Slide 2 de 5" deve manter essa região `aria-live="polite"` (`role="status"`) sempre montada, trocando só o texto (veja **API**).
 - **Cor e contraste:** os botões são o Button `outline`, com texto e contorno nos papéis do sistema. O conteúdo dos slides segue as regras de cada componente.
 
@@ -231,55 +231,26 @@ export function Exemplo() {
 
 ## Plugins
 
-Use a prop `plugins` para adicionar plugins do Embla, como o de reprodução automática. O pacote `embla-carousel-autoplay` não está instalado neste projeto, então esta seção não tem exemplo ao vivo; instale-o antes de usar.
-
-**O trecho abaixo não foi executado**, porque o pacote não está instalado: confira o comportamento do `reset` ao sair do mouse depois de uma pausa manual (ele pode retomar a rolagem). Um carrossel que avança sozinho **precisa de um botão de pausar** (WCAG 2.2.2). O exemplo do shadcn só para a rolagem ao passar o mouse, o que não serve para quem usa o teclado: ofereça também um controle de pausar (um botão com nome fixo e `aria-pressed`, não um rótulo que troca), e pare a rolagem quando o foco entrar.
+Use a prop `plugins` para adicionar plugins do Embla, como o de reprodução automática (`embla-carousel-autoplay`). Veja a [documentação do plugin](https://www.embla-carousel.com/plugins/autoplay/).
 
 <Source
-  language="tsx"
+  language="bash"
   dark
-  code={`import Autoplay from "embla-carousel-autoplay"
-
-export function Exemplo() {
-  const autoplay = React.useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true, stopOnFocusIn: true })
-  )
-  const [tocando, setTocando] = React.useState(true)
-
-  return (
-    <div className="mx-auto w-full max-w-sm px-12">
-      <Carousel
-        aria-label="Destaques da semana"
-        plugins={[autoplay.current]}
-        onMouseEnter={autoplay.current.stop}
-        onMouseLeave={autoplay.current.reset}
-      >
-        <CarouselContent>
-          <CarouselItem>...</CarouselItem>
-          <CarouselItem>...</CarouselItem>
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-      <Button
-        variant="outline"
-        size="sm"
-        aria-pressed={!tocando}
-        onClick={() => {
-          if (tocando) {
-            autoplay.current.stop()
-          } else {
-            autoplay.current.play()
-          }
-          setTocando(!tocando)
-        }}
-      >
-        Pausar a rolagem automática
-      </Button>
-    </div>
-  )
-}`}
+  code="npm.cmd install embla-carousel-autoplay@8.6.0 -w <workspace>"
 />
+
+Use a mesma versão do `embla-carousel-react` (8.6.0) e fixe a versão exata, sem `^`. No Storybook, o pacote é dependência de `@workspace/storybook`.
+
+O exemplo do shadcn só chama `stop` ao passar o mouse, o que não serve para quem usa o teclado nem cumpre a WCAG 2.2.2. O exemplo abaixo segue o padrão de carrossel com rotação automática do WAI-ARIA:
+
+- **Botão de pausar** visível, antes dos slides na ordem de leitura. O nome troca entre "Pausar a rotação automática" e "Retomar a rotação automática" (o nome muda, então não use `aria-pressed` junto).
+- **A rotação para** quando o mouse ou o foco do teclado entra no carrossel (os botões dos slides contam) e volta quando sai, a menos que a pessoa tenha pausado.
+- **Movimento reduzido:** com `prefers-reduced-motion: reduce`, o carrossel começa pausado.
+- **Região ao vivo:** o `CarouselContent` fica com `aria-live="off"` enquanto gira, para o leitor de tela não anunciar cada troca, e com `aria-live="polite"` quando está parado.
+
+O estado (pausa, mouse, foco) fica no React, e um efeito chama `plugin.play()` ou `plugin.stop()`. Por isso o plugin é criado com `playOnInit: false`, `stopOnInteraction: false` e `stopOnFocusIn: false`, e o `loop` fica ligado nas opções.
+
+<Canvas of={CarouselStories.Plugins} />
 
 ## RTL
 
@@ -351,7 +322,7 @@ Os botões de navegação, com o nome "Slide anterior" e "Próximo slide". Aceit
   </tbody>
 </table>
 
-Recebem `data-slot="carousel-previous"` e `data-slot="carousel-next"`.
+Recebem `data-slot="carousel-previous"` e `data-slot="carousel-next"`. Nas pontas, recebem `aria-disabled="true"` e `data-disabled` (com `focusableWhenDisabled`), sem o `disabled` nativo: num teste, confira `aria-disabled` e não `toBeDisabled()`.
 
 ### useCarousel
 

@@ -16,8 +16,11 @@
  * - Foco: o registro usava `outline-none` sem substituto. Agora o gatilho tem o
  *   anel sólido de 3px no `ring`, mas por dentro (`ring-inset`, sem
  *   afastamento), porque a raiz tem `overflow-hidden` e cortaria um anel de
- *   fora. O `ring` tem 3,5:1 no branco e 3,2:1 sobre `muted` no claro; no
+ *   fora. O `ring` tem 5,2:1 no branco e 4,7:1 sobre `muted` no claro; no
  *   escuro, 7,6:1 no fundo e 5,7:1 sobre `muted`.
+ * - Links no painel: sublinhados, com o anel de foco do projeto (`ring-3 ring-ring
+ *   ring-offset-2 ring-offset-background`, `rounded-sm`) no lugar do outline do
+ *   navegador.
  * - Item desabilitado: `data-disabled` apaga o gatilho em 50% (o Base UI marca o
  *   `<button>` com `disabled`, então ele sai da ordem do Tab); o estado não
  *   precisa cumprir contraste.
@@ -92,7 +95,7 @@ function AccordionContent({
     >
       <div
         className={cn(
-          "h-(--accordion-panel-height) pt-0 pb-4 data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          "h-(--accordion-panel-height) pt-0 pb-4 data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background [&_p:not(:last-child)]:mb-4",
           className
         )}
       >

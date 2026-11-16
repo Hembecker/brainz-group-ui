@@ -5,10 +5,22 @@ import { cn } from "cn"
  * Slider — estrutura e API do shadcn/ui (versão Base UI):
  * https://ui.shadcn.com/docs/components/base/slider
  * As cores, o contraste e os tamanhos são os da Big Brain.
+ * - Trilho e polegar com `rounded-full`: a forma não depende do raio da marca
+ *   (com os 4px do SESI, o `rounded-2xl` do rhea deixava o polegar quadrado).
  * - Construído sobre o Slider do Base UI. Cada polegar é um `<input
  *   type="range">` oculto dentro de um `div`, com setas, Home/End e
- *   PageUp/PageDown de graça. O texto de leitura de valor (`aria-valuetext`)
- *   já distingue os polegares de um intervalo ("início"/"fim").
+ *   PageUp/PageDown de graça.
+ * - Texto do valor (`aria-valuetext`): num intervalo de dois valores, o padrão
+ *   do Base UI é "25 start range"/"50 end range", em inglês numa página pt-BR
+ *   (WCAG 3.1.2). Aqui o padrão de dois valores é em português: "25 (início)"
+ *   e "50 (fim)". Com um ou com três ou mais valores, vale o padrão do Base UI
+ *   (o número, ou o `format`).
+ * - `getAriaLabel` e `getAriaValueText`: acréscimo da Big Brain à API do
+ *   shadcn, repassados a cada polegar (`Slider.Thumb` do Base UI). O
+ *   `getAriaValueText` substitui o padrão acima (por exemplo, numa página em
+ *   outra língua ou para "75%"). O `getAriaLabel` dá um nome por polegar e
+ *   substitui o nome que viria do `aria-labelledby`: inclua nele o nome do
+ *   campo ("Preço mínimo").
  * - Nome acessível: o polegar herda o nome do `aria-labelledby` do Slider.
  *   Aponte-o para um rótulo visível (`Label` com `id`). Um `aria-label` no
  *   Slider nomearia só o grupo, não o polegar.
@@ -42,10 +54,14 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  getAriaLabel,
+  getAriaValueText,
   ...props
-}: SliderPrimitive.Root.Props) {
+}: SliderPrimitive.Root.Props &
+  Pick<SliderPrimitive.Thumb.Props, "getAriaLabel" | "getAriaValueText">) {
   // Um número solto em `value`/`defaultValue` é um polegar só; o registro
-  // caía em [min, max] e desenhava dois.
+  // caía em [min, max] e desenhava dois. Sem `value` nem `defaultValue`, o
+  // Base UI guarda um valor só, em `min`, então também é um polegar só.
   const _values = Array.isArray(value)
     ? value
     : typeof value === "number"
@@ -54,7 +70,7 @@ function Slider({
         ? defaultValue
         : typeof defaultValue === "number"
           ? [defaultValue]
-          : [min, max]
+          : [min]
 
   return (
     <SliderPrimitive.Root
@@ -70,7 +86,7 @@ function Slider({
       <SliderPrimitive.Control className="relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:min-h-40 data-vertical:w-auto data-vertical:flex-col">
         <SliderPrimitive.Track
           data-slot="slider-track"
-          className="relative grow overflow-hidden rounded-2xl bg-input select-none data-horizontal:h-1 data-horizontal:w-full data-vertical:h-full data-vertical:w-1"
+          className="relative grow overflow-hidden rounded-full bg-input select-none data-horizontal:h-1 data-horizontal:w-full data-vertical:h-full data-vertical:w-1"
         >
           <SliderPrimitive.Indicator
             data-slot="slider-range"
@@ -81,7 +97,15 @@ function Slider({
           <SliderPrimitive.Thumb
             data-slot="slider-thumb"
             key={index}
-            className="block size-4 shrink-0 rounded-2xl bg-white shadow-md ring-1 ring-input transition-[color,box-shadow] duration-200 select-none not-dark:bg-clip-padding hover:ring-2 hover:ring-primary has-focus-visible:ring-3 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background data-disabled:pointer-events-none"
+            getAriaLabel={getAriaLabel}
+            getAriaValueText={
+              getAriaValueText ??
+              (_values.length === 2
+                ? (formatado, _valor, i) =>
+                    `${formatado} (${i === 0 ? "início" : "fim"})`
+                : undefined)
+            }
+            className="block size-4 shrink-0 rounded-full bg-white shadow-md ring-1 ring-input transition-[color,box-shadow] duration-200 select-none not-dark:bg-clip-padding hover:ring-2 hover:ring-primary has-focus-visible:ring-3 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background data-disabled:pointer-events-none"
           />
         ))}
       </SliderPrimitive.Control>

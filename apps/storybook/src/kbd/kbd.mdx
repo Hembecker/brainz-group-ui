@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as KbdStories from "./kbd.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={KbdStories} />
 
@@ -51,10 +52,10 @@ KbdGroup
 - **Separador:** o `+` entre as teclas é só visual: leva `aria-hidden="true"`.
 - **Contraste** (texto da tecla sobre o fundo, nos dois modos):
   - padrão, `muted-foreground` sobre `muted`: 6,6:1 no claro e 6,1:1 no escuro. Dentro de um Button, a tecla mantém o chip `muted`, então o mesmo contraste vale em qualquer variante;
-  - dentro de um **Input Group**, `muted-foreground` sobre `background`: 7,4:1 e 8,1:1. O registro usava `bg-input`, que dava 1,6:1 e 2,1:1 com esse texto; o `InputGroupAddon` já aplicava `bg-background`, e o próprio `Kbd` agora concorda. O chip contra o campo (`field`) tem 1,25:1 e 1,33:1: é decorativo, o texto é que vale;
+  - dentro de um **Input Group**, `muted-foreground` sobre `muted` no claro (6,6:1 na Brainz, 5,3:1 no SESI) e sobre `background` no escuro (8,1:1). O registro usava `bg-input`, que dava 1,6:1 e 2,1:1 com esse texto; o `InputGroupAddon` aplica as mesmas cores, e o próprio `Kbd` concorda. O `bg-background` sumia no campo branco do SESI claro (1:1). O chip contra o campo (`field`) tem 1,25:1 e 1,33:1: é decorativo, o texto é que vale;
   - dentro de um **Tooltip** (fundo `foreground`), `text-background` sobre `muted-foreground`: 7,4:1 e 8,1:1, um papel cheio nos dois modos. O registro usava `bg-background/20` e `/10`, com uma variante `dark:`. O chip contra o tooltip tem 2,7:1 e 2,4:1, também decorativo.
 - **Ícones decorativos:** um ícone dentro do `Kbd` leva `aria-hidden="true"`.
-- **Zoom:** o `Kbd` tem altura mínima de 20px e cresce com o texto; confira o zoom a 200%.
+- **Zoom:** o `Kbd` tem altura fixa de 20px (`h-5`, 1,25rem, que acompanha o zoom do navegador) e largura mínima de 20px (`min-w-5`), que cresce com o texto; confira o zoom a 200%.
 
 <Source
   language="tsx"
@@ -65,7 +66,11 @@ KbdGroup
 </Kbd>
 
 <Button aria-keyshortcuts="Control+S">
-  Salvar <Kbd>Ctrl</Kbd>
+  Salvar{" "}
+  <KbdGroup>
+    <Kbd>Ctrl</Kbd>
+    <Kbd>S</Kbd>
+  </KbdGroup>
 </Button>`}
 />
 
@@ -83,7 +88,7 @@ Use o `Kbd` dentro de um `Button` para mostrar uma tecla no botão. Dê `data-ic
 
 ## Tooltip
 
-Use o `Kbd` dentro de um `Tooltip` para mostrar um tooltip com uma tecla. O tooltip é só um complemento visual: o botão já tem o nome pelo texto dele, e o atalho vai também no `aria-keyshortcuts`.
+Use o `Kbd` dentro de um `Tooltip` para mostrar um tooltip com uma tecla. O tooltip é só um complemento visual: o botão já tem o nome pelo texto dele. Quando o atalho existir de fato no seu código, ligue-o ao botão com `aria-keyshortcuts` (veja Acessibilidade). O exemplo só mostra as teclas e não registra atalho nenhum, por isso não declara o atributo.
 
 <Canvas of={KbdStories.ComTooltip} />
 
@@ -105,14 +110,16 @@ O `Kbd` e o `KbdGroup` usam `gap` e `inline-flex`, sem direção fixa, então se
 
 Mostra uma tecla do teclado. Aceita todas as props de um `<kbd>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Kbd">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="kbd"`. Dentro de um Tooltip ele usa `in-data-[slot=tooltip-content]`, e dentro de um Input Group, `in-data-[slot=input-group]`.
 
@@ -120,14 +127,16 @@ O elemento recebe `data-slot="kbd"`. Dentro de um Tooltip ele usa `in-data-[slot
 
 Agrupa componentes `Kbd`. O tipo das props é o de um `<div>`, mas o elemento renderizado é um `<kbd>` (herdado do registro).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Kbd: KbdGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="kbd-group"`.
 

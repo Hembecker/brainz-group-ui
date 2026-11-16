@@ -55,12 +55,15 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+// Espera só as animações finitas da linha do tempo do documento: as guiadas
+// pela rolagem (`animation-timeline: scroll()`) e as em loop nunca terminam.
 async function esperarAnimacoes() {
   await Promise.allSettled(
     document
       .getAnimations()
       .filter(
         (animation) =>
+          animation.timeline === document.timeline &&
           animation.effect?.getComputedTiming().iterations !== Infinity
       )
       .map((animation) => animation.finished)

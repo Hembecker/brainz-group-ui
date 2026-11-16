@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as PopoverStories from "./popover.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={PopoverStories} />
 
@@ -108,9 +109,9 @@ Um popover com campos de formulário. Cada campo tem rótulo persistente.
 
 ## RTL
 
-Os recuos e a animação de entrada usam lados lógicos (`inline-start` e `inline-end`), então o popover segue a direção do `<html>`.
+Os recuos e a animação de entrada usam lados lógicos (`inline-start` e `inline-end`), então os lados seguem a direção do `DirectionProvider`, não o `dir` do DOM.
 
-Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. Para um popover isolado, como no exemplo, passe `dir` e `lang` ao próprio `PopoverContent`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+Como o conteúdo vai para um portal no `body`, um `dir` posto num ancestral do gatilho não chega a ele. Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>` e um `DirectionProvider direction="rtl"` na raiz. Para um popover isolado, como no exemplo, ponha o `DirectionProvider` em volta dele (os lados) e passe `dir` e `lang` ao próprio `PopoverContent` (o texto e a seta). Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={PopoverStories.Rtl} />
 
@@ -122,29 +123,33 @@ O `Popover` é construído sobre o [Popover do Base UI](https://base-ui.com/reac
 
 O popup, com o portal e o posicionador. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Popover: PopoverContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"center"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Popover</code></td><td>nenhum (só o contexto)</td><td><code>popover</code></td></tr>
-    <tr><td><code>PopoverTrigger</code></td><td><code>{'<button>'}</code></td><td><code>popover-trigger</code></td></tr>
-    <tr><td><code>PopoverContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>popover-content</code></td></tr>
-    <tr><td><code>PopoverHeader</code></td><td><code>{'<div>'}</code></td><td><code>popover-header</code></td></tr>
-    <tr><td><code>PopoverTitle</code></td><td><code>{'<h2>'}</code></td><td><code>popover-title</code></td></tr>
-    <tr><td><code>PopoverDescription</code></td><td><code>{'<p>'}</code></td><td><code>popover-description</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Popover: Referência da API, PopoverContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Popover</code></td><td>nenhum (só o contexto)</td><td><code>popover</code></td></tr>
+      <tr><td><code>PopoverTrigger</code></td><td><code>{'<button>'}</code></td><td><code>popover-trigger</code></td></tr>
+      <tr><td><code>PopoverContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>popover-content</code></td></tr>
+      <tr><td><code>PopoverHeader</code></td><td><code>{'<div>'}</code></td><td><code>popover-header</code></td></tr>
+      <tr><td><code>PopoverTitle</code></td><td><code>{'<h2>'}</code></td><td><code>popover-title</code></td></tr>
+      <tr><td><code>PopoverDescription</code></td><td><code>{'<p>'}</code></td><td><code>popover-description</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

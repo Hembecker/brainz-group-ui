@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as MarkerStories from "./marker.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={MarkerStories} />
 
@@ -35,7 +36,7 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/mar
 
 <Marker>
   <MarkerIcon>
-    <CheckIcon />
+    <CheckIcon aria-hidden="true" />
   </MarkerIcon>
   <MarkerContent>Explorou 4 arquivos</MarkerContent>
 </Marker>`}
@@ -68,7 +69,7 @@ O `Marker` é presentacional por padrão: o papel certo depende do uso, e quem m
 - **Status e progresso:** para um marcador que muda enquanto algo acontece, como "Pensando..." ou uma ferramenta em execução, use `role="status"`, e a atualização é anunciada de forma educada (`polite`). O `Marker` repassa o `role` para o elemento. O `Spinner` dentro do `MarkerIcon` fica escondido da tecnologia assistiva junto com o ícone, então só o texto é lido (veja **Status**).
 - **Separador com texto:** não ponha `role="separator"`. Um separador toma o nome do `aria-label` e trata o conteúdo como apresentação, então o texto visível não seria lido. As linhas dos lados são pseudo-elementos decorativos, e o texto é lido como um texto comum. Reserve `role="separator"` para um divisor sem texto.
 - **Marcador com borda:** tem a mesma semântica do padrão. A borda de baixo é decorativa.
-- **Ícone decorativo:** o `MarkerIcon` leva `aria-hidden="true"`, e o `MarkerContent` ao lado carrega o sentido. Um marcador só com ícone precisa de um `aria-label` ou de texto visível, para não ser lido como vazio.
+- **Ícone decorativo:** o `MarkerIcon` leva `aria-hidden="true"`, e o `MarkerContent` ao lado carrega o sentido. Um marcador só com ícone precisa de um texto `sr-only` no `MarkerContent` (ou de texto visível), para não ser lido como vazio. Não ponha `aria-label` direto no `Marker`: ele é um `<div>` sem papel, e o ARIA proíbe o nome em elementos sem papel (o axe acusa `aria-prohibited-attr`). O `aria-label` só vale junto de um papel: `role="img"`, para tratar o marcador como uma imagem só, ou `role="status"`, se ele muda enquanto algo acontece.
 - **Link e botão:** use `render` com um `<a>` (navegação) ou um `<button type="button">` (ação). O nome vem do texto do `MarkerContent`. O foco é o anel sólido do projeto (`--ring`, afastado 2px pela cor do fundo), e o link fica sublinhado, para não depender só da cor.
 - **Contraste:** o texto usa `muted-foreground`: 7,4:1 no fundo claro e 8,1:1 no escuro. As linhas do separador e da borda (`border`) são decorativas, porque o texto é que carrega o sentido.
 - **Movimento:** o `shimmer` passa um brilho pelo texto e pausa sozinho com `prefers-reduced-motion`. Durante a passagem do brilho, uma parte do texto fica mais clara; use só em texto de status que não seja a única fonte de uma informação importante.
@@ -87,15 +88,16 @@ O `Marker` é presentacional por padrão: o papel certo depende do uso, e quem m
   <MarkerContent>Hoje</MarkerContent>
 </Marker>
 
-<Marker aria-label="Sincronizado">
+<Marker>
   <MarkerIcon>
-    <CheckIcon />
+    <CheckIcon aria-hidden="true" />
   </MarkerIcon>
+  <MarkerContent className="sr-only">Sincronizado</MarkerContent>
 </Marker>
 
 <Marker render={<a href="/arquivos" />}>
   <MarkerIcon>
-    <FileTextIcon />
+    <FileTextIcon aria-hidden="true" />
   </MarkerIcon>
   <MarkerContent>Explorou 4 arquivos</MarkerContent>
 </Marker>`}
@@ -107,16 +109,18 @@ Use `variant` para trocar entre o marcador em linha, a linha com borda e o separ
 
 <Canvas of={MarkerStories.Variantes} />
 
-<table>
-  <thead>
-    <tr><th>Variante</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>default</code></td><td>Um marcador em linha, para status, notas e ações.</td></tr>
-    <tr><td><code>border</code></td><td>Um marcador padrão com uma borda embaixo da linha.</td></tr>
-    <tr><td><code>separator</code></td><td>Um rótulo centralizado, com uma linha de cada lado.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Marker: Variantes">
+  <table>
+    <thead>
+      <tr><th>Variante</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>default</code></td><td>Um marcador em linha, para status, notas e ações.</td></tr>
+      <tr><td><code>border</code></td><td>Um marcador padrão com uma borda embaixo da linha.</td></tr>
+      <tr><td><code>separator</code></td><td>Um rótulo centralizado, com uma linha de cada lado.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ## Status
 
@@ -180,16 +184,18 @@ A página do shadcn não tem uma seção de RTL, mas as linhas do separador e o 
 
 A raiz do marcador. O arquivo também exporta `markerVariants`, para usar o estilo em componentes próprios. Aceita as props de um `<div>`, ou do elemento passado em `render`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "border" | "separator"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code>: renderiza outro elemento, como um link</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Marker">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "border" | "separator"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code>: renderiza outro elemento, como um link</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="marker"` e `data-variant`.
 

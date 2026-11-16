@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ItemStories from "./item.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ItemStories} />
 
@@ -197,17 +198,19 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` 
 
 O componente principal, para mostrar conteúdo com mídia, título, descrição e ações. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | "muted"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "xs"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Item">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | "muted"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "xs"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="item"`, `data-variant` e `data-size`.
 
@@ -223,14 +226,16 @@ Um separador visual entre itens do grupo (veja **Grupo**). O `className` vai par
 
 Mostra mídia, como ícones, imagens ou avatares.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "icon" | "image"'}</code></td><td><code>{'"default"'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Item: ItemMedia">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "icon" | "image"'}</code></td><td><code>{'"default"'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ItemContent
 
@@ -242,7 +247,7 @@ O título do item.
 
 ### ItemDescription
 
-A descrição do item, na cor `muted-foreground`.
+A descrição do item, na cor `muted-foreground`. Um link dentro dela fica sublinhado e, no hover, usa o papel `link-hover`, como na FieldDescription.
 
 ### ItemActions
 
@@ -256,22 +261,24 @@ Um cabeçalho acima do conteúdo do item.
 
 Um rodapé abaixo do conteúdo do item.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>ItemGroup</code></td><td><code>{'<div role="list">'}</code></td><td><code>item-group</code></td></tr>
-    <tr><td><code>ItemSeparator</code></td><td><code>Separator</code></td><td><code>item-separator</code></td></tr>
-    <tr><td><code>ItemMedia</code></td><td><code>{'<div>'}</code></td><td><code>item-media</code></td></tr>
-    <tr><td><code>ItemContent</code></td><td><code>{'<div>'}</code></td><td><code>item-content</code></td></tr>
-    <tr><td><code>ItemTitle</code></td><td><code>{'<div>'}</code></td><td><code>item-title</code></td></tr>
-    <tr><td><code>ItemDescription</code></td><td><code>{'<p>'}</code></td><td><code>item-description</code></td></tr>
-    <tr><td><code>ItemActions</code></td><td><code>{'<div>'}</code></td><td><code>item-actions</code></td></tr>
-    <tr><td><code>ItemHeader</code></td><td><code>{'<div>'}</code></td><td><code>item-header</code></td></tr>
-    <tr><td><code>ItemFooter</code></td><td><code>{'<div>'}</code></td><td><code>item-footer</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Item: ItemFooter">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ItemGroup</code></td><td><code>{'<div role="list">'}</code></td><td><code>item-group</code></td></tr>
+      <tr><td><code>ItemSeparator</code></td><td><code>{'<div role="none">'}</code>, com a linha (<code>Separator</code>, <code>aria-hidden</code>) dentro</td><td><code>item-separator</code></td></tr>
+      <tr><td><code>ItemMedia</code></td><td><code>{'<div>'}</code></td><td><code>item-media</code></td></tr>
+      <tr><td><code>ItemContent</code></td><td><code>{'<div>'}</code></td><td><code>item-content</code></td></tr>
+      <tr><td><code>ItemTitle</code></td><td><code>{'<div>'}</code></td><td><code>item-title</code></td></tr>
+      <tr><td><code>ItemDescription</code></td><td><code>{'<p>'}</code></td><td><code>item-description</code></td></tr>
+      <tr><td><code>ItemActions</code></td><td><code>{'<div>'}</code></td><td><code>item-actions</code></td></tr>
+      <tr><td><code>ItemHeader</code></td><td><code>{'<div>'}</code></td><td><code>item-header</code></td></tr>
+      <tr><td><code>ItemFooter</code></td><td><code>{'<div>'}</code></td><td><code>item-footer</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas aceitam as props do elemento delas.
 

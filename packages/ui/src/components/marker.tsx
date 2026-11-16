@@ -21,6 +21,9 @@ import { cn } from "cn"
  *   ring-offset-2 ring-offset-background`), sem outline do navegador.
  * - Link: o registro sublinha o Marker quando ele é um <a> (`[a]:underline`),
  *   então o link não depende só da cor. Os ícones (SVG) não recebem o sublinhado.
+ * - Links no conteúdo (`MarkerContent`): sublinhados, com o anel de foco do
+ *   projeto (`ring-3 ring-ring ring-offset-2 ring-offset-background`,
+ *   `rounded-sm`) no lugar do outline do navegador.
  * - Marcador de status: `role="status"` vai por conta de quem usa (veja a
  *   página Docs). O `shimmer` do texto não anima com movimento reduzido.
  * - Espaçamentos lógicos (`me`/`ms`, `text-start`): funciona em RTL.
@@ -80,7 +83,7 @@ function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
     <span
       data-slot="marker-content"
       className={cn(
-        "min-w-0 wrap-break-word group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "min-w-0 wrap-break-word group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground *:[a]:rounded-sm *:[a]:outline-none *:[a]:focus-visible:ring-3 *:[a]:focus-visible:ring-ring *:[a]:focus-visible:ring-offset-2 *:[a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}

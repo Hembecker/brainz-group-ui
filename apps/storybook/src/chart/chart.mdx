@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ChartStories from "./chart.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ChartStories} />
 
@@ -349,18 +350,20 @@ O exemplo abaixo mostra os três indicadores, cada um com o tooltip aberto no m�
 
 ### Props
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>labelKey</code></td><td><code>string</code></td><td>A chave do <code>config</code> ou dos dados usada no rótulo.</td></tr>
-    <tr><td><code>nameKey</code></td><td><code>string</code></td><td>A chave do <code>config</code> ou dos dados usada no nome.</td></tr>
-    <tr><td><code>indicator</code></td><td><code>{'"dot" | "line" | "dashed"'}</code></td><td>O estilo do indicador.</td></tr>
-    <tr><td><code>hideLabel</code></td><td><code>boolean</code></td><td>Oculta o rótulo.</td></tr>
-    <tr><td><code>hideIndicator</code></td><td><code>boolean</code></td><td>Oculta o indicador.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Chart: Props">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>labelKey</code></td><td><code>string</code></td><td>A chave do <code>config</code> ou dos dados usada no rótulo.</td></tr>
+      <tr><td><code>nameKey</code></td><td><code>string</code></td><td>A chave do <code>config</code> ou dos dados usada no nome.</td></tr>
+      <tr><td><code>indicator</code></td><td><code>{'"dot" | "line" | "dashed"'}</code></td><td>O estilo do indicador.</td></tr>
+      <tr><td><code>hideLabel</code></td><td><code>boolean</code></td><td>Oculta o rótulo.</td></tr>
+      <tr><td><code>hideIndicator</code></td><td><code>boolean</code></td><td>Oculta o indicador.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### Cores
 
@@ -453,17 +456,19 @@ Em RTL, use `dir="rtl"` no contêiner e `reversed` no `XAxis`, para os meses cor
 
 O contêiner do gráfico. Entrega a configuração aos filhos, escreve as variáveis `--color-<chave>` e envolve o `ResponsiveContainer` do Recharts. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>config</code></td><td><code>ChartConfig</code></td><td>— (obrigatória)</td></tr>
-    <tr><td><code>id</code></td><td><code>string</code></td><td>gerado com <code>useId</code></td></tr>
-    <tr><td><code>initialDimension</code></td><td><code>{'{ width: number; height: number }'}</code></td><td><code>{'{ width: 320, height: 200 }'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td><code>aspect-video</code> (troque por uma altura)</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Chart: ChartContainer">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>config</code></td><td><code>ChartConfig</code></td><td>— (obrigatória)</td></tr>
+      <tr><td><code>id</code></td><td><code>string</code></td><td>gerado com <code>useId</code></td></tr>
+      <tr><td><code>initialDimension</code></td><td><code>{'{ width: number; height: number }'}</code></td><td><code>{'{ width: 320, height: 200 }'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td><code>aspect-video</code> (troque por uma altura)</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="chart"` e `data-chart`.
 
@@ -475,36 +480,40 @@ Um objeto cuja chave é a chave da série. Cada item tem `label` e `icon` opcion
 
 O `ChartTooltip` é o `Tooltip` do Recharts. O `ChartTooltipContent` é o conteúdo, com as props abaixo, além das do `Tooltip`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>indicator</code></td><td><code>{'"dot" | "line" | "dashed"'}</code></td><td><code>{'"dot"'}</code></td></tr>
-    <tr><td><code>hideLabel</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>hideIndicator</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>labelKey</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>nameKey</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>labelFormatter</code> / <code>formatter</code></td><td>funções do Recharts</td><td>—</td></tr>
-    <tr><td><code>className</code> / <code>labelClassName</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Chart: ChartTooltip e ChartTooltipContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>indicator</code></td><td><code>{'"dot" | "line" | "dashed"'}</code></td><td><code>{'"dot"'}</code></td></tr>
+      <tr><td><code>hideLabel</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>hideIndicator</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>labelKey</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>nameKey</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>labelFormatter</code> / <code>formatter</code></td><td>funções do Recharts</td><td>—</td></tr>
+      <tr><td><code>className</code> / <code>labelClassName</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ChartLegend e ChartLegendContent
 
 O `ChartLegend` é a `Legend` do Recharts. O `ChartLegendContent` é o conteúdo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>nameKey</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>hideIcon</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>verticalAlign</code></td><td><code>{'"top" | "bottom"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Chart: ChartLegend e ChartLegendContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>nameKey</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>hideIcon</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>verticalAlign</code></td><td><code>{'"top" | "bottom"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ChartStyle
 

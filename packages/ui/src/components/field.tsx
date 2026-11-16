@@ -20,6 +20,9 @@
  *   sobre `field` para 3,82:1 (5,11:1 no escuro): não ponha rótulo ou erro
  *   inválido sobre essas superfícies (um choice card marcado ou com o mouse
  *   em cima, por exemplo).
+ * - Links na `FieldDescription`: sublinhados, hover em `link-hover` e anel de foco
+ *   do projeto (`ring-3 ring-ring ring-offset-2 ring-offset-background`,
+ *   `rounded-sm`) no lugar do outline do navegador.
  * - `FieldError` é uma região viva sempre montada: `aria-live="polite"` (e
  *   `aria-atomic`), sem `role="alert"`. O registro só montava o erro quando
  *   havia texto, e um `role="alert"` que nasce já com o texto nem sempre é
@@ -49,6 +52,9 @@
  * - Anel de foco do choice card (`has-[:focus-visible]`): sólido, 3px, `ring`,
  *   afastado 2px pela cor do fundo, como no Button.
  * - Paddings e margens lógicos (`ms-4`, `text-start`), então funciona em RTL.
+ * - Link dentro do FieldDescription: no hover vai para `link-hover`, e não
+ *   para `primary` como no registro. A primária 600 tem só 3,8:1 contra o
+ *   fundo escuro; `link-hover` tem 9,3:1 no claro e 13,3:1 no escuro.
  */
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -185,7 +191,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
       className={cn(
         "text-start text-sm leading-normal font-normal text-muted-foreground group-has-data-horizontal/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
         "last:mt-0 nth-last-2:-mt-1",
-        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-link-hover [&>a]:rounded-sm [&>a]:outline-none [&>a]:focus-visible:ring-3 [&>a]:focus-visible:ring-ring [&>a]:focus-visible:ring-offset-2 [&>a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}

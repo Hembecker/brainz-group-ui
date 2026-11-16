@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as DropdownMenuStories from "./dropdown-menu.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={DropdownMenuStories} />
 
@@ -240,116 +241,130 @@ O `DropdownMenu` é construído sobre o [Menu do Base UI](https://base-ui.com/re
 
 O popup, com o portal e o posicionamento. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: DropdownMenuContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DropdownMenuSubContent
 
 O popup de um submenu. Aceita as props do `DropdownMenuContent`, com outros padrões.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"inline-end"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'-3'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: DropdownMenuSubContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"inline-end"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'-3'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DropdownMenuItem
 
 Um item de ação. Aceita as props do Item do Base UI (por exemplo `disabled`, `onClick`, `closeOnClick` e `render`).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: DropdownMenuItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DropdownMenuCheckboxItem
 
 Um item que liga e desliga. Aceita as props do CheckboxItem do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: DropdownMenuCheckboxItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DropdownMenuRadioItem
 
 Uma opção do `DropdownMenuRadioGroup`. Aceita as props do RadioItem do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>any</code></td><td>—</td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: DropdownMenuRadioItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>any</code></td><td>—</td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DropdownMenuLabel e DropdownMenuSubTrigger
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: DropdownMenuLabel e DropdownMenuSubTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 `inset` dá ao item o recuo de 28px no começo (`ps-7`), para alinhá-lo com os itens que têm ícone ou indicador. O `DropdownMenuSeparator` aceita as props do Separator do Base UI, e o `DropdownMenuShortcut`, as de um `<span>`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>DropdownMenu</code></td><td>nenhum (só o contexto)</td><td><code>dropdown-menu</code></td></tr>
-    <tr><td><code>DropdownMenuTrigger</code></td><td><code>{'<button>'}</code></td><td><code>dropdown-menu-trigger</code></td></tr>
-    <tr><td><code>DropdownMenuPortal</code></td><td>portal no <code>body</code></td><td><code>dropdown-menu-portal</code></td></tr>
-    <tr><td><code>DropdownMenuContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>dropdown-menu-content</code></td></tr>
-    <tr><td><code>DropdownMenuGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>dropdown-menu-group</code></td></tr>
-    <tr><td><code>DropdownMenuLabel</code></td><td><code>{'<div>'}</code></td><td><code>dropdown-menu-label</code></td></tr>
-    <tr><td><code>DropdownMenuItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>dropdown-menu-item</code></td></tr>
-    <tr><td><code>DropdownMenuCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>dropdown-menu-checkbox-item</code></td></tr>
-    <tr><td><code>DropdownMenuRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>dropdown-menu-radio-group</code></td></tr>
-    <tr><td><code>DropdownMenuRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>dropdown-menu-radio-item</code></td></tr>
-    <tr><td><code>DropdownMenuSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>dropdown-menu-separator</code></td></tr>
-    <tr><td><code>DropdownMenuShortcut</code></td><td><code>{'<span>'}</code></td><td><code>dropdown-menu-shortcut</code></td></tr>
-    <tr><td><code>DropdownMenuSub</code></td><td>nenhum (só o contexto)</td><td><code>dropdown-menu-sub</code></td></tr>
-    <tr><td><code>DropdownMenuSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>dropdown-menu-sub-trigger</code></td></tr>
-    <tr><td><code>DropdownMenuSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>dropdown-menu-sub-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dropdown Menu: Referência da API, DropdownMenuLabel e DropdownMenuSubTrigger">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>DropdownMenu</code></td><td>nenhum (só o contexto)</td><td><code>dropdown-menu</code></td></tr>
+      <tr><td><code>DropdownMenuTrigger</code></td><td><code>{'<button>'}</code></td><td><code>dropdown-menu-trigger</code></td></tr>
+      <tr><td><code>DropdownMenuPortal</code></td><td>portal no <code>body</code></td><td><code>dropdown-menu-portal</code></td></tr>
+      <tr><td><code>DropdownMenuContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>dropdown-menu-content</code></td></tr>
+      <tr><td><code>DropdownMenuGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>dropdown-menu-group</code></td></tr>
+      <tr><td><code>DropdownMenuLabel</code></td><td><code>{'<div>'}</code></td><td><code>dropdown-menu-label</code></td></tr>
+      <tr><td><code>DropdownMenuItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>dropdown-menu-item</code></td></tr>
+      <tr><td><code>DropdownMenuCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>dropdown-menu-checkbox-item</code></td></tr>
+      <tr><td><code>DropdownMenuRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>dropdown-menu-radio-group</code></td></tr>
+      <tr><td><code>DropdownMenuRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>dropdown-menu-radio-item</code></td></tr>
+      <tr><td><code>DropdownMenuSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>dropdown-menu-separator</code></td></tr>
+      <tr><td><code>DropdownMenuShortcut</code></td><td><code>{'<span>'}</code></td><td><code>dropdown-menu-shortcut</code></td></tr>
+      <tr><td><code>DropdownMenuSub</code></td><td>nenhum (só o contexto)</td><td><code>dropdown-menu-sub</code></td></tr>
+      <tr><td><code>DropdownMenuSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>dropdown-menu-sub-trigger</code></td></tr>
+      <tr><td><code>DropdownMenuSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>dropdown-menu-sub-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

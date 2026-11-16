@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as CardStories from "./card.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={CardStories} />
 
@@ -129,15 +130,17 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa `dir` 
 
 O contêiner raiz do card. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Card">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="card"` e `data-size`. A variável `--card-spacing` pode ser trocada pela `className`.
 
@@ -165,19 +168,21 @@ O corpo principal do card.
 
 As ações e o conteúdo secundário na base do card. Com a classe `border-t`, ganha um espaço acima da borda.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>CardHeader</code></td><td><code>{'<div>'}</code></td><td><code>card-header</code></td></tr>
-    <tr><td><code>CardTitle</code></td><td><code>{'<div>'}</code></td><td><code>card-title</code></td></tr>
-    <tr><td><code>CardDescription</code></td><td><code>{'<div>'}</code></td><td><code>card-description</code></td></tr>
-    <tr><td><code>CardAction</code></td><td><code>{'<div>'}</code></td><td><code>card-action</code></td></tr>
-    <tr><td><code>CardContent</code></td><td><code>{'<div>'}</code></td><td><code>card-content</code></td></tr>
-    <tr><td><code>CardFooter</code></td><td><code>{'<div>'}</code></td><td><code>card-footer</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Card: CardFooter">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>CardHeader</code></td><td><code>{'<div>'}</code></td><td><code>card-header</code></td></tr>
+      <tr><td><code>CardTitle</code></td><td><code>{'<div>'}</code></td><td><code>card-title</code></td></tr>
+      <tr><td><code>CardDescription</code></td><td><code>{'<div>'}</code></td><td><code>card-description</code></td></tr>
+      <tr><td><code>CardAction</code></td><td><code>{'<div>'}</code></td><td><code>card-action</code></td></tr>
+      <tr><td><code>CardContent</code></td><td><code>{'<div>'}</code></td><td><code>card-content</code></td></tr>
+      <tr><td><code>CardFooter</code></td><td><code>{'<div>'}</code></td><td><code>card-footer</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas aceitam as props de um `<div>`.
 

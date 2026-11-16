@@ -1,0 +1,123 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as ButtonStories from "../button/button.stories";
+import * as InputStories from "../input/input.stories";
+
+<Meta title="Componentes/Visão geral" />
+
+# Componentes
+
+Os 63 componentes da biblioteca, organizados por categoria. Cada um tem uma página com exemplos, variantes, estados e código para copiar.
+
+São os componentes do registro do shadcn/ui (estilo `base-rhea`), menos dois: o Sonner, que não foi instalado (as notificações usam o [Toast](?path=/docs/componentes-toast--docs), feito sobre o Toast do Base UI), e o `form`, um item vazio no registro. Todos foram revisados um a um com os tokens da Big Brain: cores dos papéis semânticos, anel de foco sólido, textos fixos em português e contrastes anotados no comentário do topo de cada arquivo.
+
+Todos ficam no pacote `@workspace/ui` e são importados pelo caminho `components/<nome>`:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Button } from "@workspace/ui/components/button"
+import { Field, FieldLabel } from "@workspace/ui/components/field"`}
+/>
+
+## Como ler cada página
+
+Toda página de componente segue as seções da página dele no shadcn/ui, na mesma ordem:
+
+1. **Exemplo principal**, logo abaixo do título e da descrição.
+2. **Instalação** e **Uso**: o comando do CLI, o arquivo no pacote e um trecho mínimo de import e uso.
+3. **Acessibilidade**: as regras do design system aplicadas ao componente (nome acessível, foco, gatilhos, formulários, mudanças dinâmicas).
+4. **Exemplos**: uma seção para cada variante, tamanho e estado (desabilitado, inválido, carregando…), e uma seção **RTL** quando o componente tem direção.
+5. **Referência da API**: as props, com tipo e valor padrão.
+
+Abaixo de cada exemplo, o botão **Show code** mostra o JSX pronto para copiar. A barra de ferramentas troca a marca, o modo (claro ou escuro) e a direção de todos os exemplos ao mesmo tempo.
+
+Um exemplo de variante, do [Button](?path=/docs/componentes-button--docs):
+
+<Canvas of={ButtonStories.Demo} />
+
+E um exemplo de estado, o campo inválido do [Input](?path=/docs/componentes-input--docs):
+
+<Canvas of={InputStories.Invalido} />
+
+## Formulários
+
+- [Button](?path=/docs/componentes-button--docs): Mostra um botão, ou um componente com a aparência de um botão.
+- [Button Group](?path=/docs/componentes-button-group--docs): Um contêiner que agrupa botões relacionados com um estilo consistente.
+- [Input](?path=/docs/componentes-input--docs): Um campo de texto para formulários e entrada de dados, com estilo e recursos de acessibilidade já incluídos.
+- [Input Group](?path=/docs/componentes-input-group--docs): Adicione ícones, textos, botões e outros conteúdos de apoio dentro de um campo.
+- [Input OTP](?path=/docs/componentes-input-otp--docs): Um componente acessível de senha de uso único, com suporte a copiar e colar.
+- [Textarea](?path=/docs/componentes-textarea--docs): Mostra um campo de texto de várias linhas, ou um componente que parece um.
+- [Label](?path=/docs/componentes-label--docs): Mostra um rótulo acessível associado a um controle.
+- [Field](?path=/docs/componentes-field--docs): Combine rótulos, controles e textos de ajuda para montar campos de formulário acessíveis e grupos de campos.
+- [Checkbox](?path=/docs/componentes-checkbox--docs): Um controle que alterna entre marcado e não marcado.
+- [Radio Group](?path=/docs/componentes-radio-group--docs): Um conjunto de botões marcáveis, os botões de opção, em que no máximo um pode estar marcado por vez.
+- [Switch](?path=/docs/componentes-switch--docs): Um controle que alterna entre ligado e desligado.
+- [Slider](?path=/docs/componentes-slider--docs): Um controle em que a pessoa escolhe um valor dentro de um intervalo.
+- [Select](?path=/docs/componentes-select--docs): Mostra uma lista de opções para a pessoa escolher, aberta por um botão.
+- [Native Select](?path=/docs/componentes-native-select--docs): Um elemento `<select>` nativo do HTML, estilizado de forma consistente com o design system.
+- [Combobox](?path=/docs/componentes-combobox--docs): Um campo de texto com autocompletar: a pessoa digita, a lista de sugestões filtra, e ela escolhe uma opção.
+- [Toggle](?path=/docs/componentes-toggle--docs): Um botão de duas posições, que fica ligado ou desligado.
+- [Toggle Group](?path=/docs/componentes-toggle-group--docs): Um conjunto de botões de duas posições, que podem ficar ligados ou desligados.
+- [Calendar](?path=/docs/componentes-calendar--docs): Um calendário para escolher uma data ou um intervalo de datas.
+- [Questionnaire](?path=/docs/componentes-questionnaire--docs): Um questionário em várias etapas, com perguntas de escolha única, de escolha múltipla, de resposta livre e que podem ser puladas.
+
+## Sobreposições e menus
+
+- [Dialog](?path=/docs/componentes-dialog--docs): Uma janela sobreposta à janela principal ou a outro diálogo, que deixa o conteúdo de trás inerte.
+- [Alert Dialog](?path=/docs/componentes-alert-dialog--docs): Um diálogo modal que interrompe a pessoa com um conteúdo importante e espera uma resposta.
+- [Sheet](?path=/docs/componentes-sheet--docs): Estende o Dialog para mostrar um conteúdo que complementa a tela principal, preso a uma das bordas.
+- [Drawer](?path=/docs/componentes-drawer--docs): Uma gaveta que desliza da borda da tela. Serve para ações e formulários curtos, sobretudo no celular.
+- [Popover](?path=/docs/componentes-popover--docs): Mostra conteúdo rico num portal, aberto por um botão.
+- [Hover Card](?path=/docs/componentes-hover-card--docs): Uma pré-visualização, para quem enxerga, do conteúdo que está por trás de um link.
+- [Tooltip](?path=/docs/componentes-tooltip--docs): Um balão que mostra informação sobre um elemento quando ele recebe o foco do teclado ou o mouse passa por cima.
+- [Dropdown Menu](?path=/docs/componentes-dropdown-menu--docs): Mostra um menu de ações ou de funções, aberto por um botão.
+- [Context Menu](?path=/docs/componentes-context-menu--docs): Mostra um menu de ações, aberto com o botão direito do mouse (ou com um toque longo) sobre uma área.
+- [Menubar](?path=/docs/componentes-menubar--docs): Uma barra de menus, como a de um aplicativo de desktop, com acesso rápido a um conjunto de comandos.
+- [Command](?path=/docs/componentes-command--docs): Um menu de comandos para busca e ações rápidas.
+- [Navigation Menu](?path=/docs/componentes-navigation-menu--docs): Uma coleção de links para navegar pelo site, com painéis que abrem a partir de um gatilho.
+- [Toast](?path=/docs/componentes-toast--docs): Uma mensagem curta, mostrada por um tempo e depois removida.
+
+## Exibição
+
+- [Card](?path=/docs/componentes-card--docs): Mostra um card com cabeçalho, conteúdo e rodapé.
+- [Alert](?path=/docs/componentes-alert--docs): Mostra um destaque para chamar a atenção do usuário.
+- [Badge](?path=/docs/componentes-badge--docs): Mostra um selo, ou um componente com a aparência de um selo.
+- [Kbd](?path=/docs/componentes-kbd--docs): Mostra uma tecla do teclado, ou um atalho.
+- [Avatar](?path=/docs/componentes-avatar--docs): Uma imagem com um fallback, para representar uma pessoa.
+- [Aspect Ratio](?path=/docs/componentes-aspect-ratio--docs): Mostra um conteúdo dentro de uma proporção definida.
+- [Skeleton](?path=/docs/componentes-skeleton--docs): Mostra um espaço reservado enquanto o conteúdo carrega.
+- [Spinner](?path=/docs/componentes-spinner--docs): Um indicador que mostra que algo está carregando.
+- [Empty](?path=/docs/componentes-empty--docs): Mostra um estado vazio, quando não há nada para exibir.
+- [Item](?path=/docs/componentes-item--docs): Um componente versátil para mostrar conteúdo com mídia, título, descrição e ações.
+- [Table](?path=/docs/componentes-table--docs): Uma tabela responsiva.
+- [Progress](?path=/docs/componentes-progress--docs): Mostra um indicador do andamento de uma tarefa, em geral como uma barra de progresso.
+- [Separator](?path=/docs/componentes-separator--docs): Separa conteúdo, visualmente ou semanticamente.
+- [Scroll Area](?path=/docs/componentes-scroll-area--docs): Complementa a rolagem nativa com uma barra de estilo próprio, igual em todos os navegadores.
+- [Resizable](?path=/docs/componentes-resizable--docs): Grupos de painéis redimensionáveis, com suporte a teclado.
+- [Accordion](?path=/docs/componentes-accordion--docs): Um conjunto de títulos empilhados na vertical, cada um revelando uma seção de conteúdo.
+- [Collapsible](?path=/docs/componentes-collapsible--docs): Um componente interativo que expande e recolhe um painel.
+- [Tabs](?path=/docs/componentes-tabs--docs): Um conjunto de seções de conteúdo em camadas, chamadas painéis de aba, exibidas uma de cada vez.
+- [Carousel](?path=/docs/componentes-carousel--docs): Um carrossel com movimento e gesto de arrastar, feito com o Embla.
+- [Chart](?path=/docs/componentes-chart--docs): Gráficos bonitos, feitos com o Recharts.
+
+## Navegação e layout
+
+- [Breadcrumb](?path=/docs/componentes-breadcrumb--docs): Mostra o caminho até o recurso atual, numa hierarquia de links.
+- [Pagination](?path=/docs/componentes-pagination--docs): Paginação, com links de página, de página anterior e de próxima página.
+- [Sidebar](?path=/docs/componentes-sidebar--docs): Uma barra lateral composável, com tema e personalizável.
+- [Direction](?path=/docs/componentes-direction--docs): Um provedor que define a direção do texto (`ltr` ou `rtl`) para a aplicação.
+
+## Conversa e IA
+
+- [Message](?path=/docs/componentes-message--docs): Mostra uma mensagem de uma conversa, com avatar, cabeçalho, rodapé e alinhamento opcionais.
+- [Message Scroller](?path=/docs/componentes-message-scroller--docs): Um contêiner de rolagem para chat: ancora os turnos, abre conversas salvas, acompanha respostas em streaming, carrega o histórico sem pular e leva a qualquer mensagem.
+- [Bubble](?path=/docs/componentes-bubble--docs): Mostra conteúdo de conversa num balão: variantes, alinhamento, agrupamento, reações e conteúdo recolhível.
+- [Attachment](?path=/docs/componentes-attachment--docs): Mostra um arquivo ou uma imagem anexada, com a mídia, o nome e os metadados, o estado do envio e as ações.
+- [Code Block](?path=/docs/componentes-code-block--docs): Mostra código, saída de terminal e diffs, com um cabeçalho opcional, números de linha e um botão de copiar.
+- [Marker](?path=/docs/componentes-marker--docs): Mostra um status em linha, uma nota do sistema, uma linha com borda ou um separador com rótulo numa conversa.
+- [Trace](?path=/docs/componentes-trace--docs): O bloco de construção para raciocínio, chamadas de ferramenta, fontes e mais.
+
+## Blocos de aplicação
+
+Os componentes também compõem modelos de tela inteira, documentados na seção **Blocks**: [Dashboard](?path=/docs/blocks-dashboard--docs), [Login](?path=/docs/blocks-login--docs) e [Cadastro](?path=/docs/blocks-cadastro--docs). Para os componentes de conversa e de agentes reunidos por padrão de uso, veja [Componentes de IA](?path=/docs/componentes-de-ia--docs).

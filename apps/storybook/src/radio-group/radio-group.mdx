@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as RadioGroupStories from "./radio-group.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={RadioGroupStories} />
 
@@ -59,10 +60,10 @@ Use a composição a seguir para montar um `RadioGroup`:
 
 - **Nome do grupo:** o `RadioGroup` expõe `role="radiogroup"` e precisa de um nome que diga o que a pessoa está escolhendo ("Densidade", "Plano"). Use um `FieldSet` com um `FieldLegend` (veja **Conjunto de campos**), `aria-labelledby` apontando para um título visível ou, sem título visível, `aria-label`.
 - **Nome de cada opção:** todo `RadioGroupItem` tem um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do item. O nome da opção tem que fazer sentido junto com o do grupo.
-- **Teclado:** o Tab entra no grupo e para só no item marcado (ou no primeiro, se nenhum estiver marcado). As setas movem o foco e marcam o item, e o Espaço marca o item focado. O Base UI cuida da ordem e das setas, inclusive em RTL.
+- **Teclado:** o Tab entra no grupo e para só no item marcado (ou no primeiro, se nenhum estiver marcado). As setas movem o foco e marcam o item, e o Espaço marca o item focado. O Base UI cuida da ordem e das setas, inclusive em RTL quando recebe a direção pelo `DirectionProvider` (veja **RTL**).
 - **Contraste do círculo:** o limite do controle precisa de 3:1 contra o fundo (WCAG 1.4.11). O círculo desmarcado é preenchido com `input`, e não com `input/90` como no registro. No claro tem 4,6:1 no branco, 4,2:1 na `muted` e 3,7:1 sobre o `field`; no escuro tem 3,8:1 no fundo e no card e 3,6:1 na `muted`. Marcado, o círculo é `primary` (5,2:1 no branco, 4,2:1 sobre o `field`, 3,8:1 no fundo escuro e 3,4:1 no card escuro) e o ponto é `primary-foreground` (5,2:1).
-- **Foco:** o anel é sólido, de 3px, no token `--ring` (3,5:1 no branco; 7,6:1 no fundo escuro), e fica afastado 2px pela cor do fundo, como no Button. No cartão de escolha, quem mostra o foco é o `FieldLabel` que envolve o `Field`. Não remova o anel.
-- **Inválido:** marque cada item com `aria-invalid` (assistiva) e cada `Field` com `data-invalid` (visual). O círculo troca a borda para `destructive` (4,8:1 no claro; 6,8:1 no escuro) e, no foco, o anel também passa a `destructive`. Cor sozinha não basta: mostre uma mensagem de texto, com `id`, e ligue-a ao grupo por `aria-describedby`.
+- **Foco:** o anel é sólido, de 3px, no token `--ring` (5,2:1 no branco; 7,6:1 no fundo escuro), e fica afastado 2px pela cor do fundo, como no Button. No cartão de escolha, quem mostra o foco é o `FieldLabel` que envolve o `Field`. Não remova o anel.
+- **Inválido:** marque o `RadioGroup` com `aria-invalid` (assistiva) e com `aria-errormessage` apontando para o `id` do `FieldError`, e ponha esse `id` também no `aria-describedby` do grupo, junto com o da descrição. O `aria-errormessage` só vale no elemento que tem `aria-invalid`. Marque também cada `RadioGroupItem` com `aria-invalid` (a borda do círculo) e cada `Field` com `data-invalid` (o rótulo). O círculo troca a borda para `destructive` (4,8:1 no claro; 6,8:1 no escuro) e, no foco, o anel também passa a `destructive`. Cor sozinha não basta: mostre a mensagem de texto.
 - **Desabilitado:** `disabled` no `RadioGroup` desabilita todos os itens, e no `RadioGroupItem` só aquele. O item desabilitado sai da ordem do Tab e fica a 50%. Adicione `data-disabled` ao `Field` para apagar também o rótulo.
 - **Mudanças dinâmicas:** ao escolher uma opção que muda o resto da tela, avise a mudança numa região `aria-live="polite"` sempre montada, trocando só o texto dela.
 
@@ -113,13 +114,13 @@ Use a prop `disabled` no item para desabilitá-lo, ou no `RadioGroup` para desab
 
 ## Inválido
 
-Use `aria-invalid` no `RadioGroupItem` e `data-invalid` no `Field` para mostrar erros de validação. Explique o erro numa mensagem de texto e ligue-a ao grupo por `aria-describedby`.
+Use `aria-invalid` no `RadioGroup` e em cada `RadioGroupItem`, e `data-invalid` em cada `Field`, para mostrar erros de validação. Explique o erro num `FieldError` com `id` e ligue-o ao grupo por `aria-describedby` (junto com a descrição) e por `aria-errormessage`.
 
 <Canvas of={RadioGroupStories.Invalido} />
 
 ## RTL
 
-O `RadioGroupItem` usa posicionamento lógico (`start-1/2` e `rtl:translate-x-1/2` no ponto), então funciona em RTL sem nenhuma prop: o círculo vai para a direita do texto e as setas seguem a direção. Coloque `dir="rtl"` e o `lang` num ancestral (o exemplo usa um `div` porque esta página é LTR) e o `dir` também no `RadioGroup`, no item e no rótulo. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+O `RadioGroupItem` usa posicionamento lógico (`start-1/2` e `rtl:translate-x-1/2` no ponto), então o `dir="rtl"` num ancestral basta para o layout: o círculo vai para a direita do texto e o ponto fica centrado. O teclado é outra coisa: o Base UI só inverte as setas (em RTL, a seta para a esquerda vai para o próximo item) quando recebe a direção pelo `DirectionProvider` (`@workspace/ui/components/direction`); o `dir` num ancestral muda só o CSS. Por isso o exemplo envolve o grupo no provider e também usa `dir="rtl"` e `lang` num `div`, porque esta página é LTR. Numa página inteira em RTL, o provider vem do app; aqui, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={RadioGroupStories.Rtl} />
 
@@ -131,23 +132,27 @@ Veja a documentação do [Radio Group no Base UI](https://base-ui.com/react/comp
 
 Envolve o `RadioGroup` do Base UI (`role="radiogroup"`).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: string, eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>name</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: nome do grupo, quando não há legenda ou título</td><td>—</td></tr>
-    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do título do grupo</td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Radio Group: RadioGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: string, eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>name</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: nome do grupo, quando não há legenda ou título</td><td>—</td></tr>
+      <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do título do grupo</td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro</td><td>—</td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id do erro; vale com <code>aria-invalid</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="radio-group"`.
 
@@ -155,17 +160,19 @@ O elemento recebe `data-slot="radio-group"`.
 
 Envolve o `Radio.Root` do Base UI (`role="radio"`).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code>: obrigatório</td><td>—</td></tr>
-    <tr><td><code>id</code></td><td><code>string</code>: o mesmo do <code>htmlFor</code> do rótulo</td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Radio Group: RadioGroupItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code>: obrigatório</td><td>—</td></tr>
+      <tr><td><code>id</code></td><td><code>string</code>: o mesmo do <code>htmlFor</code> do rótulo</td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-O botão recebe `data-slot="radio-group-item"` e o indicador, `data-slot="radio-group-indicator"`. O item não tem variantes nem tamanhos: tem 16px (`size-4`) e é um círculo (`rounded-2xl`).
+O elemento raiz (o `<span role="radio">` do Base UI) recebe `data-slot="radio-group-item"` e o indicador, `data-slot="radio-group-indicator"`. O item não tem variantes nem tamanhos: tem 16px (`size-4`) e é um círculo (`rounded-full`, que não depende do raio da marca).

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ButtonGroupStories from "./button-group.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ButtonGroupStories} />
 
@@ -59,6 +60,7 @@ Monte um `ButtonGroup` com esta composição:
 - Dê um nome ao grupo com `aria-label` ou `aria-labelledby`.
 - Cada botão só com ícone dentro do grupo também precisa de um nome específico, como "Próxima página" (veja o Button). O mesmo vale para o gatilho de um menu, de um popover ou de um select dentro do grupo: dê a ele um `aria-label`.
 - Um campo dentro do grupo (`Input`) precisa de um rótulo persistente: um `FieldLabel` com `htmlFor`, ou um `aria-label` quando o botão ao lado já diz o propósito. O placeholder não é rótulo.
+- Um campo dentro do grupo (`Input`, `InputGroup` ou o gatilho do `Select`) mantém a borda, o anel de foco e o estado inválido dele: com `aria-invalid`, a borda fica vermelha também ao lado de um botão `outline`. O grupo não troca a borda do campo, então o contraste dela é o da marca (no SESI claro, 5,9:1 no branco).
 - O botão focado sobe acima dos vizinhos, então o anel de foco nunca fica escondido.
 
 <Source
@@ -151,14 +153,16 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `di
 
 Um contêiner que agrupa botões relacionados com um estilo consistente.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Button Group: ButtonGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Grupos aninhados criam layouts mais complexos, com espaço entre eles. Veja o exemplo **Aninhado**.
 
@@ -175,27 +179,31 @@ Grupos aninhados criam layouts mais complexos, com espaço entre eles. Veja o ex
 
 Divide visualmente os botões dentro de um grupo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Button Group: ButtonGroupSeparator">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ButtonGroupText
 
 Mostra um texto dentro do grupo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Button Group: ButtonGroupText">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>render</code></td><td><code>React.ReactElement</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Use `render` para trocar o elemento, por exemplo por um `<label>`: `<ButtonGroupText render={<label htmlFor="nome" />}>`.
 

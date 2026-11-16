@@ -30,7 +30,7 @@ import { ArrowDownIcon } from "lucide-react"
  *   `aria-labelledby` continuam valendo para dar outro nome.
  * - Anel de foco do Viewport: sólido, 3px, no `ring`, para dentro
  *   (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de
- *   fora. O contraste é o do `ring` contra o fundo (3,5:1 no claro; no
+ *   fora. O contraste é o do `ring` contra o fundo (5,2:1 no claro; no
  *   escuro, 7,6:1 no fundo e 6,7:1 num card).
  * - Anúncio: o `MessageScrollerContent` já é `role="log"` (aria-live
  *   `polite` implícito) com `aria-relevant="additions"`: uma linha nova é

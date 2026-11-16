@@ -244,6 +244,23 @@ export const Destrutivo: Story = {
   name: "Destrutivo",
   play: async ({ canvasElement }) => {
     await abrirAlerta(canvasElement, "Excluir chat", "Excluir o chat?")
+
+    // The initial focus is the first tabbable element: here the link in the
+    // description (as in shadcn), never the destructive action.
+    const link = screen.getByRole("link", { name: "configurações" })
+    await waitFor(() => expect(link).toHaveFocus())
+
+    // Reached by keyboard, the link shows the solid project ring instead of
+    // the browser outline.
+    await userEvent.tab()
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Cancelar" })).toHaveFocus()
+    )
+    await userEvent.tab({ shift: true })
+    await waitFor(() => expect(link).toHaveFocus())
+    const estilo = getComputedStyle(link)
+    await expect(estilo.outlineStyle).toBe("none")
+    await expect(estilo.boxShadow).not.toBe("none")
   },
   render: () => (
     <AlertDialog>

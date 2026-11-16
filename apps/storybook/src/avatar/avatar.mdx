@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as AvatarStories from "./avatar.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={AvatarStories} />
 
@@ -162,15 +163,17 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `di
 
 O contêiner raiz. Envolve a imagem e o fallback. Aceita todas as props do Avatar do Base UI, além de `role` e `aria-label`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Avatar">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="avatar"` e `data-size`.
 
@@ -178,81 +181,93 @@ O elemento recebe `data-slot="avatar"` e `data-size`.
 
 Mostra a imagem. Aceita todas as props do Avatar Image do Base UI. Só é exibida depois de carregar.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>src</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Avatar: AvatarImage">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>src</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AvatarFallback
 
 Mostra o conteúdo reserva enquanto a imagem carrega ou quando ela falha. Aceita todas as props do Avatar Fallback do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Avatar: AvatarFallback">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AvatarBadge
 
 Um indicador no canto do avatar. Aceita as props de um `<span>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Avatar: AvatarBadge">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AvatarGroup
 
 Agrupa avatares com sobreposição. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Avatar: AvatarGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AvatarGroupCount
 
 O indicador de quantos avatares ficaram de fora. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Avatar: AvatarGroupCount">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Avatar</code></td><td><code>{'<span>'}</code></td><td><code>avatar</code></td></tr>
-    <tr><td><code>AvatarImage</code></td><td><code>{'<img>'}</code></td><td><code>avatar-image</code></td></tr>
-    <tr><td><code>AvatarFallback</code></td><td><code>{'<span>'}</code></td><td><code>avatar-fallback</code></td></tr>
-    <tr><td><code>AvatarBadge</code></td><td><code>{'<span>'}</code></td><td><code>avatar-badge</code></td></tr>
-    <tr><td><code>AvatarGroup</code></td><td><code>{'<div>'}</code></td><td><code>avatar-group</code></td></tr>
-    <tr><td><code>AvatarGroupCount</code></td><td><code>{'<div>'}</code></td><td><code>avatar-group-count</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Avatar: Referência da API, AvatarGroupCount">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Avatar</code></td><td><code>{'<span>'}</code></td><td><code>avatar</code></td></tr>
+      <tr><td><code>AvatarImage</code></td><td><code>{'<img>'}</code></td><td><code>avatar-image</code></td></tr>
+      <tr><td><code>AvatarFallback</code></td><td><code>{'<span>'}</code></td><td><code>avatar-fallback</code></td></tr>
+      <tr><td><code>AvatarBadge</code></td><td><code>{'<span>'}</code></td><td><code>avatar-badge</code></td></tr>
+      <tr><td><code>AvatarGroup</code></td><td><code>{'<div>'}</code></td><td><code>avatar-group</code></td></tr>
+      <tr><td><code>AvatarGroupCount</code></td><td><code>{'<div>'}</code></td><td><code>avatar-group-count</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Para os detalhes das props do Avatar, Avatar Image e Avatar Fallback, veja a [documentação do Base UI](https://base-ui.com/react/components/avatar#api-reference).

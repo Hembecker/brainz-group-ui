@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as BadgeStories from "./badge.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={BadgeStories} />
 
@@ -45,7 +46,7 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/bad
   - hover, quando o selo é um link: `primary-hover` com branco 7,2:1, `secondary-hover` 6,3:1 e 7,7:1, `destructive-hover` 6,4:1 e 10,3:1, outline `muted-foreground` sobre `muted` 6,6:1 e 6,1:1. O `ghost` reage ao hover mesmo sem ser link (como no shadcn), com os mesmos 6,6:1 e 6,1:1.
 - **Link:** um selo que é link precisa de um nome que diga o destino ("Abrir relatório") e, como a variante `default` não tem sublinhado, de algo além da cor para parecer um link: o ícone de seta do exemplo ajuda, ou use a variante `link`. Para navegação, use `<a>`; para uma ação, use um `<button>` (um `Button`, não o Badge).
 - **Ícones decorativos:** levam `aria-hidden="true"`. O ícone nunca é o único nome.
-- **Spinner:** o `Spinner` tem `role="status"` e o nome "Carregando". Dentro do selo, passe um `aria-label` específico ("Excluindo"), como no exemplo. Para avisar o fim da operação, use uma região `aria-live="polite"` sempre montada (veja o Spinner).
+- **Spinner:** o `Spinner` tem `role="status"` e o nome "Carregando". Se o texto do selo já diz o estado ("Excluindo"), o Spinner é decorativo: esconda-o com `aria-hidden="true"`, como no exemplo, para o selo não ser lido como "Excluindo Excluindo". Só passe um `aria-label` específico quando o Spinner for a única indicação, sem texto. Para avisar a mudança e o fim da operação, use uma região `aria-live="polite"` sempre montada (veja o Spinner).
 - **Inválido:** `aria-invalid` pinta a borda de `destructive`, como no Button, mas o selo não é um campo: para um erro de formulário, use o `Field`.
 - **Foco:** só o selo que é link recebe foco. O anel é sólido, no `ring`, afastado 2px pela cor do fundo, como no Button.
 - **Cores personalizadas:** as cores do exemplo (`blue-50`, `green-700`…) não são papéis do tema, então o contraste é por sua conta: confira nos dois modos.
@@ -59,7 +60,7 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/bad
 </Badge>
 
 <Badge variant="destructive">
-  <Spinner data-icon="inline-start" aria-label="Excluindo" />
+  <Spinner data-icon="inline-start" aria-hidden="true" />
   Excluindo
 </Badge>`}
 />
@@ -78,7 +79,7 @@ Você pode pôr um ícone dentro do selo. Use `data-icon="inline-start"` para o 
 
 ## Com Spinner
 
-Você pode pôr um Spinner dentro do selo. Lembre de passar `data-icon="inline-start"` ou `data-icon="inline-end"` ao Spinner e um `aria-label` específico.
+Você pode pôr um Spinner dentro do selo. Lembre de passar `data-icon="inline-start"` ou `data-icon="inline-end"` ao Spinner. Se o texto do selo já diz o estado, esconda o Spinner com `aria-hidden="true"`; use um `aria-label` específico só quando o Spinner for a única indicação. Para anunciar a mudança, use a região `aria-live="polite"` sempre montada (veja o Spinner).
 
 <Canvas of={BadgeStories.ComSpinner} />
 
@@ -106,16 +107,18 @@ Os paddings dos ícones são lógicos (`ps` e `pe`), então o selo segue a dire�
 
 Mostra um selo, ou um componente com a aparência de um selo. Aceita todas as props de um `<span>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "secondary" | "destructive" | "outline" | "ghost" | "link"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Badge">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "secondary" | "destructive" | "outline" | "ghost" | "link"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="badge"` e `data-variant`. O `badgeVariants` também é exportado, para dar a aparência de selo a outro elemento.
 

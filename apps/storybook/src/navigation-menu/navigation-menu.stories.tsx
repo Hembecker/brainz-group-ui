@@ -295,15 +295,46 @@ export const Demo: Story = {
 
 export const ComponenteDeLink: Story = {
   name: "Componente de link",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // The link of the current page (`active`) is announced as the current
+    // page and gets the solid `muted` background, without focus or hover
+    // (`focus:bg-muted` would hide a missing `data-active` style).
+    const atual = await canvas.findByRole("link", { name: "Documentação" })
+    await expect(atual).toHaveAttribute("aria-current", "page")
+    await expect(atual).toHaveAttribute("data-active")
+    await expect(
+      canvas.getByRole("link", { name: "Blocos" })
+    ).not.toHaveAttribute("aria-current")
+
+    const referencia = document.createElement("div")
+    referencia.style.backgroundColor = "var(--muted)"
+    canvasElement.append(referencia)
+    const muted = getComputedStyle(referencia).backgroundColor
+    referencia.remove()
+    await waitFor(() =>
+      expect(getComputedStyle(atual).backgroundColor).toBe(muted)
+    )
+  },
   render: () => (
     <NavigationMenu aria-label="Link do roteador">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink
             render={<a href="#" />}
+            active
             className={navigationMenuTriggerStyle()}
           >
             Documentação
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            render={<a href="#" />}
+            className={navigationMenuTriggerStyle()}
+          >
+            Blocos
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

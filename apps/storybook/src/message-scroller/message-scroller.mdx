@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as MessageScrollerStories from "./message-scroller.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={MessageScrollerStories} />
 
@@ -132,7 +133,7 @@ O `MessageScroller` preenche o pai, então ponha-o dentro de um contêiner com a
 O Message Scroller mantém a área de rolagem alcançável pelo teclado e a transcrição anunciável, sem impor uma interface de mensagem.
 
 - **Área de rolagem alcançável pelo teclado:** o `MessageScrollerViewport` é uma região com nome e foco por padrão: `role="region"`, `aria-label="Mensagens"` e `tabIndex={0}`. O Tab chega nele, e as setas, o PageUp, o PageDown, o Home e o End rolam a conversa. Rolar assim solta o acompanhamento do fim (`autoScroll`), como qualquer gesto de quem lê. O rótulo padrão do primitivo é "Messages"; aqui o padrão é "Mensagens", e dá para trocar por `aria-label` ou `aria-labelledby` ("Conversa com a Lia").
-- **Foco visível:** a área ganha o anel sólido de 3px no `--ring` ao receber foco pelo teclado (`focus-visible`), desenhado para dentro (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de fora. O anel tem 3,5:1 no claro; no escuro, 7,6:1 contra o fundo e 6,7:1 contra um card.
+- **Foco visível:** a área ganha o anel sólido de 3px no `--ring` ao receber foco pelo teclado (`focus-visible`), desenhado para dentro (`ring-inset`), porque a raiz tem `overflow-hidden` e cortaria um anel de fora. O anel tem 5,2:1 no claro; no escuro, 7,6:1 contra o fundo e 6,7:1 contra um card.
 - **Mensagens novas anunciadas com educação:** o `MessageScrollerContent` é um `role="log"` com `aria-relevant="additions"`. O `log` é uma região ao vivo `polite` implícita: uma linha nova é anunciada sem interromper a leitura, mas o texto que cresce dentro de uma linha em streaming não é lido pedaço a pedaço. Não acrescente outro `aria-live`.
 - **Esperar a resposta completa:** passe `aria-busy` ao `MessageScrollerContent` enquanto um turno chega, se os anúncios devem esperar a linha pronta.
 - **Estado que muda fora da lista:** para "Respondendo…", use uma região `role="status"` (por exemplo um `Marker`) sempre montada, trocando só o texto. A região fica fora do `log`.
@@ -445,18 +446,20 @@ O comportamento é o do primitivo `@shadcn/react/message-scroller`, igual para o
 
 A raiz sem estilo. Não renderiza elemento: só o contexto.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>autoScroll</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>defaultScrollPosition</code></td><td><code>{'"start" | "end" | "last-anchor"'}</code></td><td><code>{'"end"'}</code></td></tr>
-    <tr><td><code>scrollEdgeThreshold</code></td><td><code>number</code></td><td><code>{'8'}</code></td></tr>
-    <tr><td><code>scrollPreviousItemPeek</code></td><td><code>number</code></td><td><code>{'64'}</code></td></tr>
-    <tr><td><code>scrollMargin</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: MessageScrollerProvider">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>autoScroll</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>defaultScrollPosition</code></td><td><code>{'"start" | "end" | "last-anchor"'}</code></td><td><code>{'"end"'}</code></td></tr>
+      <tr><td><code>scrollEdgeThreshold</code></td><td><code>number</code></td><td><code>{'8'}</code></td></tr>
+      <tr><td><code>scrollPreviousItemPeek</code></td><td><code>number</code></td><td><code>{'64'}</code></td></tr>
+      <tr><td><code>scrollMargin</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 - `autoScroll`: acompanha as respostas em streaming enquanto a pessoa está no fim.
 - `defaultScrollPosition`: onde a conversa abre (veja **Abrir conversas salvas**).
@@ -468,14 +471,16 @@ A raiz sem estilo. Não renderiza elemento: só o contexto.
 
 O quadro estilizado. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: MessageScroller">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-scroller"` e, do primitivo, `data-scrollable` (`start`, `end` ou `start end`, para onde ainda dá para rolar), `data-autoscrolling` e `data-pending-scroll`.
 
@@ -483,18 +488,20 @@ O elemento recebe `data-slot="message-scroller"` e, do primitivo, `data-scrollab
 
 O elemento que rola. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>preserveScrollOnPrepend</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Mensagens"'}</code></td></tr>
-    <tr><td><code>role</code></td><td><code>string</code></td><td><code>{'"region"'}</code></td></tr>
-    <tr><td><code>tabIndex</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: MessageScrollerViewport">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>preserveScrollOnPrepend</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Mensagens"'}</code></td></tr>
+      <tr><td><code>role</code></td><td><code>string</code></td><td><code>{'"region"'}</code></td></tr>
+      <tr><td><code>tabIndex</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-scroller-viewport"`, `data-scrollable`, `data-autoscrolling` e `data-pending-scroll`.
 
@@ -502,17 +509,19 @@ O elemento recebe `data-slot="message-scroller-viewport"`, `data-scrollable`, `d
 
 O contêiner da transcrição. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>role</code></td><td><code>string</code></td><td><code>{'"log"'}</code></td></tr>
-    <tr><td><code>aria-relevant</code></td><td><code>string</code></td><td><code>{'"additions"'}</code></td></tr>
-    <tr><td><code>spacerClassName</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: MessageScrollerContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>role</code></td><td><code>string</code></td><td><code>{'"log"'}</code></td></tr>
+      <tr><td><code>aria-relevant</code></td><td><code>string</code></td><td><code>{'"additions"'}</code></td></tr>
+      <tr><td><code>spacerClassName</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-scroller-content"`. Dentro dele há um espaçador `aria-hidden`, usado na ancoragem.
 
@@ -520,16 +529,18 @@ O elemento recebe `data-slot="message-scroller-content"`. Dentro dele há um esp
 
 O limite de uma linha da transcrição. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>messageId</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>scrollAnchor</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: MessageScrollerItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>messageId</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>scrollAnchor</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-scroller-item"`, `data-message-id` e `data-scroll-anchor`.
 
@@ -537,34 +548,38 @@ O elemento recebe `data-slot="message-scroller-item"`, `data-message-id` e `data
 
 O botão que rola ao início ou ao fim. Aceita as props de um `<button>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>direction</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"end"'}</code></td></tr>
-    <tr><td><code>behavior</code></td><td><code>ScrollBehavior</code></td><td><code>{'"smooth"'}</code></td></tr>
-    <tr><td><code>variant</code></td><td><code>Button variant</code></td><td><code>{'"secondary"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>Button size</code></td><td><code>{'"icon-sm"'}</code></td></tr>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code></td><td><code>{'<Button />'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: MessageScrollerButton">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>direction</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"end"'}</code></td></tr>
+      <tr><td><code>behavior</code></td><td><code>ScrollBehavior</code></td><td><code>{'"smooth"'}</code></td></tr>
+      <tr><td><code>variant</code></td><td><code>Button variant</code></td><td><code>{'"secondary"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>Button size</code></td><td><code>{'"icon-sm"'}</code></td></tr>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code></td><td><code>{'<Button />'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="message-scroller-button"`, `data-direction`, `data-variant`, `data-size` e, do primitivo, `data-active` (`true` ou `false`). Sem `children`, mostra a seta e o texto `sr-only`.
 
 ### Hooks
 
-<table>
-  <thead>
-    <tr><th>Hook</th><th>Devolve</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>useMessageScroller()</code></td><td><code>{'{ scrollToMessage, scrollToStart, scrollToEnd }'}</code></td></tr>
-    <tr><td><code>useMessageScrollerScrollable()</code></td><td><code>{'{ start: boolean; end: boolean }'}</code></td></tr>
-    <tr><td><code>useMessageScrollerVisibility()</code></td><td><code>{'{ currentAnchorId: string | null; visibleMessageIds: string[] }'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Message Scroller: Hooks">
+  <table>
+    <thead>
+      <tr><th>Hook</th><th>Devolve</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>useMessageScroller()</code></td><td><code>{'{ scrollToMessage, scrollToStart, scrollToEnd }'}</code></td></tr>
+      <tr><td><code>useMessageScrollerScrollable()</code></td><td><code>{'{ start: boolean; end: boolean }'}</code></td></tr>
+      <tr><td><code>useMessageScrollerVisibility()</code></td><td><code>{'{ currentAnchorId: string | null; visibleMessageIds: string[] }'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 - `scrollToMessage(messageId, options?)`: devolve `boolean`.
 - `scrollToStart(options?)` e `scrollToEnd(options?)`: devolvem `boolean`.

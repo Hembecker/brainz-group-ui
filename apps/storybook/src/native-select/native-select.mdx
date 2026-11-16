@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as NativeSelectStories from "./native-select.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={NativeSelectStories} />
 
@@ -83,8 +84,8 @@ Use `NativeSelectOptGroup` para organizar as opções em categorias.
 - **Teclado e leitor de tela:** como é um `<select>` nativo, ele já funciona com as setas, o Espaço, o Enter e a digitação da primeira letra, e é lido com o nome, o valor e a posição na lista. Não use `tabIndex` positivo.
 - **Seta decorativa:** o ícone leva `aria-hidden="true"` e `pointer-events-none`, então ele não é lido e o clique chega ao `<select>`.
 - **Grupos:** `NativeSelectOptGroup` usa `label`, que o leitor de tela lê ao entrar no grupo. Dê a cada grupo um nome curto e específico.
-- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. Não remova o anel.
-- **Contraste:** o texto escolhido é sempre `foreground`, inclusive dentro de um `Field` inválido, e a seta é `muted-foreground` (5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo). A borda de erro tem 3,8:1 e 5,1:1. A lista aberta é desenhada pelo navegador, com as cores do sistema.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. A borda vem do token `--field-border`. Na Brainz Group ela é transparente nos dois modos: o limite do campo tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. No SESI claro o campo é branco, com a borda Neutral/300 `#DFDFDF` (1,33:1 no branco, escolha do usuário); no SESI escuro ela continua transparente. Não remova o anel.
+- **Contraste:** o texto escolhido é sempre `foreground`, inclusive dentro de um `Field` inválido, e a seta é `muted-foreground` (na Brainz Group, 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo; no SESI claro, 5,9:1 no campo branco). A borda de erro tem 3,8:1 e 5,1:1 na Brainz Group e 4,7:1 no SESI claro. A lista aberta é desenhada pelo navegador, com as cores do sistema.
 - **Desabilitado:** `disabled` tira o campo da ordem do Tab e apaga o campo todo em 50%. Informe o motivo numa descrição.
 
 <Source
@@ -140,20 +141,22 @@ O `NativeSelect` usa paddings e a posição da seta lógicos (`ps`, `pe`, `end`)
 
 O componente principal, que envolve o `<select>` nativo num `div`. Aceita todas as props de um `<select>`, que vão para o `<select>`, exceto `className`, que vai para o wrapper.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>size</code></td><td><code>{'"sm" | "default"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code>: aplicada ao wrapper</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Native Select: NativeSelect">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>size</code></td><td><code>{'"sm" | "default"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code>: aplicada ao wrapper</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O wrapper recebe `data-slot="native-select-wrapper"`, o `<select>` recebe `data-slot="native-select"` e a seta recebe `data-slot="native-select-icon"`; o `data-size` com o valor resolvido fica no wrapper e no `<select>`. O `size="sm"` tem 28px de altura (`h-7`) e o padrão, 32px (`h-8`), ambos com `rounded-2xl`.
 
@@ -161,29 +164,33 @@ O wrapper recebe `data-slot="native-select-wrapper"`, o `<select>` recebe `data-
 
 Uma opção do seletor.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Native Select: NativeSelectOption">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### NativeSelectOptGroup
 
 Agrupa opções relacionadas.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>label</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Native Select: NativeSelectOptGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>label</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 <Source
   language="tsx"

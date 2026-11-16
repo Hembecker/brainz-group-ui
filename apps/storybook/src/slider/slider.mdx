@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as SliderStories from "./slider.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={SliderStories} />
 
@@ -41,8 +42,9 @@ O `Slider` é só o controle. O nome vem de um rótulo visível, ligado pelo `ar
 
 - **Papel e teclado:** cada polegar é um `<input type="range">` do Base UI, com `role="slider"`, `aria-valuenow`, `aria-valuemin` e `aria-valuemax`. Tab chega ao polegar, as setas mudam o valor em um passo (`step`), Page Up e Page Down em passos grandes (`largeStep`), e Home e End vão aos extremos.
 - **Nome acessível no polegar:** o polegar é o que a tecnologia assistiva lê, então é ele que precisa de nome. Use um `Label` visível com `id` e aponte o Slider para ele com `aria-labelledby`: todos os polegares herdam o nome. Um `aria-label` no próprio `Slider` nomeia só o grupo, e o polegar ficaria sem nome. O tooltip nunca é o único nome.
-- **Vários polegares:** com mais de um valor, os polegares compartilham o nome do rótulo e a tecnologia assistiva os distingue só pelo valor (`aria-valuenow`). Num intervalo de dois valores, o Base UI acrescenta ao texto lido "start range" e "end range", em inglês e sem tradução. Para nomes diferentes por polegar e textos em português, o Base UI aceita `getAriaLabel` e `getAriaValueText` no `Slider.Thumb`; este componente ainda não os expõe.
-- **Texto do valor:** quando o número sozinho não diz nada ("75"), um texto mais claro, como "75%", vem do `getAriaValueText` do Base UI, que também depende dessa exposição.
+- **Vários polegares:** com mais de um valor, os polegares compartilham o nome do rótulo e a tecnologia assistiva os distingue pelo valor. Num intervalo de dois valores, o texto lido (`aria-valuetext`) diz qual é a ponta, em português: "25 (início)" e "50 (fim)". O padrão do Base UI seria "25 start range", em inglês numa página em português. Com três ou mais valores, só o número distingue os polegares.
+- **Nome por polegar (`getAriaLabel`):** para nomes diferentes, passe `getAriaLabel`, que recebe o índice do polegar. O nome que ele devolve substitui o do `aria-labelledby`, então inclua o nome do campo: "Preço mínimo" e "Preço máximo", e não só "Mínimo".
+- **Texto do valor (`getAriaValueText`):** quando o número sozinho não diz nada ("75"), passe um texto mais claro, como "75%", pelo `getAriaValueText`. Ele substitui o padrão em português do intervalo. Numa página em outra língua, como um intervalo em árabe, passe o texto nessa língua, porque o padrão em português ficaria tão errado quanto o inglês.
 - **Contraste do trilho (3:1 para controles):** o trilho usa o papel `input`, com 4,6:1 no branco e 3,8:1 no fundo e no card escuros. O preenchimento usa a `primary`, com 5,2:1 no branco, 3,8:1 no fundo escuro e 3,4:1 no card escuro. O polegar é branco com contorno `input` (4,6:1 no branco) e 19,7:1 no fundo escuro. Os números estão no comentário do componente.
 - **Valor além da cor:** o trecho preenchido e o vazio se distinguem só pela cor (1,1:1 entre eles). Quem marca o valor é a posição do polegar, que tem contorno e contraste próprios. Se o valor exato importa, mostre-o em texto, como no exemplo **Controlado**.
 - **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O foco de verdade está no `<input>` dentro do polegar, então o estilo usa `has-focus-visible`. Não remova o anel. No hover, o polegar ganha um contorno `primary` de 2px, que o anel de foco cobre.
@@ -113,29 +115,33 @@ O Base UI só inverte o eixo (as setas, o arraste e a posição do polegar) quan
 
 ### Slider
 
-O `Slider` envolve o `Slider.Root` do Base UI, com a trilha, o preenchimento e um polegar para cada valor. Repassa as props do Root. Veja a [referência do Base UI Slider](https://base-ui.com/react/components/slider#api-reference) para a lista completa. As principais:
+O `Slider` envolve o `Slider.Root` do Base UI, com a trilha, o preenchimento e um polegar para cada valor. Repassa as props do Root, e `getAriaLabel` e `getAriaValueText` a cada polegar (acréscimo da Big Brain à API do shadcn). Veja a [referência do Base UI Slider](https://base-ui.com/react/components/slider#api-reference) para a lista completa. As principais:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>defaultValue</code></td><td><code>number | number[]</code>: valores iniciais, sem controle</td><td>—</td></tr>
-    <tr><td><code>value</code></td><td><code>number | number[]</code>: valores controlados</td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: number | number[], eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>onValueCommitted</code></td><td><code>{'(value: number | number[], eventDetails) => void'}</code>: ao soltar o polegar</td><td>—</td></tr>
-    <tr><td><code>min</code></td><td><code>number</code></td><td><code>0</code></td></tr>
-    <tr><td><code>max</code></td><td><code>number</code></td><td><code>100</code></td></tr>
-    <tr><td><code>step</code></td><td><code>number</code></td><td><code>1</code></td></tr>
-    <tr><td><code>largeStep</code></td><td><code>number</code>: passo do Page Up e do Page Down</td><td><code>10</code></td></tr>
-    <tr><td><code>minStepsBetweenValues</code></td><td><code>number</code>: distância mínima entre polegares</td><td><code>0</code></td></tr>
-    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>name</code></td><td><code>string</code>: nome do campo no formulário</td><td>—</td></tr>
-    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do rótulo visível; dá o nome aos polegares</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Slider">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>defaultValue</code></td><td><code>number | number[]</code>: valores iniciais, sem controle</td><td>um polegar só, em <code>min</code></td></tr>
+      <tr><td><code>value</code></td><td><code>number | number[]</code>: valores controlados</td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: number | number[], eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>onValueCommitted</code></td><td><code>{'(value: number | number[], eventDetails) => void'}</code>: ao soltar o polegar</td><td>—</td></tr>
+      <tr><td><code>min</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+      <tr><td><code>max</code></td><td><code>number</code></td><td><code>100</code></td></tr>
+      <tr><td><code>step</code></td><td><code>number</code></td><td><code>1</code></td></tr>
+      <tr><td><code>largeStep</code></td><td><code>number</code>: passo do Page Up e do Page Down</td><td><code>10</code></td></tr>
+      <tr><td><code>minStepsBetweenValues</code></td><td><code>number</code>: distância mínima entre polegares</td><td><code>0</code></td></tr>
+      <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>name</code></td><td><code>string</code>: nome do campo no formulário</td><td>—</td></tr>
+      <tr><td><code>getAriaLabel</code></td><td><code>{'(index: number) => string'}</code>: nome de cada polegar; substitui o do <code>aria-labelledby</code></td><td>—</td></tr>
+      <tr><td><code>getAriaValueText</code></td><td><code>{'(formattedValue: string, value: number, index: number) => string'}</code>: texto lido do valor de cada polegar</td><td>com dois valores, <code>"25 (início)"</code> e <code>"50 (fim)"</code>; senão, o do Base UI</td></tr>
+      <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do rótulo visível; dá o nome aos polegares</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O Root recebe `data-slot="slider"`, a trilha `data-slot="slider-track"`, o preenchimento `data-slot="slider-range"` e cada polegar `data-slot="slider-thumb"`. O componente fixa `thumbAlignment="edge"`, que mantém o polegar dentro do trilho nas pontas.
 

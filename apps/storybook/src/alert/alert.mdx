@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as AlertStories from "./alert.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={AlertStories} />
 
@@ -138,69 +139,79 @@ Os recuos, o texto e a ação são lógicos (`text-start`, `pe`, `end`), então 
 
 Mostra um destaque para chamar a atenção do usuário. Aceita todas as props de um `<div>`, inclusive `role` e `aria-live`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>role</code></td><td><code>string</code></td><td>— (veja <strong>Acessibilidade</strong>)</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Alert">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>role</code></td><td><code>string</code></td><td>— (veja <strong>Acessibilidade</strong>)</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-O elemento recebe `data-slot="alert"`.
+O elemento recebe `data-slot="alert"` e `data-variant` com a variante resolvida (`default` ou `destructive`).
 
 ### AlertTitle
 
 O título do alerta.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert: AlertTitle">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AlertDescription
 
 A descrição, ou o conteúdo, do alerta.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert: AlertDescription">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AlertAction
 
 Um elemento de ação, como um botão, posicionado no canto do fim do alerta.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert: AlertAction">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Alert</code></td><td><code>{'<div>'}</code></td><td><code>alert</code></td></tr>
-    <tr><td><code>AlertTitle</code></td><td><code>{'<div>'}</code></td><td><code>alert-title</code></td></tr>
-    <tr><td><code>AlertDescription</code></td><td><code>{'<div>'}</code></td><td><code>alert-description</code></td></tr>
-    <tr><td><code>AlertAction</code></td><td><code>{'<div>'}</code></td><td><code>alert-action</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert: Referência da API, AlertAction">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Alert</code></td><td><code>{'<div>'}</code></td><td><code>alert</code></td></tr>
+      <tr><td><code>AlertTitle</code></td><td><code>{'<div>'}</code></td><td><code>alert-title</code></td></tr>
+      <tr><td><code>AlertDescription</code></td><td><code>{'<div>'}</code></td><td><code>alert-description</code></td></tr>
+      <tr><td><code>AlertAction</code></td><td><code>{'<div>'}</code></td><td><code>alert-action</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas aceitam as props de um `<div>`.
 

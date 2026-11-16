@@ -90,9 +90,15 @@ export const Demo: Story = {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuGroup>
-                <DropdownMenuItem>Documentação</DropdownMenuItem>
-                <DropdownMenuItem>Temas</DropdownMenuItem>
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
+                <DropdownMenuItem render={<a href="#documentacao" />}>
+                  Documentação
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<a href="#temas" />}>
+                  Temas
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<a href="#github" />}>
+                  GitHub
+                </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -190,9 +196,15 @@ export const Dropdown: Story = {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuGroup>
-                <DropdownMenuItem>Documentação</DropdownMenuItem>
-                <DropdownMenuItem>Temas</DropdownMenuItem>
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
+                <DropdownMenuItem render={<a href="#documentacao" />}>
+                  Documentação
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<a href="#temas" />}>
+                  Temas
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<a href="#github" />}>
+                  GitHub
+                </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -295,9 +307,15 @@ export const Rtl: Story = {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" dir="rtl" lang="ar">
                   <DropdownMenuGroup>
-                    <DropdownMenuItem>التوثيق</DropdownMenuItem>
-                    <DropdownMenuItem>السمات</DropdownMenuItem>
-                    <DropdownMenuItem>جيت هاب</DropdownMenuItem>
+                    <DropdownMenuItem render={<a href="#documentacao" />}>
+                      التوثيق
+                    </DropdownMenuItem>
+                    <DropdownMenuItem render={<a href="#temas" />}>
+                      السمات
+                    </DropdownMenuItem>
+                    <DropdownMenuItem render={<a href="#github" />}>
+                      جيت هاب
+                    </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>

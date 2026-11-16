@@ -29,6 +29,16 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
  *   (as duas se anulariam). No modo vertical o botão já gira 90°, e espelhar
  *   o ícone o apontaria para o lado errado: o espelhamento só vale no
  *   horizontal. No vertical o teclado continua com ← e → (como no shadcn).
+ * - Teclado: as setas não trocam de slide quando o foco está num campo ou num
+ *   widget que usa as setas (input, textarea, select, slider, grupo de rádio,
+ *   lista, menu, grade…) dentro do carrossel; o registro cancelava a tecla e
+ *   o cursor do campo não andava. Teclas vindas de um portal (popup de
+ *   Select/Menu aberto num slide) também são ignoradas.
+ * - Nas pontas, os botões usam `focusableWhenDisabled`: ficam com
+ *   `aria-disabled="true"` e `data-disabled` (apagados pelo Button), sem o
+ *   `disabled` nativo, e continuam na ordem do Tab. Assim o foco não cai no
+ *   <body> quando o último "Próximo slide" é ativado, e as setas continuam
+ *   funcionando (WCAG 2.4.3).
  * - Sem reprodução automática por padrão. Se usar um plugin de autoplay, ofereça
  *   um botão de pausar (WCAG 2.2.2) e pare a rolagem ao focar ou passar o mouse.
  * - Sem cores com opacidade neste arquivo.
@@ -110,6 +120,22 @@ function Carousel({
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      // As setas ficam com o campo ou o widget que já as usa (texto, slider,
+      // select, grupo de rádio…) dentro do carrossel.
+      const target = event.target as HTMLElement
+      // Teclas vindas de um portal (popup de Select ou Menu aberto num slide)
+      // chegam por aqui pela árvore do React, mas não são do carrossel.
+      if (!event.currentTarget.contains(target)) return
+      const widget = target.closest<HTMLElement>(
+        'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="slider"], [role="spinbutton"], [role="combobox"], [role="listbox"], [role="radiogroup"], [role="tablist"], [role="menu"], [role="menubar"], [role="grid"], [role="tree"], [role="toolbar"]'
+      )
+      if (
+        target.isContentEditable ||
+        (widget && event.currentTarget.contains(widget))
+      ) {
+        return
+      }
+
       // Em RTL as setas espelham: ← avança e → volta.
       const rtl = (opts?.direction ?? direction) === "rtl"
       if (event.key === (rtl ? "ArrowRight" : "ArrowLeft")) {
@@ -257,6 +283,7 @@ function CarouselPrevious({
         className
       )}
       disabled={!canScrollPrev}
+      focusableWhenDisabled
       onClick={scrollPrev}
       {...props}
     >
@@ -290,6 +317,7 @@ function CarouselNext({
         className
       )}
       disabled={!canScrollNext}
+      focusableWhenDisabled
       onClick={scrollNext}
       {...props}
     >

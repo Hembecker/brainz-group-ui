@@ -18,9 +18,12 @@ import { cn } from "cn"
  *   cheio e de um quadrado de ícone que se distinga dele (o exemplo usa um
  *   gradiente de `muted` para `background`, não `bg-muted/30`).
  * - Escala rhea: `rounded-3xl` no contêiner e `rounded-xl` no ícone; não mexa.
- * - Links na descrição: sublinhados em `muted-foreground`. O hover usa
- *   `text-primary` do registro (no escuro a Primária 600 dá só 3,8:1 no
- *   fundo; `link-hover` seria 13,3:1). Pendência anotada, não trocada.
+ * - Links na descrição: sublinhados em `muted-foreground` (não dependem só da
+ *   cor); o hover já usa `text-link-hover` (na Brainz, Primária 800 no claro,
+ *   9,3:1, e Primária 200 no escuro, 13,3:1), no lugar do `text-primary` do
+ *   registro (3,8:1 no escuro). O foco usa o anel do projeto (`ring-3 ring-ring
+ *   ring-offset-2 ring-offset-background`, `rounded-sm`), sem o outline do
+ *   navegador.
  * - Paddings e gaps lógicos e centralizados: funciona em RTL.
  */
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
@@ -94,7 +97,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
     <div
       data-slot="empty-description"
       className={cn(
-        "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-link-hover",
+        "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-link-hover [&>a]:rounded-sm [&>a]:outline-none [&>a]:focus-visible:ring-3 [&>a]:focus-visible:ring-ring [&>a]:focus-visible:ring-offset-2 [&>a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}

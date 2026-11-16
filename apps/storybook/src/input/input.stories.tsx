@@ -91,31 +91,33 @@ export const Campo: Story = {
 export const GrupoDeCampos: Story = {
   name: "Grupo de campos",
   render: () => (
-    <FieldGroup className="max-w-xs">
-      <Field>
-        <FieldLabel htmlFor="grupo-nome">Nome</FieldLabel>
-        <Input id="grupo-nome" placeholder="Joana Lima" autoComplete="name" />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="grupo-email">E-mail</FieldLabel>
-        <Input
-          id="grupo-email"
-          type="email"
-          placeholder="nome@exemplo.com"
-          autoComplete="email"
-          aria-describedby="grupo-email-descricao"
-        />
-        <FieldDescription id="grupo-email-descricao">
-          Vamos enviar as novidades para este endereço.
-        </FieldDescription>
-      </Field>
-      <Field orientation="horizontal">
-        <Button type="reset" variant="outline">
-          Limpar
-        </Button>
-        <Button type="submit">Enviar</Button>
-      </Field>
-    </FieldGroup>
+    <form className="max-w-xs" onSubmit={(event) => event.preventDefault()}>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="grupo-nome">Nome</FieldLabel>
+          <Input id="grupo-nome" placeholder="Joana Lima" autoComplete="name" />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="grupo-email">E-mail</FieldLabel>
+          <Input
+            id="grupo-email"
+            type="email"
+            placeholder="nome@exemplo.com"
+            autoComplete="email"
+            aria-describedby="grupo-email-descricao"
+          />
+          <FieldDescription id="grupo-email-descricao">
+            Vamos enviar as novidades para este endereço.
+          </FieldDescription>
+        </Field>
+        <Field orientation="horizontal">
+          <Button type="reset" variant="outline">
+            Limpar
+          </Button>
+          <Button type="submit">Enviar</Button>
+        </Field>
+      </FieldGroup>
+    </form>
   ),
 }
 

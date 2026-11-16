@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as CalendarStories from "./calendar.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={CalendarStories} />
 
@@ -56,7 +57,7 @@ Veja a documentação do [React DayPicker](https://react-day-picker.js.org) para
 - **Teclado:** o dia é um botão, e só o dia em foco está no Tab (os outros têm `tabindex="-1"`). As setas movem o foco entre os dias, Page Up e Page Down trocam o mês, Shift mais Page Up ou Page Down (ou mais Seta para cima ou para baixo) trocam o ano, Shift mais Seta para a esquerda ou para a direita trocam o mês, Home e End vão ao começo e ao fim da semana, e Enter ou Espaço escolhem o dia. O teste da story **Demo** percorre isso (clique, setas, Page Down e Page Up).
 - **Anúncio do mês:** o rótulo do mês é uma região viva (`role="status"` com `aria-live="polite"`) que o DayPicker mantém sempre montada. Só o texto muda, e o leitor de tela anuncia o mês novo quando você usa Page Up, Page Down ou os botões. Com `captionLayout="dropdown"`, a região fica oculta na tela mas continua anunciando, porque o rótulo visível vira os dois `<select>`.
 - **Dia de hoje, selecionado e fora do mês:** nenhum estado depende só da cor. Hoje leva "Hoje" no nome e `aria-current="date"`; o selecionado leva ", selecionado" no nome e `aria-selected` na célula. Os contrastes: o texto do dia selecionado é branco sobre `primary` (5,2:1 nos dois modos), e o selecionado, como controle, tem 5,2:1 contra o fundo no claro e 3,8:1 no escuro (3,4:1 sobre o `card` no escuro), todos acima dos 3:1. O dia de hoje é `foreground` sobre `muted` (17,7:1 no claro e 14,2:1 no escuro). Os dias fora do mês são `muted-foreground` (7,4:1 no claro e 8,1:1 no escuro, no fundo da página).
-- **Limite conhecido:** nas pontas de um intervalo (e no dia de hoje selecionado), o botão `primary` fica sobre a faixa `muted`. No claro são 4,7:1, mas no escuro são 2,8:1, abaixo dos 3:1 para o limite do controle. O texto passa nos dois, e o estado também é dito no nome do botão. Está anotado para a marca decidir.
+- **Pontas do intervalo e hoje selecionado:** nesses dias, o botão `primary` fica sobre a faixa `muted`. No claro são 4,7:1. No escuro, sem nada a mais, seriam 2,8:1, abaixo dos 3:1 para o limite do controle; por isso, no escuro, as pontas do intervalo e o dia de hoje selecionado ganham uma borda de 2px na cor do fundo, e a primária fica contra ela: 3,8:1. A faixa continua `muted`, porque o hoje que é ponta ou meio de um intervalo precisa dela. O texto passa nos dois modos, e o estado também é dito no nome do botão.
 - **Foco visível:** o dia em foco leva o anel sólido de sempre (3px na cor `ring`, afastado 2px pela cor do fundo), conferido no teste da **Demo**. Os botões de mês usam o anel do Button. No seletor de mês e ano, o `<select>` é invisível e o anel aparece no contêiner (`has-focus-visible`).
 - **Seletores de mês e ano:** com `captionLayout="dropdown"`, são `<select>` nativos com nome ("Escolha o mês", "Escolha o ano", vindos do locale), então funcionam no teclado e no leitor de tela sem nada a mais.
 - **Datas indisponíveis:** `disabled` deixa o botão desabilitado (fora do Tab, com `opacity-50`). Não dependa só do risco: diga o motivo no texto da página, como "Datas reservadas".
@@ -214,31 +215,33 @@ Para o `DirectionProvider`, veja a página **Direction**.
 
 O `Calendar` repassa todas as props do `DayPicker` do [React DayPicker](https://react-day-picker.js.org). Estas são as que a página usa, e as que o Calendar acrescenta ou muda.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>mode</code></td><td><code>{'"single" | "multiple" | "range"'}</code></td><td>—</td></tr>
-    <tr><td><code>selected</code></td><td><code>{'Date | Date[] | DateRange'}</code></td><td>—</td></tr>
-    <tr><td><code>onSelect</code></td><td><code>{'(selected) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>numberOfMonths</code></td><td><code>number</code></td><td><code>{'1'}</code></td></tr>
-    <tr><td><code>captionLayout</code></td><td><code>{'"label" | "dropdown" | "dropdown-months" | "dropdown-years"'}</code></td><td><code>{'"label"'}</code></td></tr>
-    <tr><td><code>showOutsideDays</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
-    <tr><td><code>showWeekNumber</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>{'Matcher | Matcher[]'}</code></td><td>—</td></tr>
-    <tr><td><code>modifiers</code> e <code>modifiersClassNames</code></td><td><code>{'Record<string, Matcher | Matcher[]>'}</code> e <code>{'Record<string, string>'}</code></td><td>—</td></tr>
-    <tr><td><code>month</code>, <code>defaultMonth</code> e <code>onMonthChange</code></td><td><code>{'Date'}</code> e <code>{'(month: Date) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>startMonth</code> e <code>endMonth</code></td><td><code>Date</code></td><td>—</td></tr>
-    <tr><td><code>today</code></td><td><code>Date</code></td><td>a data atual</td></tr>
-    <tr><td><code>timeZone</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>locale</code></td><td><code>Locale</code></td><td><code>enUS</code></td></tr>
-    <tr><td><code>dir</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td>a direção do <code>DirectionProvider</code></td></tr>
-    <tr><td><code>buttonVariant</code></td><td><code>{'ButtonProps["variant"]'}</code></td><td><code>{'"ghost"'}</code></td></tr>
-    <tr><td><code>formatters</code>, <code>components</code> e <code>classNames</code></td><td>veja o DayPicker</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Calendar: Referência da API">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>mode</code></td><td><code>{'"single" | "multiple" | "range"'}</code></td><td>—</td></tr>
+      <tr><td><code>selected</code></td><td><code>{'Date | Date[] | DateRange'}</code></td><td>—</td></tr>
+      <tr><td><code>onSelect</code></td><td><code>{'(selected) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>numberOfMonths</code></td><td><code>number</code></td><td><code>{'1'}</code></td></tr>
+      <tr><td><code>captionLayout</code></td><td><code>{'"label" | "dropdown" | "dropdown-months" | "dropdown-years"'}</code></td><td><code>{'"label"'}</code></td></tr>
+      <tr><td><code>showOutsideDays</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+      <tr><td><code>showWeekNumber</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>{'Matcher | Matcher[]'}</code></td><td>—</td></tr>
+      <tr><td><code>modifiers</code> e <code>modifiersClassNames</code></td><td><code>{'Record<string, Matcher | Matcher[]>'}</code> e <code>{'Record<string, string>'}</code></td><td>—</td></tr>
+      <tr><td><code>month</code>, <code>defaultMonth</code> e <code>onMonthChange</code></td><td><code>{'Date'}</code> e <code>{'(month: Date) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>startMonth</code> e <code>endMonth</code></td><td><code>Date</code></td><td>—</td></tr>
+      <tr><td><code>today</code></td><td><code>Date</code></td><td>a data atual</td></tr>
+      <tr><td><code>timeZone</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>locale</code></td><td><code>Locale</code></td><td><code>enUS</code></td></tr>
+      <tr><td><code>dir</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td>a direção do <code>DirectionProvider</code></td></tr>
+      <tr><td><code>buttonVariant</code></td><td><code>{'ButtonProps["variant"]'}</code></td><td><code>{'"ghost"'}</code></td></tr>
+      <tr><td><code>formatters</code>, <code>components</code> e <code>classNames</code></td><td>veja o DayPicker</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento raiz recebe `data-slot="calendar"`. A variável `--cell-size` (padrão `--spacing(8)`) muda o tamanho das células, e `--cell-radius` muda o raio.
 
@@ -246,15 +249,17 @@ O elemento raiz recebe `data-slot="calendar"`. A variável `--cell-size` (padrã
 
 O botão de cada dia, usado pelo `Calendar` e exportado para quem monta um `DayButton` próprio (como na story **Tamanho da célula**). Aceita as props do `DayButton` do DayPicker e `locale`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>day</code></td><td><code>CalendarDay</code></td><td>—</td></tr>
-    <tr><td><code>modifiers</code></td><td><code>Modifiers</code></td><td>—</td></tr>
-    <tr><td><code>locale</code></td><td><code>{'Partial<Locale>'}</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Calendar: CalendarDayButton">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>day</code></td><td><code>CalendarDay</code></td><td>—</td></tr>
+      <tr><td><code>modifiers</code></td><td><code>Modifiers</code></td><td>—</td></tr>
+      <tr><td><code>locale</code></td><td><code>{'Partial<Locale>'}</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="button"`, `data-day` e os atributos de estado (`data-selected-single`, `data-range-start`, `data-range-middle`, `data-range-end` e `data-outside`).

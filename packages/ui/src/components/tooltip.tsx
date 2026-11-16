@@ -24,8 +24,13 @@ import { cn } from "cn"
  *   shadcn manda pô-lo na raiz do app. Aqui o `delay` padrão é 0.
  * - Botão desabilitado: ele não recebe o mouse. Embrulhe-o num `span` como
  *   gatilho e use `focusableWhenDisabled` no botão, para o teclado alcançá-lo.
- * - O conteúdo vai para um portal no `body`: em RTL isolado, passe `dir` (e
- *   `lang`) ao `TooltipContent`.
+ * - RTL: os lados `inline-start`/`inline-end` seguem a direção do
+ *   `DirectionProvider`, não o `dir` do DOM. O conteúdo vai para um portal no
+ *   `body`, então um `dir` num ancestral do gatilho não chega a ele: o texto e
+ *   a seta seguem o `dir` do `<html>` ou o do próprio `TooltipContent`. Num
+ *   app em RTL, `dir`/`lang` no `<html>` e `DirectionProvider direction="rtl"`
+ *   na raiz; num tooltip RTL isolado, `DirectionProvider` em volta (os lados)
+ *   e `dir`/`lang` no `TooltipContent` (o texto e a seta).
  */
 
 function TooltipProvider({

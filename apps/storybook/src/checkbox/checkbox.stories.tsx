@@ -212,6 +212,7 @@ export const Tabela: Story = {
             <Checkbox
               id="tabela-todos"
               name="tabela-todos"
+              indeterminate
               aria-label="Selecionar todas as pessoas"
             />
           </TableHead>

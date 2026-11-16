@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as TableStories from "./table.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={TableStories} />
 
@@ -94,7 +95,7 @@ Monte uma `Table` com esta composição:
 - **Alinhamento:** use `text-end` (e não `text-right`) nas colunas de números, para a coluna seguir a direção. O cabeçalho e as células usam `text-start`.
 - **Hover e linha selecionada:** o fundo no hover e o da linha com `data-state="selected"` são o papel `muted`, a mesma cor. Quem seleciona linhas deve mostrar isso também por outro meio, como uma caixa marcada e um texto: a cor sozinha não basta (WCAG 1.4.1). O fundo da linha com um menu aberto usa o mesmo papel.
 - **Contraste:** o texto da tabela usa `foreground` (19,7:1 no branco e 19,0:1 no escuro). No rodapé (`bg-muted`), ele tem 17,7:1 no claro e 14,3:1 no escuro. A legenda usa `muted-foreground`, com 7,4:1 e 8,1:1. As bordas das linhas são decorativas: a leitura é feita pelas linhas e pelas colunas, não pela cor.
-- **Rolagem horizontal:** a `Table` põe um `<div>` com `overflow-x-auto` em volta do `<table>`, e ele não aceita props. Se a tabela puder ficar mais larga que a tela, quem usa só o teclado precisa de um jeito de rolar: uma área rolável sem nenhum elemento focável dentro (o caso de uma tabela só de texto) pode não receber foco. Nesse caso, ponha o `<Table>` dentro de um contêiner próprio com `role="region"`, `aria-labelledby` e `tabIndex={0}` (e o anel de foco `focus-visible:ring-3 focus-visible:ring-ring`).
+- **Rolagem horizontal:** a `Table` põe um `<div>` com `overflow-x-auto` em volta do `<table>`, e ele não aceita props. Se a tabela puder ficar mais larga que a tela, quem usa só o teclado precisa de um jeito de rolar: uma área rolável sem nenhum elemento focável dentro (o caso de uma tabela só de texto) pode não receber foco. Nesse caso, ponha o `<Table>` dentro de um contêiner próprio com `role="region"`, `aria-labelledby` (o `id` do `TableCaption`) e `tabIndex={0}`, e dê a ele a rolagem e o anel de foco do projeto: `overflow-x-auto rounded-xl outline-hidden focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background **:data-[slot=table-container]:overflow-visible`, como no bloco [Dashboard](?path=/docs/blocks-dashboard--docs). O contêiner da própria `Table` continua com `overflow-x-auto` e rolaria no lugar do seu, que é o que recebe o foco: por isso ele passa a `overflow-visible`, e as setas rolam a região. Num card, o afastamento usa a cor do card (`ring-offset-card`); quando um ancestral cortaria o anel (de borda a borda num card), use `ring-inset` no lugar do afastamento.
 - **Tabelas grandes:** para ordenar, filtrar ou paginar, o cabeçalho que ordena é um botão dentro do `<th>`, com `aria-sort` no `<th>`.
 
 <Source
@@ -167,15 +168,17 @@ O `<tr>`. Muda de fundo no hover, com um menu aberto (`aria-expanded` num descen
 
 O `<th>` de um cabeçalho.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>scope</code></td><td><code>{'"col" | "row" | "colgroup" | "rowgroup"'}</code></td><td><code>{'"col"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Table: TableHead">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>scope</code></td><td><code>{'"col" | "row" | "colgroup" | "rowgroup"'}</code></td><td><code>{'"col"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### TableCell
 
@@ -185,20 +188,22 @@ O `<td>` de uma célula.
 
 O `<caption>`, na cor `muted-foreground`, abaixo da tabela.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Table</code></td><td><code>{'<div>'}</code> + <code>{'<table>'}</code></td><td><code>table-container</code> e <code>table</code></td></tr>
-    <tr><td><code>TableHeader</code></td><td><code>{'<thead>'}</code></td><td><code>table-header</code></td></tr>
-    <tr><td><code>TableBody</code></td><td><code>{'<tbody>'}</code></td><td><code>table-body</code></td></tr>
-    <tr><td><code>TableFooter</code></td><td><code>{'<tfoot>'}</code></td><td><code>table-footer</code></td></tr>
-    <tr><td><code>TableRow</code></td><td><code>{'<tr>'}</code></td><td><code>table-row</code></td></tr>
-    <tr><td><code>TableHead</code></td><td><code>{'<th>'}</code></td><td><code>table-head</code></td></tr>
-    <tr><td><code>TableCell</code></td><td><code>{'<td>'}</code></td><td><code>table-cell</code></td></tr>
-    <tr><td><code>TableCaption</code></td><td><code>{'<caption>'}</code></td><td><code>table-caption</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Table: TableCaption">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Table</code></td><td><code>{'<div>'}</code> + <code>{'<table>'}</code></td><td><code>table-container</code> e <code>table</code></td></tr>
+      <tr><td><code>TableHeader</code></td><td><code>{'<thead>'}</code></td><td><code>table-header</code></td></tr>
+      <tr><td><code>TableBody</code></td><td><code>{'<tbody>'}</code></td><td><code>table-body</code></td></tr>
+      <tr><td><code>TableFooter</code></td><td><code>{'<tfoot>'}</code></td><td><code>table-footer</code></td></tr>
+      <tr><td><code>TableRow</code></td><td><code>{'<tr>'}</code></td><td><code>table-row</code></td></tr>
+      <tr><td><code>TableHead</code></td><td><code>{'<th>'}</code></td><td><code>table-head</code></td></tr>
+      <tr><td><code>TableCell</code></td><td><code>{'<td>'}</code></td><td><code>table-cell</code></td></tr>
+      <tr><td><code>TableCaption</code></td><td><code>{'<caption>'}</code></td><td><code>table-caption</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas aceitam as props do elemento delas.

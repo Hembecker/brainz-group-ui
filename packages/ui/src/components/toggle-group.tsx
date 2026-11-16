@@ -9,8 +9,16 @@
  * - O estado ligado vem do Toggle (preenchido com `primary`, veja toggle.tsx).
  *   Foi removido o `data-[state=on]:bg-muted` do registro: o Base UI não emite
  *   `data-state`, era uma classe morta.
+ * - O `orientation` precisa chegar ao Base UI (`orientation={orientation}` na
+ *   raiz), como no Tabs: o registro o separava das props sem repassar, e o
+ *   grupo vertical seguia as setas horizontais. O `data-orientation` explícito
+ *   continua, porque as classes `data-vertical:` dependem dele.
+ * - A raiz expõe os valores resolvidos em `data-variant` e `data-size`
+ *   (`default` quando o grupo não define). O contexto segue com os valores
+ *   crus, para o `variant`/`size` de um item valer quando o grupo não define.
  * - `spacing` padrão 2; `spacing={0}` junta os itens (cantos e bordas
- *   lógicos, funcionam em RTL).
+ *   lógicos, funcionam em RTL). Em RTL, o teclado segue o `DirectionProvider`
+ *   (de `direction.tsx`), não o `dir`.
  */
 import * as React from "react"
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
@@ -48,9 +56,10 @@ function ToggleGroup({
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
-      data-variant={variant}
-      data-size={size}
+      data-variant={variant ?? "default"}
+      data-size={size ?? "default"}
       data-spacing={spacing}
+      orientation={orientation}
       data-orientation={orientation}
       style={{ "--gap": spacing } as React.CSSProperties}
       className={cn(

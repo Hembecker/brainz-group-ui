@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as TextareaStories from "./textarea.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={TextareaStories} />
 
@@ -41,8 +42,8 @@ O `Textarea` é só o campo. O rótulo, a descrição e a mensagem de erro vêm 
 - **Limite de caracteres:** se usar `maxLength`, diga o limite na descrição ou num contador. Um contador que muda enquanto se digita não deve ser anunciado a cada tecla: deixe-o fora de uma região `aria-live` ou atualize-o só nos marcos (por exemplo, ao restarem 20 caracteres).
 - **Obrigatório:** use o atributo `required`, que a tecnologia assistiva já anuncia. Se houver um asterisco visual, ele leva `aria-hidden="true"`, e a página deve explicar o que ele significa.
 - **Desabilitado:** `disabled` tira o campo da ordem do Tab e apaga o campo todo em 50%. Campos desabilitados não precisam cumprir contraste, mas informe o motivo numa descrição. Para mostrar um texto que a pessoa pode ler e copiar, mas não editar, use `readOnly`, que continua focável.
-- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. O campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. Não remova o anel.
-- **Contraste:** o texto digitado é sempre `foreground`, inclusive dentro de um `Field` inválido. O placeholder tem 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo, e a borda de erro tem 3,8:1 e 5,1:1.
+- **Foco:** o anel é sólido, de 3px, no token `--ring`, e fica afastado 2px pela cor do fundo, como no Button. A borda do campo é o token `--field-border`. Na Brainz Group ela é transparente nos dois modos, então o campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens), e o foco e o estado inválido são o que o destacam. Uma marca de campo contornado, como o SESI no claro, mostra a borda `--field-border` (`#DFDFDF`, 1,33:1 no branco do campo); no SESI escuro ela continua transparente. Não remova o anel.
+- **Contraste:** o texto digitado é sempre `foreground`, inclusive dentro de um `Field` inválido. O placeholder tem 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo, e a borda de erro tem 3,8:1 e 5,1:1 (valores da Brainz Group, sobre o `field` mist).
 - **Tamanho e zoom:** o campo cresce com o conteúdo (`field-sizing-content`) e não tem alça de redimensionar, então nada fica escondido. Com zoom a 200%, ele continua ocupando a largura do contêiner.
 
 <Source
@@ -98,22 +99,24 @@ O `Textarea` usa paddings simétricos e o texto segue a direção do campo, ent�
 
 O `Textarea` envolve o `<textarea>` nativo e aceita todas as props dele.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>rows</code></td><td><code>number</code></td><td>—</td></tr>
-    <tr><td><code>placeholder</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>readOnly</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Textarea">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>rows</code></td><td><code>number</code></td><td>—</td></tr>
+      <tr><td><code>placeholder</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>readOnly</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="textarea"`. O `Textarea` não tem variantes nem tamanhos: tem 64px de altura mínima (`min-h-16`), cresce com o conteúdo e é `rounded-2xl`.
 

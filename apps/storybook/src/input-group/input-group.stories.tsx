@@ -786,7 +786,7 @@ export const Carregando: Story = {
           />
           <InputGroupAddon align="inline-end">
             <InputGroupText>Salvando...</InputGroupText>
-            <Spinner aria-label="Salvando" />
+            <Spinner aria-hidden="true" />
           </InputGroupAddon>
         </InputGroup>
       </Field>
@@ -961,7 +961,7 @@ export const Rtl: Story = {
             />
             <InputGroupAddon align="inline-end">
               <InputGroupText>جاري الحفظ...</InputGroupText>
-              <Spinner aria-label="جاري التحميل" />
+              <Spinner aria-hidden="true" />
             </InputGroupAddon>
           </InputGroup>
         </Field>

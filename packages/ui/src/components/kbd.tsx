@@ -9,10 +9,12 @@ import { cn } from "cn"
  * - Padrão: `muted-foreground` sobre `muted`, 6,6:1 no claro e 6,1:1 no
  *   escuro. Dentro de um Button, o chip `muted` mantém esse contraste em
  *   qualquer variante.
- * - Dentro de um InputGroup: `bg-background` com `muted-foreground`, 7,4:1 no
- *   claro e 8,1:1 no escuro, destacado do campo (`field`). O registro usava
- *   `bg-input`, que dá 1,6:1 e 2,1:1 com esse texto. O `InputGroupAddon`
- *   já aplica o mesmo `bg-background` nas teclas dele.
+ * - Dentro de um InputGroup: `bg-muted` no claro (o `bg-background` sumia no
+ *   campo branco do SESI, 1:1; escolha do usuário em 2026-11-16) e
+ *   `bg-background` no escuro (lá a `muted` é a mesma mist 800 do `field`).
+ *   Texto `muted-foreground`: 6,6:1 na muted da Brainz, 5,3:1 na do SESI e
+ *   8,1:1 no escuro. O registro usava `bg-input`, que dá 1,6:1 e 2,1:1 com
+ *   esse texto. O `InputGroupAddon` aplica as mesmas cores nas teclas dele.
  * - Dentro de um Tooltip (fundo `foreground`): `bg-muted-foreground` com
  *   `text-background`, 7,4:1 no claro e 8,1:1 no escuro, um papel cheio nos
  *   dois modos. O registro usava `bg-background/20` e `/10`, com a variante
@@ -26,7 +28,7 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
     <kbd
       data-slot="kbd"
       className={cn(
-        "pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-lg bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none in-data-[slot=input-group]:bg-background in-data-[slot=tooltip-content]:bg-muted-foreground in-data-[slot=tooltip-content]:text-background [&_svg:not([class*='size-'])]:size-3",
+        "pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-lg bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none in-data-[slot=input-group]:bg-muted dark:in-data-[slot=input-group]:bg-background in-data-[slot=tooltip-content]:bg-muted-foreground in-data-[slot=tooltip-content]:text-background [&_svg:not([class*='size-'])]:size-3",
         className
       )}
       {...props}

@@ -1,0 +1,275 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as LoginStories from "./login.stories";
+import { ScrollTable } from "../../docs/_components/token-table";
+
+<Meta of={LoginStories} />
+
+# Login
+
+O modelo padrão de autenticação: o formulário de entrada no início da tela e, no fim, uma coluna com a marca ou uma imagem. Vem do bloco [login-02 do shadcn/ui](https://ui.shadcn.com/blocks/login#login-02), com os textos em português, as cores da marca ativa e as regras de acessibilidade da Big Brain.
+
+<Canvas of={LoginStories.Demo} />
+
+As prévias desta página ficam numa caixa com altura mínima fixa, no lugar da tela inteira, e seguem a barra de ferramentas (**Marca**, **Modo** e **Direção**). A coluna lateral aparece a partir de 1024px (`lg`) de largura da janela da documentação, e não da caixa: numa janela menor, a prévia mostra o layout de tablet e celular, com o formulário sozinho. Para ver o bloco na tela inteira, abra a [Demo como story](?path=/story/blocks-login--demo).
+
+## Quando usar
+
+- Na tela de entrada de qualquer projeto que tenha conta de usuário. É o layout padrão: comece por ele e troque só o que o projeto pede (marca, imagem, links, provedores).
+- Quando o projeto também tem cadastro, use o [Cadastro](?path=/docs/blocks-cadastro--docs), que tem o mesmo layout, e ligue as duas páginas com `signupHref` e `loginHref`.
+- O bloco não guarda dados nem fala com o servidor. Ele valida o preenchimento e entrega os valores no `onSubmit`; a autenticação, as mensagens do servidor e o redirecionamento ficam com o projeto.
+
+## Instalação
+
+O bloco já está no pacote `@workspace/ui`, em `packages/ui/src/blocks/login.tsx`, e usa o layout compartilhado `packages/ui/src/blocks/auth-layout.tsx`. Ele depende só de componentes do pacote: [Field](?path=/docs/componentes-field--docs), [Input](?path=/docs/componentes-input--docs), [Button](?path=/docs/componentes-button--docs) e [Spinner](?path=/docs/componentes-spinner--docs).
+
+<Source
+  language="tsx"
+  dark
+  code={`import { LoginForm, LoginPage } from "@workspace/ui/blocks/login"`}
+/>
+
+A origem é o comando `npx shadcn add login-02`. O código gerado pelo CLI (em inglês, com `href="#"` e sem validação) foi trocado por este bloco: não rode o comando de novo por cima dele.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { LoginPage } from "@workspace/ui/blocks/login"
+
+export function Entrar() {
+  return (
+    <LoginPage
+      forgotPasswordHref="/recuperar-senha"
+      signupHref="/cadastro"
+      onSubmit={async ({ email, password }) => {
+        // autentique aqui (API do projeto) e redirecione
+      }}
+    />
+  )
+}`}
+/>
+
+`LoginPage` é a página inteira: `AuthLayout` (marca no topo, formulário no centro da primeira coluna, coluna lateral no fim) mais o `LoginForm`. Para montar o layout à mão, ou usar o formulário dentro de outro lugar, componha as duas peças:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { AuthLayout } from "@workspace/ui/blocks/auth-layout"
+import { LoginForm } from "@workspace/ui/blocks/login"
+
+<AuthLayout image={{ src: "/capa.jpg", alt: "" }}>
+  <LoginForm onSubmit={entrar} error={erro} pending={enviando} />
+</AuthLayout>`}
+/>
+
+O `onSubmit` só é chamado com os campos válidos, e o bloco já chama `preventDefault`. Sem `onSubmit`, o formulário válido segue o envio nativo (`action` e `method` do `<form>` passam direto). Enquanto a resposta não chega, passe `pending`; se ela trouxer um erro, passe `error` (o formulário inteiro) ou `errors` (por campo).
+
+## Acessibilidade
+
+- **Rótulos persistentes:** "E-mail" e "Senha" ficam sempre visíveis e ligados aos campos por `htmlFor` e `id`. O placeholder só mostra o formato. Os ids saem de `React.useId()`, então dois formulários na mesma página não colidem.
+- **Erros ligados ao campo:** cada campo tem um `FieldError` sempre montado, uma região `aria-live="polite"` em que só o texto muda. Enquanto há erro, o campo ganha `aria-invalid`, o `Field` ganha `data-invalid` (rótulo e mensagem em vermelho) e a mensagem entra no `aria-errormessage` e no `aria-describedby` do campo. Quando a pessoa edita o campo, o erro sai e esses atributos também.
+- **Foco no primeiro erro:** a validação é do bloco (`noValidate`), em português. Num envio com erro, o foco vai para o primeiro campo inválido, e o leitor de tela lê o rótulo e a mensagem juntos.
+- **Erro do formulário:** a prop `error` aparece abaixo do título, numa região `aria-live="polite"` sempre montada. É `polite` porque a pessoa acabou de enviar e está esperando a resposta; `assertive` fica para erros críticos. O texto é vermelho direto sobre o fundo (4,76:1 no claro e 6,82:1 no escuro), sem caixa tingida.
+- **Enviando:** com `pending`, o botão fica desabilitado, mas continua focável (`focusableWhenDisabled`), então o foco não cai no `<body>`. O texto muda para "Entrando…", o Spinner é decorativo e o formulário ganha `aria-busy`. Um Enter num campo enquanto envia é ignorado.
+- **Teclado:** a ordem do Tab é a do bloco do shadcn: e-mail, "Esqueceu a senha?", senha, Entrar, provedores e "Cadastre-se". Enter num campo envia. Todo link e botão tem o anel de foco sólido de 3px no `--ring`, afastado 2px pela cor do fundo.
+- **Nomes específicos:** os botões de provedor levam o nome inteiro ("Entrar com GitHub"), e o ícone fica com `aria-hidden`. Os links de texto são sublinhados, então não dependem só da cor.
+- **Preenchimento automático:** `autoComplete="email"` e `"current-password"`, para o navegador e o gerenciador de senhas preencherem.
+- **Marcos e título:** o topo é um `<header>`, o formulário fica num `<main>` e o título é um `<h1>`. O painel da marca é decorativo (`aria-hidden`): o nome da marca já está no topo, em texto.
+- **Celular e zoom:** abaixo de 1024px (`lg`) a coluna lateral some e o formulário ocupa a tela, com no máximo 20rem de largura. A 320px nada rola na horizontal.
+
+## Com imagem
+
+Passe `image` para trocar o painel da marca por uma imagem de capa, que cobre a coluna inteira (`object-cover`). O `alt` é obrigatório: descreva a imagem quando ela informa algo, ou use `alt=""` quando ela for só decorativa. `dimInDark` escurece a imagem no modo escuro, como no bloco do shadcn. O exemplo usa a paleta da marca, servida pelo Storybook, no lugar de uma foto. Como a coluna só aparece a partir de 1024px, veja a imagem [na story](?path=/story/blocks-login--com-imagem).
+
+<Canvas of={LoginStories.ComImagem} />
+
+## Sem coluna lateral
+
+`aside={false}` remove a coluna do fim, e o formulário fica centralizado na tela toda. O exemplo também troca a marca do topo por um nome com link (`brand`) e usa o `footer` para os termos de uso.
+
+<Canvas of={LoginStories.SemColunaLateral} />
+
+## Com erro
+
+`error` mostra o erro do formulário inteiro, e `errors` marca campos específicos. Os dois vêm de fora (da resposta do servidor, por exemplo); o erro de um campo some assim que a pessoa edita aquele campo e volta se a resposta do próximo envio trouxer o mesmo erro: quando chega um objeto `errors` novo ou o `pending` volta a `false`. Nunca no próprio clique em "Entrar": enquanto a resposta não chega, o leitor de tela não anuncia de novo o erro antigo. Quando a resposta não tiver erro, passe `errors` sem aquele campo (ou vazio). As stories [Erro repetido do servidor](?path=/story/blocks-login--erro-repetido) e [Erro sem nova resposta](?path=/story/blocks-login--sem-nova-resposta) testam os dois casos.
+
+<Canvas of={LoginStories.ComErro} />
+
+## Enviando
+
+`pending` desabilita o botão de entrar e os provedores, troca o texto do botão e mostra o Spinner.
+
+<Canvas of={LoginStories.Enviando} />
+
+## Somente o formulário
+
+`LoginForm` sozinho, sem o layout: para um modal, um card ou um layout próprio. O título e a descrição são props.
+
+<Canvas of={LoginStories.SomenteOFormulario} />
+
+## Validação e teclado
+
+Clique em "Entrar" na prévia do início da página com os campos vazios: os dois ficam inválidos, com a mensagem de cada um, e o foco vai para o e-mail. Um e-mail sem domínio completo ganha a própria mensagem. A story [Validação e teclado](?path=/story/blocks-login--validacao) faz esse caminho sozinha e confere a ordem do Tab. Ela não aparece nesta página porque move o foco ao abrir.
+
+## Marca e tema
+
+O bloco só usa papéis semânticos (`bg-background`, `bg-secondary`, `text-muted-foreground`, `bg-primary` no botão), nunca a paleta `--bb-*` direto. Por isso ele acompanha sozinho as escolhas da barra de ferramentas:
+
+- **Marca:** o símbolo e o nome do topo e o logo do painel saem do registro de marcas (`useBrand()`), e as cores e a fonte, do `data-brand` do `<html>`. O SESI usa os tokens oficiais do SI Design System e um logo de exemplo (veja [Temas](?path=/docs/temas--docs)).
+- **Modo:** no escuro, o painel usa a Primária 900 com o logo na 100 (9,0:1 na Brainz Group); no claro, a Primária 100 com o logo na 800 (7,7:1). É o papel `secondary`, um tom da própria Primária.
+- **Direção:** em RTL o formulário vai para a direita e a coluna lateral para a esquerda, sem prop nenhuma.
+
+Para uma marca fixa num projeto, passe `brand={{ name, logo, href }}`; o `logo` é decorativo (`aria-hidden`), porque o nome aparece ao lado em texto.
+
+## RTL
+
+Todo texto do formulário pode ser trocado por `labels`, inclusive as mensagens de erro. Com `dir="rtl"` e o `lang` num ancestral, a grade e os alinhamentos lógicos invertem o layout.
+
+<Canvas of={LoginStories.Rtl} />
+
+## Referência da API
+
+### LoginPage
+
+Aceita todas as props do `LoginForm` e estas, do `AuthLayout`:
+
+<ScrollTable label="Login: LoginPage">
+  <table>
+    <thead>
+      <tr>
+        <th>Prop</th>
+        <th>Tipo</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>brand</code></td>
+        <td><code>{"{ name: string; logo?: ReactNode; href?: string }"}</code></td>
+        <td>símbolo e nome da marca ativa, sem link</td>
+      </tr>
+      <tr>
+        <td><code>aside</code></td>
+        <td><code>ReactNode | false</code></td>
+        <td>painel da marca</td>
+      </tr>
+      <tr>
+        <td><code>image</code></td>
+        <td><code>{"{ src: string; alt: string; dimInDark?: boolean }"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>footer</code></td>
+        <td><code>ReactNode</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>layoutClassName</code></td>
+        <td><code>string</code></td>
+        <td>-</td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+### LoginForm
+
+Aceita também as props de um `<form>` (`action`, `method`, `className`…), menos quatro: `onSubmit` e `title`, que mudam de sentido, e `defaultValue` e `children`, que o bloco não aceita (os valores iniciais vão em `defaultValues`, e os campos são do próprio bloco).
+
+<ScrollTable label="Login: LoginForm">
+  <table>
+    <thead>
+      <tr>
+        <th>Prop</th>
+        <th>Tipo</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>title</code></td>
+        <td><code>ReactNode</code></td>
+        <td><code>"Entrar na sua conta"</code></td>
+      </tr>
+      <tr>
+        <td><code>description</code></td>
+        <td><code>ReactNode</code></td>
+        <td><code>"Digite seu e-mail abaixo para entrar na sua conta"</code></td>
+      </tr>
+      <tr>
+        <td><code>onSubmit</code></td>
+        <td><code>{"(values: { email: string; password: string }, event) => void"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>defaultValues</code></td>
+        <td><code>{"{ email?: string; password?: string }"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>forgotPasswordHref</code></td>
+        <td><code>string</code></td>
+        <td>- (sem o link)</td>
+      </tr>
+      <tr>
+        <td><code>signupHref</code></td>
+        <td><code>string</code></td>
+        <td>- (sem o link)</td>
+      </tr>
+      <tr>
+        <td><code>socialProviders</code></td>
+        <td><code>{"{ id: string; label: string; icon?: ReactNode; onClick? }[]"}</code></td>
+        <td>- (sem separador nem botões)</td>
+      </tr>
+      <tr>
+        <td><code>error</code></td>
+        <td><code>string</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>errors</code></td>
+        <td><code>{"{ email?: string; password?: string }"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>labels</code></td>
+        <td><code>Partial&lt;LoginFormLabels&gt;</code></td>
+        <td><code>loginFormLabels</code> (português)</td>
+      </tr>
+      <tr>
+        <td><code>pending</code></td>
+        <td><code>boolean</code></td>
+        <td><code>false</code></td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+### labels
+
+<ScrollTable label="Login: labels">
+  <table>
+    <thead>
+      <tr>
+        <th>Chave</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>email</code></td><td>E-mail</td></tr>
+      <tr><td><code>emailPlaceholder</code></td><td>nome@exemplo.com</td></tr>
+      <tr><td><code>password</code></td><td>Senha</td></tr>
+      <tr><td><code>forgotPassword</code></td><td>Esqueceu a senha?</td></tr>
+      <tr><td><code>submit</code></td><td>Entrar</td></tr>
+      <tr><td><code>pending</code></td><td>Entrando…</td></tr>
+      <tr><td><code>separator</code></td><td>Ou continue com</td></tr>
+      <tr><td><code>noAccount</code></td><td>Não tem conta?</td></tr>
+      <tr><td><code>signup</code></td><td>Cadastre-se</td></tr>
+      <tr><td><code>emailRequired</code></td><td>Informe o e-mail.</td></tr>
+      <tr><td><code>emailInvalid</code></td><td>Informe um e-mail completo, como nome@exemplo.com.</td></tr>
+      <tr><td><code>passwordRequired</code></td><td>Informe a senha.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

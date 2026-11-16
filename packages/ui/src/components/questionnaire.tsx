@@ -29,9 +29,11 @@ import { CheckIcon } from "lucide-react"
  *   botões; "Pergunta 1 de 3" e o nome "Progresso do questionário" no
  *   progresso; e as mensagens padrão do erro. O primitivo os escreve em
  *   inglês, então o `QuestionnaireProgress` e o `QuestionnaireError` os
- *   trocam por padrões em português (o `children`, o `aria-label` e o
- *   `render` que você passar valem no lugar deles). O `QuestionnaireError`
- *   sabe se o item é obrigatório por um contexto do `QuestionnaireItem`.
+ *   trocam por padrões em português (o `children`, o `aria-label`, o
+ *   `aria-valuetext` e o `render` que você passar valem no lugar deles). Com
+ *   um `children` próprio no progresso, passe também um `aria-valuetext` que
+ *   diga o mesmo. O `QuestionnaireError` sabe se o item é obrigatório por um
+ *   contexto do `QuestionnaireItem`.
  * - Erro: o primitivo monta o `<p>` do erro sempre, mas `hidden` até o item
  *   ficar inválido, e então põe `role="alert"`. Não é a região
  *   `aria-live="polite"` sempre montada do `FieldError`: o anúncio é
@@ -48,8 +50,8 @@ import { CheckIcon } from "lucide-react"
  *   (letra ou número) usava `border-primary/10 bg-background/80` e agora usa
  *   `border-border bg-background`. Inválida (`data-invalid`): borda
  *   `destructive` cheia.
- * - Campo livre (`QuestionnaireInput`): o mesmo do Input (papel `field`,
- *   sem borda, anel sólido `ring`; inválido com borda e anel `destructive`
+ * - Campo livre (`QuestionnaireInput`): o mesmo do Input (papel `field`
+ *   e borda `--field-border`, anel sólido `ring`; inválido com borda e anel `destructive`
  *   cheios, no lugar de `ring-destructive/20` e das variantes `/50` e `/40`
  *   do escuro). Precisa de nome acessível por rótulo visível (`Label`
  *   com `htmlFor`), `aria-labelledby` ou `aria-label`: o placeholder não é
@@ -81,6 +83,7 @@ function QuestionnaireProgress({
   children,
   className,
   render,
+  "aria-valuetext": ariaValueText,
   ...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Progress>) {
   return (
@@ -99,7 +102,7 @@ function QuestionnaireProgress({
           : undefined
         const merged = {
           ...renderProps,
-          "aria-valuetext": texto,
+          "aria-valuetext": ariaValueText ?? texto,
           children: children ?? texto,
         }
         if (typeof render === "function") return render(merged, state)
@@ -248,7 +251,7 @@ function QuestionnaireInput({
       <QuestionnairePrimitive.Input
         data-slot="questionnaire-input"
         className={cn(
-          "h-8 min-h-11 w-full min-w-0 rounded-2xl border border-transparent bg-field px-2.5 py-1 text-base text-foreground transition-[color,box-shadow,background-color] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive sm:min-h-0 md:text-sm",
+          "h-8 min-h-11 w-full min-w-0 rounded-2xl border border-field-border bg-field px-2.5 py-1 text-base text-foreground transition-[color,box-shadow,background-color] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive sm:min-h-0 md:text-sm",
           "selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground",
           className
         )}

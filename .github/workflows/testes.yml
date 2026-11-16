@@ -1,0 +1,68 @@
+# Testes da biblioteca a cada push na master e a cada pull request.
+#
+# Roda o mesmo que se roda à mão antes de commitar (CLAUDE.md, "Verificado"):
+# typecheck, lint, as stories com axe no claro, no escuro, em RTL e com a marca
+# SESI (claro e escuro), e o build do app de exemplo e do Storybook estático.
+#
+# - As actions ficam fixas pelo SHA do commit (a tag está no comentário), como
+#   as versões fixas dos package.json.
+# - O Node é o 26, o mesmo da máquina onde a bateria foi conferida.
+# - A telemetria do Storybook fica desligada pelo main.ts (core.disableTelemetry),
+#   que vale dentro e fora do Turbo; uma variável de ambiente aqui não chegaria
+#   às tarefas do Turbo (modo de env estrito).
+# - O Playwright baixa só o Chromium headless, que é o que o Vitest usa
+#   (vite.config.ts: browser.headless e instances chromium).
+# - Este workflow não bloqueia o deploy: o Vercel publica a master sozinho.
+name: Testes
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testes:
+    name: Typecheck, lint, stories e build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Instalar o Chromium do Playwright
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      # A primeira rodada com o cache do Vite frio pode falhar com "Vite
+      # unexpectedly reloaded" (otimização de dependências). Só ela é repetida,
+      # uma vez: uma falha de verdade reprova duas vezes e o passo falha.
+      - name: Stories com axe no claro (repete uma vez com o cache frio)
+        run: npm run test:light -w @workspace/storybook || npm run test:light -w @workspace/storybook
+
+      - name: Stories com axe no escuro e em RTL
+        run: npm run test:dark -w @workspace/storybook && npm run test:rtl -w @workspace/storybook
+
+      - name: Stories com axe na marca SESI (claro e escuro)
+        run: npm run test:sesi -w @workspace/storybook
+
+      - name: Build (app de exemplo e Storybook estático)
+        run: npm run build

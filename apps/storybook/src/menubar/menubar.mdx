@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as MenubarStories from "./menubar.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={MenubarStories} />
 
@@ -182,95 +183,107 @@ O `Menubar` é construído sobre o [Menubar do Base UI](https://base-ui.com/reac
 
 O popup do menu, com portal e posição. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'-4'}</code></td></tr>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'8'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Menubar: MenubarContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'-4'}</code></td></tr>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'8'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### MenubarItem
 
 Um item de ação. Aceita as props do Item do Base UI (`disabled`, `onClick`, `render`…).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Menubar: MenubarItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### MenubarCheckboxItem e MenubarRadioItem
 
 Itens de marcar e de escolher. `MenubarCheckboxItem` aceita as props do CheckboxItem do Base UI, e `MenubarRadioItem` as do RadioItem.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>checked</code> / <code>defaultChecked</code> (caixa)</td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>onCheckedChange</code> (caixa)</td><td><code>{'(checked: boolean) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>value</code> (radio)</td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Menubar: MenubarCheckboxItem e MenubarRadioItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>checked</code> / <code>defaultChecked</code> (caixa)</td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>onCheckedChange</code> (caixa)</td><td><code>{'(checked: boolean) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>value</code> (radio)</td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### MenubarRadioGroup
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: string) => void'}</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Menubar: MenubarRadioGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: string) => void'}</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### MenubarLabel, MenubarSubTrigger
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Menubar: MenubarLabel, MenubarSubTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Menubar</code></td><td><code>{'<div role="menubar">'}</code></td><td><code>menubar</code></td></tr>
-    <tr><td><code>MenubarMenu</code></td><td>nenhum (só o contexto)</td><td><code>menubar-menu</code></td></tr>
-    <tr><td><code>MenubarTrigger</code></td><td><code>{'<button role="menuitem">'}</code></td><td><code>menubar-trigger</code></td></tr>
-    <tr><td><code>MenubarPortal</code></td><td>portal no <code>body</code></td><td><code>menubar-portal</code></td></tr>
-    <tr><td><code>MenubarContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>menubar-content</code></td></tr>
-    <tr><td><code>MenubarGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>menubar-group</code></td></tr>
-    <tr><td><code>MenubarLabel</code></td><td><code>{'<div>'}</code></td><td><code>menubar-label</code></td></tr>
-    <tr><td><code>MenubarItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>menubar-item</code></td></tr>
-    <tr><td><code>MenubarCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>menubar-checkbox-item</code></td></tr>
-    <tr><td><code>MenubarRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>menubar-radio-group</code></td></tr>
-    <tr><td><code>MenubarRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>menubar-radio-item</code></td></tr>
-    <tr><td><code>MenubarSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>menubar-separator</code></td></tr>
-    <tr><td><code>MenubarShortcut</code></td><td><code>{'<span>'}</code></td><td><code>menubar-shortcut</code></td></tr>
-    <tr><td><code>MenubarSub</code></td><td>nenhum (só o contexto)</td><td><code>menubar-sub</code></td></tr>
-    <tr><td><code>MenubarSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>menubar-sub-trigger</code></td></tr>
-    <tr><td><code>MenubarSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>menubar-sub-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Menubar: Referência da API, MenubarLabel, MenubarSubTrigger">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Menubar</code></td><td><code>{'<div role="menubar">'}</code></td><td><code>menubar</code></td></tr>
+      <tr><td><code>MenubarMenu</code></td><td>nenhum (só o contexto)</td><td><code>menubar-menu</code></td></tr>
+      <tr><td><code>MenubarTrigger</code></td><td><code>{'<button role="menuitem">'}</code></td><td><code>menubar-trigger</code></td></tr>
+      <tr><td><code>MenubarPortal</code></td><td>portal no <code>body</code></td><td><code>menubar-portal</code></td></tr>
+      <tr><td><code>MenubarContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>menubar-content</code></td></tr>
+      <tr><td><code>MenubarGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>menubar-group</code></td></tr>
+      <tr><td><code>MenubarLabel</code></td><td><code>{'<div>'}</code></td><td><code>menubar-label</code></td></tr>
+      <tr><td><code>MenubarItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>menubar-item</code></td></tr>
+      <tr><td><code>MenubarCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>menubar-checkbox-item</code></td></tr>
+      <tr><td><code>MenubarRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>menubar-radio-group</code></td></tr>
+      <tr><td><code>MenubarRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>menubar-radio-item</code></td></tr>
+      <tr><td><code>MenubarSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>menubar-separator</code></td></tr>
+      <tr><td><code>MenubarShortcut</code></td><td><code>{'<span>'}</code></td><td><code>menubar-shortcut</code></td></tr>
+      <tr><td><code>MenubarSub</code></td><td>nenhum (só o contexto)</td><td><code>menubar-sub</code></td></tr>
+      <tr><td><code>MenubarSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>menubar-sub-trigger</code></td></tr>
+      <tr><td><code>MenubarSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>menubar-sub-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

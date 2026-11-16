@@ -34,6 +34,9 @@ import { XIcon } from "lucide-react"
  * - Raio do Card (`min(--radius-4xl, 24px)`), recuo de 24px, paddings e
  *   posição lógicos (`start`/`end`, `rtl:translate-x-1/2`), para funcionar em
  *   RTL.
+ * - Links na descrição: sublinhados, com o anel de foco do projeto (`ring-3
+ *   ring-ring ring-offset-2 ring-offset-background`, `rounded-sm`) no lugar do
+ *   outline do navegador, como no AlertDialog.
  * - Anel de foco: o Popup não tem anel (`outline-none`), porque o foco vai para
  *   o primeiro controle; os botões e campos usam o anel sólido deles.
  * - Conteúdo longo: limite a altura de uma região interna (`max-h-[50vh]
@@ -171,7 +174,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground *:[a]:rounded-sm *:[a]:outline-none *:[a]:focus-visible:ring-3 *:[a]:focus-visible:ring-ring *:[a]:focus-visible:ring-offset-2 *:[a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}

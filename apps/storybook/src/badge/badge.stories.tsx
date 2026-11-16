@@ -62,12 +62,12 @@ export const ComSpinner: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge variant="destructive">
-        <Spinner data-icon="inline-start" aria-label="Excluindo" />
+        <Spinner data-icon="inline-start" aria-hidden="true" />
         Excluindo
       </Badge>
       <Badge variant="secondary">
         Gerando
-        <Spinner data-icon="inline-end" aria-label="Gerando" />
+        <Spinner data-icon="inline-end" aria-hidden="true" />
       </Badge>
     </div>
   ),
@@ -75,8 +75,8 @@ export const ComSpinner: Story = {
 
 export const Link: Story = {
   render: () => (
-    <Badge render={<a href="#link" />}>
-      Abrir link
+    <Badge render={<a href="#relatorio" />}>
+      Abrir relatório
       <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
     </Badge>
   ),

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ScrollAreaStories from "./scroll-area.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ScrollAreaStories} />
 
@@ -89,19 +90,21 @@ A barra e a rolagem seguem a direção de um ancestral com `dir="rtl"`. O exempl
 
 O `ScrollArea` envolve o `ScrollArea.Root` do Base UI e repassa as props dele. Veja a [referência do Base UI Scroll Area](https://base-ui.com/react/components/scroll-area#api-reference) para a lista completa. As principais:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>role</code></td><td><code>string</code>: vai para o viewport; use <code>"region"</code></td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: vai para o viewport</td><td>—</td></tr>
-    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: vai para o viewport</td><td>—</td></tr>
-    <tr><td><code>overflowEdgeThreshold</code></td><td><code>{'number | Partial<{ xStart; xEnd; yStart; yEnd }>'}</code>: distância, em pixels, para marcar as bordas com conteúdo escondido</td><td><code>0</code></td></tr>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Scroll Area: ScrollArea">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>role</code></td><td><code>string</code>: vai para o viewport; use <code>"region"</code></td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: vai para o viewport</td><td>—</td></tr>
+      <tr><td><code>aria-labelledby</code></td><td><code>string</code>: vai para o viewport</td><td>—</td></tr>
+      <tr><td><code>overflowEdgeThreshold</code></td><td><code>{'number | Partial<{ xStart; xEnd; yStart; yEnd }>'}</code>: distância, em pixels, para marcar as bordas com conteúdo escondido</td><td><code>0</code></td></tr>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O contêiner recebe `data-slot="scroll-area"` e o viewport recebe `data-slot="scroll-area-viewport"`.
 
@@ -109,16 +112,18 @@ O contêiner recebe `data-slot="scroll-area"` e o viewport recebe `data-slot="sc
 
 A barra de rolagem. Aceita as props do `ScrollArea.Scrollbar` do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>orientation</code></td><td><code>{'"vertical" | "horizontal"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
-    <tr><td><code>keepMounted</code></td><td><code>boolean</code>: mantém o elemento no DOM quando não há o que rolar</td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Scroll Area: ScrollBar">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>orientation</code></td><td><code>{'"vertical" | "horizontal"'}</code></td><td><code>{'"vertical"'}</code></td></tr>
+      <tr><td><code>keepMounted</code></td><td><code>boolean</code>: mantém o elemento no DOM quando não há o que rolar</td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 A barra recebe `data-slot="scroll-area-scrollbar"` e `data-orientation`, e o polegar recebe `data-slot="scroll-area-thumb"`.
 

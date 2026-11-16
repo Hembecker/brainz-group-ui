@@ -20,6 +20,8 @@ import { cn } from "cn"
  * - Portal: o conteúdo vai para um portal no `body`. A classe `dark` e o `dir`
  *   do `<html>` chegam a ele, mas um `dir` posto num ancestral do gatilho não:
  *   para um popover RTL isolado, passe `dir` (e `lang`) ao `PopoverContent`.
+ *   Os lados `inline-start`/`inline-end` seguem o `DirectionProvider`, não o
+ *   `dir` do DOM: num popover isolado, ponha um `DirectionProvider` em volta.
  * - Anel de foco: o Popup não tem anel (`outline-hidden`), porque o foco vai
  *   para o primeiro controle; os botões e campos usam o anel sólido deles.
  */

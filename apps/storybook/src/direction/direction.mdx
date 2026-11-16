@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as DirectionStories from "./direction.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={DirectionStories} />
 
@@ -74,25 +75,29 @@ function MyComponent() {
 
 ### DirectionProvider
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>direction</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td><code>{'"ltr"'}</code></td></tr>
-    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Direction: DirectionProvider">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>direction</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td><code>{'"ltr"'}</code></td></tr>
+      <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O `DirectionProvider` não gera elemento nem `data-slot`: só passa a direção por contexto.
 
 ### useDirection
 
-<table>
-  <thead>
-    <tr><th>Retorno</th><th>Tipo</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>direction</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td>A direção do provedor mais próximo, ou <code>"ltr"</code> sem provedor.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Direction: useDirection">
+  <table>
+    <thead>
+      <tr><th>Retorno</th><th>Tipo</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>direction</code></td><td><code>{'"ltr" | "rtl"'}</code></td><td>A direção do provedor mais próximo, ou <code>"ltr"</code> sem provedor.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

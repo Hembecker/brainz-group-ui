@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as QuestionnaireStories from "./questionnaire.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={QuestionnaireStories} />
 
@@ -177,7 +178,7 @@ Passe `items` para renderizar no servidor o item ativo, o progresso, as ações 
 - **Mensagem de erro:** o `<p>` do erro fica sempre montado, `hidden` até o item ficar inválido, e então ganha `role="alert"`. Isso é diferente do `FieldError`, que é uma região `aria-live="polite"` sempre montada: o anúncio aqui é assertivo e acontece quando a pergunta falha. Não dá para mudar isso sem editar o primitivo. Para erros do host (veja **Validação personalizada**), passe `invalid` no item e o texto no `QuestionnaireError`.
 - **Progresso:** o `QuestionnaireProgress` é um `role="progressbar"` com `aria-live="polite"`, o nome "Progresso do questionário" e o `aria-valuetext` "Pergunta 2 de 3". O texto visível é o mesmo. Num indicador personalizado, os segmentos são decorativos (`aria-hidden="true"`) e o texto continua presente.
 - **Estado no texto:** o estado de cada resposta (marcada, inválida) também é exposto pelo próprio controle (`checked`, `aria-invalid`), e a opção marcada muda de fundo e de borda, não só de cor do indicador. A pergunta pulada fica sem resposta; o `onStatusChange` entrega `unanswered`, `answered` ou `skipped`.
-- **Teclado:** Tab entra no item. As setas para cima e para baixo movem entre as respostas (e marcam um radio). A seta para a esquerda volta uma pergunta e a seta para a direita avança, quando já há resposta e o foco não está num campo de texto. Enter numa resposta marcada avança; Ctrl ou Cmd mais Enter avança de qualquer ponto. Com `shortcuts`, uma letra ou um número escolhe a opção, enquanto o foco está dentro do questionário e fora do campo de texto; a tecla também fica em `aria-keyshortcuts` na resposta, e o ícone com a tecla é `aria-hidden`.
+- **Teclado:** Tab entra no item. As setas para cima e para baixo movem entre as respostas (e marcam um radio). A seta para a esquerda volta uma pergunta e a seta para a direita avança (esta só quando já há resposta) quando o foco está no item, num checkbox ou num botão; num radio as setas mudam a opção, como em qualquer grupo de radio, e num campo de texto movem o cursor. Enter numa resposta marcada avança; Ctrl ou Cmd mais Enter avança de qualquer ponto. Com `shortcuts`, uma letra ou um número escolhe a opção, enquanto o foco está dentro do questionário e fora do campo de texto; a tecla também fica em `aria-keyshortcuts` na resposta, e o ícone com a tecla é `aria-hidden`.
 - **Foco:** ao navegar, o foco vai para o item novo (um `fieldset` com `tabIndex={-1}`, que não é uma parada do Tab e não mostra anel). Se a validação falha, vai para uma resposta do item. O anel da opção e do campo é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo.
 - **Botões de navegação:** são `<button>` de verdade, com os mesmos estilos do Button. Têm no mínimo 44px de altura em telas pequenas. O nome é a ação ("Próxima"); passe um texto específico quando ajudar ("Salvar plano").
 - **Contraste:** o contorno da opção é `input` (4,6:1 no branco; 3,8:1 no escuro). A opção marcada usa borda `primary` e fundo `accent` (`card` no escuro, porque o indicador `primary` tem 3,4:1 sobre o `card` e só 2,9:1 sobre o `accent`). O texto da descrição é `muted-foreground` (6,6:1 sobre o `accent`). O erro é `destructive` (4,8:1 no branco e 6,8:1 no escuro; sobre `muted` ou `accent`, use `destructive-hover`).
@@ -280,7 +281,11 @@ Componha o Questionnaire dentro de um Dialog, deixando o cancelamento e o fecham
 
 ## RTL
 
-A página do shadcn não tem uma seção de RTL. O Questionnaire usa paddings e margens lógicos (`ms-auto`, `text-start`), então funciona em RTL sem nenhuma prop, e os testes rodam todas as stories também com `dir="rtl"`. Atenção às setas do teclado: o primitivo liga a seta para a esquerda a "pergunta anterior" e a seta para a direita a "próxima" sem olhar a direção, então em RTL elas **não** são espelhadas (a seta para a esquerda continua voltando). As setas para cima e para baixo, o Enter e os atalhos de letra não dependem da direção. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas.
+A página do shadcn não tem uma seção de RTL. O Questionnaire usa paddings e margens lógicos (`ms-auto`, `text-start`), então funciona em RTL sem nenhuma prop, e os testes rodam todas as stories também com `dir="rtl"`. Atenção às setas do teclado: fora de um radio e de um campo de texto, o primitivo liga a seta para a esquerda a "pergunta anterior" e a seta para a direita a "próxima" sem olhar a direção, então em RTL esse atalho **não** é espelhado (a seta para a esquerda continua voltando). Num radio, as setas para a esquerda e para a direita seguem o grupo de radio nativo, que o navegador espelha em RTL. As setas para cima e para baixo, o Enter e os atalhos de letra não dependem da direção. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas.
+
+## Sem estilo
+
+O comportamento do `Questionnaire` (estado, navegação, validação, atalhos e progresso) vem do pacote `@shadcn/react`, um primitivo sem estilo (versão fixa 0.3.1 em `packages/ui`). Para usá-lo direto com o seu próprio markup e estilo, veja o [Questionnaire do @shadcn/react](https://ui.shadcn.com/docs/react/questionnaire).
 
 ## Referência da API
 
@@ -288,57 +293,64 @@ A página do shadcn não tem uma seção de RTL. O Questionnaire usa paddings e 
 
 A raiz, um `<form>`. Aceita as props de um `<form>` nativo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>items</code></td><td><code>{'readonly { name: string; required?: boolean; disabled?: boolean; choices?: readonly { value: string; disabled?: boolean }[] }[]'}</code></td><td>—</td></tr>
-    <tr><td><code>defaultItem</code></td><td><code>string</code>: o nome do item inicial</td><td>o primeiro habilitado</td></tr>
-    <tr><td><code>item</code></td><td><code>string</code>: o item ativo, controlado</td><td>—</td></tr>
-    <tr><td><code>onItemChange</code></td><td><code>{'(item: string) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>shortcuts</code></td><td><code>{'"letters" | "numbers"'}</code></td><td>—</td></tr>
-    <tr><td><code>onSubmit</code></td><td><code>{'React.FormEventHandler<HTMLFormElement>'}</code>: só roda com os itens válidos</td><td>—</td></tr>
-    <tr><td><code>onReset</code></td><td><code>{'React.FormEventHandler<HTMLFormElement>'}</code></td><td>—</td></tr>
-    <tr><td><code>noValidate</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Questionnaire">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>items</code></td><td><code>{'readonly { name: string; required?: boolean; disabled?: boolean; choices?: readonly { value: string; disabled?: boolean }[] }[]'}</code></td><td>—</td></tr>
+      <tr><td><code>defaultItem</code></td><td><code>string</code>: o nome do item inicial</td><td>o primeiro habilitado</td></tr>
+      <tr><td><code>item</code></td><td><code>string</code>: o item ativo, controlado</td><td>—</td></tr>
+      <tr><td><code>onItemChange</code></td><td><code>{'(item: string) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>shortcuts</code></td><td><code>{'"letters" | "numbers"'}</code></td><td>—</td></tr>
+      <tr><td><code>onSubmit</code></td><td><code>{'React.FormEventHandler<HTMLFormElement>'}</code>: só roda com os itens válidos</td><td>—</td></tr>
+      <tr><td><code>onReset</code></td><td><code>{'React.FormEventHandler<HTMLFormElement>'}</code></td><td>—</td></tr>
+      <tr><td><code>noValidate</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### QuestionnaireProgress
 
-O progresso: um `role="progressbar"`. Texto padrão "Pergunta 1 de 3" e nome "Progresso do questionário"; o `children`, o `aria-label` e o `render` que você passar valem no lugar.
+O progresso: um `role="progressbar"`. Texto padrão "Pergunta 1 de 3" e nome "Progresso do questionário"; o `children`, o `aria-label`, o `aria-valuetext` e o `render` que você passar valem no lugar. Com um `children` próprio, passe também um `aria-valuetext` que diga o mesmo, porque o padrão continua "Pergunta X de Y".
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state: { current; total; first; last }) => ReactElement'}</code></td><td>—</td></tr>
-    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Pergunta X de Y"</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Questionnaire: QuestionnaireProgress">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state: { current; total; first; last }) => ReactElement'}</code></td><td>—</td></tr>
+      <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Pergunta X de Y"</td></tr>
+      <tr><td><code>aria-valuetext</code></td><td><code>string</code></td><td>"Pergunta X de Y"</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### QuestionnaireItem
 
 Um item (pergunta): um `fieldset`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>name</code></td><td><code>string</code>: o nome do campo no <code>FormData</code></td><td>obrigatório</td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code>: tira o item do fluxo</td><td><code>false</code></td></tr>
-    <tr><td><code>invalid</code></td><td><code>boolean</code>: marca o item como inválido (erro do host)</td><td><code>false</code></td></tr>
-    <tr><td><code>onStatusChange</code></td><td><code>{'(status: "unanswered" | "answered" | "skipped") => void'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do título, quando a <code>legend</code> não é o primeiro filho</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Questionnaire: QuestionnaireItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>name</code></td><td><code>string</code>: o nome do campo no <code>FormData</code></td><td>obrigatório</td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code>: tira o item do fluxo</td><td><code>false</code></td></tr>
+      <tr><td><code>invalid</code></td><td><code>boolean</code>: marca o item como inválido (erro do host)</td><td><code>false</code></td></tr>
+      <tr><td><code>onStatusChange</code></td><td><code>{'(status: "unanswered" | "answered" | "skipped") => void'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-labelledby</code></td><td><code>string</code>: id do título, quando a <code>legend</code> não é o primeiro filho</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### QuestionnaireTitle e QuestionnaireDescription
 
@@ -352,19 +364,21 @@ Agrupa as opções (e o campo livre). Aceita `render` e as props de um `div`.
 
 Uma opção: um cartão de escolha (`label`) com um `input` radio ou checkbox por dentro.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>obrigatório</td></tr>
-    <tr><td><code>checked</code></td><td><code>boolean</code>: controlado</td><td>—</td></tr>
-    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>onChange</code></td><td><code>{'React.ChangeEventHandler<HTMLInputElement>'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Questionnaire: QuestionnaireChoice">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>obrigatório</td></tr>
+      <tr><td><code>checked</code></td><td><code>boolean</code>: controlado</td><td>—</td></tr>
+      <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>onChange</code></td><td><code>{'React.ChangeEventHandler<HTMLInputElement>'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### QuestionnaireChoiceDescription
 
@@ -374,31 +388,35 @@ Um texto de apoio dentro da opção (um `span`).
 
 O campo de resposta livre, ligado ao item. Dê a ele um nome acessível (rótulo visível, `aria-labelledby` ou `aria-label`).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>type</code></td><td><code>{'"text" | "email" | "number" | "search" | "tel" | "url" | …'}</code></td><td><code>{'"text"'}</code></td></tr>
-    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Questionnaire: QuestionnaireInput">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>type</code></td><td><code>{'"text" | "email" | "number" | "search" | "tel" | "url" | …'}</code></td><td><code>{'"text"'}</code></td></tr>
+      <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### QuestionnaireError
 
 A mensagem de erro do item. Fica `hidden` até o item ficar inválido. Com `children` ausente, usa uma frase em português conforme o item seja obrigatório ou não.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Escolha uma resposta para continuar." (obrigatório) ou "Escolha uma resposta ou pule esta pergunta."</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Questionnaire: QuestionnaireError">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Escolha uma resposta para continuar." (obrigatório) ou "Escolha uma resposta ou pule esta pergunta."</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### QuestionnaireActions
 
@@ -408,17 +426,19 @@ O contêiner das ações, só de layout (uma grade com Anterior, Pular, Próxima
 
 Os botões de navegação. Cada um aparece conforme a pergunta ativa (os outros ficam `hidden` e `inert`): Anterior fora da primeira; Pular nos itens opcionais; Próxima fora da última; Enviar só na última. Aceitam as props de um `<button>` e `render`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td>as variantes do Button</td><td><code>{'"outline"'}</code> (Anterior e Pular) ou <code>{'"default"'}</code> (Próxima e Enviar)</td></tr>
-    <tr><td><code>size</code></td><td>os tamanhos do Button</td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Anterior", "Pular", "Próxima" ou "Enviar"</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Questionnaire: QuestionnairePrevious, QuestionnaireSkip, QuestionnaireNext e QuestionnaireSubmit">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td>as variantes do Button</td><td><code>{'"outline"'}</code> (Anterior e Pular) ou <code>{'"default"'}</code> (Próxima e Enviar)</td></tr>
+      <tr><td><code>size</code></td><td>os tamanhos do Button</td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>"Anterior", "Pular", "Próxima" ou "Enviar"</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Cada parte recebe um `data-slot` (`questionnaire`, `questionnaire-progress`, `questionnaire-item`, `questionnaire-title`, `questionnaire-description`, `questionnaire-choices`, `questionnaire-choice`, `questionnaire-choice-description`, `questionnaire-input`, `questionnaire-error`, `questionnaire-actions` e os botões). Os botões expõem `data-variant` e `data-size`.

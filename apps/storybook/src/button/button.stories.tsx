@@ -185,15 +185,15 @@ export const ComSpinner: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-2">
       <Button variant="outline" disabled>
-        <Spinner data-icon="inline-start" />
+        <Spinner data-icon="inline-start" aria-hidden="true" />
         Gerando
       </Button>
       <Button variant="secondary" disabled>
         Baixando
-        <Spinner data-icon="inline-end" />
+        <Spinner data-icon="inline-end" aria-hidden="true" />
       </Button>
       <Button disabled focusableWhenDisabled>
-        <Spinner data-icon="inline-start" />
+        <Spinner data-icon="inline-start" aria-hidden="true" />
         Salvando
       </Button>
     </div>
@@ -329,8 +329,7 @@ export const Rtl: Story = {
         <PlusIcon aria-hidden="true" />
       </Button>
       <Button variant="secondary" disabled>
-        <Spinner data-icon="inline-start" aria-label="جاري التحميل" /> جاري
-        التحميل
+        <Spinner data-icon="inline-start" aria-hidden="true" /> جاري التحميل
       </Button>
     </div>
   ),

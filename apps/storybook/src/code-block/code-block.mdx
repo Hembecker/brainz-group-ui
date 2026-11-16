@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as CodeBlockStories from "./code-block.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={CodeBlockStories} />
 
@@ -88,13 +89,13 @@ O `CodeBlockContent` recebe uma string ou uma lista de `CodeBlockLine`. Use as l
 
 - **Bloco rolável alcançável pelo teclado:** o `CodeBlockContent` é um `<pre>` com `tabIndex={0}`, então quem usa só o teclado chega a ele e rola com as setas (sem isso o axe reprova: `scrollable-region-focusable`). O anel de foco aparece no bloco inteiro (`--ring`, afastado 2px pela cor do fundo), porque a máscara do `scroll-fade` cortaria um anel no próprio `<pre>`. Dê um nome ao bloco que rola ou que tem título: `role="region"` com `aria-labelledby` apontando para o `CodeBlockTitle` (que precisa de `id`) ou um `aria-label`, como nos exemplos de **Altura** e **Mostrar mais**. Sem nome, o leitor de tela encontra um campo de rolagem sem anúncio. Para tirar a parada de Tab de um bloco que nunca rola, passe `tabIndex={-1}`.
 - **Botão de copiar com nome em português:** o `CodeBlockCopyButton` se chama "Copiar código" e não muda de nome ao copiar. Passe um `aria-label` que diga o alvo quando houver mais de um botão na página: "Copiar o erro", "Copiar app/api/chat/route.ts". O ícone leva `aria-hidden="true"`.
-- **Aviso de "Copiado":** uma região `aria-live="polite"` fica sempre montada ao lado do botão, e só o texto dela muda para "Copiado" (por 2 segundos). Um nome fixo no botão e o aviso na região evitam que o leitor de tela leia a mesma notícia duas vezes. Se a cópia falhar (o navegador nega o acesso à área de transferência), nada é anunciado nem mostrado.
+- **Aviso de "Copiado":** uma região `aria-live="polite"` fica sempre montada ao lado do botão, e só o texto dela muda para "Copiado" (por 2 segundos). Um nome fixo no botão e o aviso na região evitam que o leitor de tela leia a mesma notícia duas vezes. Se a cópia falhar (o navegador nega o acesso à área de transferência ou não tem a API, como numa origem sem HTTPS), nada é anunciado nem mostrado.
 - **Botões só de ícone:** cada um leva `aria-label` com a ação e o alvo, e o ícone leva `aria-hidden="true"`: "Baixar route.ts". O botão de quebrar linhas leva `aria-pressed`, para o estado ser anunciado. O botão de mostrar mais leva `aria-expanded` e `aria-controls` com o `id` do `CodeBlockContent`. O tooltip nunca é o único nome.
 - **Contraste do realce de sintaxe:** as cores do `github-light` e do `github-dark` não dão 4,5:1 sobre o fundo do bloco (`muted`) nem sobre uma linha realçada (`border`). O `lib/highlighter.tsx` troca cada cor que falha por um tom mais escuro (claro) ou mais claro (escuro) da mesma matiz, e todas passam de 4,6:1 sobre o bloco, sobre a linha realçada e sobre a linha removida, nos dois modos. As trocas valem também para as cores ANSI, e o texto "dim" (`ESC[2m`) usa `muted-foreground` em vez do tom a 50%. Se os tokens `muted`, `border` ou `destructive` mudarem, confira de novo os números.
 - **Sentido além da cor:** as linhas do diff levam um marcador `+` ou `−` além do tom, e a variante `destructive` leva um título ("Erro") além da cor. O realce de linha (`highlighted`) é só um tom: se a linha importa para entender o texto em volta, diga qual é no próprio texto. Os números de linha são escondidos do leitor de tela.
 - **Direção:** o código é sempre `dir="ltr"`, mesmo numa página RTL.
-- **Contraste dos papéis:** o texto do bloco é `foreground` (17,7:1 sobre `muted` no claro, 14,3:1 no escuro) e o cabeçalho, `muted-foreground` (6,6:1 e 6,1:1). Na variante `destructive`, o texto usa `destructive-hover` sobre `muted` (5,9:1 e 7,8:1).
-- **Teclado nas ações flutuantes:** sem cabeçalho, a ação flutua no canto e aparece com o mouse e com o foco do teclado (`group-focus-within`), e fica sempre visível em telas de toque.
+- **Contraste dos papéis:** o texto do bloco é `foreground` (17,7:1 sobre `muted` no claro, 14,3:1 no escuro) e o cabeçalho, `muted-foreground` (6,6:1 e 6,1:1). Na variante `destructive`, o texto usa `destructive-hover` sobre `muted` (5,8:1 e 7,7:1).
+- **Teclado nas ações flutuantes:** sem cabeçalho, a ação flutua no canto e aparece com o mouse e com o foco do teclado (`group-focus-within`), e fica sempre visível em telas de toque. O contorno `ring-border` do botão flutuante só vale fora do foco: com o foco, o botão mostra o anel sólido (`--ring`, 3px, afastado 2px pela cor do fundo).
 
 <Source
   language="tsx"
@@ -334,16 +335,18 @@ O exemplo desta seção ficou de fora do Storybook: ele depende do Streamdown e 
 
 A superfície que guarda o cabeçalho, o conteúdo e o rodapé. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code>: o tom do bloco</td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code>: o <code>sm</code> tem menos recuo e código em <code>text-xs</code>, para saída de ferramentas</td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Code Block: CodeBlock">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code>: o tom do bloco</td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code>: o <code>sm</code> tem menos recuo e código em <code>text-xs</code>, para saída de ferramentas</td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="code-block"`, `data-variant` e `data-size`.
 
@@ -363,50 +366,56 @@ Guarda botões no fim do cabeçalho. Como filho direto do `CodeBlock`, ele flutu
 
 Um botão ghost só de ícone que copia o `value` para a área de transferência. Aceita as props do [Button](?path=/docs/componentes-button--docs). Recebe `data-slot="code-block-copy-button"` e `data-copied` por 2 segundos depois de copiar.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code>: o texto a copiar (obrigatório)</td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: o nome do botão</td><td><code>{'"Copiar código"'}</code></td></tr>
-    <tr><td><code>variant</code></td><td><code>Button["variant"]</code></td><td><code>{'"ghost"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>Button["size"]</code></td><td><code>{'"icon-xs"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Code Block: CodeBlockCopyButton">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code>: o texto a copiar (obrigatório)</td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: o nome do botão</td><td><code>{'"Copiar código"'}</code></td></tr>
+      <tr><td><code>variant</code></td><td><code>Button["variant"]</code></td><td><code>{'"ghost"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>Button["size"]</code></td><td><code>{'"icon-xs"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CodeBlockContent
 
 O `<pre>` que rola ou quebra. Aceita as props de um `<pre>`. Recebe `data-slot="code-block-content"`, e o `<code>` dentro dele, `data-slot="code-block-code"`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>children</code></td><td><code>React.ReactNode</code>: uma string ou uma lista de <code>CodeBlockLine</code></td><td>—</td></tr>
-    <tr><td><code>wrap</code></td><td><code>boolean</code>: quebra as linhas longas em vez de rolar</td><td><code>false</code></td></tr>
-    <tr><td><code>lineNumbers</code></td><td><code>boolean</code>: numera cada linha; uma string é dividida em linhas</td><td><code>false</code></td></tr>
-    <tr><td><code>startLine</code></td><td><code>number</code>: o número da primeira linha, com <code>lineNumbers</code></td><td><code>1</code></td></tr>
-    <tr><td><code>tabIndex</code></td><td><code>number</code>: deixa o conteúdo focável, para rolar pelo teclado</td><td><code>0</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code>, como <code>max-h-72</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Code Block: CodeBlockContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>children</code></td><td><code>React.ReactNode</code>: uma string ou uma lista de <code>CodeBlockLine</code></td><td>—</td></tr>
+      <tr><td><code>wrap</code></td><td><code>boolean</code>: quebra as linhas longas em vez de rolar</td><td><code>false</code></td></tr>
+      <tr><td><code>lineNumbers</code></td><td><code>boolean</code>: numera cada linha; uma string é dividida em linhas</td><td><code>false</code></td></tr>
+      <tr><td><code>startLine</code></td><td><code>number</code>: o número da primeira linha, com <code>lineNumbers</code></td><td><code>1</code></td></tr>
+      <tr><td><code>tabIndex</code></td><td><code>number</code>: deixa o conteúdo focável, para rolar pelo teclado</td><td><code>0</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code>, como <code>max-h-72</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CodeBlockLine
 
 Uma linha de código. Aceita as props de um `<span>`. Recebe `data-slot="code-block-line"` e `data-variant`, e o texto fica num `data-slot="code-block-line-content"`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "added" | "removed" | "highlighted"'}</code>: o estado da linha</td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Code Block: CodeBlockLine">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "added" | "removed" | "highlighted"'}</code>: o estado da linha</td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### CodeBlockFooter
 
@@ -422,12 +431,14 @@ Uma linha abaixo do conteúdo, por exemplo para um botão de "Mostrar mais". Ace
 
 Devolve um nó React por linha. Devolve linhas de texto simples até a primeira passada terminar e, para sempre, para uma linguagem que não está na lista.
 
-<table>
-  <thead>
-    <tr><th>Argumento</th><th>Tipo</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>code</code></td><td><code>string</code></td><td>O código a realçar. Uma quebra de linha no fim é ignorada.</td></tr>
-    <tr><td><code>language</code></td><td><code>string</code></td><td>Uma linguagem ou apelido de <code>lib/highlighter.tsx</code>, ou <code>{'"ansi"'}</code>.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Code Block: useHighlightedCode">
+  <table>
+    <thead>
+      <tr><th>Argumento</th><th>Tipo</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>code</code></td><td><code>string</code></td><td>O código a realçar. Uma quebra de linha no fim é ignorada.</td></tr>
+      <tr><td><code>language</code></td><td><code>string</code></td><td>Uma linguagem ou apelido de <code>lib/highlighter.tsx</code>, ou <code>{'"ansi"'}</code>.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as DrawerStories from "./drawer.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={DrawerStories} />
 
@@ -12,7 +13,7 @@ Uma gaveta que desliza da borda da tela. Serve para ações e formulários curto
 
 O exemplo principal do shadcn troca entre uma gaveta de baixo (celular) e uma lateral (desktop) com o hook `useIsMobile`. Como as stories desta página são JSX literal, que não chama hooks, o exemplo é uma gaveta de baixo, o `swipeDirection` padrão. Os lados têm a própria seção, **Posição**.
 
-O Drawer deste registro usa o [Drawer do Base UI](https://base-ui.com/react/components/drawer), não o vaul.
+O Drawer deste registro usa o [Drawer do Base UI](https://base-ui.com/react/components/drawer), não o vaul (veja **Migrando do vaul**).
 
 ## Instalação
 
@@ -155,32 +156,36 @@ Para uma região rolável, faça do contêiner de rolagem um item flex. Evite `h
 
 A gaveta expõe variáveis CSS para personalizar o estilo. Defina as de tamanho no `DrawerContent`, e a do véu em `[data-slot=drawer-overlay]` no seu CSS.
 
-<table>
-  <thead>
-    <tr><th>Variável</th><th>Padrão</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>--drawer-inset</code></td><td><code>{'0px'}</code></td><td>Afasta a gaveta das bordas da tela.</td></tr>
-    <tr><td><code>--drawer-bleed-background</code></td><td><code>{'var(--color-popover)'}</code></td><td>Preenche o vão atrás da gaveta quando o arrasto passa do limite.</td></tr>
-    <tr><td><code>--drawer-overlay-min-opacity</code></td><td><code>{'0'}</code></td><td>Opacidade mínima do véu. Com pontos de ancoragem, o padrão é <code>{'0.5'}</code>.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Drawer: Estilo">
+  <table>
+    <thead>
+      <tr><th>Variável</th><th>Padrão</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>--drawer-inset</code></td><td><code>{'--spacing(2)'}</code> (8px)</td><td>Afasta a gaveta das bordas da tela. Com <code>{'[--drawer-inset:0px]'}</code> no <code>DrawerContent</code>, a gaveta encosta nas bordas.</td></tr>
+      <tr><td><code>--drawer-bleed-background</code></td><td><code>{'transparent'}</code></td><td>Preenche o vão atrás da gaveta quando o arrasto passa do limite.</td></tr>
+      <tr><td><code>--drawer-overlay-min-opacity</code></td><td><code>{'0'}</code></td><td>Opacidade mínima do véu. Com pontos de ancoragem, o padrão é <code>{'0.5'}</code>.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 A gaveta também define atributos de dados, que você usa em variantes como `data-[swipe-direction=down]:` no `DrawerContent`, ou `group-data-[swipe-axis=y]/drawer-popup:` nos descendentes.
 
-<table>
-  <thead>
-    <tr><th>Atributo</th><th>Valores</th><th>Presente quando</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>data-swipe-direction</code></td><td><code>up</code>, <code>right</code>, <code>down</code>, <code>left</code></td><td>Sempre.</td></tr>
-    <tr><td><code>data-swipe-axis</code></td><td><code>x</code>, <code>y</code></td><td>Sempre.</td></tr>
-    <tr><td><code>data-snap-points</code></td><td>presente</td><td>A gaveta tem pontos de ancoragem.</td></tr>
-    <tr><td><code>data-expanded</code></td><td>presente</td><td>A gaveta está no ponto de ancoragem máximo.</td></tr>
-    <tr><td><code>data-swiping</code></td><td>presente</td><td>Um arrasto está em andamento.</td></tr>
-    <tr><td><code>data-nested-drawer-open</code></td><td>presente</td><td>Há uma gaveta aninhada aberta por cima.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Drawer: Estilo 2">
+  <table>
+    <thead>
+      <tr><th>Atributo</th><th>Valores</th><th>Presente quando</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>data-swipe-direction</code></td><td><code>up</code>, <code>right</code>, <code>down</code>, <code>left</code></td><td>Sempre.</td></tr>
+      <tr><td><code>data-swipe-axis</code></td><td><code>x</code>, <code>y</code></td><td>Sempre.</td></tr>
+      <tr><td><code>data-snap-points</code></td><td>presente</td><td>A gaveta tem pontos de ancoragem.</td></tr>
+      <tr><td><code>data-expanded</code></td><td>presente</td><td>A gaveta está no ponto de ancoragem máximo.</td></tr>
+      <tr><td><code>data-swiping</code></td><td>presente</td><td>Um arrasto está em andamento.</td></tr>
+      <tr><td><code>data-nested-drawer-open</code></td><td>presente</td><td>Há uma gaveta aninhada aberta por cima.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ## Posição
 
@@ -282,6 +287,125 @@ function PerfilResponsivo() {
 }`}
 />
 
+## Migrando do vaul
+
+O Drawer deste registro usa o [Drawer do Base UI](https://base-ui.com/react/components/drawer) no lugar do vaul. Um código escrito para a gaveta antiga, com o vaul, precisa destas mudanças.
+
+### 1. Troque a dependência
+
+O vaul sai e entra o `@base-ui/react`, que já está no pacote `@workspace/ui`.
+
+<Source
+  language="diff"
+  dark
+  code={`- vaul
++ @base-ui/react`}
+/>
+
+### 2. Troque `direction` por `swipeDirection`
+
+Use `down` no lugar de `bottom` e `up` no lugar de `top`. `left` e `right` continuam iguais, e são lados físicos (veja **Posição**).
+
+<Source
+  language="diff"
+  dark
+  code={`- <Drawer direction="bottom">
++ <Drawer swipeDirection="down">`}
+/>
+
+### 3. Troque `asChild` por `render`
+
+No `DrawerTrigger`, passe o elemento do gatilho na prop `render`.
+
+<Source
+  language="diff"
+  dark
+  code={`- <DrawerTrigger asChild>
+-   <Button variant="outline">Abrir</Button>
+- </DrawerTrigger>
++ <DrawerTrigger render={<Button variant="outline" />}>
++   Abrir
++ </DrawerTrigger>`}
+/>
+
+No `DrawerClose`, passe o elemento de fechar na prop `render`.
+
+<Source
+  language="diff"
+  dark
+  code={`- <DrawerClose asChild>
+-   <Button variant="outline">Cancelar</Button>
+- </DrawerClose>
++ <DrawerClose render={<Button variant="outline" />}>
++   Cancelar
++ </DrawerClose>`}
+/>
+
+### 4. Atualize as props dos pontos de ancoragem
+
+Com pontos de ancoragem, renomeie as props controladas do ponto ativo e a do avanço em sequência.
+
+<Source
+  language="diff"
+  dark
+  code={`  <Drawer
+    snapPoints={[0.25, 0.5, 1]}
+-   activeSnapPoint={snapPoint}
+-   setActiveSnapPoint={setSnapPoint}
+-   snapToSequentialPoint
++   snapPoint={snapPoint}
++   onSnapPointChange={setSnapPoint}
++   snapToSequentialPoints
+  >`}
+/>
+
+### 5. Atualize as props de animação e de foco
+
+<Source
+  language="diff"
+  dark
+  code={`- <Drawer onAnimationEnd={(open) => setDone(open)}>
++ <Drawer onOpenChangeComplete={(open) => setDone(open)}>`}
+/>
+
+<Source
+  language="diff"
+  dark
+  code={`- <DrawerContent onOpenAutoFocus={(event) => event.preventDefault()}>
++ <DrawerContent initialFocus={false}>`}
+/>
+
+### 6. Revise as props que só o vaul tem
+
+`handleOnly`, `repositionInputs` e `shouldScaleBackground` não têm equivalente direto. Para o comportamento de que você precisa, use props do Base UI como `disablePointerDismissal`, `modal`, `snapPoints` ou o estado controlado `open`.
+
+<Source
+  language="diff"
+  dark
+  code={`- <Drawer handleOnly repositionInputs={false} shouldScaleBackground>
++ <Drawer>`}
+/>
+
+<Source
+  language="diff"
+  dark
+  code={`- <Drawer dismissible={false}>
++ <Drawer disablePointerDismissal>`}
+/>
+
+### 7. Atualize os seletores de atributos de dados
+
+Troque os seletores `data-vaul-drawer-direction` do vaul pelos `data-swipe-direction` do Base UI.
+
+<Source
+  language="diff"
+  dark
+  code={`- <DrawerContent className="data-[vaul-drawer-direction=bottom]:max-h-[50vh]">
++ <DrawerContent className="data-[swipe-direction=down]:max-h-[50vh]">`}
+/>
+
+O Base UI também expõe atributos como `data-swiping`, `data-starting-style` e `data-ending-style`, para os estados de arrasto e de transição. Os descendentes do `DrawerContent` usam `group-data-[swipe-axis=x]/drawer-popup` e `group-data-[swipe-axis=y]/drawer-popup` para estilos de um eixo só (veja **Estilo**).
+
 ## Referência da API
 
 O `Drawer` é construído sobre o [Drawer do Base UI](https://base-ui.com/react/components/drawer#api-reference): `DrawerTrigger`, `DrawerPortal`, `DrawerClose`, `DrawerOverlay`, `DrawerTitle` e `DrawerDescription` repassam as props do Base UI (por exemplo `render` no gatilho e no `DrawerClose`). O `DrawerContent` aceita as props do Popup do Base UI (por exemplo `initialFocus`).
@@ -290,50 +414,56 @@ O `Drawer` é construído sobre o [Drawer do Base UI](https://base-ui.com/react/
 
 A raiz. Aceita as props do Drawer do Base UI, com estas em destaque:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>swipeDirection</code></td><td><code>{'"up" | "right" | "down" | "left"'}</code></td><td><code>{'"down"'}</code></td></tr>
-    <tr><td><code>modal</code></td><td><code>{'boolean | "trap-focus"'}</code></td><td><code>{'true'}</code></td></tr>
-    <tr><td><code>showSwipeHandle</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>snapPoints</code></td><td><code>{'(number | string)[]'}</code></td><td>—</td></tr>
-    <tr><td><code>snapPoint</code> / <code>onSnapPointChange</code></td><td>controlado</td><td>—</td></tr>
-    <tr><td><code>disablePointerDismissal</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>open</code> / <code>defaultOpen</code> / <code>onOpenChange</code></td><td>controlado ou não</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Drawer">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>swipeDirection</code></td><td><code>{'"up" | "right" | "down" | "left"'}</code></td><td><code>{'"down"'}</code></td></tr>
+      <tr><td><code>modal</code></td><td><code>{'boolean | "trap-focus"'}</code></td><td><code>{'true'}</code></td></tr>
+      <tr><td><code>showSwipeHandle</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>snapPoints</code></td><td><code>{'(number | string)[]'}</code></td><td>—</td></tr>
+      <tr><td><code>snapPoint</code> / <code>onSnapPointChange</code></td><td>controlado</td><td>—</td></tr>
+      <tr><td><code>disablePointerDismissal</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>open</code> / <code>defaultOpen</code> / <code>onOpenChange</code></td><td>controlado ou não</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DrawerContent
 
 O popup, com o portal, o véu e a área de exibição. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>initialFocus</code></td><td><code>{'boolean | RefObject | function'}</code></td><td>primeiro controle</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Drawer: DrawerContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>initialFocus</code></td><td><code>{'boolean | RefObject | function'}</code></td><td>primeiro controle</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Drawer</code></td><td>nenhum (só o contexto)</td><td><code>drawer</code></td></tr>
-    <tr><td><code>DrawerTrigger</code></td><td><code>{'<button>'}</code></td><td><code>drawer-trigger</code></td></tr>
-    <tr><td><code>DrawerPortal</code></td><td>portal no <code>body</code></td><td><code>drawer-portal</code></td></tr>
-    <tr><td><code>DrawerOverlay</code></td><td><code>{'<div>'}</code></td><td><code>drawer-overlay</code></td></tr>
-    <tr><td><code>DrawerContent</code></td><td><code>{'<div role="dialog">'}</code> (popup, dentro da área de exibição <code>drawer-viewport</code>)</td><td><code>drawer-popup</code> e <code>drawer-content</code></td></tr>
-    <tr><td><code>DrawerSwipeHandle</code></td><td><code>{'<div aria-hidden="true">'}</code></td><td><code>drawer-swipe-handle</code></td></tr>
-    <tr><td><code>DrawerClose</code></td><td><code>{'<button>'}</code></td><td><code>drawer-close</code></td></tr>
-    <tr><td><code>DrawerHeader</code></td><td><code>{'<div>'}</code></td><td><code>drawer-header</code></td></tr>
-    <tr><td><code>DrawerFooter</code></td><td><code>{'<div>'}</code></td><td><code>drawer-footer</code></td></tr>
-    <tr><td><code>DrawerTitle</code></td><td><code>{'<h2>'}</code></td><td><code>drawer-title</code></td></tr>
-    <tr><td><code>DrawerDescription</code></td><td><code>{'<p>'}</code></td><td><code>drawer-description</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Drawer: Referência da API, DrawerContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Drawer</code></td><td>nenhum (só o contexto)</td><td><code>drawer</code></td></tr>
+      <tr><td><code>DrawerTrigger</code></td><td><code>{'<button>'}</code></td><td><code>drawer-trigger</code></td></tr>
+      <tr><td><code>DrawerPortal</code></td><td>portal no <code>body</code></td><td><code>drawer-portal</code></td></tr>
+      <tr><td><code>DrawerOverlay</code></td><td><code>{'<div>'}</code></td><td><code>drawer-overlay</code></td></tr>
+      <tr><td><code>DrawerContent</code></td><td><code>{'<div role="dialog">'}</code> (popup, dentro da área de exibição <code>drawer-viewport</code>)</td><td><code>drawer-popup</code> e <code>drawer-content</code></td></tr>
+      <tr><td><code>DrawerSwipeHandle</code></td><td><code>{'<div aria-hidden="true">'}</code></td><td><code>drawer-swipe-handle</code></td></tr>
+      <tr><td><code>DrawerClose</code></td><td><code>{'<button>'}</code></td><td><code>drawer-close</code></td></tr>
+      <tr><td><code>DrawerHeader</code></td><td><code>{'<div>'}</code></td><td><code>drawer-header</code></td></tr>
+      <tr><td><code>DrawerFooter</code></td><td><code>{'<div>'}</code></td><td><code>drawer-footer</code></td></tr>
+      <tr><td><code>DrawerTitle</code></td><td><code>{'<h2>'}</code></td><td><code>drawer-title</code></td></tr>
+      <tr><td><code>DrawerDescription</code></td><td><code>{'<p>'}</code></td><td><code>drawer-description</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

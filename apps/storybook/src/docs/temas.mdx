@@ -1,0 +1,372 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as BadgeStories from "../badge/badge.stories";
+import * as ButtonStories from "../button/button.stories";
+import * as CardStories from "../card/card.stories";
+import * as ChartStories from "../chart/chart.stories";
+import * as FieldStories from "../field/field.stories";
+import * as InputStories from "../input/input.stories";
+import { BrandLogos } from "./_components/brand-logos";
+import {
+  ActiveTheme,
+  BrandScales,
+  GradientSwatch,
+  LiveScale,
+} from "./_components/color-scale";
+import { LiveTokenTable, RoleMapTable, ScrollTable } from "./_components/token-table";
+import {
+  brandRoleMap,
+  neutralRoleMap,
+  sesiRoleOverrides,
+} from "./_components/theme-data";
+
+<Meta title="Temas" />
+
+# Temas
+
+As cores, a fonte e o logo do Design System vêm de uma **marca**. A Brainz Group é a marca padrão. O SESI está instalado com os tokens **oficiais** do SI Design System (Sistema Indústria) e um logo genérico, para mostrar que a troca de marca não exige editar nenhum componente.
+
+Esta página lê o tema ao vivo. Troque **Marca** e **Modo** na barra de ferramentas do Storybook e acompanhe as amostras, as tabelas e as pré-visualizações.
+
+<ActiveTheme />
+
+## Visão geral
+
+Os tokens ficam em `packages/ui/src/styles/globals.css`, em duas camadas.
+
+**1. Primitivas (camada de marca).** Os valores brutos de uma marca, com o prefixo `--bb-`. É o único lugar com hex de marca:
+
+- `--bb-primary-100` a `--bb-primary-900`: a escala Primária, com nove passos, a mesma estrutura do SESI;
+- `--bb-gradient`: o gradiente da marca, em CSS, para fundos decorativos. Na Brainz Group é o gradiente do logo, da Primária 500 a `#305BA3` (o fim do gradiente no SVG oficial, e não uma segunda cor da marca); no SESI, da Primária 500 (a Pure) à 700. Hoje nenhum componente nem bloco o usa; o símbolo do logo da Brainz Group, em SVG, monta o mesmo gradiente;
+- `--bb-font-sans`: a pilha de fontes da marca;
+- `--bb-ink`: a tinta do logo oficial. Hoje nenhum papel a usa: o logo da Brainz Group pinta a tinta com `currentColor`, para continuar legível no modo escuro.
+
+**2. Papéis semânticos.** O que cada cor **faz**: `--primary`, `--secondary`, `--ring`, `--link`, `--chart-1` a `--chart-5`, `--sidebar-primary`, os estados (`--primary-hover`, `--primary-pressed`…) e os neutros (`--background`, `--foreground`, `--muted`, `--border`…). Os papéis de marca apontam para um passo das escalas; os neutros e o vermelho têm o `oklch` do tema mist do shadcn escrito direto.
+
+Os componentes e os blocos usam **só os papéis**, pelas classes do Tailwind (`bg-primary`, `text-muted-foreground`, `ring-ring`, `bg-sidebar`…), expostas no `@theme inline`. Nunca usam `--bb-*` nem hex. Por isso trocar a camada de marca troca o visual de tudo de uma vez.
+
+<Source
+  language="css"
+  dark
+  code={`/* Primitiva: o valor bruto, por marca */
+:root,
+:root[data-brand="brainz"] {
+  --bb-primary-600: #2568d8;
+}
+
+/* Papel: o que a cor faz, nos dois modos */
+:root {
+  --primary: var(--bb-primary-600);
+  --primary-foreground: oklch(1 0 0); /* branco: 5,2:1 na primary */
+}
+
+/* Exposição ao Tailwind: gera bg-primary, text-primary… */
+@theme inline {
+  --color-primary: var(--primary);
+}`}
+/>
+
+### Qual passo cada papel usa
+
+Os papéis de marca mudam de passo entre o claro e o escuro, para manter o contraste. A tabela abaixo foi transcrita do `globals.css`.
+
+<RoleMapTable rows={brandRoleMap} caption="Papéis de marca e o passo da escala que cada um usa" />
+
+Os neutros da Brainz Group são os do tema mist do shadcn, com os ajustes de acessibilidade marcados com "A11Y" no `globals.css`. Eles e o vermelho de erro ainda são **PROVISÓRIOS**.
+
+<RoleMapTable rows={neutralRoleMap} caption="Papéis neutros da Brainz Group (o escuro vale para todas as marcas)" />
+
+Uma marca pode trocar o **visual** por papéis, nunca a estrutura: cores (inclusive o fundo e a borda do campo), raio e fonte, sim; tamanhos, espaçamentos, markup e comportamento, não. O SESI sobrescreve estes papéis, no bloco `:root[data-brand="sesi"]:not(.dark)` (claro) e `:root[data-brand="sesi"].dark, :root[data-brand="sesi"] .dark` (escuro). O segundo seletor do escuro é obrigatório: um `.dark` num elemento interno (o wrapper do preview do Storybook, ou um app que põe a classe abaixo do `<html>`) redeclara todos os papéis do `.dark` base, e o bloco da marca precisa casar com ele também. O SI Design System não tem modo escuro: no escuro só muda a ação primária (`--primary`, os estados dela e `--sidebar-primary`), que passa para a Pure com texto escuro, e o resto é derivado, não oficial.
+
+<RoleMapTable rows={sesiRoleOverrides} caption="Papéis que o SESI sobrescreve" />
+
+## Marcas instaladas
+
+Cada marca é um bloco `:root[data-brand="<id>"]` no `globals.css` mais uma entrada no registro `packages/ui/src/brand/brands.tsx` (nome, logo, símbolo e se a marca é ilustrativa: hoje o SESI, por causa do logo de exemplo).
+
+- **Brainz Group** (`brainz`, padrão): a Primária vem da paleta oficial (`brand/paleta-primaria.png`, base 500 = `#4787F0`). Uma cor só: não há Secundária (o `#305BA3` aparece apenas como fim do gradiente do logo). Fonte: Inter Variable (**PROVISÓRIA**).
+- **SESI** (`sesi`): as cores, os neutros, o vermelho de erro, a fonte (Inter) e o raio vêm do **SI Design System**, a biblioteca do Sistema Indústria (coleções Colors e Biblioteca do Figma, conferidas com o zeroheight, em 2026-11-16). O SESI tem **uma cor só, o verde**: não tem tema secundário nem azul (o azul é de outra marca do Sistema Indústria). A escala vai de 100 a 900 com os hex oficiais, e o verde da marca, `#52AE32` (Pure), é a 500. Ela não cumpre o contrato por passo (branco na 600 dá 3,96:1; a 500 tem 2,82:1 no branco), então o SESI **sobrescreve os papéis** (tabela acima): a ação primária fica na 700, porque o branco na Pure do SI DS dá 2,8:1. Por escolha do usuário (2026-11-16), o resto segue o SI DS onde dá: o anel é rosa, como o foco do SI DS, num tom que passa (Highlights/600, `#CA588A`; o `#F673AD` oficial tem 2,6:1); a borda do campo é a oficial `#DFDFDF` (1,33:1, aceita como o limite do campo da Brainz); o fundo da página é o `#F9FFF9` do SI DS; e o raio é de 4px nos campos e nos botões. O logo continua genérico, por isso a marca aparece como "ilustrativa".
+
+As escalas de todas as marcas, lado a lado. Estes hex foram copiados do `globals.css`: uma marca inativa não pode ser lida do CSS, porque os papéis resolvem no `:root`.
+
+<BrandScales />
+
+### Marca ativa, ao vivo
+
+Estas amostras leem as variáveis do CSS carregado agora. Cada passo mostra o hex e o contraste com o branco (o fundo do claro) e com a mist 950 (o fundo do escuro), os dois fundos de página. As outras regras do contrato (a mist 900 e os pares do `secondary`) estão na tabela do passo 2, mais abaixo, e os pares dos papéis na tabela de **Tokens semânticos**. Se um valor daqui não bater com as escalas estáticas acima, a amostra avisa.
+
+<LiveScale />
+
+<GradientSwatch />
+
+## Tokens semânticos
+
+Cada superfície tem um par `<papel>` + `<papel>-foreground`, para o texto e os ícones sobre ela, como no shadcn. A tabela mede agora o contraste de cada par na marca e no modo ativos. Texto pede 4,5:1; anel de foco, bordas de controle e marcas de gráfico pedem 3:1. Cores com transparência (as bordas do escuro) são compostas sobre o fundo antes da medida.
+
+<LiveTokenTable />
+
+O axe dos testes só mede texto. Os números de anel, borda e gráfico precisam ser conferidos à mão (ou nesta tabela) sempre que um valor mudar.
+
+## Troca de marca
+
+A marca ativa é o atributo `data-brand` no `<html>`. Sem o atributo, ou com um valor desconhecido, vale a Brainz Group.
+
+O atributo **precisa estar no `<html>`**: o seletor de cada marca é `:root[data-brand="<id>"]`, que só casa com o elemento raiz, e os papéis são declarados no `:root` e resolvem as primitivas ali. Um `data-brand` num elemento interno não muda nada.
+
+Num projeto de uma marca só, grave o atributo no `index.html`. Assim a página já abre com a marca certa, sem piscar:
+
+<Source
+  language="html"
+  dark
+  code={`<!doctype html>
+<html lang="pt-BR" data-brand="sesi">
+  …
+</html>`}
+/>
+
+Para trocar em tempo de execução (um seletor de marca, por exemplo), use o `setBrand`. As cores e a fonte trocam sozinhas pelo CSS. O que o CSS não carrega, como o logo, sai do registro pelo `useBrand`, que acompanha o atributo:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { brandList } from "@workspace/ui/brand/brands"
+import { setBrand, useBrand } from "@workspace/ui/brand/use-brand"
+
+export function BrandSwitcher() {
+  const brand = useBrand()
+
+  return (
+    <div>
+      <brand.Logo title={brand.name} className="h-6 w-auto" />
+      {brandList.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          aria-pressed={brand.id === item.id}
+          onClick={() => setBrand(item.id)}
+        >
+          Usar a marca {item.name}
+        </button>
+      ))}
+    </div>
+  )
+}`}
+/>
+
+A marca e o modo são independentes e se combinam: o modo escuro é a classe `.dark` no `<html>` (a mesma do `ThemeProvider` de `apps/web` e da variante `dark:`).
+
+<Source language="html" dark code={`<html lang="pt-BR" class="dark" data-brand="sesi">`} />
+
+## Exemplo: trocando a Brainz Group pelo SESI sem editar componentes
+
+O SESI instalado aqui é o caso concreto, com os valores oficiais do SI Design System. Nenhum arquivo de `packages/ui/src/components/` nem de `packages/ui/src/blocks/` muda.
+
+### 1. Adicione a camada de marca
+
+No `globals.css`, depois do bloco da Brainz Group, um bloco `:root[data-brand="<id>"]` com a escala Primária de 100 a 900, o gradiente, a tinta e a fonte. Cada marca tem **uma cor só**: o papel `secondary` sai da própria Primária, sem nenhuma outra cor. Redefina o `--bb-gradient`, senão a marca nova herda o da Brainz Group, que termina no azul do logo.
+
+<Source
+  language="css"
+  dark
+  code={`/* SESI — tokens oficiais do SI Design System. Uma cor só: verde. */
+:root[data-brand="sesi"] {
+  --bb-primary-100: #edf8ea; /* Lightest */
+  --bb-primary-200: #cbecc8; /* Lighter */
+  --bb-primary-300: #a2dda1; /* Light */
+  --bb-primary-400: #75c459; /* Medium */
+  --bb-primary-500: #52ae32; /* Pure, o verde da marca */
+  --bb-primary-600: #419128; /* Dark */
+  --bb-primary-700: #356e21; /* Darker */
+  --bb-primary-800: #095840;
+  --bb-primary-900: #05483b; /* Darkest */
+
+  --bb-gradient: linear-gradient(
+    180deg,
+    var(--bb-primary-500) 17%,
+    var(--bb-primary-700) 82%
+  );
+  --bb-ink: #262626;
+  --bb-font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --radius: 0.1389rem; /* 4px nos controles */
+}
+
+/* Papéis que a escala oficial não cumpre, e o campo contornado do SI DS. */
+:root[data-brand="sesi"]:not(.dark) {
+  --primary: var(--bb-primary-700); /* 6,17:1 com branco */
+  --background: #f9fff9; /* Background/SESI/500 */
+  --ring: #ca588a; /* rosa Highlights/600: 3,92:1 no fundo */
+  --field: #ffffff;
+  --field-border: #dfdfdf; /* a oficial: 1,33:1, escolha do usuário */
+  /* … os demais no globals.css */
+}
+
+/* Escuro: os dois seletores (um .dark interno redeclara os papéis). */
+:root[data-brand="sesi"].dark,
+:root[data-brand="sesi"] .dark {
+  --primary: var(--bb-primary-500); /* 6,17:1 no card */
+  --primary-foreground: oklch(0.148 0.004 228.8); /* 7,0:1 */
+  /* … os demais no globals.css */
+}`}
+/>
+
+Para usar a fonte oficial de uma marca, carregue-a no `globals.css` (um pacote `@fontsource`, como a Inter, ou um `@font-face` com o arquivo licenciado) e ponha o nome dela no começo de `--bb-font-sans`.
+
+### 2. Confira o contrato de contraste
+
+Os papéis apontam para passos fixos da escala Primária, então a escala de cada marca nova precisa cumprir o contrato anotado no `globals.css`. Se um passo não cumprir e a escala for sua, ajuste a claridade dele. Se a escala for oficial e não puder mudar, como a do SESI, sobrescreva o papel no bloco da marca (`:root[data-brand="<id>"]:not(.dark)` no claro e `:root[data-brand="<id>"].dark, :root[data-brand="<id>"] .dark` no escuro, com os dois seletores), apontando para um passo que cumpra a regra. Nunca troque o passo no `:root`, porque isso mudaria todas as marcas.
+
+<ScrollTable label="Contrato de contraste por marca">
+  <table>
+    <thead>
+      <tr>
+        <th>Regra</th>
+        <th>Por quê</th>
+        <th>Brainz Group</th>
+        <th>SESI (escala oficial)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Primária 600 com branco ≥ 4,5:1</td>
+        <td>Ação primária (texto branco) e link no claro.</td>
+        <td>5,2:1</td>
+        <td>3,96:1, não cumpre: a ação primária e o link usam a 700 (6,17:1)</td>
+      </tr>
+      <tr>
+        <td>Primária 500 no branco ≥ 3:1</td>
+        <td>Primeira série de gráfico no claro. O anel do claro é a 600 desde 2026-11-16 (5,2:1 no branco, 4,2:1 no campo).</td>
+        <td>3,5:1</td>
+        <td>2,82:1, não cumpre: os gráficos começam na 600 (o anel do SESI é rosa, 3,92:1)</td>
+      </tr>
+      <tr>
+        <td>Primária 400 na mist 950 e na mist 900 ≥ 3:1</td>
+        <td>Anel de foco no escuro, no fundo e no card.</td>
+        <td>7,6:1 e 6,7:1</td>
+        <td>9,20:1 e 8,11:1</td>
+      </tr>
+      <tr>
+        <td>Primária 700 com branco ≥ 4,5:1</td>
+        <td>Hover da ação primária.</td>
+        <td>7,2:1</td>
+        <td>6,17:1 (o hover do SESI é a 800, 8,46:1)</td>
+      </tr>
+      <tr>
+        <td>Primária 300 na mist 950 ≥ 4,5:1</td>
+        <td>Link no escuro.</td>
+        <td>10,2:1</td>
+        <td>12,58:1</td>
+      </tr>
+      <tr>
+        <td>Primária 500 a 900 no branco e 200 a 600 na mist 950 ≥ 3:1</td>
+        <td>As cinco séries de gráfico, em cada modo.</td>
+        <td>3,5 a 10,9:1 e 13,3 a 3,8:1</td>
+        <td>no claro, a 500 tem 2,82:1: as séries são 600 a 900 (3,96 a 10,52:1) e o cinza #646464 (5,92:1); no escuro, 15,4 a 5,0:1</td>
+      </tr>
+      <tr>
+        <td>Primária 800 sobre 100 e sobre 200, 100 sobre 900 e sobre 800 ≥ 4,5:1</td>
+        <td>O papel <code>secondary</code> e o hover dele nos dois modos.</td>
+        <td>7,7:1, 6,3:1, 9,0:1 e 7,7:1</td>
+        <td>7,74:1, 6,60:1, 9,62:1 e 7,74:1</td>
+      </tr>
+      <tr>
+        <td>No escuro, a primária no card (mist 900) ≥ 3:1, com o texto dela ≥ 4,5:1</td>
+        <td>Checkbox marcado, Switch ligado e dia selecionado do Calendar sobre card e popover.</td>
+        <td>600 com branco: 3,35:1 no card</td>
+        <td>a 700 daria 2,82:1, então no escuro a primária é a Pure (500) com texto mist 950: 6,17:1 no card e 7,0:1 de texto</td>
+      </tr>
+      <tr>
+        <td>Gradiente: livre</td>
+        <td>Decorativo, sem texto em cima.</td>
+        <td>Primária 500 → #305BA3</td>
+        <td>Primária 500 → 700</td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+Os números foram calculados a partir dos hex da escala de cada marca (a mist 950 e a mist 900 convertidas do `oklch`). Com a marca nova ativa na barra de ferramentas, parte deles é medida na hora: as amostras de **Marca ativa, ao vivo** medem cada passo contra o branco e a mist 950, e a tabela de **Tokens semânticos** mede os pares dos papéis (texto, anel no fundo e no card, borda, primária no card, gráficos). As regras sobre a mist 900 e os pares do `secondary` entre passos são conferidas à mão, com estes números. Depois, rode a suíte de acessibilidade na marca nova: `npm.cmd run test:sesi` (dentro de `apps/storybook`) roda todas as stories com o axe no claro e no escuro com `data-brand="sesi"`.
+
+### 3. Registre a marca
+
+Em `packages/ui/src/brand/brands.tsx`, acrescente o id ao tipo `BrandId` e uma entrada ao registro, com o nome, o logo, o símbolo e a marcação `illustrative`. O exemplo usa o logo genérico de `example-logo.tsx`; num projeto real, faça um componente com o SVG oficial, como o `brainz-logo.tsx`.
+
+<Source
+  language="tsx"
+  dark
+  code={`export type BrandId = "brainz" | "sesi"
+
+export const brands: Record<BrandId, BrandDefinition> = {
+  brainz: { /* … */ },
+  sesi: {
+    id: "sesi",
+    name: "SESI",
+    description:
+      "Tokens oficiais do SI Design System (cores, neutros, fonte e raio). O logo é de exemplo.",
+    illustrative: true,
+    Logo: createExampleLogo("S", "SESI"),
+    Mark: createExampleMark("S"),
+  },
+}`}
+/>
+
+### 4. Ative a marca
+
+Grave `data-brand="sesi"` no `<html>` (no `index.html` ou com `setBrand("sesi")`). Pronto: componentes, gráficos e blocos passam a usar as cores, a fonte e o logo do SESI.
+
+### Pré-visualização
+
+Componentes de verdade, das próprias páginas de cada um. Troque **Marca** para **SESI** e **Modo** para **Escuro** na barra de ferramentas: o botão, o badge, o campo, o interruptor, o gráfico e o cartão mudam juntos, sem nenhuma prop nova.
+
+<Canvas of={ButtonStories.Padrao} />
+
+<Canvas of={ButtonStories.Secundario} />
+
+<Canvas of={BadgeStories.Variantes} />
+
+<Canvas of={InputStories.Campo} />
+
+<Canvas of={FieldStories.Interruptor} />
+
+<Canvas of={ChartStories.PrimeiroGrafico} />
+
+<Canvas of={CardStories.Demo} />
+
+## Logos e imagens
+
+O logo não é uma cor, então o CSS não o troca: ele sai do registro de marcas. `useBrand()` devolve a marca ativa, com `Logo` (o logo completo) e `Mark` (o símbolo, para espaços pequenos). Os dois são componentes SVG que aceitam as props de `<svg>` e um `title` opcional:
+
+- sem `title`, o logo é decorativo (`aria-hidden`), para quando o nome da marca já aparece em texto ao lado;
+- com `title`, ele vira uma imagem com nome (`role="img"`).
+
+<BrandLogos />
+
+- **Brainz Group** (`BrainzLogo` e `BrainzMark`, em `packages/ui/src/brand/brainz-logo.tsx`): gerados do SVG oficial. A tinta ("BRAINZ") usa `currentColor` e segue a cor do texto em volta, por isso continua legível no escuro; "GROUP" usa a Primária 500 e o símbolo, um gradiente SVG da Primária 500 a `#305BA3`, como no arquivo oficial (as mesmas cores do `--bb-gradient`).
+- **SESI**: o logo é **genérico** (`createExampleLogo` e `createExampleMark`, em `example-logo.tsx`): a inicial num quadrado na Primária 600 e o nome na fonte da marca. Não reproduz o logo real.
+
+Os blocos de aplicação (Dashboard, Login e Cadastro) usam o mesmo caminho: sem a prop `brand`, mostram o símbolo e o nome da marca ativa pelo `useBrand()`; com ela, usam o nome e o logo que você passar. Imagens, como a capa do layout de autenticação, entram por props (`src` e `alt`, com `alt=""` quando a imagem é só decorativa), nunca embutidas no bloco. A seção Blocks documenta as props de cada um.
+
+## Modo claro e escuro
+
+O modo escuro é a classe `.dark` num ancestral, normalmente o `<html>`. O bloco `.dark` do `globals.css` redefine **todos** os papéis: os neutros sobem para a mist 950, 900 e 800 (fundo, card e superfícies) e os papéis de marca mudam de passo (veja a tabela **Qual passo cada papel usa**, no começo da página):
+
+- a ação primária continua na Primária 600 com texto branco, nos dois modos (no SESI: a 700 com branco no claro e a Pure, 500, com texto escuro no escuro);
+- o anel de foco passa da 600 para a 400, e o link da 600 para a 300, para manter o contraste no fundo escuro (no SESI, o anel passa do rosa 600 para o rosa 300 e o link da 700 para a 300);
+- o anel tem a mesma cor da primária no claro (a 600) e só 2,0:1 contra ela no escuro (Brainz Group), por isso o Button afasta o anel 2px pela cor do fundo (`ring-offset-2 ring-offset-background`).
+
+O modo escuro inteiro ainda é **PROVISÓRIO** até a marca validar. Os testes rodam nos dois modos (`npm.cmd run test` faz o claro, o escuro e o RTL).
+
+## Gráficos
+
+As cores de gráfico também são papéis: `--chart-1` a `--chart-5` vêm da escala Primária, com uma faixa de passos por modo, para todas as séries terem 3:1 contra o fundo:
+
+- claro: Primária 500 a 900 (3,5 a 10,9:1 no branco, Brainz Group);
+- escuro: Primária 200 a 600 (13,3 a 3,8:1 na mist 950).
+
+Um gráfico usa as séries pela configuração do `ChartContainer` (`color: "var(--chart-1)"`) e, como os componentes e os blocos, troca de marca e de modo sozinho. As cores de gráfico ainda são **PROVISÓRIAS**. Veja o [Chart](?path=/docs/componentes-chart--docs) para montar gráficos acessíveis (tabela de dados, legenda e tooltip).
+
+## Veja também
+
+- [Blocks](?path=/docs/blocks-visão-geral--docs): o Dashboard, o Login e o Cadastro trocam de marca pelo mesmo seletor e usam o logo do registro de marcas.
+- [Tipografia](?path=/docs/tipografia--docs): a fonte de cada marca e a escala de texto.
+- [Instalação](?path=/docs/instalação--docs): como um app novo importa o `globals.css` e passa a ter as marcas.
+- [Introdução](?path=/docs/introdução--docs): como o sistema se organiza.

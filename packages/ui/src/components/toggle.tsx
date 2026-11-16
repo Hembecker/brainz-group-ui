@@ -16,6 +16,8 @@
  *   como no Button. `aria-invalid` usa `ring-destructive` cheio, sem os
  *   `/20` e `/40` do registro.
  * - Escala rhea: `rounded-2xl`; alturas sm 28 / default 32 / lg 36.
+ * - `data-variant` e `data-size` expõem a variante e o tamanho resolvidos,
+ *   como no Button e no ToggleGroupItem.
  * - Toggle só com ícone precisa de `aria-label`. Com texto visível, não ponha
  *   `aria-label`: o nome deve ser o texto que aparece.
  */
@@ -55,6 +57,8 @@ function Toggle({
   return (
     <TogglePrimitive
       data-slot="toggle"
+      data-variant={variant ?? "default"}
+      data-size={size ?? "default"}
       className={cn(toggleVariants({ variant, size, className }))}
       {...props}
     />

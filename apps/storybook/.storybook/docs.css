@@ -9,7 +9,25 @@
   overflow-wrap: anywhere;
 }
 
-.sbdocs-content table {
+/*
+ * Long PascalCase API headings (`### QuestionnaireChoiceDescription`,
+ * `### DropdownMenuCheckboxItem`) are one word that never broke, so at 320px
+ * they widened the DropdownMenu and Questionnaire pages. The page's own
+ * headings wrap anywhere now. Direct children only: headings inside story
+ * previews (Card titles, specimens) keep the component's own wrapping.
+ */
+.sbdocs-content > :is(h1, h2, h3, h4, h5, h6) {
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Fallback for raw MDX tables: they scroll inside themselves instead of the
+ * page. A scrolling table cannot take the keyboard focus, so a table that
+ * overflows goes inside ScrollTable (a focusable region, see token-table.tsx),
+ * which this rule no longer reaches. Direct children only, so story previews
+ * (the Table component) keep their own layout.
+ */
+.sbdocs-content > table {
   display: block;
   max-width: 100%;
   overflow-x: auto;
@@ -19,4 +37,13 @@
 .sbdocs-content div:has(> pre.prismjs) {
   max-width: 100%;
   overflow-x: auto;
+}
+
+/*
+ * Blocks pages: the templates switch to two columns at 1024px (lg), and the
+ * Docs column is ~1000px wide. On the Blocks pages the column grows, so the
+ * previews show the desktop layout on a wide enough window.
+ */
+.sbdocs-content:has([id^="anchor--blocks-"]) {
+  max-width: 1320px;
 }

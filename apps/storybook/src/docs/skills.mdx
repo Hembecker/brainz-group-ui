@@ -1,0 +1,233 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { ScrollTable } from "../docs/_components/token-table";
+
+<Meta title="Skills" />
+
+# Skills
+
+Como trabalhar neste Design System com um assistente de IA (Claude Code, Cursor, VS Code com Copilot e parecidos): o que o shadcn chama de *skills*, o servidor MCP dele, os comandos do CLI que dão contexto ao assistente e os fluxos do próprio repositório.
+
+Esta página só registra o que foi conferido neste repositório, com o CLI local do shadcn na versão **4.23.0** (fixa em `packages/ui/package.json`), em 2026-11-15. O que a documentação do shadcn descreve e não funciona aqui fica na seção **Não suportado aqui**, no fim da página, com o motivo.
+
+## O que são skills no shadcn
+
+Na [documentação do shadcn](https://ui.shadcn.com/docs/skills), um *skill* é um pacote de instruções que o assistente carrega sozinho quando encontra um `components.json` no projeto. Ele dá ao assistente o contexto do projeto e as regras de composição do shadcn:
+
+- **contexto do projeto:** a cada interação, o skill roda `shadcn info --json` e injeta o resultado (framework, versão do Tailwind, aliases, biblioteca base, ícones e componentes instalados);
+- **referência do CLI:** `init`, `add`, `search`, `view`, `docs`, `diff`, `info` e `build`;
+- **temas:** variáveis CSS, cores OKLCH, modo escuro e raio;
+- **registros:** como montar e publicar um registro próprio;
+- **MCP:** como configurar o servidor MCP do shadcn.
+
+**Situação neste repositório:** o skill do shadcn **não está instalado** (veja a seção **Não suportado aqui**). As peças em que ele se apoia funcionam: o `shadcn info`, o `shadcn docs`, o `shadcn search` e o servidor MCP, descritos abaixo. Um assistente pode usá-las diretamente, sem o skill.
+
+O repositório também não tem skills, agentes ou comandos próprios do Claude Code. O que orienta um assistente aqui é o `CLAUDE.md` da raiz (fontes da verdade, regras de acessibilidade, convenção de cada componente e tokens) e a configuração de pré-visualização `.claude/launch.json`.
+
+## Contexto do projeto
+
+O `shadcn info` mostra o que o assistente precisa saber antes de gerar código. Rode dentro de `packages/ui`, onde está o `components.json` da biblioteca:
+
+<Source
+  language="bash"
+  dark
+  code={`cd packages/ui
+npx.cmd shadcn info --json`}
+/>
+
+Em `packages/ui`, ele informa o estilo `base-rhea`, a base `base` (Base UI), o Tailwind v4 com o CSS em `src/styles/globals.css`, o alias `@workspace/ui`, os ícones `lucide`, `rtl: true`, o registro `@shadcn` e os 63 componentes instalados. Em `apps/web`, o mesmo comando informa o framework Vite e o alias `@`.
+
+O campo de preset que o `info` mostra (e o `npx.cmd shadcn preset resolve --json`) descreve o preset do template, com cores mist e tema neutro. Ele **não** reflete os tokens da marca, que foram aplicados à mão no `globals.css`: para o assistente, a fonte das cores é o `globals.css`, não o preset.
+
+## Comandos do CLI
+
+Todos rodam dentro de `packages/ui`, com o CLI local (`npx.cmd shadcn`, sem `@latest`). Os quatro primeiros só leem: não escrevem nenhum arquivo e precisam de acesso à rede para consultar o registro.
+
+<ScrollTable label="Skills: Comandos do CLI">
+  <table>
+    <thead>
+      <tr><th>Comando</th><th>O que faz</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{'npx.cmd shadcn docs <nome>'}</code></td><td>Devolve o link da página do componente na versão Base UI e o link do código dos exemplos. Só os links, não o conteúdo. Aceita <code>--json</code> e <code>-b base|radix|aria</code>.</td></tr>
+      <tr><td><code>{'npx.cmd shadcn view <nome>'}</code></td><td>Imprime o item do registro em JSON, com o código completo dos arquivos no estilo <code>base-rhea</code>, sem instalar nada. Serve para comparar o registro com a versão customizada daqui.</td></tr>
+      <tr><td><code>{'npx.cmd shadcn search @shadcn -q <termo>'}</code></td><td>Procura no registro. <code>-t</code> filtra pelo tipo (<code>ui</code>, <code>block</code>, <code>hook</code>…) e <code>-l</code> limita o número de resultados.</td></tr>
+      <tr><td><code>npx.cmd shadcn info --json</code></td><td>O contexto do projeto (veja acima).</td></tr>
+      <tr><td><code>{'npx.cmd shadcn add <nome> --dry-run'}</code></td><td>Segundo o <code>--help</code>, mostra o que seria escrito, sem escrever.</td></tr>
+      <tr><td><code>{'npx.cmd shadcn add <nome> --diff <arquivo>'}</code></td><td>Segundo o <code>--help</code>, mostra a diferença entre o registro e um arquivo do projeto. Substitui o <code>shadcn diff</code>, que o CLI marca como obsoleto.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+<Source
+  language="bash"
+  dark
+  code={`cd packages/ui
+
+# Página e exemplos de um componente
+npx.cmd shadcn docs sidebar
+
+# Código do registro, sem instalar
+npx.cmd shadcn view button
+
+# Blocos de login do registro
+npx.cmd shadcn search @shadcn -q login -t block -l 5
+
+# Antes de instalar: o que mudaria
+npx.cmd shadcn add button --dry-run
+npx.cmd shadcn add button --diff src/components/button.tsx`}
+/>
+
+As linhas do `add` com `--dry-run` e `--diff` vêm do `npx.cmd shadcn add --help`. Depois de usá-las, confira com `git status` que nenhum arquivo mudou.
+
+**Atenção: o `add` sobrescreve os componentes customizados.** Os componentes daqui não são os do registro: cada um tem decisões de acessibilidade e de tokens anotadas no comentário do topo (anel de foco sólido, nenhuma cor com opacidade, papel `field` nos campos, espaçamento lógico para RTL). Quando o `add --all` instalou a biblioteca, ele sobrescreveu Button, Card, ButtonGroup e Spinner, e as decisões tiveram de ser reaplicadas. Se um `add` sobrescrever um componente sem querer, restaure o arquivo pelo git e reaplique as decisões do comentário do topo. Depois, confira se o CLI não voltou a escrever `^` nas versões do `package.json`.
+
+<Source
+  language="bash"
+  dark
+  code={`# Desfaz a sobrescrita de um componente
+git restore packages/ui/src/components/button.tsx`}
+/>
+
+**Nunca rode `shadcn apply`** (veja a seção **Não suportado aqui**).
+
+## Servidor MCP
+
+O shadcn tem um servidor [MCP](https://ui.shadcn.com/docs/mcp) (Model Context Protocol) que deixa o assistente consultar os registros do `components.json`. Ele roda pelo CLI local, por stdio, e expõe sete ferramentas:
+
+<ScrollTable label="Antes de instalar: o que mudaria: Servidor MCP">
+  <table>
+    <thead>
+      <tr><th>Ferramenta</th><th>O que faz</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>get_project_registries</code></td><td>Lista os registros do <code>components.json</code> (aqui, só o <code>@shadcn</code>).</td></tr>
+      <tr><td><code>list_items_in_registries</code></td><td>Lista os itens de um registro.</td></tr>
+      <tr><td><code>search_items_in_registries</code></td><td>Procura itens pelo nome ou pela função.</td></tr>
+      <tr><td><code>view_items_in_registries</code></td><td>Mostra o código de um item.</td></tr>
+      <tr><td><code>get_item_examples_from_registries</code></td><td>Mostra os exemplos de uso de um item.</td></tr>
+      <tr><td><code>get_add_command_for_items</code></td><td>Devolve o comando de instalação de um item.</td></tr>
+      <tr><td><code>get_audit_checklist</code></td><td>Devolve uma lista de verificação para depois de instalar.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+**O servidor precisa rodar em `packages/ui`.** A raiz do monorepo não tem `components.json`: iniciado ali, o servidor responde, mas `get_project_registries` volta sem nenhum registro. Os dois comandos abaixo foram testados e encontram o registro `@shadcn`:
+
+<Source
+  language="bash"
+  dark
+  code={`# Dentro de packages/ui
+npx.cmd shadcn mcp
+
+# Ou a partir da raiz, no workspace da biblioteca
+npm.cmd exec --workspace=@workspace/ui -- shadcn mcp`}
+/>
+
+### Configurar no Claude Code
+
+O repositório **não tem** um `.mcp.json`. Para usar o servidor no Claude Code, crie o arquivo na raiz com o comando acima. No Windows, o `cmd /c` é o que executa o `npm.cmd`:
+
+<Source
+  language="json"
+  dark
+  code={`{
+  "mcpServers": {
+    "shadcn": {
+      "command": "cmd",
+      "args": ["/c", "npm", "exec", "--workspace=@workspace/ui", "--", "shadcn", "mcp"]
+    }
+  }
+}`}
+/>
+
+Reinicie o Claude Code e rode `/mcp`: o servidor `shadcn` deve aparecer como conectado. O comando do servidor foi testado por stdio; o registro no cliente depende da máquina de cada pessoa e não foi testado aqui.
+
+Esta configuração difere da documentação do shadcn em dois pontos, de propósito:
+
+- usa o CLI local, de versão fixa, e não `npx shadcn@latest mcp`, porque o projeto não usa `latest` em nada;
+- roda no workspace `@workspace/ui`, onde está o `components.json`.
+
+**O comando que o MCP sugere não serve como está.** O `get_add_command_for_items` sempre devolve `npx shadcn@latest add @shadcn/<nome>`. Aqui, rode o equivalente local, dentro de `packages/ui`, e trate o resultado como qualquer `add` (veja o aviso acima):
+
+<Source
+  language="bash"
+  dark
+  code={`cd packages/ui
+npx.cmd shadcn add @shadcn/login-02 --dry-run`}
+/>
+
+## Fluxos do repositório
+
+Os scripts abaixo estão nos `package.json` do monorepo. Rode-os da raiz, com `npm.cmd` (a política de execução do PowerShell bloqueia o `npm.ps1`).
+
+<ScrollTable label="Ou a partir da raiz, no workspace da biblioteca: Fluxos do repositório">
+  <table>
+    <thead>
+      <tr><th>Comando</th><th>O que faz</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>npm.cmd run storybook</code></td><td>Abre esta documentação em <code>http://localhost:6007</code>, a única porta do Storybook. No app do Claude, a configuração <code>big-brain-ui-storybook</code> do <code>.claude/launch.json</code> faz o mesmo.</td></tr>
+      <tr><td><code>npm.cmd run test</code></td><td>Cada story vira um teste no Chromium, com o axe como erro: qualquer violação reprova. Roda três vezes: claro, escuro e RTL.</td></tr>
+      <tr><td><code>npm.cmd run test:light -w @workspace/storybook</code></td><td>Só o modo claro. Há também <code>test:dark</code> e <code>test:rtl</code>.</td></tr>
+      <tr><td><code>npm.cmd run test:sesi -w @workspace/storybook</code></td><td>A mesma bateria com a marca SESI, no claro e no escuro, para conferir que todo componente mantém o contraste com outra marca.</td></tr>
+      <tr><td><code>npm.cmd run typecheck</code></td><td>TypeScript em todos os pacotes: <code>packages/ui</code>, <code>apps/storybook</code> e <code>apps/web</code> (este pelo <code>tsconfig.app.json</code>, porque o <code>tsconfig.json</code> dele só tem referências).</td></tr>
+      <tr><td><code>npm.cmd run lint</code></td><td>ESLint em todos os pacotes.</td></tr>
+      <tr><td><code>npm.cmd run format</code></td><td>Prettier, com a ordenação das classes do Tailwind. Escreve nos arquivos.</td></tr>
+      <tr><td><code>npm.cmd run build</code></td><td>Gera o app de exemplo (<code>apps/web</code>) e o Storybook estático (<code>apps/storybook/storybook-static</code>).</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+A primeira rodada dos testes com o cache frio pode falhar com "Vite unexpectedly reloaded", por causa da otimização de dependências. Rodar de novo resolve; por isso o CI repete a primeira rodada (a do claro) uma vez.
+
+### Contrato de contraste da marca
+
+Toda marca precisa cumprir o contrato anotado na camada de marca do `packages/ui/src/styles/globals.css`. Por exemplo: a Primária 600 com branco a pelo menos 4,5:1, a 500 no branco a pelo menos 3:1 (anel de foco e gráficos no claro) e a 400 no fundo escuro a pelo menos 3:1 (anel no escuro). Se a escala for oficial e não cumprir, como a do SESI, a marca sobrescreve os papéis que falham no bloco dela (veja [Temas](?path=/docs/temas--docs), "Confira o contrato de contraste").
+
+A conferência tem duas partes:
+
+1. **Texto:** o axe mede o contraste de todo texto das stories. O `npm.cmd run test` confere a marca padrão e o `test:sesi` confere o SESI.
+2. **O que não é texto:** o axe não mede anel de foco, gráficos nem limites de controles. Esses números são conferidos à mão, contra a lista do contrato, sempre que um valor de marca muda, e ficam anotados no comentário do bloco da marca.
+
+Não há um script que confira o contrato inteiro de forma automática.
+
+### Um fluxo com o assistente
+
+Para mexer num componente com um assistente:
+
+1. `npx.cmd shadcn info --json` em `packages/ui`, para o contexto do projeto;
+2. `npx.cmd shadcn docs <nome>` e `npx.cmd shadcn view <nome>`, para a página do shadcn e o código do registro, que são a fonte da estrutura e do comportamento;
+3. o comentário do topo do componente em `packages/ui/src/components/`, com as decisões que precisam ser mantidas;
+4. a mudança, usando só papéis semânticos (`bg-primary`, `text-muted-foreground`…), nunca a paleta `--bb-*` nem cores fixas;
+5. `npm.cmd run typecheck` e `npm.cmd run lint`;
+6. `npm.cmd run test` e, quando a mudança mexe em cores, `npm.cmd run test:sesi -w @workspace/storybook`;
+7. a página no Storybook, só com o teclado, nos dois modos.
+
+## Não suportado aqui
+
+O que a documentação do shadcn descreve e não está disponível ou não deve ser usado neste repositório:
+
+<ScrollTable label="Ou a partir da raiz, no workspace da biblioteca: Não suportado aqui">
+  <table>
+    <thead>
+      <tr><th>Recurso</th><th>Motivo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Skill do shadcn (<code>npx skills add shadcn/ui</code>)</td><td>Não instalado nem testado. A instalação usa outro CLI, o <code>skills</code> (skills.sh), que não faz parte do projeto, baixaria um pacote sem versão fixa e escreveria arquivos. O repositório não tem pasta de skills nem <code>SKILL.md</code>.</td></tr>
+      <tr><td><code>shadcn mcp init --client …</code></td><td>Não foi rodado: ele escreve o arquivo de configuração com <code>npx shadcn@latest mcp</code>, sem versão fixa e na pasta onde roda. Use a configuração manual acima.</td></tr>
+      <tr><td>Configuração do MCP no repositório</td><td>Não existe <code>.mcp.json</code>, <code>.cursor/mcp.json</code> nem <code>.vscode/mcp.json</code>. Cada pessoa configura o próprio cliente.</td></tr>
+      <tr><td><code>shadcn apply</code> e troca de preset (inclusive o pedido "Switch to --preset" do skill)</td><td>Proibido pelo <code>CLAUDE.md</code>. Testado em 2026-11-13 e desfeito: sobrescreveu todos os componentes com o estilo do preset, trocou o modo escuro, duplicou dependências e fez stories reprovarem no axe por contraste. Para trocar de preset, registre o código no <code>CLAUDE.md</code> e mude à mão o que valer a pena.</td></tr>
+      <tr><td><code>shadcn diff</code></td><td>O CLI marca como obsoleto. Use <code>{'add <nome> --diff'}</code>.</td></tr>
+      <tr><td><code>shadcn build</code> e <code>shadcn registry validate</code></td><td>Os comandos existem, mas o repositório não tem <code>registry.json</code>: a Big Brain não publica um registro próprio.</td></tr>
+      <tr><td>Preset como fonte das cores</td><td>O <code>preset resolve</code> mostra o preset do template (mist e neutro), não os tokens da marca, aplicados à mão no <code>globals.css</code>.</td></tr>
+      <tr><td><code>shadcn docs</code> como fonte do conteúdo</td><td>Ele devolve só os links. O conteúdo da página fica no site do shadcn ou na MDX dela no GitHub (<code>apps/v4/content/docs/components/base/</code>).</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+## Veja também
+
+- [Instalação](?path=/docs/instalação--docs): o caminho com Vite deste repositório e o `components.json`.
+- [Componentes](?path=/docs/componentes-visão-geral--docs): o catálogo, com o link da página do shadcn de cada um.
+- [Temas](?path=/docs/temas--docs): os papéis semânticos que um componente novo deve usar no lugar da paleta.
+- [Blocks](?path=/docs/blocks-visão-geral--docs): os templates prontos de aplicação.

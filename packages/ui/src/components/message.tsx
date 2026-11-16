@@ -25,6 +25,12 @@ import { cn } from "cn"
  *   `bg-muted`.
  * - Direção: o `align="end"` usa `flex-row-reverse` e o rodapé usa
  *   `justify-end`, que seguem o `dir`; os recuos são `px-*`, simétricos.
+ * - Lado do cabeçalho: em `align="end"`, o `MessageContent` leva todo filho
+ *   com `data-slot` ao fim (`self-end`), inclusive o `MessageHeader`. É o
+ *   código do registro, mantido como está; o texto da API do shadcn diz que o
+ *   cabeçalho fica no início, mas o código dele faz o mesmo que este. Para
+ *   prendê-lo no início, troque a classe por
+ *   `group-data-[align=end]/message:*:data-slot:not-data-[slot=message-header]:self-end`.
  */
 
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {

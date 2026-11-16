@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as AspectRatioStories from "./aspect-ratio.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={AspectRatioStories} />
 
@@ -92,14 +93,17 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `fi
 
 Reserva um espaço com a proporção pedida e posiciona o conteúdo dentro dele. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>ratio</code></td><td><code>number</code></td><td>— (obrigatória)</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Aspect Ratio: AspectRatio">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ratio</code></td><td><code>number</code></td><td>— (obrigatória)</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>style</code></td><td><code>React.CSSProperties</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-O elemento recebe `data-slot="aspect-ratio"` e a variável CSS `--ratio`.
+O elemento recebe `data-slot="aspect-ratio"` e a variável CSS `--ratio`. O `style` passado é mesclado com ela, e o `--ratio` sempre vem da prop `ratio`.

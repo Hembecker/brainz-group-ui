@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as InputOTPStories from "./input-otp.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={InputOTPStories} />
 
@@ -9,6 +10,10 @@ import * as InputOTPStories from "./input-otp.stories";
 Um componente acessível de senha de uso único, com suporte a copiar e colar.
 
 <Canvas of={InputOTPStories.Demo} />
+
+## Sobre
+
+O Input OTP é construído sobre o [input-otp](https://github.com/guilhermerodz/input-otp), de Guilherme Rodz. Ele renderiza **um único `<input>` real**, invisível e sobreposto às casas. As casas (`InputOTPSlot`) são só o desenho: o teclado, a colagem, o preenchimento automático do código recebido por SMS e o leitor de tela falam com esse input.
 
 ## Instalação
 
@@ -48,10 +53,6 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/inp
 />
 
 O `InputOTP` não tem rótulo. Use um `Field` com um `FieldLabel htmlFor` ligado ao `id` do `InputOTP`.
-
-## Sobre
-
-O Input OTP é construído sobre o [input-otp](https://github.com/guilhermerodz/input-otp), de Guilherme Rodz. Ele renderiza **um único `<input>` real**, invisível e sobreposto às casas. As casas (`InputOTPSlot`) são só o desenho: o teclado, a colagem, o preenchimento automático do código recebido por SMS e o leitor de tela falam com esse input.
 
 ## Composição
 
@@ -165,7 +166,7 @@ Use `REGEXP_ONLY_DIGITS_AND_CHARS` para aceitar letras e números. O `InputOTP` 
 
 ## Formulário
 
-Um formulário de verificação completo, num `Card`. O `FieldLabel` está ligado ao `id` do `InputOTP`, que leva `required`; o botão "Reenviar código" tem texto, e o ícone dele é decorativo. As casas maiores vêm de classes no `InputOTPGroup` (`*:data-[slot=input-otp-slot]:h-12`).
+Um formulário de verificação completo, num `Card`. O `FieldLabel` está ligado ao `id` do `InputOTP`, que leva `required`; o botão "Reenviar código" tem texto, e o ícone dele é decorativo. As casas maiores vêm de classes no `InputOTPGroup` (`*:data-[slot=input-otp-slot]:h-12`). O `onSubmit` com `preventDefault` só impede que o exemplo recarregue a página; o botão "Reenviar código" é `type="button"` para não enviar o formulário.
 
 <Canvas of={InputOTPStories.Formulario} />
 
@@ -181,29 +182,31 @@ Veja a documentação do [input-otp](https://input-otp.rodz.dev) para mais infor
 
 ### InputOTP
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>maxLength</code></td><td><code>number</code> (obrigatória)</td><td>—</td></tr>
-    <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>onChange</code></td><td><code>{'(newValue: string) => unknown'}</code></td><td>—</td></tr>
-    <tr><td><code>onComplete</code></td><td><code>{'(...args: any[]) => unknown'}</code>: chamada quando todas as casas são preenchidas</td><td>—</td></tr>
-    <tr><td><code>pattern</code></td><td><code>string</code>: expressão regular dos caracteres aceitos</td><td>—</td></tr>
-    <tr><td><code>textAlign</code></td><td><code>{'"left" | "center" | "right"'}</code></td><td><code>{'"left"'}</code></td></tr>
-    <tr><td><code>pasteTransformer</code></td><td><code>{'(pasted: string) => string'}</code></td><td>—</td></tr>
-    <tr><td><code>pushPasswordManagerStrategy</code></td><td><code>{'"increase-width" | "none"'}</code></td><td><code>{'"increase-width"'}</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-    <tr><td><code>containerClassName</code></td><td><code>string</code>: classes do contêiner que envolve o input e as casas</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code>: classes do input real</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input OTP: InputOTP">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>maxLength</code></td><td><code>number</code> (obrigatória)</td><td>—</td></tr>
+      <tr><td><code>value</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>defaultValue</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>onChange</code></td><td><code>{'(newValue: string) => unknown'}</code></td><td>—</td></tr>
+      <tr><td><code>onComplete</code></td><td><code>{'(...args: any[]) => unknown'}</code>: chamada quando todas as casas são preenchidas</td><td>—</td></tr>
+      <tr><td><code>pattern</code></td><td><code>string</code>: expressão regular dos caracteres aceitos</td><td>—</td></tr>
+      <tr><td><code>textAlign</code></td><td><code>{'"left" | "center" | "right"'}</code></td><td><code>{'"left"'}</code></td></tr>
+      <tr><td><code>pasteTransformer</code></td><td><code>{'(pasted: string) => string'}</code></td><td>—</td></tr>
+      <tr><td><code>pushPasswordManagerStrategy</code></td><td><code>{'"increase-width" | "none"'}</code></td><td><code>{'"increase-width"'}</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+      <tr><td><code>containerClassName</code></td><td><code>string</code>: classes do contêiner que envolve o input e as casas</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code>: classes do input real</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O input recebe `data-slot="input-otp"`.
 
@@ -211,32 +214,36 @@ O input recebe `data-slot="input-otp"`.
 
 Agrupa casas. É um `<div>`; aceita as props de um `div`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input OTP: InputOTPGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### InputOTPSlot
 
 Uma casa do código. Só desenha o caractere, o cursor e o estado ativo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>index</code></td><td><code>number</code> (obrigatória): a posição da casa, a partir de 0</td><td>—</td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code>: só estilo (marque também o <code>InputOTP</code>)</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input OTP: InputOTPSlot">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>index</code></td><td><code>number</code> (obrigatória): a posição da casa, a partir de 0</td><td>—</td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code>: só estilo (marque também o <code>InputOTP</code>)</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 A casa recebe `data-slot="input-otp-slot"` e `data-active`.
 
 ### InputOTPSeparator
 
-Um separador decorativo entre grupos, com um ícone de traço. É um `<div role="separator">`.
+Um separador decorativo entre grupos, com um ícone de traço. É um `<div role="separator">`, com `data-slot="input-otp-separator"`. O `className` é mesclado às classes base (`flex items-center` e o ícone em `size-4`), então `className="mx-2"` só acrescenta a margem.

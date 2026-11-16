@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ToggleGroupStories from "./toggle-group.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ToggleGroupStories} />
 
@@ -57,7 +58,7 @@ Monte um `ToggleGroup` com esta composição:
 - **Nome de cada item:** um item só com ícone recebe `aria-label` ("Negrito"). Um item com texto visível não leva `aria-label`: o texto já é o nome, e o nome precisa conter o que aparece. O nome não muda com o estado.
 - **Estado:** cada item expõe `aria-pressed`. Mesmo no modo de seleção única, os itens são botões com `aria-pressed`, não opções de um radio.
 - **Ligado sem depender de uma cor fraca:** o item ligado é preenchido com `primary` (veja a seção de acessibilidade do Toggle: texto com 5,2:1, e 5,2:1 e 3,8:1 do preenchimento contra o fundo claro e o escuro). Filhos de um item não devem usar `text-muted-foreground`, que cairia abaixo de 4,5:1 sobre o preenchimento.
-- **Teclado:** Tab entra no grupo, Espaço ou Enter alterna o item focado e as setas movem o foco entre os itens (em RTL, a direção das setas se inverte). Com `loopFocus` (padrão), o foco volta ao primeiro item depois do último.
+- **Teclado:** Tab entra no grupo, Espaço ou Enter alterna o item focado e as setas movem o foco entre os itens (← e → na horizontal, ↑ e ↓ na vertical). Na horizontal, as setas **se invertem em RTL**; na vertical, não mudam com a direção. Para o RTL do teclado funcionar, o app precisa do `DirectionProvider` (de `@workspace/ui/components/direction`; o preview do Storybook já tem um). Com `loopFocus` (padrão), o foco volta ao primeiro item depois do último.
 - **Ícones decorativos:** levam `aria-hidden="true"`.
 - **Foco:** anel sólido de 3px no token `--ring`, afastado 2px pela cor do fundo. O item focado sobe na pilha (`z-10`), para o anel não ficar sob o vizinho quando os itens estão juntos (`spacing={0}`).
 - **Descrição:** uma ajuda sobre o grupo (como no exemplo Personalizado) liga-se por `aria-describedby`.
@@ -111,7 +112,7 @@ Um exemplo controlado, com o grupo nomeado por um título (`aria-labelledby`) e 
 
 ## RTL
 
-Os recuos, as bordas e os cantos são lógicos, então o grupo segue a direção de um ancestral com `dir="rtl"`. O exemplo usa `dir` no próprio grupo porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+Os recuos, as bordas e os cantos são lógicos, então o visual do grupo segue a direção de um ancestral com `dir="rtl"`. As setas não seguem o `dir`: elas se invertem pelo `DirectionProvider` (`←` vai para o próximo item e `→` para o anterior). O exemplo usa `dir` e `lang` num `div` e um `DirectionProvider` para o teclado do Base UI seguir a direção; num app em RTL, coloque o `dir` e o `lang` no `<html>`. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={ToggleGroupStories.Rtl} />
 
@@ -121,43 +122,47 @@ Os recuos, as bordas e os cantos são lógicos, então o grupo segue a direção
 
 O `ToggleGroup` envolve o `ToggleGroup` do Base UI e repassa todas as props dele. Veja a [referência do Base UI Toggle Group](https://base-ui.com/react/components/toggle-group#api-reference) para a lista completa. As principais:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code> (nos itens)</td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code> (nos itens)</td></tr>
-    <tr><td><code>spacing</code></td><td><code>number</code>: espaço entre os itens</td><td><code>2</code></td></tr>
-    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
-    <tr><td><code>multiple</code></td><td><code>boolean</code>: permite vários itens ligados</td><td><code>false</code></td></tr>
-    <tr><td><code>value</code></td><td><code>string[]</code>: estado controlado</td><td>—</td></tr>
-    <tr><td><code>defaultValue</code></td><td><code>string[]</code>: estado inicial, sem controle</td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value: string[], eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>loopFocus</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-label</code> / <code>aria-labelledby</code></td><td><code>string</code>: o nome do grupo</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Toggle Group: ToggleGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code> (nos itens)</td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code> (nos itens)</td></tr>
+      <tr><td><code>spacing</code></td><td><code>number</code>: espaço entre os itens</td><td><code>2</code></td></tr>
+      <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code></td><td><code>{'"horizontal"'}</code></td></tr>
+      <tr><td><code>multiple</code></td><td><code>boolean</code>: permite vários itens ligados</td><td><code>false</code></td></tr>
+      <tr><td><code>value</code></td><td><code>string[]</code>: estado controlado</td><td>—</td></tr>
+      <tr><td><code>defaultValue</code></td><td><code>string[]</code>: estado inicial, sem controle</td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value: string[], eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>loopFocus</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-label</code> / <code>aria-labelledby</code></td><td><code>string</code>: o nome do grupo</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-O elemento recebe `data-slot="toggle-group"`, `data-variant`, `data-size`, `data-spacing` e `data-orientation`.
+O elemento recebe `data-slot="toggle-group"`, `data-variant` e `data-size` (os valores resolvidos: `default` quando o grupo não define), `data-spacing` e `data-orientation`. O `orientation` também chega ao Base UI, que decide por ele quais setas movem o foco.
 
 ### ToggleGroupItem
 
 Aceita as props do `Toggle` (veja a página do Toggle). `variant` e `size` vêm do grupo e prevalecem sobre os do item.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>string</code>: identifica o item no valor do grupo</td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há texto visível</td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Toggle Group: ToggleGroupItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>string</code>: identifica o item no valor do grupo</td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há texto visível</td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="toggle-group-item"`, `data-variant`, `data-size` e `data-spacing`. O estado fica em `aria-pressed`.
 

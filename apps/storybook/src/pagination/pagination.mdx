@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as PaginationStories from "./pagination.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={PaginationStories} />
 
@@ -150,7 +151,7 @@ import { buttonVariants } from "@workspace/ui/components/button"
 
 Os espaçamentos e os cantos são lógicos (`ps-*` e `pe-*`), e as setas de "Anterior" e de "Próxima" levam `rtl:rotate-180`. Em RTL, "Anterior" fica à direita, com a seta apontando para a direita, e "Próxima" fica à esquerda.
 
-O texto dos botões vem da prop `text` (o padrão é "Anterior" e "Próxima"); num app em outro idioma, passe-o e troque também o `aria-label`, que precisa conter o texto visível. O exemplo usa os números arábicos orientais, como o do shadcn.
+O texto dos botões vem da prop `text` (o padrão é "Anterior" e "Próxima"); num app em outro idioma, passe-o e troque também o `aria-label`, que precisa conter o texto visível. Em línguas com flexão, como o árabe, o nome precisa ter a palavra exata da tela, não só uma forma parecida: por isso o nome começa por "السابق" e "التالي" ("السابق، الانتقال إلى الصفحة السابقة"), e não é só "الصفحة السابقة". Os números são os arábicos orientais, como no exemplo do shadcn.
 
 Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
@@ -162,15 +163,17 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `di
 
 O `<nav>` raiz. Aceita as props de um `<nav>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Paginação"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Pagination">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Paginação"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### PaginationContent e PaginationItem
 
@@ -180,16 +183,18 @@ O `<nav>` raiz. Aceita as props de um `<nav>`.
 
 O link de uma página: um `<a>` com `buttonVariants`. Aceita as props de um `<a>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>isActive</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"'}</code></td><td><code>{'"icon"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Pagination: PaginationLink">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>isActive</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"'}</code></td><td><code>{'"icon"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Com `isActive`, o link leva `aria-current="page"`, `data-active` e a variante `outline`; sem ele, a variante é `ghost`. O elemento recebe `data-slot="pagination-link"`, `data-variant` e `data-size`.
 
@@ -197,30 +202,34 @@ Com `isActive`, o link leva `aria-current="page"`, `data-active` e a variante `o
 
 Os links de anterior e de próxima, com a seta e o texto. Aceitam as props de `PaginationLink`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>text</code></td><td><code>string</code></td><td><code>{'"Anterior"'}</code> / <code>{'"Próxima"'}</code></td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Ir para a página anterior"'}</code> / <code>{'"Ir para a próxima página"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | …'}</code></td><td><code>{'"default"'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Pagination: PaginationPrevious e PaginationNext">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>text</code></td><td><code>string</code></td><td><code>{'"Anterior"'}</code> / <code>{'"Próxima"'}</code></td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Ir para a página anterior"'}</code> / <code>{'"Ir para a próxima página"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | …'}</code></td><td><code>{'"default"'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### PaginationEllipsis
 
 As reticências de páginas omitidas (`<span>`, com o texto `sr-only` "Mais páginas"). Aceita as props de um `<span>`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Pagination</code></td><td><code>{'<nav>'}</code></td><td><code>pagination</code></td></tr>
-    <tr><td><code>PaginationContent</code></td><td><code>{'<ul>'}</code></td><td><code>pagination-content</code></td></tr>
-    <tr><td><code>PaginationItem</code></td><td><code>{'<li>'}</code></td><td><code>pagination-item</code></td></tr>
-    <tr><td><code>PaginationLink</code></td><td><code>{'<a>'}</code></td><td><code>pagination-link</code></td></tr>
-    <tr><td><code>PaginationEllipsis</code></td><td><code>{'<span>'}</code></td><td><code>pagination-ellipsis</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Pagination: PaginationEllipsis">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Pagination</code></td><td><code>{'<nav>'}</code></td><td><code>pagination</code></td></tr>
+      <tr><td><code>PaginationContent</code></td><td><code>{'<ul>'}</code></td><td><code>pagination-content</code></td></tr>
+      <tr><td><code>PaginationItem</code></td><td><code>{'<li>'}</code></td><td><code>pagination-item</code></td></tr>
+      <tr><td><code>PaginationLink</code></td><td><code>{'<a>'}</code></td><td><code>pagination-link</code></td></tr>
+      <tr><td><code>PaginationEllipsis</code></td><td><code>{'<span>'}</code></td><td><code>pagination-ellipsis</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

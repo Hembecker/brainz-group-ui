@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as InputGroupStories from "./input-group.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={InputGroupStories} />
 
@@ -66,7 +67,7 @@ Use esta composição para montar um `InputGroup`:
 - **Botões só com ícone:** levam um nome específico, por `aria-label` ("Copiar link") ou por um `<span className="sr-only">`. O tooltip nunca é o único nome. Um botão que liga e desliga, como "Favoritar", usa `aria-pressed` e mantém o mesmo nome. Quando o resultado de uma ação não aparece para quem usa leitor de tela, como "Link copiado", anuncie-o numa região `role="status"` que fica sempre montada.
 - **Gatilhos de primitivos:** o `Popover` e o `DropdownMenu` recebem o `InputGroupButton` pela prop `render`, sem um `div` em volta, para o próprio botão ser o gatilho. Não ponha um botão dentro de um gatilho. O `PopoverContent` precisa de um `PopoverTitle` (ele dá o nome ao diálogo).
 - **Ordem do foco:** o addon vem depois do campo no DOM, e o `align` o posiciona visualmente. Assim o Tab e o leitor de tela começam pelo campo. Clicar no addon, fora de um botão, foca o `<input>` do grupo.
-- **Foco visível:** o anel fica no **grupo**, não no campo interno: sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Input (`has-[[data-slot=input-group-control]:focus-visible]`). O campo interno não desenha anel nem halo. O grupo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens). Um botão dentro do grupo tem o próprio anel do Button.
+- **Foco visível:** o anel fica no **grupo**, não no campo interno: sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Input (`has-[[data-slot=input-group-control]:focus-visible]`). O campo interno não desenha anel nem halo. O grupo tem o fundo `field` e a borda `--field-border`, que depende da marca. Na Brainz Group ela é transparente, então o campo não tem borda visível em repouso: o limite dele tem 1,25:1 no claro e 1,33:1 no escuro (escolha registrada nos tokens). No SESI claro o campo é branco, com borda Neutral/300 `#DFDFDF` (1,33:1, escolha do usuário); no SESI escuro ela continua transparente. Veja [Temas](?path=/docs/temas--docs). Um botão dentro do grupo tem o próprio anel do Button.
 - **Estado inválido:** marque o campo com `aria-invalid` e o `Field` com `data-invalid`. O grupo pinta a borda de `destructive` e, com o foco, o anel também (veja **Inválido**). Cor sozinha não basta: ligue um `FieldError` ao campo por `aria-errormessage` e também por `aria-describedby`.
 - **Desabilitado:** use `disabled` no campo e nos botões do grupo, e `data-disabled="true"` no `InputGroup`, que apaga os addons (`opacity-50`). Só o `disabled` do campo e dos botões tira cada um do Tab; o `data-disabled` é visual.
 - **Movimento e contraste:** o `Spinner` para com `prefers-reduced-motion`; um ícone girando fora dele deve levar `motion-reduce:animate-none`. O texto do addon é `muted-foreground` (5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo), e o `Kbd` ganha um fundo cheio (`bg-background`) que o separa do campo.
@@ -141,7 +142,7 @@ O exemplo "Favoritar" usa `aria-pressed`, e o "Copiar link" anuncia o resultado 
 
 ## Kbd
 
-Use o `Kbd` para mostrar um atalho de teclado dentro do campo. O `Kbd` fica sobre um fundo cheio (`bg-background`).
+Use o `Kbd` para mostrar um atalho de teclado dentro do campo. O `Kbd` fica sobre um fundo cheio (`bg-muted` no claro e `bg-background` no escuro).
 
 <Canvas of={InputGroupStories.TeclaDeAtalho} />
 
@@ -189,14 +190,16 @@ O InputGroup usa paddings e margens lógicos (`ps`/`pe`, `ms`/`me`) e o `align` 
 
 O componente principal, que envolve o campo e os addons. É um `<div role="group">` e aceita as props de um `div`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input Group: InputGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 <Source
   language="tsx"
@@ -211,15 +214,17 @@ O componente principal, que envolve o campo e os addons. É um `<div role="group
 
 Mostra ícones, textos, botões ou outro conteúdo ao lado do campo. Para a ordem do foco, ele deve ficar depois do campo no DOM; a prop `align` o posiciona. Para um `InputGroupInput`, use `inline-start` ou `inline-end`; para um `InputGroupTextarea`, use `block-start` ou `block-end`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>align</code></td><td><code>{'"inline-start" | "inline-end" | "block-start" | "block-end"'}</code></td><td><code>{'"inline-start"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input Group: InputGroupAddon">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>align</code></td><td><code>{'"inline-start" | "inline-end" | "block-start" | "block-end"'}</code></td><td><code>{'"inline-start"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="input-group-addon"` e `data-align`. Um addon pode ter vários `InputGroupButton` e ícones.
 
@@ -240,17 +245,19 @@ O elemento recebe `data-slot="input-group-addon"` e `data-align`. Um addon pode 
 
 Mostra botões dentro do grupo. Aceita as props do `Button` (exceto `size` e `type`, que têm os valores abaixo).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>size</code></td><td><code>{'"xs" | "icon-xs" | "sm" | "icon-sm"'}</code></td><td><code>{'"xs"'}</code></td></tr>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive" | "outline" | "secondary" | "ghost" | "link"'}</code></td><td><code>{'"ghost"'}</code></td></tr>
-    <tr><td><code>type</code></td><td><code>{'"button" | "submit" | "reset"'}</code></td><td><code>{'"button"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input Group: InputGroupButton">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>size</code></td><td><code>{'"xs" | "icon-xs" | "sm" | "icon-sm"'}</code></td><td><code>{'"xs"'}</code></td></tr>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive" | "outline" | "secondary" | "ghost" | "link"'}</code></td><td><code>{'"ghost"'}</code></td></tr>
+      <tr><td><code>type</code></td><td><code>{'"button" | "submit" | "reset"'}</code></td><td><code>{'"button"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 <Source
   language="tsx"
@@ -265,14 +272,16 @@ Mostra botões dentro do grupo. Aceita as props do `Button` (exceto `size` e `ty
 
 O substituto do `<Input />` para montar grupos. Já traz os estilos do grupo e usa o `data-slot="input-group-control"` para o foco.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input Group: InputGroupInput">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas as outras props vão para o `Input`, e as dele para o `<input>`: `id`, `type`, `aria-invalid`, `aria-describedby`, `aria-errormessage`, `disabled`, `readOnly`…
 
@@ -280,14 +289,16 @@ Todas as outras props vão para o `Input`, e as dele para o `<input>`: `id`, `ty
 
 O substituto do `<Textarea />` para montar grupos. Também usa o `data-slot="input-group-control"`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input Group: InputGroupTextarea">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas as outras props vão para o `Textarea`.
 
@@ -304,13 +315,15 @@ Todas as outras props vão para o `Textarea`.
 
 ### InputGroupText
 
-Um `<span>` com o estilo de texto do grupo (`muted-foreground`, ícones de 16px). Não aparece na tabela do shadcn, mas faz parte da composição. Aceita as props de um `span`; dê um `id` a ele para citá-lo em `aria-describedby`.
+Um `<span>` com o estilo de texto do grupo (`muted-foreground`, ícones de 16px). Não aparece na tabela do shadcn, mas faz parte da composição. Aceita as props de um `span`; dê um `id` a ele para citá-lo em `aria-describedby`. O elemento recebe `data-slot="input-group-text"`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Input Group: InputGroupText">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

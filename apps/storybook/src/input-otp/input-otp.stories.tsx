@@ -429,65 +429,67 @@ export const Alfanumerico: Story = {
 export const Formulario: Story = {
   name: "Formulário",
   render: () => (
-    <Card className="mx-auto max-w-md">
-      <CardHeader>
-        <CardTitle>Confirme o seu acesso</CardTitle>
-        <CardDescription>
-          Digite o código de verificação que enviamos para o seu e-mail:{" "}
-          <span className="font-medium">m@exemplo.com</span>.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Field>
-          <div className="flex items-center justify-between">
-            <FieldLabel htmlFor="formulario-verificacao">
-              Código de verificação
-            </FieldLabel>
-            <Button type="button" variant="outline" size="xs">
-              <RefreshCwIcon aria-hidden="true" data-icon="inline-start" />
-              Reenviar código
-            </Button>
-          </div>
-          <InputOTP
-            id="formulario-verificacao"
-            maxLength={6}
-            required
-            aria-describedby="formulario-verificacao-descricao"
-          >
-            <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-            </InputOTPGroup>
-            <InputOTPSeparator className="mx-2" />
-            <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-          <FieldDescription id="formulario-verificacao-descricao">
-            <a href="#">Não tenho mais acesso a este e-mail.</a>
-          </FieldDescription>
-        </Field>
-      </CardContent>
-      <CardFooter>
-        <Field>
-          <Button type="submit" className="w-full">
-            Verificar
-          </Button>
-          <div className="text-sm text-muted-foreground">
-            Está com dificuldade para entrar?{" "}
-            <a
-              href="#"
-              className="underline underline-offset-4 transition-colors hover:text-primary"
+    <form onSubmit={(event) => event.preventDefault()}>
+      <Card className="mx-auto max-w-md">
+        <CardHeader>
+          <CardTitle>Confirme o seu acesso</CardTitle>
+          <CardDescription>
+            Digite o código de verificação que enviamos para o seu e-mail:{" "}
+            <span className="font-medium">m@exemplo.com</span>.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Field>
+            <div className="flex items-center justify-between">
+              <FieldLabel htmlFor="formulario-verificacao">
+                Código de verificação
+              </FieldLabel>
+              <Button type="button" variant="outline" size="xs">
+                <RefreshCwIcon aria-hidden="true" data-icon="inline-start" />
+                Reenviar código
+              </Button>
+            </div>
+            <InputOTP
+              id="formulario-verificacao"
+              maxLength={6}
+              required
+              aria-describedby="formulario-verificacao-descricao"
             >
-              Fale com o suporte
-            </a>
-          </div>
-        </Field>
-      </CardFooter>
-    </Card>
+              <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+              <InputOTPSeparator className="mx-2" />
+              <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+            <FieldDescription id="formulario-verificacao-descricao">
+              <a href="#">Não tenho mais acesso a este e-mail.</a>
+            </FieldDescription>
+          </Field>
+        </CardContent>
+        <CardFooter>
+          <Field>
+            <Button type="submit" className="w-full">
+              Verificar
+            </Button>
+            <div className="text-sm text-muted-foreground">
+              Está com dificuldade para entrar?{" "}
+              <a
+                href="#"
+                className="underline underline-offset-4 transition-colors hover:text-link-hover"
+              >
+                Fale com o suporte
+              </a>
+            </div>
+          </Field>
+        </CardFooter>
+      </Card>
+    </form>
   ),
 }
 

@@ -113,6 +113,7 @@ export const Demo: Story = {
         const id = toast.add({
           title: "Evento criado",
           description: "Domingo, 3 de dezembro, às 9h00",
+          timeout: 10000,
           actionProps: {
             children: "Desfazer",
             onClick() {

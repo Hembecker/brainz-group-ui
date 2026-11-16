@@ -24,8 +24,10 @@ import { cn } from "cn"
  *   fundo no claro; no escuro, 6,1:1 sobre `muted` e 8,1:1 sobre o fundo. A aba ativa usa
  *   `bg-background` e `text-foreground`; no escuro, por cima, o
  *   `dark:bg-input/30` do registro, exceção escolhida pelo usuário (a mesma
- *   do Button outline), para a aba ativa se destacar da lista. Na `line` a
- *   aba ativa fica sem fundo nos dois modos (o `bg-input/30` não entra) e
+ *   do Button outline), para a aba ativa se destacar da lista. Texto da aba
+ *   ativa: 19,7:1 no claro; no escuro, sobre o branco a 12% por cima da
+ *   lista `muted`, 9,7:1. Na `line` a aba ativa fica sem fundo nos dois
+ *   modos (o `bg-input/30` não entra; 19,0:1 sobre o fundo no escuro) e
  *   ganha o sublinhado.
  * - O estado ativo não depende só do fundo: a cor do texto muda
  *   (`foreground` contra `muted-foreground`) e o `aria-selected` o expõe.
@@ -43,8 +45,8 @@ import { cn } from "cn"
  *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
  *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
  *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
- *   afastamento de 2px). Por dentro, ele encosta no fundo do item: 3,15:1
- *   sobre `muted` e 3,5:1 sobre `background` no claro; 5,7:1 e 7,6:1 no
+ *   afastamento de 2px). Por dentro, ele encosta no fundo do item: 4,7:1
+ *   sobre `muted` e 5,2:1 sobre `background` no claro; 5,7:1 e 7,6:1 no
  *   escuro.
  * - Sublinhado da `line` na horizontal: o registro o punha a `-5px` da aba, 1,5px
  *   abaixo da lista, e a lista que rola o cortaria. Agora fica a `-3px`,

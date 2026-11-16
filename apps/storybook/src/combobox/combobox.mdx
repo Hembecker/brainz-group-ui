@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ComboboxStories from "./combobox.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ComboboxStories} />
 
@@ -125,16 +126,48 @@ Itens agrupados com `ComboboxCollection` dentro de cada `ComboboxGroup`, e um se
 - **Rótulo persistente:** o campo é um `<input role="combobox">` e precisa de um rótulo sempre visível, ligado pelo `htmlFor` do `FieldLabel` (ou do `Label`) ao `id` do `ComboboxInput`. Nos chips, o `id` vai no `ComboboxChipsInput`; no modo popup, no `ComboboxTrigger`. O placeholder nunca é o rótulo: ele some ao digitar.
 - **Rótulo e lista aberta:** com a lista aberta, o Base UI marca o resto da página como `aria-hidden`, inclusive o rótulo e a descrição. O nome continua ligado pelo `htmlFor`, mas, quando o campo também tem `aria-describedby`, o axe deixa de achar o rótulo. Nesse caso, dê um `id` ao `FieldLabel` e ligue-o também por `aria-labelledby` no campo, como na seção **Inválido**.
 - **Teclado:** o foco fica no campo, e a lista é percorrida por `aria-activedescendant`. Digitar filtra; ↓ abre a lista e move o destaque; Enter escolhe o item destacado; Esc fecha, e o foco continua no campo. O teste da story **Demo** confere que o foco fica no campo, que digitar filtra a lista e que o Esc a fecha. Com `autoHighlight`, o primeiro item já fica destacado ao filtrar.
-- **Botões só com ícone:** o componente dá o nome a eles, em português fixo (como o "Fechar" do Dialog): o gatilho da seta é "Mostrar opções", o botão de limpar é "Limpar seleção" e o de remover um chip é "Remover" mais o texto do chip ("Remover Next.js"), para o nome dizer o alvo. Os ícones são decorativos. O gatilho do modo popup não leva nome fixo: o nome dele é o rótulo do campo. Para outro idioma, passe `aria-label` ao `ComboboxTrigger` ou ao `ComboboxClear`; o do chip é fixo, então use `showRemove={false}` e o seu próprio `ComboboxPrimitive.ChipRemove`.
-- **Fora da ordem do Tab:** a seta, o limpar e o remover do chip têm `tabIndex={-1}`: o campo é a parada do teclado, como no combobox editável do WAI-ARIA. Isso também evita o erro do axe de um elemento focável dentro de uma área `aria-hidden` (a que o Base UI cria com a lista aberta). Pelo teclado, apague o texto do campo para limpar a escolha. Nos chips, a seta ← no campo vazio leva o foco ao último chip, e Delete ou Backspace o remove.
+- **Botões só com ícone:** o componente dá o nome a eles, em português fixo (como o "Fechar" do Dialog): o gatilho da seta é "Mostrar opções", o botão de limpar é "Limpar seleção" e o de remover um chip é "Remover" mais o texto do chip ("Remover Next.js"), para o nome dizer o alvo. Os ícones são decorativos. Os nomes da seta, do limpar e do remover do chip são fixos: o `ComboboxInput` não repassa props à seta nem ao limpar, e o `ComboboxClear` não é exportado, como no shadcn. Para outro idioma, use `showTrigger={false}` e `showClear={false}` e ponha os seus botões nos filhos do `ComboboxInput`, como no trecho ao fim desta seção; no chip, use `showRemove={false}` e o seu próprio `ComboboxPrimitive.ChipRemove`. O gatilho do modo popup não leva nome fixo: o nome dele é o rótulo do campo (um `ComboboxTrigger` avulso aceita `aria-label`).
+- **Fora da ordem do Tab:** a seta, o limpar e o remover do chip têm `tabIndex={-1}`: o campo é a parada do teclado, como no combobox editável do WAI-ARIA. Isso também evita o erro do axe de um elemento focável dentro de uma área `aria-hidden` (a que o Base UI cria com a lista aberta). Pelo teclado, apague o texto do campo para limpar a escolha. Nos chips, a seta ← (→ em RTL) no campo vazio leva o foco ao último chip, e Delete ou Backspace o remove. A tecla segue a direção do `DirectionProvider` (veja **RTL**).
 - **Sem resultados:** o `ComboboxEmpty` tem `role="status"` e `aria-live="polite"`, e o Base UI o mantém montado: só o texto aparece e some, e o leitor de tela anuncia "Nenhum item encontrado" sem tirar o foco do campo.
-- **Foco visível:** o anel é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Input. O campo não tem borda visível em repouso (o limite dele tem 1,25:1 no claro e 1,33:1 no escuro, escolha registrada nos tokens), então o foco e o estado inválido são o que o destacam. Nos chips, o anel vem de `focus-within`. Na lista, o item destacado usa `bg-accent`, sem anel.
+- **Foco visível:** o anel é sólido, de 3px, no token `--ring`, afastado 2px pela cor do fundo, como no Input. O campo tem o fundo `field` e a borda `--field-border`, que depende da marca. Na Brainz Group (e no SESI escuro) a borda é transparente: o campo não tem borda visível em repouso (o limite dele tem 1,25:1 no claro e 1,33:1 no escuro, escolha registrada nos tokens), então o foco e o estado inválido são o que o destacam. No SESI claro o campo é contornado pela `--field-border` (`#DFDFDF`, 1,33:1: escolha do usuário). Nos chips, o anel vem de `focus-within`. Na lista, o item destacado usa `bg-accent`, sem anel.
 - **Estado inválido:** marque o campo com `aria-invalid` e o `Field` com `data-invalid`. A borda e o anel passam a `destructive`. Cor sozinha não basta: explique o problema num `FieldError` com `id` e ligue-o ao campo por `aria-errormessage` e também por `aria-describedby`. O texto digitado e o placeholder mantêm as cores `foreground` e `muted-foreground`, para não herdar o vermelho do erro.
 - **Contraste:** o chip usa `secondary` com `secondary-foreground` (7,7:1 no claro e 9,0:1 no escuro). O placeholder tem 5,9:1 no claro e 6,1:1 no escuro sobre o fundo do campo.
 - **Desabilitado:** `disabled` no `ComboboxInput` tira o campo e os botões do Tab e apaga o conjunto em 50%. Um `ComboboxItem disabled` fica visível na lista, mas não pode ser escolhido.
 - **Modo popup:** o conteúdo é um `role="dialog"` e precisa de nome: passe `aria-label` ao `ComboboxContent`, e dê um `aria-label` ao campo de busca de dentro, que não tem rótulo visível.
 - **Portal e RTL:** a lista vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ela, mas um `dir` num ancestral do campo não. Veja **RTL**.
 - **Testes:** a lista fechada não existe para o axe. Por isso cada story tem um `play` que abre a lista, espera a animação de entrada terminar e só depois deixa o axe rodar, no claro, no escuro e em RTL.
+
+Para dar outros nomes à seta e ao limpar (por exemplo, em inglês), desligue os do componente e ponha os seus num `InputGroupAddon` dentro do `ComboboxInput`. O `ComboboxPrimitive` é o `Combobox` de `@base-ui/react`. O `data-slot="combobox-clear"` e a classe da seta repetem o que o componente faz: a seta some enquanto o botão de limpar aparece. O `className` do `ComboboxInput` é a única peça a mais: esconde o grupo de botões vazio que o componente deixa quando os botões dele estão desligados.
+
+<Source
+  language="tsx"
+  dark
+  code={`<ComboboxInput
+  id="framework"
+  placeholder="Select a framework"
+  showTrigger={false}
+  className="*:data-[slot=input-group-addon]:empty:hidden"
+>
+  <InputGroupAddon align="inline-end">
+    <InputGroupButton
+      size="icon-xs"
+      variant="ghost"
+      render={<ComboboxTrigger />}
+      aria-label="Show options"
+      tabIndex={-1}
+      className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
+    />
+    <ComboboxPrimitive.Clear
+      data-slot="combobox-clear"
+      render={<InputGroupButton variant="ghost" size="icon-xs" />}
+      aria-label="Clear selection"
+      tabIndex={-1}
+    >
+      <XIcon aria-hidden="true" />
+    </ComboboxPrimitive.Clear>
+  </InputGroupAddon>
+</ComboboxInput>`}
+/>
 
 ## Itens que são objetos
 
@@ -273,7 +306,7 @@ Você pode adicionar um complemento ao combobox com o `InputGroupAddon` dentro d
 
 ## RTL
 
-Coloque `dir="rtl"` e o `lang` num ancestral do campo e passe os mesmos ao `ComboboxContent`: a lista está num portal no `body`, e o `div` com `dir` não a alcança. Os paddings, as margens e os cantos são lógicos (`ps`/`pe`, `ms`), então o campo, os chips e o indicador de escolha trocam de lado sozinhos. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
+Coloque `dir="rtl"` e o `lang` num ancestral do campo e passe os mesmos ao `ComboboxContent`: a lista está num portal no `body`, e o `div` com `dir` não a alcança. Os paddings, as margens e os cantos são lógicos (`ps`/`pe`, `ms`), então o campo, os chips e o indicador de escolha trocam de lado sozinhos. O `dir` só inverte o layout: para as setas dos chips seguirem a direção (→ no campo vazio leva ao último chip), o app, ou o exemplo isolado, precisa também do `<DirectionProvider direction="rtl">`, como explica a página [Direction](?path=/docs/componentes-direction--docs). O exemplo traz os dois, e o teste dele confere a seta →. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={ComboboxStories.Rtl} />
 
@@ -283,84 +316,94 @@ O `Combobox` e as suas partes envolvem os primitivos do Base UI. Veja a [documen
 
 ### Combobox
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>items</code></td><td><code>{'Value[] | { value: string; items: Value[] }[]'}</code>: a lista (ou os grupos) que o Base UI filtra</td><td>—</td></tr>
-    <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>{'Value | Value[]'}</code> (um array com <code>multiple</code>)</td><td>—</td></tr>
-    <tr><td><code>onValueChange</code></td><td><code>{'(value, details) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>autoHighlight</code></td><td><code>boolean</code>: destaca o primeiro item ao filtrar</td><td><code>false</code></td></tr>
-    <tr><td><code>itemToStringValue</code></td><td><code>{'(item) => string'}</code>: o texto de um item que é objeto</td><td>—</td></tr>
-    <tr><td><code>isItemEqualToValue</code></td><td><code>{'(item, value) => boolean'}</code>: como comparar um item com o valor</td><td><code>Object.is</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Combobox">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>items</code></td><td><code>{'Value[] | { value: string; items: Value[] }[]'}</code>: a lista (ou os grupos) que o Base UI filtra</td><td>—</td></tr>
+      <tr><td><code>value</code> / <code>defaultValue</code></td><td><code>{'Value | Value[]'}</code> (um array com <code>multiple</code>)</td><td>—</td></tr>
+      <tr><td><code>onValueChange</code></td><td><code>{'(value, details) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>autoHighlight</code></td><td><code>boolean</code>: destaca o primeiro item ao filtrar</td><td><code>false</code></td></tr>
+      <tr><td><code>itemToStringValue</code></td><td><code>{'(item) => string'}</code>: o texto de um item que é objeto</td><td>—</td></tr>
+      <tr><td><code>isItemEqualToValue</code></td><td><code>{'(item, value) => boolean'}</code>: como comparar um item com o valor</td><td><code>Object.is</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ComboboxInput
 
 O `ComboboxInput` envolve um `InputGroup` com o `<input>` do Base UI, o botão da seta e, se pedido, o de limpar. `className` vai para o `InputGroup`; as outras props vão para o `<input>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
-    <tr><td><code>placeholder</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>showTrigger</code></td><td><code>boolean</code>: mostra o botão da seta</td><td><code>true</code></td></tr>
-    <tr><td><code>showClear</code></td><td><code>boolean</code>: mostra o botão de limpar</td><td><code>false</code></td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
-    <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
-    <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Combobox: ComboboxInput">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>id</code></td><td><code>string</code>: o <code>htmlFor</code> do rótulo aponta para ele</td><td>—</td></tr>
+      <tr><td><code>placeholder</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>showTrigger</code></td><td><code>boolean</code>: mostra o botão da seta</td><td><code>true</code></td></tr>
+      <tr><td><code>showClear</code></td><td><code>boolean</code>: mostra o botão de limpar</td><td><code>false</code></td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-invalid</code></td><td><code>{'boolean | "true" | "false"'}</code></td><td>—</td></tr>
+      <tr><td><code>aria-describedby</code></td><td><code>string</code>: ids da descrição e do erro, separados por espaço</td><td>—</td></tr>
+      <tr><td><code>aria-errormessage</code></td><td><code>string</code>: id da mensagem de erro</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ComboboxContent
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>6</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>0</code></td></tr>
-    <tr><td><code>anchor</code></td><td>o <code>ref</code> do <code>useComboboxAnchor</code>: ancora a lista nos chips</td><td>—</td></tr>
-    <tr><td><code>dir</code> / <code>lang</code></td><td><code>string</code>: necessários num exemplo RTL isolado, porque a lista está num portal</td><td>—</td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: nome do <code>dialog</code> no modo popup</td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Combobox: ComboboxContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>6</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>0</code></td></tr>
+      <tr><td><code>anchor</code></td><td>o <code>ref</code> do <code>useComboboxAnchor</code>: ancora a lista nos chips</td><td>—</td></tr>
+      <tr><td><code>dir</code> / <code>lang</code></td><td><code>string</code>: necessários num exemplo RTL isolado, porque a lista está num portal</td><td>—</td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: nome do <code>dialog</code> no modo popup</td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ComboboxItem
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>Value</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Combobox: ComboboxItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>Value</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ComboboxChip
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>showRemove</code></td><td><code>boolean</code>: mostra o botão de remover (nome "Remover" mais o texto do chip)</td><td><code>true</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Combobox: ComboboxChip">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>showRemove</code></td><td><code>boolean</code>: mostra o botão de remover (nome "Remover" mais o texto do chip)</td><td><code>true</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ComboboxTrigger
 
 Renderiza o `<button>` que abre a lista. Dentro do `ComboboxInput` ele já tem o nome "Mostrar opções". No modo popup, use a prop `render` com um `Button` e dê o `id` do rótulo a ele.
 
-`ComboboxChips`, `ComboboxChipsInput`, `ComboboxClear`, `ComboboxList`, `ComboboxEmpty`, `ComboboxGroup`, `ComboboxLabel`, `ComboboxCollection`, `ComboboxSeparator` e `ComboboxValue` aceitam `className` e as props do primitivo. O `useComboboxAnchor` devolve um `ref` para o `ComboboxChips` e o `anchor` do `ComboboxContent`. Os elementos recebem `data-slot` (`combobox-chips`, `combobox-chip`, `combobox-chip-input`, `combobox-content`, `combobox-item`, `combobox-list`, `combobox-empty`…).
+`ComboboxChips`, `ComboboxChipsInput`, `ComboboxList`, `ComboboxEmpty`, `ComboboxGroup`, `ComboboxLabel`, `ComboboxCollection`, `ComboboxSeparator` e `ComboboxValue` aceitam `className` e as props do primitivo. O `useComboboxAnchor` devolve um `ref` para o `ComboboxChips` e o `anchor` do `ComboboxContent`. Os elementos recebem `data-slot` (`combobox-chips`, `combobox-chip`, `combobox-chip-input`, `combobox-content`, `combobox-item`, `combobox-list`, `combobox-empty`…).

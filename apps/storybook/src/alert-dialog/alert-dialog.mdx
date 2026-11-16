@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as AlertDialogStories from "./alert-dialog.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={AlertDialogStories} />
 
@@ -78,13 +79,13 @@ Monte um `AlertDialog` com esta composição:
 ## Acessibilidade
 
 - **Papel, nome e descrição:** o `AlertDialogContent` tem `role="alertdialog"`, e o Base UI o liga ao `AlertDialogTitle` (`aria-labelledby`) e ao `AlertDialogDescription` (`aria-describedby`). O título diz a ação ou o assunto ("Excluir o chat?"), não só "Atenção", e a descrição diz a consequência.
-- **Foco inicial:** o foco vai para o primeiro controle do diálogo. Como o `AlertDialogCancel` vem antes do `AlertDialogAction` no rodapé, o foco começa no **Cancelar**, e a ação destrutiva nunca é a padrão: um Enter distraído não exclui nada. Mantenha essa ordem. O teste da story **Demo** confere o foco inicial.
+- **Foco inicial:** como no Base UI e no shadcn, o foco vai para o primeiro elemento focável do diálogo (aberto por toque, vai para o próprio diálogo, para não abrir o teclado virtual). Sem link no título nem na descrição, é o **Cancelar**, porque o `AlertDialogCancel` vem antes do `AlertDialogAction` no rodapé; com um link na descrição, é o link (veja **Destrutivo**). Nos dois casos a ação destrutiva nunca é a padrão: um Enter distraído não exclui nada. Mantenha essa ordem. Para focar outro elemento, passe `initialFocus` ao `AlertDialogContent` (por exemplo, uma ref do `AlertDialogCancel`). Os testes das stories **Demo** e **Destrutivo** conferem o foco inicial.
 - **Foco preso e devolvido:** o Tab não sai do diálogo, porque o resto da página fica inerte. Esc fecha e o foco volta para o gatilho (o teste da **Demo** confere: Tab seis vezes, Esc e o foco no gatilho).
 - **Diferença para o Dialog:** clicar fora do `AlertDialog` **não** fecha. A pessoa precisa responder com o Cancelar, a ação ou Esc. Por isso não há botão X no canto.
 - **Gatilho e botões:** `AlertDialogTrigger` recebe o elemento pela prop `render`, como `render={<Button variant="outline" />}`, sem `div` envolvendo. O `AlertDialogCancel` também é um `<button>` (um `Close` do Base UI renderizado como Button). Abrir e responder são ações, então são `<button>`, nunca `<a>`.
 - **Nomes específicos:** o texto da ação diz o que ela faz ("Excluir", "Compartilhar"), não "OK" ou "Sim". O componente não tem textos fixos: o idioma é o do seu conteúdo.
 - **Ícone da mídia:** o ícone dentro do `AlertDialogMedia` é decorativo e leva `aria-hidden="true"`, porque o título já diz tudo.
-- **Links na descrição:** ganham sublinhado (o componente já aplica), para não depender só da cor.
+- **Links na descrição:** ganham sublinhado (o componente já aplica), para não depender só da cor, e o anel de foco sólido do projeto (`focus-visible`, `ring`, afastado 2px pelo fundo), no lugar do outline padrão do navegador. O teste da story **Destrutivo** confere o anel pelo teclado.
 - **Véu de fundo:** o `AlertDialogOverlay` escurece a página (`bg-black/30` com desfoque), a única cor com opacidade do componente. Ele não carrega texto, então não tem contraste a cumprir: quem destaca o diálogo é o fundo `popover`, com o texto `popover-foreground` e o contorno `ring-border`.
 - **Portal e RTL:** o conteúdo vai para um portal no `body`. A classe `dark` e o `dir` do `<html>` chegam a ele, mas um `dir` num ancestral do gatilho não. Veja **RTL**.
 - **Testes:** o diálogo fechado não existe para o axe. Por isso cada story tem um `play` que abre o diálogo, espera a animação de entrada terminar e confere que ele está centralizado; o axe roda depois, com o diálogo aberto, no claro, no escuro e em RTL.
@@ -137,7 +138,7 @@ Combine `size="sm"` com o `AlertDialogMedia`.
 
 ## Destrutivo
 
-Use `variant="destructive"` no `AlertDialogAction` para a ação destrutiva. O `AlertDialogMedia` ganha o tom com `className="text-destructive"` (o fundo continua o `muted` cheio, sem o `destructive/10` do registro, que tem opacidade). O foco inicial continua no Cancelar.
+Use `variant="destructive"` no `AlertDialogAction` para a ação destrutiva. O `AlertDialogMedia` ganha o tom com `className="text-destructive"` (o fundo continua o `muted` cheio, sem o `destructive/10` do registro, que tem opacidade). Neste exemplo, como no do shadcn, o foco inicial fica no link da descrição, o primeiro elemento focável; a ação destrutiva continua fora do foco inicial. Para começar no Cancelar, passe `initialFocus` ao `AlertDialogContent` com uma ref do `AlertDialogCancel`.
 
 <Canvas of={AlertDialogStories.Destrutivo} />
 
@@ -157,61 +158,70 @@ O `AlertDialog` é construído sobre o [AlertDialog do Base UI](https://base-ui.
 
 O popup, com o véu e o portal. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert Dialog: AlertDialogContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>initialFocus</code></td><td><code>{'boolean | RefObject | (openType) => HTMLElement | boolean | null'}</code> (do Base UI)</td><td>o primeiro elemento focável</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AlertDialogAction
 
 O botão da ação. É um `Button`: aceita as props dele (`variant`, `size`, `onClick`…).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive" | …'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert Dialog: AlertDialogAction">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive" | …'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AlertDialogCancel
 
 O botão que fecha o diálogo sem agir. É um `Close` do Base UI renderizado como `Button`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | … (do Button)'}</code></td><td><code>{'"outline"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | … (do Button)'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert Dialog: AlertDialogCancel">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | … (do Button)'}</code></td><td><code>{'"outline"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm" | … (do Button)'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>AlertDialog</code></td><td>nenhum (só o contexto)</td><td><code>alert-dialog</code></td></tr>
-    <tr><td><code>AlertDialogTrigger</code></td><td><code>{'<button>'}</code></td><td><code>alert-dialog-trigger</code></td></tr>
-    <tr><td><code>AlertDialogPortal</code></td><td>portal no <code>body</code></td><td><code>alert-dialog-portal</code></td></tr>
-    <tr><td><code>AlertDialogOverlay</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-overlay</code></td></tr>
-    <tr><td><code>AlertDialogContent</code></td><td><code>{'<div role="alertdialog">'}</code></td><td><code>alert-dialog-content</code></td></tr>
-    <tr><td><code>AlertDialogHeader</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-header</code></td></tr>
-    <tr><td><code>AlertDialogFooter</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-footer</code></td></tr>
-    <tr><td><code>AlertDialogMedia</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-media</code></td></tr>
-    <tr><td><code>AlertDialogTitle</code></td><td><code>{'<h2>'}</code></td><td><code>alert-dialog-title</code></td></tr>
-    <tr><td><code>AlertDialogDescription</code></td><td><code>{'<p>'}</code></td><td><code>alert-dialog-description</code></td></tr>
-    <tr><td><code>AlertDialogAction</code></td><td><code>{'<button>'}</code></td><td><code>alert-dialog-action</code></td></tr>
-    <tr><td><code>AlertDialogCancel</code></td><td><code>{'<button>'}</code></td><td><code>alert-dialog-cancel</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Alert Dialog: Referência da API, AlertDialogCancel">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>AlertDialog</code></td><td>nenhum (só o contexto)</td><td><code>alert-dialog</code></td></tr>
+      <tr><td><code>AlertDialogTrigger</code></td><td><code>{'<button>'}</code></td><td><code>alert-dialog-trigger</code></td></tr>
+      <tr><td><code>AlertDialogPortal</code></td><td>portal no <code>body</code></td><td><code>alert-dialog-portal</code></td></tr>
+      <tr><td><code>AlertDialogOverlay</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-overlay</code></td></tr>
+      <tr><td><code>AlertDialogContent</code></td><td><code>{'<div role="alertdialog">'}</code></td><td><code>alert-dialog-content</code></td></tr>
+      <tr><td><code>AlertDialogHeader</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-header</code></td></tr>
+      <tr><td><code>AlertDialogFooter</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-footer</code></td></tr>
+      <tr><td><code>AlertDialogMedia</code></td><td><code>{'<div>'}</code></td><td><code>alert-dialog-media</code></td></tr>
+      <tr><td><code>AlertDialogTitle</code></td><td><code>{'<h2>'}</code></td><td><code>alert-dialog-title</code></td></tr>
+      <tr><td><code>AlertDialogDescription</code></td><td><code>{'<p>'}</code></td><td><code>alert-dialog-description</code></td></tr>
+      <tr><td><code>AlertDialogAction</code></td><td><code>{'<button>'}</code></td><td><code>alert-dialog-action</code></td></tr>
+      <tr><td><code>AlertDialogCancel</code></td><td><code>{'<button>'}</code></td><td><code>alert-dialog-cancel</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

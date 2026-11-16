@@ -23,9 +23,13 @@ import { ChevronDownIcon } from "lucide-react"
  *   RTL isolado, passe `dir` e `lang` ao `NavigationMenuContent` e
  *   `align="end"` ao `NavigationMenu`.
  * - Cores com opacidade do registro trocadas por papéis cheios: o estado
- *   aberto e o link ativo usam `bg-muted` (era `bg-muted/50`) e os contornos do
- *   painel usam `ring-border` (era `ring-foreground/5` e
+ *   aberto e o link ativo usam `bg-muted` (era `bg-muted/50`) e o contorno do
+ *   painel (o `Popup`) usa `ring-border` (era `ring-foreground/5` e
  *   `dark:ring-foreground/10`).
+ * - Link ativo: o Base UI marca o link da página atual (`active`) com
+ *   `data-active=""` e `aria-current="page"`. O registro usava
+ *   `data-[active=true]:`, que nunca casava; aqui é a variante `data-active:`
+ *   do `shadcn/tailwind.css`.
  * - Anel de foco: o gatilho e o link da barra usam o anel sólido,
  *   desenhado por dentro (`ring-inset`), por causa da rolagem na barra (veja
  *   abaixo). Dentro do painel, o link usa o mesmo anel sólido, também por
@@ -33,10 +37,30 @@ import { ChevronDownIcon } from "lucide-react"
  *   painel: o destaque `muted` sozinho mediria ~1,1:1 sobre o `popover`,
  *   abaixo dos 3:1 de um indicador de foco. O registro tirava esse anel
  *   (`focus:ring-0` no `NavigationMenuContent`).
- * - Pendências do registro mantidas como estão: as variantes
+ * - Pendências do registro: as variantes
  *   `data-ending-style:data-activation-direction=left:…` do
  *   `NavigationMenuContent` não são seletores válidos do Tailwind (não geram
- *   nada). O gatilho passou de `h-9` para `h-8`, a escala dos controles.
+ *   nada) e ficaram como estão. O gatilho passou de `h-9` para `h-8`, a escala
+ *   dos controles.
+ * - Classes inertes do registro removidas (tire-as de novo depois de um
+ *   `shadcn add`):
+ *   - no `NavigationMenuContent`, as oito `data-[motion=…]` e
+ *     `data-[motion^=…]` (slide e fade, físicas) e todas as
+ *     `group-data-[viewport=false]/navigation-menu:*`: são atributos do Radix
+ *     (`data-motion`, `data-viewport`), e o Base UI não emite nenhum deles, só
+ *     o `data-activation-direction`;
+ *   - no `Popup`, `data-[ending-style]:easing-[ease]` (não é utilitário do
+ *     Tailwind) e `xs:w-(--popup-width)` (não há breakpoint `xs`; o
+ *     `w-(--popup-width)` já está lá);
+ *   - no `NavigationMenuIndicator`, `top-full` (o elemento não é posicionado).
+ * - `NavigationMenuIndicator`: é o `NavigationMenu.Icon` do Base UI, um
+ *   `<span aria-hidden>` decorativo que marca com `data-popup-open` o item
+ *   cujo painel está aberto. Ele lê o estado do item, então precisa ficar
+ *   dentro de um `NavigationMenuItem` (ao lado do gatilho ou dentro dele):
+ *   fora de um item, como na árvore da página do shadcn (filho da raiz), o
+ *   Base UI lança um erro. Não é o indicador de viewport do Radix. As classes
+ *   `data-[state=hidden|visible]:…` do registro eram do Radix e viraram
+ *   `opacity-0 transition-opacity data-popup-open:opacity-100`.
  * - Rolagem na barra (escolha do usuário): quando a lista da barra não cabe na largura,
  *   rola na horizontal dentro da própria barra, em vez de empurrar a página
  *   (a 320px, ou com zoom de 400%). A barra de rolagem fica escondida
@@ -48,8 +72,8 @@ import { ChevronDownIcon } from "lucide-react"
  *   `scroll-px-10` faz o item focado parar fora da zona do fade, e os itens
  *   não encolhem (`shrink-0`). Como o contêiner corta o que passa da borda,
  *   o anel de foco desses itens é desenhado por dentro (`ring-inset`, sem o
- *   afastamento de 2px). Por dentro, ele encosta no fundo do item: 3,15:1
- *   sobre `muted` e 3,5:1 sobre `background` no claro; 5,7:1 e 7,6:1 no
+ *   afastamento de 2px). Por dentro, ele encosta no fundo do item: 4,7:1
+ *   sobre `muted` e 5,2:1 sobre `background` no claro; 5,7:1 e 7,6:1 no
  *   escuro.
  */
 
@@ -150,7 +174,7 @@ function NavigationMenuContent({
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
       className={cn(
-        "data-ending-style:data-activation-direction=left:translate-x-[50%] rtl:data-ending-style:data-activation-direction=left:-translate-x-[50%] data-ending-style:data-activation-direction=right:translate-x-[-50%] rtl:data-ending-style:data-activation-direction=right:-translate-x-[-50%] data-starting-style:data-activation-direction=left:translate-x-[-50%] rtl:data-starting-style:data-activation-direction=left:-translate-x-[-50%] data-starting-style:data-activation-direction=right:translate-x-[50%] rtl:data-starting-style:data-activation-direction=right:-translate-x-[50%] h-full w-auto p-1.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[viewport=false]/navigation-menu:rounded-2xl group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:shadow-lg group-data-[viewport=false]/navigation-menu:ring-1 group-data-[viewport=false]/navigation-menu:ring-border group-data-[viewport=false]/navigation-menu:duration-300 data-ending-style:opacity-0 data-starting-style:opacity-0 data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out group-data-[viewport=false]/navigation-menu:data-open:animate-in group-data-[viewport=false]/navigation-menu:data-open:fade-in-0 group-data-[viewport=false]/navigation-menu:data-open:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-closed:animate-out group-data-[viewport=false]/navigation-menu:data-closed:fade-out-0 group-data-[viewport=false]/navigation-menu:data-closed:zoom-out-95",
+        "data-ending-style:data-activation-direction=left:translate-x-[50%] rtl:data-ending-style:data-activation-direction=left:-translate-x-[50%] data-ending-style:data-activation-direction=right:translate-x-[-50%] rtl:data-ending-style:data-activation-direction=right:-translate-x-[-50%] data-starting-style:data-activation-direction=left:translate-x-[-50%] rtl:data-starting-style:data-activation-direction=left:-translate-x-[-50%] data-starting-style:data-activation-direction=right:translate-x-[50%] rtl:data-starting-style:data-activation-direction=right:-translate-x-[50%] h-full w-auto p-1.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-ending-style:opacity-0 data-starting-style:opacity-0",
         className
       )}
       {...props}
@@ -179,7 +203,7 @@ function NavigationMenuPositioner({
         )}
         {...props}
       >
-        <NavigationMenuPrimitive.Popup className="data-[ending-style]:easing-[ease] xs:w-(--popup-width) relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) rounded-3xl bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-[opacity,transform,width,height,scale,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0">
+        <NavigationMenuPrimitive.Popup className="relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) rounded-3xl bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-[opacity,transform,width,height,scale,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0">
           <NavigationMenuPrimitive.Viewport className="relative size-full overflow-hidden" />
         </NavigationMenuPrimitive.Popup>
       </NavigationMenuPrimitive.Positioner>
@@ -195,7 +219,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "flex items-center gap-2 rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset in-data-[slot=navigation-menu-content]:w-full in-data-[slot=navigation-menu-content]:rounded-xl in-data-[slot=navigation-menu-content]:p-2 in-data-[slot=navigation-menu-content]:font-normal data-[active=true]:bg-muted data-[active=true]:hover:bg-muted data-[active=true]:focus:bg-muted [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center gap-2 rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset in-data-[slot=navigation-menu-content]:w-full in-data-[slot=navigation-menu-content]:rounded-xl in-data-[slot=navigation-menu-content]:p-2 in-data-[slot=navigation-menu-content]:font-normal data-active:bg-muted data-active:hover:bg-muted data-active:focus:bg-muted [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -211,7 +235,7 @@ function NavigationMenuIndicator({
     <NavigationMenuPrimitive.Icon
       data-slot="navigation-menu-indicator"
       className={cn(
-        "top-full z-1 flex h-1.5 items-end justify-center overflow-hidden data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in",
+        "z-1 flex h-1.5 items-end justify-center overflow-hidden opacity-0 transition-opacity data-popup-open:opacity-100",
         className
       )}
       {...props}

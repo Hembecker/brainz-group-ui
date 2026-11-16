@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as BubbleStories from "./bubble.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={BubbleStories} />
 
@@ -113,20 +114,22 @@ Use `variant` para mudar o tratamento visual do balão.
 
 <Canvas of={BubbleStories.Variantes} />
 
-<table>
-  <thead>
-    <tr><th>Variante</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>default</code></td><td>Um balão primário forte, em geral para o usuário atual.</td></tr>
-    <tr><td><code>secondary</code></td><td>O balão neutro padrão para o conteúdo da conversa.</td></tr>
-    <tr><td><code>muted</code></td><td>Um balão de menos destaque, para conteúdo de apoio.</td></tr>
-    <tr><td><code>tinted</code></td><td>Um balão com um leve tom da cor primária.</td></tr>
-    <tr><td><code>outline</code></td><td>Um balão com contorno, para conteúdo secundário ou rico.</td></tr>
-    <tr><td><code>ghost</code></td><td>Conteúdo sem moldura, para o texto do assistente ou conteúdo rico.</td></tr>
-    <tr><td><code>destructive</code></td><td>Um balão destrutivo, para erros e ações que falharam.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Bubble: Variantes">
+  <table>
+    <thead>
+      <tr><th>Variante</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>default</code></td><td>Um balão primário forte, em geral para o usuário atual.</td></tr>
+      <tr><td><code>secondary</code></td><td>O balão neutro padrão para o conteúdo da conversa.</td></tr>
+      <tr><td><code>muted</code></td><td>Um balão de menos destaque, para conteúdo de apoio.</td></tr>
+      <tr><td><code>tinted</code></td><td>Um balão com um leve tom da cor primária.</td></tr>
+      <tr><td><code>outline</code></td><td>Um balão com contorno, para conteúdo secundário ou rico.</td></tr>
+      <tr><td><code>ghost</code></td><td>Conteúdo sem moldura, para o texto do assistente ou conteúdo rico.</td></tr>
+      <tr><td><code>destructive</code></td><td>Um balão destrutivo, para erros e ações que falharam.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O balão acompanha o tamanho do conteúdo, até 80% da largura do contêiner. A variante `ghost` tira esse limite, para o texto do assistente e o conteúdo rico ocuparem a linha toda.
 
@@ -136,15 +139,17 @@ Use `align` no `Bubble` para alinhar o balão ao início ou ao fim da conversa.
 
 <Canvas of={BubbleStories.Alinhamento} />
 
-<table>
-  <thead>
-    <tr><th>align</th><th>Descrição</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>start</code></td><td>Alinha o balão ao início da conversa.</td></tr>
-    <tr><td><code>end</code></td><td>Alinha o balão ao fim da conversa.</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Bubble: Alinhamento">
+  <table>
+    <thead>
+      <tr><th>align</th><th>Descrição</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>start</code></td><td>Alinha o balão ao início da conversa.</td></tr>
+      <tr><td><code>end</code></td><td>Alinha o balão ao fim da conversa.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 **Observação:** numa interface de chat, o normal é alinhar pelo componente `Message` (`align="end"`), e não pelo `Bubble`. O `Bubble` dentro de um `Message` alinhado ao fim já vai para o fim (`group-data-[align=end]/message`). O alinhamento é lógico (`self-end`), então em RTL o fim é a esquerda.
 
@@ -206,16 +211,18 @@ Combine um balão com um [`Popover`](?path=/docs/componentes-popover--docs) para
 
 O contêiner raiz do balão. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "secondary" | "muted" | "tinted" | "outline" | "ghost" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Bubble">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "secondary" | "muted" | "tinted" | "outline" | "ghost" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="bubble"`, `data-variant` e `data-align`.
 
@@ -223,15 +230,17 @@ O elemento recebe `data-slot="bubble"`, `data-variant` e `data-align`.
 
 O conteúdo do balão. Aceita as props do elemento renderizado.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Bubble: BubbleContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Com `render={<button />}` ou `render={<a />}`, o balão vira um botão ou um link, com hover e anel de foco. O elemento recebe `data-slot="bubble-content"`.
 
@@ -239,16 +248,18 @@ Com `render={<button />}` ou `render={<a />}`, o balão vira um botão ou um lin
 
 A fileira de reações, sobreposta à borda do balão. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"end"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Bubble: BubbleReactions">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom"'}</code></td><td><code>{'"bottom"'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "end"'}</code></td><td><code>{'"end"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="bubble-reactions"`, `data-align` e `data-side`.
 
@@ -256,13 +267,15 @@ O elemento recebe `data-slot="bubble-reactions"`, `data-align` e `data-side`.
 
 Agrupa balões seguidos do mesmo autor. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Bubble: BubbleGroup">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="bubble-group"`.

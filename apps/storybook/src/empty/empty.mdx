@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as EmptyStories from "./empty.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={EmptyStories} />
 
@@ -140,41 +141,47 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `di
 
 O componente principal do estado vazio. Envolve o `EmptyHeader` e o `EmptyContent`. Aceita todas as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Empty">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### EmptyHeader
 
 Envolve a mídia, o título e a descrição.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Empty: EmptyHeader">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### EmptyMedia
 
 Mostra a mídia do estado vazio, como um ícone ou uma imagem. Também recebe outros componentes, como um avatar.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "icon"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Empty: EmptyMedia">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "icon"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="empty-icon"` (o nome vem do registro) e `data-variant`.
 
@@ -182,53 +189,61 @@ O elemento recebe `data-slot="empty-icon"` (o nome vem do registro) e `data-vari
 
 O título do estado vazio. Coloque um heading dentro dele (veja **Acessibilidade**).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Empty: EmptyTitle">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### EmptyDescription
 
 A descrição do estado vazio. Os links diretos dentro dela ficam sublinhados.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Empty: EmptyDescription">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### EmptyContent
 
 O conteúdo do estado vazio, como um botão, um campo ou um link.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Empty: EmptyContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Empty</code></td><td><code>{'<div>'}</code></td><td><code>empty</code></td></tr>
-    <tr><td><code>EmptyHeader</code></td><td><code>{'<div>'}</code></td><td><code>empty-header</code></td></tr>
-    <tr><td><code>EmptyMedia</code></td><td><code>{'<div>'}</code></td><td><code>empty-icon</code></td></tr>
-    <tr><td><code>EmptyTitle</code></td><td><code>{'<div>'}</code></td><td><code>empty-title</code></td></tr>
-    <tr><td><code>EmptyDescription</code></td><td><code>{'<div>'}</code></td><td><code>empty-description</code></td></tr>
-    <tr><td><code>EmptyContent</code></td><td><code>{'<div>'}</code></td><td><code>empty-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Empty: Referência da API, EmptyContent">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Empty</code></td><td><code>{'<div>'}</code></td><td><code>empty</code></td></tr>
+      <tr><td><code>EmptyHeader</code></td><td><code>{'<div>'}</code></td><td><code>empty-header</code></td></tr>
+      <tr><td><code>EmptyMedia</code></td><td><code>{'<div>'}</code></td><td><code>empty-icon</code></td></tr>
+      <tr><td><code>EmptyTitle</code></td><td><code>{'<div>'}</code></td><td><code>empty-title</code></td></tr>
+      <tr><td><code>EmptyDescription</code></td><td><code>{'<div>'}</code></td><td><code>empty-description</code></td></tr>
+      <tr><td><code>EmptyContent</code></td><td><code>{'<div>'}</code></td><td><code>empty-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 Todas aceitam as props de um `<div>` (a `EmptyDescription` é tipada como `<p>`, mas renderiza um `<div>`).

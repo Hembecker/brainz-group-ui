@@ -125,8 +125,14 @@ function EstadoControladoExemplo() {
       onOpenChange={setOpen}
       className="flex w-full max-w-[350px] flex-col gap-2"
     >
-      <CollapsibleTrigger render={<Button variant="outline" />}>
-        {open ? "Ocultar detalhes" : "Mostrar detalhes"}
+      <CollapsibleTrigger
+        render={<Button variant="outline" className="w-full" />}
+      >
+        Detalhes do pedido
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="ms-auto group-data-panel-open/button:rotate-180"
+        />
       </CollapsibleTrigger>
       <CollapsibleContent className="rounded-2xl border px-4 py-2 text-sm">
         O estado fica no seu componente: ele sabe quando o painel está aberto.
@@ -141,6 +147,7 @@ export const EstadoControlado: Story = {
     docs: {
       source: {
         code: `import * as React from "react"
+import { ChevronDownIcon } from "lucide-react"
 
 export function Exemplo() {
   const [open, setOpen] = React.useState(true)
@@ -151,8 +158,14 @@ export function Exemplo() {
       onOpenChange={setOpen}
       className="flex w-full max-w-[350px] flex-col gap-2"
     >
-      <CollapsibleTrigger render={<Button variant="outline" />}>
-        {open ? "Ocultar detalhes" : "Mostrar detalhes"}
+      <CollapsibleTrigger
+        render={<Button variant="outline" className="w-full" />}
+      >
+        Detalhes do pedido
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="ms-auto group-data-panel-open/button:rotate-180"
+        />
       </CollapsibleTrigger>
       <CollapsibleContent className="rounded-2xl border px-4 py-2 text-sm">
         O estado fica no seu componente: ele sabe quando o painel está aberto.
@@ -166,14 +179,14 @@ export function Exemplo() {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const gatilho = await canvas.findByRole("button", {
-      name: "Ocultar detalhes",
+      name: "Detalhes do pedido",
     })
 
-    // The label follows the controlled state; the state is also exposed.
+    // The name stays fixed; the controlled state is exposed by aria-expanded.
     await expect(gatilho).toHaveAttribute("aria-expanded", "true")
     await userEvent.click(gatilho)
     await expect(gatilho).toHaveAttribute("aria-expanded", "false")
-    await expect(gatilho).toHaveTextContent("Mostrar detalhes")
+    await expect(gatilho).toHaveAccessibleName("Detalhes do pedido")
     await userEvent.click(gatilho)
     await expect(gatilho).toHaveAttribute("aria-expanded", "true")
     await esperarAnimacoes()

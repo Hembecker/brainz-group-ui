@@ -71,6 +71,16 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+// The computed color of a token, serialized the same way as in box-shadow.
+function corDoToken(token: string) {
+  const sonda = document.createElement("span")
+  sonda.style.color = `var(${token})`
+  document.body.appendChild(sonda)
+  const cor = getComputedStyle(sonda).color
+  sonda.remove()
+  return cor
+}
+
 // Waits for the highlighter: `count` blocks with colored tokens.
 async function aguardarRealce(canvasElement: HTMLElement, count = 1) {
   await waitFor(
@@ -454,6 +464,14 @@ export const AcoesFlutuantes: Story = {
         getComputedStyle(copiar.parentElement as HTMLElement).opacity
       ).toBe("1")
     )
+    // With focus, the decorative `ring-border` gives way to the solid ring
+    // (3px `--ring` + 2px offset in the background color).
+    await waitFor(() => {
+      const sombra = getComputedStyle(copiar).boxShadow
+      expect(sombra).toContain(corDoToken("--ring"))
+      expect(sombra).toContain(corDoToken("--background"))
+      expect(sombra).toMatch(/\b5px\b/)
+    })
   },
   render: () => (
     <div className="w-full max-w-md">

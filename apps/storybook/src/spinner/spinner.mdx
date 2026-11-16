@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as SpinnerStories from "./spinner.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={SpinnerStories} />
 
@@ -110,3 +111,23 @@ O Spinner não tem lado: em RTL, ele só acompanha o fluxo do conteúdo ao redor
 Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={SpinnerStories.Rtl} />
+
+## Referência da API
+
+### Spinner
+
+Um indicador de carregamento. Renderiza o `Loader2Icon` do `lucide-react` e aceita todas as props de um `<svg>`, que são repassadas a ele.
+
+<ScrollTable label="Referência da API do Spinner">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Carregando"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+O elemento recebe `data-slot="spinner"` e `role="status"`; as props são repassadas por último, então as duas podem ser sobrescritas. O padrão é `size-4 animate-spin motion-reduce:animate-none`; a `className` é mesclada por cima. Dentro de um Button ou de um Badge, quem usa passa `data-icon="inline-start"` ou `"inline-end"`: o componente não define esse atributo.

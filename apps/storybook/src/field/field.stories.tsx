@@ -428,7 +428,11 @@ export const CaixaDeSelecao: Story = {
       </FieldSet>
       <FieldSeparator />
       <Field orientation="horizontal">
-        <Checkbox id="checkbox-sincronizar" defaultChecked />
+        <Checkbox
+          id="checkbox-sincronizar"
+          defaultChecked
+          aria-describedby="checkbox-sincronizar-descricao"
+        />
         <FieldContent>
           <FieldLabel htmlFor="checkbox-sincronizar">
             Sincronizar as pastas Mesa e Documentos

@@ -1,0 +1,463 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+
+import { ScrollTable } from "./_components/token-table";
+
+<Meta title="Instalação" />
+
+# Instalação
+
+Um caminho só: criar um app Vite **dentro deste monorepo**, na pasta `apps/`, com a mesma configuração do `apps/web`.
+
+O pacote `@workspace/ui` é um pacote do workspace: privado e não publicado no npm. Hoje um app só consegue usá-lo se estiver no mesmo repositório, como pasta de `apps/`. O npm workspaces liga o pacote ao app, e o Tailwind lê as classes do app e as do pacote (veja [Como o Tailwind encontra as classes](#como-o-tailwind-encontra-as-classes)). A seção [Fora do monorepo](#fora-do-monorepo) explica o que ainda falta para usar o design system em outros repositórios.
+
+Nesta página o app novo se chama `meu-app`. Troque o nome da pasta e o `name` do `package.json` pelo nome do seu projeto. Os comandos são do PowerShell, no Windows, e rodam na raiz do repositório.
+
+## Pré-requisitos
+
+- **Node.js 22.13 ou mais novo na linha 22, a linha 24, ou 26 ou mais novo.** É a faixa do campo `engines` do `package.json` da raiz (`^22.13.0 || ^24.0.0 || >=26.0.0`), a interseção do Vitest 5, do ESLint 10 e do `cn`. O CI usa o Node 26.
+- **npm 11.** O `packageManager` da raiz é o `npm@11.17.0`. O repositório usa npm workspaces: não use pnpm nem yarn.
+- **Git**, para clonar o repositório.
+
+<Source
+  language="powershell"
+  dark
+  code={`node --version   # v22.13+ (linha 22), v24.x ou v26+
+npm.cmd --version   # 11.x`}
+/>
+
+## 1. Clonar e instalar
+
+<Source
+  language="powershell"
+  dark
+  code={`git clone https://github.com/Hembecker/big-brain-ui.git
+cd big-brain-ui
+npm.cmd ci`}
+/>
+
+O `npm ci` instala tudo pelo `package-lock.json`: as dependências de todos os pacotes ficam em `node_modules/`, na raiz, e o `@workspace/ui` vira um link para `packages/ui`.
+
+Rode o `npm ci` **antes** de criar o app. Depois que a pasta nova existe, o `package-lock.json` ainda não a conhece, e o `npm ci` recusa um lock fora de sincronia. O passo 6 registra o app novo.
+
+## 2. Criar a pasta e copiar a configuração
+
+O `apps/web` é o app de referência. O jeito mais seguro é copiar a configuração dele, que já é a usada no repositório:
+
+<Source
+  language="powershell"
+  dark
+  code={`New-Item -ItemType Directory -Force apps/meu-app/src/components
+Copy-Item apps/web/vite.config.ts, apps/web/tsconfig.json, apps/web/tsconfig.app.json, apps/web/tsconfig.node.json, apps/web/components.json apps/meu-app/
+Copy-Item apps/web/src/components/theme-provider.tsx apps/meu-app/src/components/`}
+/>
+
+A pasta fica assim:
+
+<Source
+  language="text"
+  dark
+  code={`apps/meu-app/
+├── components.json        # configuração do CLI do shadcn (copiada)
+├── index.html
+├── package.json
+├── tsconfig.json          # referências e aliases (copiado)
+├── tsconfig.app.json      # o código em src/ (copiado)
+├── tsconfig.node.json     # o vite.config.ts (copiado)
+├── vite.config.ts         # React, Tailwind e o alias "@" (copiado)
+└── src/
+    ├── App.tsx
+    ├── main.tsx
+    └── components/
+        └── theme-provider.tsx   # modo escuro (copiado)`}
+/>
+
+Os arquivos copiados não mudam. O conteúdo deles está abaixo, para referência.
+
+### vite.config.ts
+
+O plugin do React, o plugin do Tailwind 4 (`@tailwindcss/vite`, sem `tailwind.config` nem PostCSS) e o alias `@` para a pasta `src/` do app.
+
+<Source
+  language="ts"
+  dark
+  code={`import { resolve } from "node:path"
+import tailwindcss from "@tailwindcss/vite"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": resolve(import.meta.dirname, "./src"),
+    },
+  },
+})`}
+/>
+
+O Vite não precisa de um alias para `@workspace/ui`: ele chega pelo link em `node_modules`, e o campo `exports` do `packages/ui/package.json` diz qual arquivo cada caminho abre.
+
+### TypeScript
+
+O `tsconfig.json` só aponta para os outros dois e repete os aliases, para o editor:
+
+<Source
+  language="json"
+  dark
+  code={`{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"]
+    }
+  }
+}`}
+/>
+
+O `tsconfig.app.json` checa o código de `src/`. O `paths` com `@workspace/ui/*` faz o TypeScript ler o código-fonte do pacote direto, sem build do pacote:
+
+<Source
+  language="json"
+  dark
+  code={`{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"]
+    }
+  },
+  "include": ["src"]
+}`}
+/>
+
+O `tsconfig.node.json` checa só o `vite.config.ts`, com os tipos do Node. Como o `verbatimModuleSyntax` está ligado, importe tipos com `import type`.
+
+## 3. package.json
+
+Crie `apps/meu-app/package.json`. As versões são as do `apps/web`, fixas, sem `^` nem `~` (o `.npmrc` da raiz tem `save-exact=true`). O `"@workspace/ui": "*"` é a referência ao pacote do workspace e fica assim.
+
+<Source
+  language="json"
+  dark
+  code={`{
+  "name": "meu-app",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@workspace/ui": "*",
+    "cn": "0.5.2",
+    "lucide-react": "1.72.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.5",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.8"
+  }
+}`}
+/>
+
+O `typecheck` passa o `-p tsconfig.app.json` porque o `tsconfig.json` tem `"files": []`: um `tsc --noEmit` sem `-p` não checaria nada. Para ter ESLint, copie também o `eslint.config.js` e as `devDependencies` de ESLint do `apps/web`.
+
+## 4. index.html
+
+<Source
+  language="html"
+  dark
+  code={`<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>`}
+/>
+
+O `lang="pt-BR"` faz o leitor de tela ler em português. O `data-brand` (a marca) e a classe `dark` (o modo) também ficam no `<html>`, como explicam as seções [Modo escuro](#modo-escuro) e [Marca](#marca).
+
+## 5. Estilos e entrada
+
+O `src/main.tsx` importa o `globals.css` do pacote **uma vez**, antes de tudo. Ele traz o Tailwind 4, as animações, a fonte Inter e todos os tokens (as marcas, os papéis e o modo escuro). O app não tem CSS próprio nem `tailwind.config`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+
+import "@workspace/ui/globals.css"
+import { App } from "@/App"
+import { ThemeProvider } from "@/components/theme-provider"
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </StrictMode>
+)`}
+/>
+
+E o `src/App.tsx`, com um componente, um bloco e o hook da marca:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { LoginPage } from "@workspace/ui/blocks/login"
+import { setBrand, useBrand } from "@workspace/ui/brand/use-brand"
+import { Button } from "@workspace/ui/components/button"
+
+export function App() {
+  const brand = useBrand()
+
+  return (
+    <>
+      <div className="flex justify-end p-4">
+        <Button
+          variant="outline"
+          onClick={() => setBrand(brand.id === "brainz" ? "sesi" : "brainz")}
+        >
+          Trocar a marca (atual: {brand.name})
+        </Button>
+      </div>
+      <LoginPage
+        signupHref="/cadastro"
+        onSubmit={(values) => console.log(values)}
+      />
+    </>
+  )
+}`}
+/>
+
+### Como o Tailwind encontra as classes
+
+O Tailwind 4 só gera as classes que encontra nos arquivos que ele lê. Elas vêm de dois lugares:
+
+- **As classes do app:** a detecção automática do Tailwind lê a pasta raiz do Vite, que é a pasta do app (`apps/meu-app`), menos o `node_modules` e o que o `.gitignore` ignora. As classes do `meu-app` entram sem configuração.
+- **As classes do pacote:** o pacote fica fora da raiz do app, então o `globals.css` aponta para ele com um `@source`. O caminho é relativo ao próprio `globals.css` (`packages/ui/src/styles/`) e cobre componentes, blocos e marcas:
+
+<Source
+  language="css"
+  dark
+  code={`@source "../**/*.{ts,tsx}";`}
+/>
+
+O `globals.css` tem mais duas linhas `@source`, presentes desde o primeiro commit do repositório: `"../../../apps/**/*.{ts,tsx,mdx}"` e `"../../../components/**/*.{ts,tsx}"`. Relativas ao `globals.css`, elas apontam para `packages/apps` e `packages/components`, pastas que não existem, e hoje não cobrem nada. Por isso cada app gera só as classes dele: uma classe usada só no Storybook não entra no CSS do `apps/web`.
+
+## 6. Registrar o app no workspace
+
+Volte à raiz e rode o `npm install`:
+
+<Source
+  language="powershell"
+  dark
+  code={`npm.cmd install`}
+/>
+
+O `workspaces` da raiz (`apps/*` e `packages/*`) já inclui a pasta nova. O `npm install` registra o `meu-app` no `package-lock.json` e liga as dependências dele. As versões são as mesmas do `apps/web`, que já estão no lock. **O `package-lock.json` muda**: faça o commit dele junto com o app.
+
+## 7. Rodar
+
+<Source
+  language="powershell"
+  dark
+  code={`npm.cmd run dev -w meu-app        # servidor de desenvolvimento do Vite (http://localhost:5173)
+npm.cmd run build -w meu-app      # tsc -b e vite build, em apps/meu-app/dist
+npm.cmd run typecheck -w meu-app  # só o TypeScript`}
+/>
+
+O `-w` roda o script do app a partir da raiz. Dentro de `apps/meu-app`, o mesmo vale sem o `-w` (`npm.cmd run dev`). Pelo Turbo, use o filtro, para não subir todos os apps:
+
+<Source
+  language="powershell"
+  dark
+  code={`npx.cmd turbo build --filter=meu-app
+npx.cmd turbo dev --filter=meu-app`}
+/>
+
+O `npm.cmd run dev` e o `npm.cmd run build` da raiz, sem filtro, rodam o Turbo em **todos** os apps, inclusive o Storybook (porta 6007).
+
+## Como importar
+
+O campo `exports` do `packages/ui/package.json` define os caminhos. Cada componente, bloco e marca é um arquivo, então se importa pelo caminho dele:
+
+<ScrollTable label="Caminhos de importação">
+  <table>
+    <thead>
+      <tr>
+        <th>Caminho</th>
+        <th>O que traz</th>
+        <th>Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code>@workspace/ui/globals.css</code>
+        </td>
+        <td>Tailwind, fonte, tokens, marcas e modo escuro.</td>
+        <td>
+          <code>import "@workspace/ui/globals.css"</code>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>@workspace/ui/components/*</code>
+        </td>
+        <td>Os 63 componentes, um arquivo por componente.</td>
+        <td>
+          <code>{`import { Button } from "@workspace/ui/components/button"`}</code>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>@workspace/ui/blocks/*</code>
+        </td>
+        <td>
+          Os modelos de aplicação: <code>dashboard</code>, <code>login</code>,{" "}
+          <code>signup</code> e <code>auth-layout</code>.
+        </td>
+        <td>
+          <code>{`import { DashboardLayout } from "@workspace/ui/blocks/dashboard"`}</code>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>@workspace/ui/brand/*</code>
+        </td>
+        <td>
+          A marca ativa (<code>use-brand</code>) e o registro de marcas (<code>brands</code>).
+        </td>
+        <td>
+          <code>{`import { useBrand } from "@workspace/ui/brand/use-brand"`}</code>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>@workspace/ui/hooks/*</code>
+        </td>
+        <td>Hooks do pacote.</td>
+        <td>
+          <code>{`import { useIsMobile } from "@workspace/ui/hooks/use-mobile"`}</code>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>@workspace/ui/lib/*</code>
+        </td>
+        <td>Utilitários.</td>
+        <td>
+          <code>{`import { cn } from "@workspace/ui/lib/utils"`}</code>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+O [catálogo de componentes](?path=/docs/componentes-visão-geral--docs) mostra cada componente com exemplos e código. As páginas dos [blocos](?path=/docs/blocks-visão-geral--docs) mostram as props de cada modelo: o [Dashboard](?path=/docs/blocks-dashboard--docs), o [Login](?path=/docs/blocks-login--docs) e o [Cadastro](?path=/docs/blocks-cadastro--docs).
+
+## Modo escuro
+
+O modo escuro é a classe `dark` num ancestral, em geral o `<html>`. Todos os papéis têm um valor no claro e outro no escuro, e a variante `dark:` do Tailwind usa a mesma classe.
+
+O `ThemeProvider` copiado do `apps/web` cuida disso: ele põe `light` ou `dark` no `<html>`, segue o sistema operacional por padrão, guarda a escolha no `localStorage` (se ele estiver bloqueado, usa o `defaultTheme`) e alterna com o atalho **Alt+Shift+D** (Option+Shift+D no Mac), que não dispara dentro de campos de texto. Ele fica no app, e não no `@workspace/ui`. Para trocar o modo por um botão, use o hook dele:
+
+<Source
+  language="tsx"
+  dark
+  code={`import { useTheme } from "@/components/theme-provider"
+
+const { setTheme } = useTheme()
+setTheme("dark") // "light", "dark" ou "system"`}
+/>
+
+Sem o `ThemeProvider`, basta pôr e tirar a classe: `document.documentElement.classList.toggle("dark")`.
+
+## Marca
+
+A marca ativa é o atributo `data-brand` no `<html>`: `brainz` (a Brainz Group, padrão também sem o atributo) ou `sesi` (tokens oficiais do SI Design System, logo de exemplo). As cores e a fonte trocam pelo CSS; os blocos leem o logo pelo `useBrand()`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { setBrand, useBrand } from "@workspace/ui/brand/use-brand"
+
+const brand = useBrand() // { id, name, description, illustrative, Logo, Mark }
+setBrand("sesi")         // grava data-brand="sesi" no <html>
+
+<brand.Logo className="h-8 w-auto" title={brand.name} />`}
+/>
+
+Um projeto de uma marca só pode fixar o atributo direto no HTML: `<html lang="pt-BR" data-brand="sesi">`. A página [Temas](?path=/docs/temas--docs) explica como adicionar uma marca nova sem mudar nenhum componente.
+
+## CLI do shadcn
+
+O `components.json` copiado é o mesmo do `apps/web`: estilo `base-rhea`, Base UI, lucide, RTL ligado, o CSS em `../../packages/ui/src/styles/globals.css` e o alias `ui` em `@workspace/ui/components`. Com ele, o CLI e os editores sabem onde ficam os componentes do monorepo.
+
+- **Componentes novos entram no pacote.** Rode `npx.cmd shadcn add <nome>` dentro de `packages/ui`, onde fica o CLI na versão fixa. Assim o componente fica disponível para todos os apps.
+- **O `shadcn add` sobrescreve.** Ele escreve por cima dos componentes já ajustados (cores, foco, textos em português) e dos blocos. Revise o diff e reaplique as decisões registradas no comentário do topo de cada arquivo.
+- **Não rode `shadcn apply`.** Ele troca todos os componentes e os tokens pelo estilo do preset.
+
+## Windows
+
+- Use `npm.cmd` e `npx.cmd`. A política de execução do PowerShell bloqueia o `npm.ps1` e o `npx.ps1`.
+- Se o npm falhar com `ENOENT … Invalid response body`, o cache global está corrompido. Use um cache novo só para o comando, antes do `npm.cmd`: `$env:npm_config_cache = "$env:TEMP\npm-cache-limpo"`. Não limpe o cache global sem combinar com o time.
+- O npm 11 avisa que não rodou o `postinstall` do esbuild (`allow-scripts`). O esbuild funciona assim mesmo.
+- Não rode instaladores interativos, como `npm create vite`: eles criam um app fora das convenções do repositório. Copie do `apps/web`, como nesta página.
+
+## Conferir a instalação
+
+- `npm.cmd run typecheck -w meu-app` termina sem erros.
+- `npm.cmd run build -w meu-app` gera `apps/meu-app/dist`.
+- No `npm.cmd run dev -w meu-app`, o botão "Trocar a marca" muda as cores e o logo do Login, e o atalho **Alt+Shift+D** troca o modo.
+
+## Fora do monorepo
+
+**Ainda não existe distribuição para outros repositórios.** O `@workspace/ui` é `private` e não está publicado no npm nem num registro privado, e o repositório não tem um registro do shadcn próprio (`registry.json`) para o `npx shadcn add` buscar os componentes, os blocos e os tokens da Big Brain. Por isso, hoje, um projeto que usa o design system é um app em `apps/` deste repositório.
+
+Copiar a pasta `packages/ui` para outro repositório funciona como solução provisória, mas quebra o vínculo: as correções daqui não chegam lá. Publicar o pacote ou montar um registro é uma lacuna conhecida, ainda sem decisão.

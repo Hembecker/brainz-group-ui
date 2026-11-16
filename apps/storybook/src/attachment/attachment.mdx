@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as AttachmentStories from "./attachment.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={AttachmentStories} />
 
@@ -39,7 +40,7 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/att
 
 <Attachment>
   <AttachmentMedia>
-    <FileTextIcon />
+    <FileTextIcon aria-hidden="true" />
   </AttachmentMedia>
   <AttachmentContent>
     <AttachmentTitle>painel-de-vendas.pdf</AttachmentTitle>
@@ -47,7 +48,7 @@ O componente está no pacote `@workspace/ui`, em `packages/ui/src/components/att
   </AttachmentContent>
   <AttachmentActions>
     <AttachmentAction aria-label="Remover painel-de-vendas.pdf">
-      <XIcon />
+      <XIcon aria-hidden="true" />
     </AttachmentAction>
   </AttachmentActions>
 </Attachment>`}
@@ -186,17 +187,19 @@ A página do shadcn não tem uma seção de RTL, mas as posições das ações d
 
 O contêiner raiz do anexo. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>state</code></td><td><code>{'"idle" | "uploading" | "processing" | "error" | "done"'}</code>: o estado do envio, que muda o estilo e o brilho</td><td><code>{'"done"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "xs"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code>: a mídia ao lado ou acima do conteúdo</td><td><code>{'"horizontal"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Attachment">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>state</code></td><td><code>{'"idle" | "uploading" | "processing" | "error" | "done"'}</code>: o estado do envio, que muda o estilo e o brilho</td><td><code>{'"done"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "xs"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>orientation</code></td><td><code>{'"horizontal" | "vertical"'}</code>: a mídia ao lado ou acima do conteúdo</td><td><code>{'"horizontal"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="attachment"`, `data-state`, `data-size` e `data-orientation`.
 
@@ -204,15 +207,17 @@ O elemento recebe `data-slot="attachment"`, `data-state`, `data-size` e `data-or
 
 O espaço da mídia, para um ícone ou uma prévia de imagem. Aceita as props de um `<div>`. Recebe `data-slot="attachment-media"` e `data-variant`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"icon" | "image"'}</code>: se a mídia guarda um ícone ou uma <code>{'<img>'}</code></td><td><code>{'"icon"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Attachment: AttachmentMedia">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"icon" | "image"'}</code>: se a mídia guarda um ícone ou uma <code>{'<img>'}</code></td><td><code>{'"icon"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AttachmentContent
 
@@ -234,51 +239,58 @@ Um contêiner para uma ou mais ações, alinhado ao fim do anexo (`<div>`). No c
 
 Um botão de ação. Renderiza um [Button](?path=/docs/componentes-button--docs) e aceita todas as props dele. Dê sempre um `aria-label` com a ação e o arquivo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>Button["variant"]</code></td><td><code>{'"ghost"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>Button["size"]</code></td><td><code>{'"icon-xs"'}</code></td></tr>
-    <tr><td><code>...props</code></td><td><code>{'React.ComponentProps<typeof Button>'}</code>: repassadas ao <code>Button</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Attachment: AttachmentAction">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>Button["variant"]</code></td><td><code>{'"ghost"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>Button["size"]</code></td><td><code>{'"icon-xs"'}</code></td></tr>
+      <tr><td><code>...props</code></td><td><code>{'React.ComponentProps<typeof Button>'}</code>: repassadas ao <code>Button</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AttachmentTrigger
 
 Uma camada que cobre o card e ativa o anexo. Renderiza um `<button type="button">` por padrão. Dê sempre um `aria-label`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code>: renderiza outro elemento, como um link</td><td>—</td></tr>
-    <tr><td><code>...props</code></td><td><code>{'React.ComponentProps<"button">'}</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Attachment: AttachmentTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | function'}</code>: renderiza outro elemento, como um link</td><td>—</td></tr>
+      <tr><td><code>...props</code></td><td><code>{'React.ComponentProps<"button">'}</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### AttachmentGroup
 
-Organiza os anexos numa linha com rolagem horizontal e encaixe. Aceita as props de um `<div>`. Para uma linha de anexos só de apresentação, veja **Acessibilidade**.
+Organiza os anexos numa linha com rolagem horizontal e encaixe. Aceita as props de um `<div>`. Tem 6px de folga em todos os lados (`p-1.5` e `scroll-px-1.5`), para o anel de foco do card, com o afastamento, não ser cortado pela rolagem. Para uma linha de anexos só de apresentação, veja **Acessibilidade**.
 
 ### Partes e data-slot
 
 Cada parte expõe um `data-slot`:
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>AttachmentMedia</code></td><td><code>{'<div>'}</code></td><td><code>attachment-media</code></td></tr>
-    <tr><td><code>AttachmentContent</code></td><td><code>{'<div>'}</code></td><td><code>attachment-content</code></td></tr>
-    <tr><td><code>AttachmentTitle</code></td><td><code>{'<span>'}</code></td><td><code>attachment-title</code></td></tr>
-    <tr><td><code>AttachmentDescription</code></td><td><code>{'<span>'}</code></td><td><code>attachment-description</code></td></tr>
-    <tr><td><code>AttachmentActions</code></td><td><code>{'<div>'}</code></td><td><code>attachment-actions</code></td></tr>
-    <tr><td><code>AttachmentAction</code></td><td><code>{'<button>'}</code> (Button)</td><td><code>attachment-action</code></td></tr>
-    <tr><td><code>AttachmentTrigger</code></td><td><code>{'<button>'}</code></td><td><code>attachment-trigger</code></td></tr>
-    <tr><td><code>AttachmentGroup</code></td><td><code>{'<div>'}</code></td><td><code>attachment-group</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Attachment: Partes e data-slot">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Attachment</code></td><td><code>{'<div>'}</code></td><td><code>attachment</code></td></tr>
+      <tr><td><code>AttachmentMedia</code></td><td><code>{'<div>'}</code></td><td><code>attachment-media</code></td></tr>
+      <tr><td><code>AttachmentContent</code></td><td><code>{'<div>'}</code></td><td><code>attachment-content</code></td></tr>
+      <tr><td><code>AttachmentTitle</code></td><td><code>{'<span>'}</code></td><td><code>attachment-title</code></td></tr>
+      <tr><td><code>AttachmentDescription</code></td><td><code>{'<span>'}</code></td><td><code>attachment-description</code></td></tr>
+      <tr><td><code>AttachmentActions</code></td><td><code>{'<div>'}</code></td><td><code>attachment-actions</code></td></tr>
+      <tr><td><code>AttachmentAction</code></td><td><code>{'<button>'}</code> (Button)</td><td><code>attachment-action</code></td></tr>
+      <tr><td><code>AttachmentTrigger</code></td><td><code>{'<button>'}</code></td><td><code>attachment-trigger</code></td></tr>
+      <tr><td><code>AttachmentGroup</code></td><td><code>{'<div>'}</code></td><td><code>attachment-group</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

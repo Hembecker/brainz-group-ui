@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ContextMenuStories from "./context-menu.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ContextMenuStories} />
 
@@ -190,32 +191,36 @@ O `ContextMenu` é construído sobre o [ContextMenu do Base UI](https://base-ui.
 
 A área que abre o menu. É um `<div>` que aceita as props de um `<div>` (e `render`), com `select-none` por padrão, para o toque longo não selecionar texto.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>tabIndex</code></td><td><code>number</code></td><td>— (use <code>{'0'}</code> para o teclado alcançar o gatilho)</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: ContextMenuTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>tabIndex</code></td><td><code>number</code></td><td>— (use <code>{'0'}</code> para o teclado alcançar o gatilho)</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ContextMenuContent
 
 O popup, com o portal e o posicionamento. Aceita as props do Popup do Base UI, como `aria-label`, `dir` e `lang`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"inline-end"'}</code></td></tr>
-    <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: ContextMenuContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>side</code></td><td><code>{'"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"'}</code></td><td><code>{'"inline-end"'}</code></td></tr>
+      <tr><td><code>sideOffset</code></td><td><code>number</code></td><td><code>{'0'}</code></td></tr>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>alignOffset</code></td><td><code>number</code></td><td><code>{'4'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ContextMenuSubContent
 
@@ -225,83 +230,93 @@ O popup de um submenu. Aceita as props do `ContextMenuContent`, e o `side` padr�
 
 Um item de ação. Aceita as props do Item do Base UI (por exemplo `disabled`, `onClick`, `closeOnClick` e `render`).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: ContextMenuItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "destructive"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ContextMenuCheckboxItem
 
 Um item que liga e desliga. Aceita as props do CheckboxItem do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: ContextMenuCheckboxItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>checked</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>defaultChecked</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>onCheckedChange</code></td><td><code>{'(checked: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ContextMenuRadioItem
 
 Uma opção do `ContextMenuRadioGroup`. Aceita as props do RadioItem do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>value</code></td><td><code>any</code></td><td>—</td></tr>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: ContextMenuRadioItem">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>value</code></td><td><code>any</code></td><td>—</td></tr>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### ContextMenuLabel e ContextMenuSubTrigger
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: ContextMenuLabel e ContextMenuSubTrigger">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>inset</code></td><td><code>boolean</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 `inset` dá ao item o recuo de 28px no começo (`ps-7`), para alinhá-lo com os itens que têm ícone ou indicador. O `ContextMenuSeparator` aceita as props do Separator do Base UI, e o `ContextMenuShortcut`, as de um `<span>`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>ContextMenu</code></td><td>nenhum (só o contexto)</td><td><code>context-menu</code></td></tr>
-    <tr><td><code>ContextMenuTrigger</code></td><td><code>{'<div>'}</code></td><td><code>context-menu-trigger</code></td></tr>
-    <tr><td><code>ContextMenuPortal</code></td><td>portal no <code>body</code></td><td><code>context-menu-portal</code></td></tr>
-    <tr><td><code>ContextMenuContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>context-menu-content</code></td></tr>
-    <tr><td><code>ContextMenuGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>context-menu-group</code></td></tr>
-    <tr><td><code>ContextMenuLabel</code></td><td><code>{'<div>'}</code></td><td><code>context-menu-label</code></td></tr>
-    <tr><td><code>ContextMenuItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>context-menu-item</code></td></tr>
-    <tr><td><code>ContextMenuCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>context-menu-checkbox-item</code></td></tr>
-    <tr><td><code>ContextMenuRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>context-menu-radio-group</code></td></tr>
-    <tr><td><code>ContextMenuRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>context-menu-radio-item</code></td></tr>
-    <tr><td><code>ContextMenuSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>context-menu-separator</code></td></tr>
-    <tr><td><code>ContextMenuShortcut</code></td><td><code>{'<span>'}</code></td><td><code>context-menu-shortcut</code></td></tr>
-    <tr><td><code>ContextMenuSub</code></td><td>nenhum (só o contexto)</td><td><code>context-menu-sub</code></td></tr>
-    <tr><td><code>ContextMenuSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>context-menu-sub-trigger</code></td></tr>
-    <tr><td><code>ContextMenuSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>context-menu-sub-content</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Context Menu: Referência da API, ContextMenuLabel e ContextMenuSubTrigger">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ContextMenu</code></td><td>nenhum (só o contexto)</td><td><code>context-menu</code></td></tr>
+      <tr><td><code>ContextMenuTrigger</code></td><td><code>{'<div>'}</code></td><td><code>context-menu-trigger</code></td></tr>
+      <tr><td><code>ContextMenuPortal</code></td><td>portal no <code>body</code></td><td><code>context-menu-portal</code></td></tr>
+      <tr><td><code>ContextMenuContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>context-menu-content</code></td></tr>
+      <tr><td><code>ContextMenuGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>context-menu-group</code></td></tr>
+      <tr><td><code>ContextMenuLabel</code></td><td><code>{'<div>'}</code></td><td><code>context-menu-label</code></td></tr>
+      <tr><td><code>ContextMenuItem</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>context-menu-item</code></td></tr>
+      <tr><td><code>ContextMenuCheckboxItem</code></td><td><code>{'<div role="menuitemcheckbox">'}</code></td><td><code>context-menu-checkbox-item</code></td></tr>
+      <tr><td><code>ContextMenuRadioGroup</code></td><td><code>{'<div role="group">'}</code></td><td><code>context-menu-radio-group</code></td></tr>
+      <tr><td><code>ContextMenuRadioItem</code></td><td><code>{'<div role="menuitemradio">'}</code></td><td><code>context-menu-radio-item</code></td></tr>
+      <tr><td><code>ContextMenuSeparator</code></td><td><code>{'<div role="separator">'}</code></td><td><code>context-menu-separator</code></td></tr>
+      <tr><td><code>ContextMenuShortcut</code></td><td><code>{'<span>'}</code></td><td><code>context-menu-shortcut</code></td></tr>
+      <tr><td><code>ContextMenuSub</code></td><td>nenhum (só o contexto)</td><td><code>context-menu-sub</code></td></tr>
+      <tr><td><code>ContextMenuSubTrigger</code></td><td><code>{'<div role="menuitem">'}</code></td><td><code>context-menu-sub-trigger</code></td></tr>
+      <tr><td><code>ContextMenuSubContent</code></td><td><code>{'<div role="menu">'}</code></td><td><code>context-menu-sub-content</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

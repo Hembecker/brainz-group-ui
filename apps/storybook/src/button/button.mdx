@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ButtonStories from "./button.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ButtonStories} />
 
@@ -143,6 +144,8 @@ Não use `<Button render={<a />} nativeButton={false} />` para links. O Button d
 
 Os paddings do Button são lógicos (`ps-*` e `pe-*`), então ele segue a direção de um ancestral com `dir="rtl"` sem nenhuma prop: `data-icon="inline-start"` fica sempre no início da leitura, que em RTL é a direita. Ícones de direção, como setas, levam `rtl:rotate-180`.
 
+No botão de carregamento do exemplo, o texto visível já diz que está carregando, então o Spinner leva `aria-hidden="true"` em vez de um `aria-label`: com o rótulo, o nome do botão seria lido duas vezes, e sem nenhum dos dois o Spinner anunciaria o "Carregando" padrão, em português, dentro de um conteúdo em árabe.
+
 Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `div` com `dir` porque esta página é LTR. Para ver a página inteira em RTL, use o seletor **Direção** na barra de ferramentas. Veja também o [guia de RTL do shadcn](https://ui.shadcn.com/docs/rtl).
 
 <Canvas of={ButtonStories.Rtl} />
@@ -153,18 +156,20 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `di
 
 O `Button` envolve o elemento `<button>` e adiciona os estilos e o comportamento do Base UI. Ele aceita todas as props de um `<button>` nativo.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | "secondary" | "ghost" | "destructive" | "link"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>render</code></td><td><code>{'React.ReactElement | (props, state) => React.ReactElement'}</code></td><td>—</td></tr>
-    <tr><td><code>nativeButton</code></td><td><code>boolean</code>: use <code>false</code> quando <code>render</code> troca o elemento por algo que não é <code>{'<button>'}</code></td><td><code>true</code></td></tr>
-    <tr><td><code>focusableWhenDisabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Button">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "outline" | "secondary" | "ghost" | "destructive" | "link"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>render</code></td><td><code>{'React.ReactElement | (props, state) => React.ReactElement'}</code></td><td>—</td></tr>
+      <tr><td><code>nativeButton</code></td><td><code>boolean</code>: use <code>false</code> quando <code>render</code> troca o elemento por algo que não é <code>{'<button>'}</code></td><td><code>true</code></td></tr>
+      <tr><td><code>focusableWhenDisabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 O elemento recebe `data-slot="button"`, `data-variant` e `data-size` com os valores resolvidos, e `data-disabled` quando está desabilitado.
 

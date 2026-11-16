@@ -17,10 +17,13 @@ import { cn } from "cn"
  * - Cor herdada: o texto fica em `foreground` (19,7:1 no claro e 19,0:1 no
  *   escuro sobre o fundo; 15,8:1 e 14,3:1 sobre o `field`). Nenhuma cor com
  *   opacidade.
- * - Desabilitado: `peer-disabled:opacity-50` quando o controle é irmão
- *   anterior (`peer`) e `group-data-[disabled=true]:opacity-50` dentro de um
- *   grupo com `data-disabled`. Texto desabilitado não precisa cumprir
- *   contraste, mas explique o motivo numa descrição.
+ * - Desabilitado: apaga em 50% quando o controle é irmão anterior (`peer`) e
+ *   está desabilitado: um controle nativo por `peer-disabled` (`:disabled`) e
+ *   a raiz do Checkbox, do Switch ou do RadioGroupItem do Base UI (um <span>
+ *   com `data-disabled`) por `peer-data-disabled`. Dentro de um grupo com
+ *   `data-disabled`, por `group-data-[disabled=true]:opacity-50`. Texto
+ *   desabilitado não precisa cumprir contraste, mas explique o motivo numa
+ *   descrição.
  * - `flex items-center gap-2` e `leading-none`: um ícone ou badge ao lado do
  *   texto fica alinhado, e gaps são lógicos, então funciona em RTL. Em rótulos
  *   de várias linhas o `leading-none` aperta as linhas: use o `FieldLabel`
@@ -33,7 +36,7 @@ function Label({ className, ...props }: React.ComponentProps<"label">) {
     <label
       data-slot="label"
       className={cn(
-        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-50",
         className
       )}
       {...props}

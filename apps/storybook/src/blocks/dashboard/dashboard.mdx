@@ -1,0 +1,397 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as DashboardStories from "./dashboard.stories";
+import { ScrollTable } from "../../docs/_components/token-table";
+
+<Meta of={DashboardStories} />
+
+# Dashboard
+
+O layout de aplicação padrão: a barra lateral no início da linha, com a marca, a navegação, os projetos e a conta, e o conteúdo da página ao lado.
+
+<Canvas of={DashboardStories.Demo} />
+
+O template vem do bloco **sidebar-08** do shadcn/ui ([ui.shadcn.com/blocks/sidebar#sidebar-08](https://ui.shadcn.com/blocks/sidebar#sidebar-08)). A aparência é a mesma: a variante `inset` da [Sidebar](?path=/docs/componentes-sidebar--docs), com o conteúdo num painel arredondado, grupos de navegação que abrem e fecham, projetos com um menu de ações e o menu da conta no rodapé. O bloco não tem dados nem regras de negócio: tudo o que aparece chega por props, e os exemplos daqui ficam só nas stories.
+
+Cada exemplo desta página fica numa caixa de altura fixa, que faz o papel da tela (a barra é fixa na tela). O atalho Ctrl+B vale para a janela inteira, então nesta página ele alterna todos os exemplos de uma vez; abra uma story sozinha para testar o teclado. Use a barra de ferramentas para ver o bloco no claro, no escuro, em RTL e com a outra marca.
+
+## Quando usar
+
+- **Use** como o layout de qualquer aplicação com área logada: painéis, sistemas internos, áreas do cliente.
+- **Use** quando a navegação tem até dois níveis (itens e subitens) e cabe numa barra lateral.
+- **Não use** em páginas públicas, de marketing ou de autenticação: para entrar e criar conta, veja os blocos [Login](?path=/docs/blocks-login--docs) e [Cadastro](?path=/docs/blocks-cadastro--docs).
+- **Não use** quando a navegação precisa de mais níveis ou de busca: monte a sua barra com as partes da [Sidebar](?path=/docs/componentes-sidebar--docs).
+
+## Instalação
+
+O bloco já faz parte do pacote `@workspace/ui`, em `packages/ui/src/blocks/dashboard.tsx`. Não há nada para instalar: ele usa a Sidebar, o Breadcrumb, o Collapsible, o DropdownMenu, o Avatar e o Separator do próprio pacote, mais o `lucide-react`.
+
+<Source language="tsx" dark code={`import { DashboardLayout } from "@workspace/ui/blocks/dashboard"`} />
+
+Ele foi portado do código que o CLI escreve (`npx shadcn add sidebar-08`). Não rode esse comando de novo para atualizar o bloco: o CLI escreveria os arquivos `app-sidebar`, `nav-main`, `nav-projects`, `nav-secondary` e `nav-user` no app, com os textos em inglês, os dados de exemplo e as cores com opacidade do registro.
+
+## Uso
+
+Passe a navegação, o usuário e, se houver, os projetos e o menu da conta. O conteúdo da página vai em `children`; sem ele, o bloco mostra a grade neutra do sidebar-08.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { DashboardLayout } from "@workspace/ui/blocks/dashboard"
+import { HomeIcon, LogOutIcon, Settings2Icon } from "lucide-react"
+
+export function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <DashboardLayout
+      brand={{ href: "/" }}
+      navMain={[
+        { title: "Início", url: "/", icon: HomeIcon, isActive: true },
+        {
+          title: "Configurações",
+          url: "/configuracoes",
+          icon: Settings2Icon,
+          items: [
+            { title: "Geral", url: "/configuracoes/geral" },
+            { title: "Equipe", url: "/configuracoes/equipe" },
+          ],
+        },
+      ]}
+      user={{ name: "Maria Souza", email: "maria@example.com" }}
+      userMenu={[[{ label: "Sair", icon: LogOutIcon, onSelect: signOut }]]}
+      breadcrumbs={[{ label: "Início" }]}
+    >
+      {children}
+    </DashboardLayout>
+  )
+}`}
+/>
+
+### Com um roteador
+
+Por padrão os links são `<a href>`. Para usar o `Link` do seu roteador, passe `renderLink`: ele devolve o elemento de link, e o bloco o entrega à prop `render` do Base UI, que junta a classe, os filhos e o `aria-current`. Ele vale para todos os links do bloco: navegação, projetos, trilha, marca e itens de menu com `href`.
+
+<Source
+  language="tsx"
+  dark
+  code={`import { Link } from "@tanstack/react-router"
+
+<DashboardLayout
+  renderLink={({ href }) => <Link to={href} />}
+  {...props}
+/>`}
+/>
+
+### Composição
+
+As partes também são exportadas, para montar uma barra diferente com o mesmo visual. Elas precisam de um `SidebarProvider` em volta; o `DashboardProvider` (opcional) leva `renderLink` e `labels` a todas.
+
+<Source
+  language="text"
+  dark
+  code={`DashboardLayout
+└── DashboardProvider (renderLink, labels)
+    └── SidebarProvider
+        ├── DashboardSidebar (Sidebar variant="inset")
+        │   ├── DashboardBrandHeader
+        │   ├── DashboardNavMain
+        │   ├── DashboardNavProjects
+        │   ├── DashboardNavSecondary
+        │   └── DashboardNavUser
+        └── SidebarInset (<main>)
+            ├── DashboardHeader (SidebarTrigger, Breadcrumb, ações)
+            └── DashboardContent (children ou DashboardPlaceholder)`}
+/>
+
+## Acessibilidade
+
+- **Pontos de referência:** no desktop a barra inteira é um `<aside>` chamado "Barra lateral" (`labels.sidebar`), então a marca e os rótulos dos grupos também ficam dentro de um ponto de referência; recolhida em `offcanvas`, ela some da árvore acessível. Dentro dela, cada menu de navegação fica num `<nav>` com nome próprio: "Plataforma", "Projetos" e "Navegação secundária", além da "Trilha de navegação" do Breadcrumb. O conteúdo fica no `<main>` do `SidebarInset`, e o cabeçalho é um `<header>` dentro dele. Troque os nomes por `navMainLabel` ou `labels`, sempre um nome diferente por `<nav>`. Ponha um `<h1>` no começo do conteúdo de cada página, como na story **Com conteúdo**.
+- **Teclado:** o Tab percorre a barra (marca, links, setas dos grupos, menus dos projetos, conta) e depois o cabeçalho (gatilho, trilha, ações). **Ctrl+B** (**⌘+B** no Mac) alterna a barra de qualquer ponto da página. Com a barra recolhida em `offcanvas`, os links escondidos saem da ordem do Tab. Os menus abrem com Enter, Espaço ou seta para baixo, e o Esc fecha e devolve o foco ao botão que os abriu. As stories conferem tudo isso nos testes.
+- **Nomes específicos:** o gatilho da barra é "Alternar barra lateral" (`labels.sidebarToggle`), com `aria-expanded`. A seta de cada grupo é "Alternar submenu de Relatórios", com `aria-expanded` e `aria-controls`. O botão de cada projeto é "Mais opções de Viagens". O botão da conta começa com o texto `sr-only` "Menu da conta", seguido do nome e do e-mail visíveis, então o nome visível continua dentro do nome acessível. Ícones, símbolo da marca e avatar são `aria-hidden`: o texto ao lado já nomeia. O tooltip dos itens na barra recolhida em ícones é só um complemento.
+- **Página atual:** `isActive` num item, num subitem ou num projeto põe `aria-current="page"` e o destaque da Sidebar. Use só no link da página atual. O grupo que contém a página atual já abre aberto, e abre sozinho quando a página atual passa para ele depois (um roteador que troca o `isActive` sem remontar o layout). Na trilha, o último item é a página atual.
+- **Link e ação:** tudo o que navega é `<a>` (ou o `Link` do roteador); a seta do grupo, os menus e o gatilho são `<button>`. Um item de menu vira link com `href` e ação com `onSelect`. O bloco não cria controles sem função: sem `projectActions` o projeto não tem menu, sem `moreProjectsUrl` não há "Ver mais projetos" e sem `userMenu` o usuário aparece como texto.
+- **Celular:** abaixo de 768px a barra vira o Sheet da Sidebar: um diálogo modal chamado "Barra lateral" (`labels.sidebar`, com a descrição `labels.sidebarDescription`), com o foco preso, e o Esc fecha e devolve o foco ao gatilho. No celular os itens não têm tooltip, para que o primeiro Esc feche o Sheet. Com `<a href>` a página recarrega e o Sheet some; com um roteador de SPA (`renderLink`), o bloco não fecha o Sheet sozinho: feche com `setOpenMobile(false)` do `useSidebar` quando a rota mudar, como faz o `CloseMobileSidebarOnNavigate` do `apps/web`. A 200% de zoom, uma janela de 1280px já cai nesse modo.
+- **Foco visível:** os itens da barra usam o anel sólido `sidebar-ring`, e a área rolável da barra deixa 8px de folga ao rolar até o item focado, para o anel não ser cortado; o gatilho e as ações do cabeçalho, o anel do Button, afastado 2px pela cor do fundo; os links da trilha, o anel `ring` com afastamento. Nenhuma cor com opacidade: a grade de exemplo usa `bg-muted` cheio, no lugar do `bg-muted/50` do registro.
+- **Contraste:** os textos usam os pares de papéis da Sidebar e do conteúdo, com os contrastes anotados no `globals.css` e na página da [Sidebar](?path=/docs/componentes-sidebar--docs). O subtítulo da marca usa `muted-foreground`: 7,1:1 sobre a `sidebar` na Brainz Group e no escuro, e 5,7:1 no SESI claro (Neutral/600 `#646464` sobre a sidebar mist 50).
+- **Testes:** cada story roda com o axe no claro, no escuro, em RTL e com a marca SESI (claro e escuro). Os `play` terminam com um menu ou o Sheet aberto, para o axe conferir também a camada de cima.
+
+## Recolhida em ícones
+
+Com `collapsible="icon"`, a barra recolhe para uma faixa de ícones, e cada item mostra o nome num tooltip ao passar o mouse ou focar. Os projetos e as setas dos grupos somem nesse modo; o menu da conta continua, aberto ao lado da faixa. `defaultOpen={false}` faz a página começar recolhida. O padrão do bloco é `offcanvas`, como no sidebar-08: a barra sai da tela inteira.
+
+<Canvas of={DashboardStories.Recolhida} />
+
+## Com conteúdo
+
+O conteúdo da página entra como filho e ganha o recuo do sidebar-08. Aqui, o título da página, cards de resumo, um [gráfico](?path=/docs/componentes-chart--docs) e uma [tabela](?path=/docs/componentes-table--docs), todos do pacote e todos com as cores dos tokens (`--chart-1` nas barras). O botão "Novo relatório" entra por `headerActions`, no fim do cabeçalho. No celular a tabela fica mais larga que o card e rola na horizontal: por isso ela está num contêiner com `role="region"`, o nome da legenda (`aria-labelledby`), `tabIndex={0}` e o anel de foco, que é quem rola (o contêiner da `Table` fica com `overflow-visible`), como pede a página da [Table](?path=/docs/componentes-table--docs). Sem ele, quem usa só o teclado pode não conseguir ver as últimas colunas.
+
+<Canvas of={DashboardStories.ComConteudo} />
+
+## Sem projetos
+
+O mínimo: só a navegação principal e o usuário. Sem `projects`, `navSecondary` e `breadcrumbs`, essas partes não aparecem; sem `userMenu`, o usuário é texto, sem botão; sem `brand.href`, a marca não é link.
+
+<Canvas of={DashboardStories.SemProjetos} />
+
+## Celular
+
+Abaixo de 768px a barra vira um Sheet, aberto pelo gatilho do cabeçalho ou pelo Ctrl+B. Os itens anteriores da trilha somem, e fica só a página atual. Nesta página a caixa tem a largura da coluna, então ela mostra a versão de desktop: abra a story **Celular** sozinha (na barra lateral do Storybook) para ver a largura de 320px.
+
+<Canvas of={DashboardStories.Mobile} />
+
+## RTL
+
+Sem `side`, a barra segue a direção: em RTL ela abre na borda direita, e o conteúdo fica à esquerda. As setas dos grupos apontam para o início da linha, e os menus, que vão para um portal, recebem o `dir` do `DirectionProvider`. Os textos fixos do bloco (os nomes dos `<nav>` e dos botões) mudam pela prop `labels`; aqui eles estão em árabe.
+
+<Canvas of={DashboardStories.Rtl} />
+
+## Marca e tema
+
+O bloco não tem cor própria nem logo fixo:
+
+- **Logo e nome:** sem a prop `brand`, o cabeçalho mostra o símbolo (`Mark`) e o nome da marca ativa, lidos por `useBrand()` do atributo `data-brand` do `<html>`. Quando a marca é ilustrativa, o subtítulo diz "Marca ilustrativa". Cada campo de `brand` substitui só o seu: `brand={{ href: "/" }}` mantém o logo e o nome da marca ativa e só transforma o cabeçalho num link.
+- **Cores:** o bloco usa só papéis semânticos (`sidebar`, `sidebar-accent`, `sidebar-ring`, `background`, `muted`, `chart-*`…), nunca a paleta `--bb-*`. Trocar de marca troca as cores sem mudar o bloco.
+- **Para ver:** troque **Marca** na barra de ferramentas para "SESI (ilustrativo)". O logo, o nome, o subtítulo, a fonte e as cores mudam juntos, nos dois modos. Veja como adicionar uma marca em [Temas](?path=/docs/temas--docs).
+
+### Marca própria e conta
+
+Para um projeto com marca fixa, passe `brand={{ name, subtitle, logo, href }}`: o nome, o subtítulo e o logo substituem os da marca ativa, e o "Marca ilustrativa" não aparece. O exemplo também mostra o resto da conta: a foto em `user.avatar` (decorativa, com `alt=""`, porque o nome já está ao lado; sem foto, as iniciais), um item `disabled` no menu da conta (anunciado como desativado, com `aria-disabled`) e `variant: "destructive"` nas ações que apagam ou encerram ("Excluir projeto" e "Sair"), que continuam com o nome em texto e não dependem só da cor.
+
+<Canvas of={DashboardStories.MarcaEConta} />
+
+## Referência da API
+
+### DashboardLayout
+
+As outras props vão para o `SidebarProvider` (`open`, `onOpenChange`, `className`, `style`…).
+
+<ScrollTable label="Dashboard: DashboardLayout">
+  <table>
+    <thead>
+      <tr>
+        <th>Prop</th>
+        <th>Tipo</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>navMain</code></td>
+        <td><code>DashboardNavItem[]</code></td>
+        <td>obrigatório</td>
+      </tr>
+      <tr>
+        <td><code>user</code></td>
+        <td><code>DashboardUser</code></td>
+        <td>obrigatório</td>
+      </tr>
+      <tr>
+        <td><code>brand</code></td>
+        <td><code>DashboardBrand</code></td>
+        <td>a marca ativa</td>
+      </tr>
+      <tr>
+        <td><code>navMainLabel</code></td>
+        <td><code>string</code></td>
+        <td><code>"Plataforma"</code></td>
+      </tr>
+      <tr>
+        <td><code>projects</code></td>
+        <td><code>DashboardProject[]</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>projectActions</code></td>
+        <td><code>DashboardProjectAction[][]</code></td>
+        <td>— (sem menu)</td>
+      </tr>
+      <tr>
+        <td><code>moreProjectsUrl</code></td>
+        <td><code>string</code></td>
+        <td>— (sem o link)</td>
+      </tr>
+      <tr>
+        <td><code>navSecondary</code></td>
+        <td><code>DashboardNavItem[]</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>userMenu</code></td>
+        <td><code>DashboardMenuItem[][]</code></td>
+        <td>— (usuário como texto)</td>
+      </tr>
+      <tr>
+        <td><code>breadcrumbs</code></td>
+        <td><code>DashboardBreadcrumb[]</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>headerActions</code></td>
+        <td><code>React.ReactNode</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>collapsible</code></td>
+        <td><code>"offcanvas" | "icon"</code></td>
+        <td><code>"offcanvas"</code></td>
+      </tr>
+      <tr>
+        <td><code>defaultOpen</code></td>
+        <td><code>boolean</code></td>
+        <td><code>true</code></td>
+      </tr>
+      <tr>
+        <td><code>renderLink</code></td>
+        <td><code>{"(link: { href: string }) => React.ReactElement"}</code></td>
+        <td><code>{"({ href }) => <a href={href} />"}</code></td>
+      </tr>
+      <tr>
+        <td><code>labels</code></td>
+        <td><code>Partial&lt;DashboardLabels&gt;</code></td>
+        <td>textos em português</td>
+      </tr>
+      <tr>
+        <td><code>children</code></td>
+        <td><code>React.ReactNode</code></td>
+        <td>a grade neutra</td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+### Tipos dos itens
+
+Os ícones (`icon`) são componentes, como os do `lucide-react` (`icon: HomeIcon`); o bloco os renderiza com `aria-hidden`.
+
+<ScrollTable label="Dashboard: Tipos dos itens">
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Campos</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>DashboardBrand</code></td>
+        <td><code>name?</code>, <code>subtitle?</code>, <code>logo?</code>, <code>href?</code></td>
+        <td>cada campo vazio vem da marca ativa; sem <code>href</code>, não é link</td>
+      </tr>
+      <tr>
+        <td><code>DashboardNavItem</code></td>
+        <td><code>title</code>, <code>url</code>, <code>icon?</code>, <code>isActive?</code>, <code>defaultOpen?</code>, <code>items?</code></td>
+        <td>com <code>items</code>, ganha a seta que abre os subitens</td>
+      </tr>
+      <tr>
+        <td><code>DashboardNavSubItem</code></td>
+        <td><code>title</code>, <code>url</code>, <code>isActive?</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>DashboardProject</code></td>
+        <td><code>name</code>, <code>url</code>, <code>icon?</code>, <code>isActive?</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>DashboardProjectAction</code></td>
+        <td><code>label</code>, <code>icon?</code>, <code>href?(project)</code>, <code>onSelect?(project)</code>, <code>variant?</code></td>
+        <td>os grupos ficam separados por uma linha</td>
+      </tr>
+      <tr>
+        <td><code>DashboardMenuItem</code></td>
+        <td><code>label</code>, <code>icon?</code>, <code>href?</code>, <code>onSelect?</code>, <code>variant?</code>, <code>disabled?</code></td>
+        <td><code>href</code> faz um link; <code>onSelect</code>, uma ação</td>
+      </tr>
+      <tr>
+        <td><code>DashboardUser</code></td>
+        <td><code>name</code>, <code>email</code>, <code>avatar?</code></td>
+        <td>sem foto, as iniciais do nome</td>
+      </tr>
+      <tr>
+        <td><code>DashboardBreadcrumb</code></td>
+        <td><code>label</code>, <code>href?</code></td>
+        <td>o último item é a página atual</td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+### DashboardLabels
+
+Os textos fixos do bloco. Passe só os que quiser trocar.
+
+<ScrollTable label="Dashboard: DashboardLabels">
+  <table>
+    <thead>
+      <tr>
+        <th>Chave</th>
+        <th>Tipo</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>navMain</code></td>
+        <td><code>string</code></td>
+        <td><code>"Plataforma"</code></td>
+      </tr>
+      <tr>
+        <td><code>projects</code></td>
+        <td><code>string</code></td>
+        <td><code>"Projetos"</code></td>
+      </tr>
+      <tr>
+        <td><code>navSecondary</code></td>
+        <td><code>string</code></td>
+        <td><code>"Navegação secundária"</code></td>
+      </tr>
+      <tr>
+        <td><code>breadcrumb</code></td>
+        <td><code>string</code></td>
+        <td><code>"Trilha de navegação"</code></td>
+      </tr>
+      <tr>
+        <td><code>toggleSubmenu</code></td>
+        <td><code>(title: string) =&gt; string</code></td>
+        <td><code>"Alternar submenu de …"</code></td>
+      </tr>
+      <tr>
+        <td><code>projectOptions</code></td>
+        <td><code>(name: string) =&gt; string</code></td>
+        <td><code>"Mais opções de …"</code></td>
+      </tr>
+      <tr>
+        <td><code>moreProjects</code></td>
+        <td><code>string</code></td>
+        <td><code>"Ver mais projetos"</code></td>
+      </tr>
+      <tr>
+        <td><code>userMenu</code></td>
+        <td><code>string</code></td>
+        <td><code>"Menu da conta"</code></td>
+      </tr>
+      <tr>
+        <td><code>illustrativeBrand</code></td>
+        <td><code>string</code></td>
+        <td><code>"Marca ilustrativa"</code></td>
+      </tr>
+      <tr>
+        <td><code>sidebarToggle</code></td>
+        <td><code>string</code></td>
+        <td><code>"Alternar barra lateral"</code></td>
+      </tr>
+      <tr>
+        <td><code>sidebar</code></td>
+        <td><code>string</code></td>
+        <td><code>"Barra lateral"</code></td>
+      </tr>
+      <tr>
+        <td><code>sidebarDescription</code></td>
+        <td><code>string</code></td>
+        <td><code>"Exibe a barra lateral no celular."</code></td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+`sidebarToggle` vai para o `label` do `SidebarTrigger`; `sidebar` e `sidebarDescription` vão para o `mobileTitle` e o `mobileDescription` da `Sidebar` (o Sheet do celular), e `sidebar` também nomeia o `<aside>` da barra no desktop.

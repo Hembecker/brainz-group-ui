@@ -1,0 +1,221 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+
+import * as CadastroStories from "./cadastro.stories";
+import { ScrollTable } from "../../docs/_components/token-table";
+
+<Meta of={CadastroStories} />
+
+# Cadastro
+
+O modelo de registro, para quando o projeto pede cadastro: nome, e-mail, senha e confirmação no início da tela e, no fim, a coluna da marca ou uma imagem. Vem do bloco [signup-02 do shadcn/ui](https://ui.shadcn.com/blocks/signup#signup-02) e usa o mesmo layout do [Login](?path=/docs/blocks-login--docs).
+
+<Canvas of={CadastroStories.Demo} />
+
+As prévias desta página ficam numa caixa com altura mínima fixa, no lugar da tela inteira, e seguem a barra de ferramentas (**Marca**, **Modo** e **Direção**). A coluna lateral aparece a partir de 1024px (`lg`) de largura da janela da documentação, e não da caixa: numa janela menor, a prévia mostra o layout de tablet e celular, com o formulário sozinho. Para ver o bloco na tela inteira, abra a [Demo como story](?path=/story/blocks-cadastro--demo).
+
+## Quando usar
+
+- Quando o projeto deixa a pessoa criar a própria conta. Se as contas são criadas por um administrador, use só o [Login](?path=/docs/blocks-login--docs).
+- Ligue as duas páginas: `loginHref` aqui e `signupHref` no Login.
+- O bloco não cria conta nenhuma. Ele valida o preenchimento, o formato do e-mail, o tamanho mínimo da senha e se as duas senhas coincidem, e entrega os valores no `onSubmit`. Regras do projeto (e-mail já cadastrado, força da senha, termos) ficam com o projeto e voltam pelo `error` ou pelo `errors`.
+
+## Instalação
+
+O bloco já está no pacote `@workspace/ui`, em `packages/ui/src/blocks/signup.tsx`, e usa o layout compartilhado `packages/ui/src/blocks/auth-layout.tsx`. Ele depende só de componentes do pacote: [Field](?path=/docs/componentes-field--docs), [Input](?path=/docs/componentes-input--docs), [Button](?path=/docs/componentes-button--docs) e [Spinner](?path=/docs/componentes-spinner--docs).
+
+<Source
+  language="tsx"
+  dark
+  code={`import { SignupForm, SignupPage } from "@workspace/ui/blocks/signup"`}
+/>
+
+A origem é o comando `npx shadcn add signup-02`. O código gerado pelo CLI (em inglês, com `href="#"`, sem validação e com `bg-background` nos campos) foi trocado por este bloco: não rode o comando de novo por cima dele.
+
+## Uso
+
+<Source
+  language="tsx"
+  dark
+  code={`import { SignupPage } from "@workspace/ui/blocks/signup"
+
+export function Cadastrar() {
+  return (
+    <SignupPage
+      loginHref="/entrar"
+      onSubmit={async ({ name, email, password }) => {
+        // crie a conta aqui (API do projeto) e redirecione
+      }}
+    />
+  )
+}`}
+/>
+
+`SignupPage` é a página inteira: `AuthLayout` mais o `SignupForm`. Para outro layout, use `SignupForm` sozinho dentro do `AuthLayout` (de `@workspace/ui/blocks/auth-layout`) ou de um layout próprio.
+
+O `onSubmit` só é chamado com os campos válidos, e o bloco já chama `preventDefault`. Enquanto a resposta não chega, passe `pending`; um erro do servidor volta por `error` (o formulário inteiro) ou `errors` (por campo, como `{ email: "Este e-mail já tem conta." }`).
+
+## Acessibilidade
+
+- **Rótulos persistentes:** cada campo tem o rótulo visível, ligado por `htmlFor` e `id` (ids de `React.useId()`). O placeholder só mostra o formato.
+- **Dicas ligadas ao campo:** a dica do e-mail, a regra da senha ("Use pelo menos 8 caracteres.") e a da confirmação ficam num `FieldDescription` com `id`, citado no `aria-describedby` do campo. O leitor de tela lê a dica logo depois do nome.
+- **Erros:** cada campo tem um `FieldError` sempre montado (`aria-live="polite"`). Com erro, o campo ganha `aria-invalid`, o `Field` ganha `data-invalid`, e a mensagem entra no `aria-errormessage` e no `aria-describedby`, depois da dica. Editar o campo tira o erro.
+- **Senhas diferentes:** o erro fica no campo de confirmação ("As senhas não coincidem."), com o mesmo tratamento de qualquer outro erro: não depende só da cor.
+- **Uma regra, um número:** o tamanho mínimo vem de `minPasswordLength` (padrão 8), e a dica e a validação usam o mesmo valor.
+- **Foco no primeiro erro:** a validação é do bloco (`noValidate`), em português. Num envio com erro, o foco vai para o primeiro campo inválido, na ordem da tela.
+- **Erro do formulário e envio:** como no Login, `error` aparece abaixo do título numa região `polite` sempre montada, e `pending` deixa o botão desabilitado mas focável, com o texto "Criando conta…", o Spinner decorativo e `aria-busy` no formulário.
+- **Teclado:** a ordem do Tab segue a tela: nome, e-mail, senha, confirmação, Criar conta, provedores e "Entrar". Enter num campo envia. Todo link e botão tem o anel de foco sólido.
+- **Preenchimento automático:** `autoComplete="name"`, `"email"` e `"new-password"` nos dois campos de senha, para o gerenciador de senhas sugerir e guardar a senha nova.
+- **Marcos, título e celular:** `<header>`, `<main>` e `<h1>` como no Login; o painel da marca é decorativo. Abaixo de 1024px a coluna lateral some, e a 320px nada rola na horizontal.
+
+## Senhas diferentes
+
+Quando a confirmação não bate com a senha, o envio para e o foco vai para a confirmação, com a mensagem ligada ao campo. A prévia mostra o estado pelo `errors`, como quando ele vem do servidor.
+
+<Canvas of={CadastroStories.SenhasDiferentes} />
+
+## Com erro
+
+`error` mostra o erro do formulário inteiro, abaixo do título, e `errors` marca campos específicos, como um e-mail que já tem conta. Os dois vêm de fora (da resposta do servidor, por exemplo). O erro de um campo some assim que a pessoa edita aquele campo e volta, como no [Login](?path=/docs/blocks-login--docs), só quando a resposta do próximo envio trouxer o mesmo erro (um objeto `errors` novo ou o `pending` que volta a `false`), nunca no próprio clique em "Criar conta".
+
+<Canvas of={CadastroStories.ComErro} />
+
+## Enviando
+
+`pending` desabilita o botão e os provedores e troca o texto do botão.
+
+<Canvas of={CadastroStories.Enviando} />
+
+## Sem coluna lateral
+
+`aside={false}` remove a coluna do fim. O exemplo também usa outra marca no topo e `minPasswordLength={12}`: a dica da senha muda junto.
+
+<Canvas of={CadastroStories.SemColunaLateral} />
+
+## Validação e teclado
+
+Clique em "Criar conta" na prévia do início da página com os campos vazios: os quatro ficam inválidos e o foco vai para o nome. A story [Validação e teclado](?path=/story/blocks-cadastro--validacao) faz o caminho inteiro sozinha (campos vazios, senha curta, senhas diferentes) e confere a ordem do Tab. Ela não aparece nesta página porque move o foco ao abrir.
+
+## Marca e tema
+
+O bloco só usa papéis semânticos, então segue a barra de ferramentas como o Login: a **Marca** troca o símbolo, o nome e o logo do painel (pelo `useBrand()`) e as cores e a fonte (pelo `data-brand` do `<html>`); o **Modo** troca o painel entre a Primária 100 com o logo na 800 (claro) e a 900 com o logo na 100 (escuro); a **Direção** inverte as colunas. O SESI usa os tokens oficiais do SI Design System e um logo de exemplo (veja [Temas](?path=/docs/temas--docs)). As opções `brand`, `aside`, `image` e `footer` são as mesmas do Login.
+
+## RTL
+
+Todo texto pode ser trocado por `labels`, inclusive as mensagens de erro e as dicas. Com `dir="rtl"` e o `lang` num ancestral, o layout se inverte sozinho.
+
+<Canvas of={CadastroStories.Rtl} />
+
+## Referência da API
+
+### SignupPage
+
+Aceita todas as props do `SignupForm` e as do `AuthLayout`: `brand`, `aside`, `image`, `footer` e `layoutClassName` (veja a [referência do Login](?path=/docs/blocks-login--docs)).
+
+### SignupForm
+
+Aceita também as props de um `<form>` (`action`, `method`, `className`…), menos `onSubmit`, `title`, `defaultValue` e `children`, como no Login.
+
+<ScrollTable label="Cadastro: SignupForm">
+  <table>
+    <thead>
+      <tr>
+        <th>Prop</th>
+        <th>Tipo</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>title</code></td>
+        <td><code>ReactNode</code></td>
+        <td><code>"Crie sua conta"</code></td>
+      </tr>
+      <tr>
+        <td><code>description</code></td>
+        <td><code>ReactNode</code></td>
+        <td><code>"Preencha o formulário abaixo para criar sua conta"</code></td>
+      </tr>
+      <tr>
+        <td><code>onSubmit</code></td>
+        <td><code>{"(values: { name; email; password; confirmPassword }, event) => void"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>defaultValues</code></td>
+        <td><code>{"Partial<SignupValues>"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>loginHref</code></td>
+        <td><code>string</code></td>
+        <td>- (sem o link)</td>
+      </tr>
+      <tr>
+        <td><code>socialProviders</code></td>
+        <td><code>{"{ id: string; label: string; icon?: ReactNode; onClick? }[]"}</code></td>
+        <td>- (sem separador nem botões)</td>
+      </tr>
+      <tr>
+        <td><code>minPasswordLength</code></td>
+        <td><code>number</code></td>
+        <td><code>8</code></td>
+      </tr>
+      <tr>
+        <td><code>error</code></td>
+        <td><code>string</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>errors</code></td>
+        <td><code>{"Partial<Record<keyof SignupValues, string>>"}</code></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><code>labels</code></td>
+        <td><code>Partial&lt;SignupFormLabels&gt;</code></td>
+        <td><code>signupFormLabels(minPasswordLength)</code> (português)</td>
+      </tr>
+      <tr>
+        <td><code>pending</code></td>
+        <td><code>boolean</code></td>
+        <td><code>false</code></td>
+      </tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+### labels
+
+<ScrollTable label="Cadastro: labels">
+  <table>
+    <thead>
+      <tr>
+        <th>Chave</th>
+        <th>Padrão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>Nome completo</td></tr>
+      <tr><td><code>namePlaceholder</code></td><td>Joana Lima</td></tr>
+      <tr><td><code>email</code></td><td>E-mail</td></tr>
+      <tr><td><code>emailPlaceholder</code></td><td>nome@exemplo.com</td></tr>
+      <tr><td><code>emailDescription</code></td><td>Vamos usar este e-mail para falar com você. Ele não será compartilhado.</td></tr>
+      <tr><td><code>password</code></td><td>Senha</td></tr>
+      <tr><td><code>passwordDescription</code></td><td>Use pelo menos {"{minPasswordLength}"} caracteres.</td></tr>
+      <tr><td><code>confirmPassword</code></td><td>Confirmar senha</td></tr>
+      <tr><td><code>confirmPasswordDescription</code></td><td>Digite a mesma senha de novo.</td></tr>
+      <tr><td><code>submit</code></td><td>Criar conta</td></tr>
+      <tr><td><code>pending</code></td><td>Criando conta…</td></tr>
+      <tr><td><code>separator</code></td><td>Ou continue com</td></tr>
+      <tr><td><code>hasAccount</code></td><td>Já tem conta?</td></tr>
+      <tr><td><code>login</code></td><td>Entrar</td></tr>
+      <tr><td><code>nameRequired</code></td><td>Informe o nome completo.</td></tr>
+      <tr><td><code>emailRequired</code></td><td>Informe o e-mail.</td></tr>
+      <tr><td><code>emailInvalid</code></td><td>Informe um e-mail completo, como nome@exemplo.com.</td></tr>
+      <tr><td><code>passwordRequired</code></td><td>Crie uma senha.</td></tr>
+      <tr><td><code>passwordTooShort</code></td><td>A senha precisa ter pelo menos {"{minPasswordLength}"} caracteres.</td></tr>
+      <tr><td><code>confirmPasswordRequired</code></td><td>Confirme a senha.</td></tr>
+      <tr><td><code>passwordMismatch</code></td><td>As senhas não coincidem.</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

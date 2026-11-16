@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as DialogStories from "./dialog.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={DialogStories} />
 
@@ -141,44 +142,50 @@ O `Dialog` é construído sobre o [Dialog do Base UI](https://base-ui.com/react/
 
 O popup, com o véu e o portal. Aceita as props do Popup do Base UI.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dialog: DialogContent">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'true'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### DialogFooter
 
 As ações na base do diálogo. Aceita as props de um `<div>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dialog: DialogFooter">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>showCloseButton</code></td><td><code>boolean</code></td><td><code>{'false'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Dialog</code></td><td>nenhum (só o contexto)</td><td><code>dialog</code></td></tr>
-    <tr><td><code>DialogTrigger</code></td><td><code>{'<button>'}</code></td><td><code>dialog-trigger</code></td></tr>
-    <tr><td><code>DialogPortal</code></td><td>portal no <code>body</code></td><td><code>dialog-portal</code></td></tr>
-    <tr><td><code>DialogOverlay</code></td><td><code>{'<div>'}</code></td><td><code>dialog-overlay</code></td></tr>
-    <tr><td><code>DialogContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>dialog-content</code></td></tr>
-    <tr><td><code>DialogClose</code></td><td><code>{'<button>'}</code></td><td><code>dialog-close</code></td></tr>
-    <tr><td><code>DialogHeader</code></td><td><code>{'<div>'}</code></td><td><code>dialog-header</code></td></tr>
-    <tr><td><code>DialogFooter</code></td><td><code>{'<div>'}</code></td><td><code>dialog-footer</code></td></tr>
-    <tr><td><code>DialogTitle</code></td><td><code>{'<h2>'}</code></td><td><code>dialog-title</code></td></tr>
-    <tr><td><code>DialogDescription</code></td><td><code>{'<p>'}</code></td><td><code>dialog-description</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Dialog: Referência da API, DialogFooter">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Dialog</code></td><td>nenhum (só o contexto)</td><td><code>dialog</code></td></tr>
+      <tr><td><code>DialogTrigger</code></td><td><code>{'<button>'}</code></td><td><code>dialog-trigger</code></td></tr>
+      <tr><td><code>DialogPortal</code></td><td>portal no <code>body</code></td><td><code>dialog-portal</code></td></tr>
+      <tr><td><code>DialogOverlay</code></td><td><code>{'<div>'}</code></td><td><code>dialog-overlay</code></td></tr>
+      <tr><td><code>DialogContent</code></td><td><code>{'<div role="dialog">'}</code></td><td><code>dialog-content</code></td></tr>
+      <tr><td><code>DialogClose</code></td><td><code>{'<button>'}</code></td><td><code>dialog-close</code></td></tr>
+      <tr><td><code>DialogHeader</code></td><td><code>{'<div>'}</code></td><td><code>dialog-header</code></td></tr>
+      <tr><td><code>DialogFooter</code></td><td><code>{'<div>'}</code></td><td><code>dialog-footer</code></td></tr>
+      <tr><td><code>DialogTitle</code></td><td><code>{'<h2>'}</code></td><td><code>dialog-title</code></td></tr>
+      <tr><td><code>DialogDescription</code></td><td><code>{'<p>'}</code></td><td><code>dialog-description</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

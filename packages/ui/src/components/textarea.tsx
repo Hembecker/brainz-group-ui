@@ -8,10 +8,13 @@ import { cn } from "cn"
  * - É um <textarea> nativo, que aceita todas as props dele (`rows`,
  *   `disabled`, `required`, `maxLength`, `aria-*`…). Não tem rótulo: use `Field` +
  *   `FieldLabel` (ou `Label`) com `htmlFor`/`id`. O placeholder nunca é o rótulo.
- * - Campo preenchido, sem borda, com o papel `field` (mist 200 no claro e 800
- *   no escuro), como o Input. O limite do campo tem 1,25:1 no claro e 1,33:1 no
- *   escuro, abaixo dos 3:1 de uma borda: escolha do usuário (veja os tokens).
- *   Placeholder em `muted-foreground` (5,9:1 e 6,1:1 sobre o `field`).
+ * - Campo preenchido com o papel `field` (mist 200 no claro e 800 no escuro),
+ *   como o Input; a borda é o token `--field-border` (`border-field-border`):
+ *   transparente na Brainz Group nos dois modos (limite do campo de 1,25:1 no
+ *   claro e 1,33:1 no escuro, abaixo dos 3:1 de uma borda: escolha do usuário,
+ *   veja os tokens) e `#DFDFDF` no SESI claro (1,33:1 no branco do campo); no
+ *   SESI escuro continua transparente.
+ *   Placeholder em `muted-foreground` (5,9:1 e 6,1:1 sobre o `field` da Brainz).
  * - Escala do estilo rhea: `rounded-2xl` (~13px) e altura mínima de 64px
  *   (`min-h-16`). Cresce com o conteúdo (`field-sizing-content`) e não tem alça de
  *   redimensionar (`resize-none`). Paddings simétricos, então funciona em RTL.
@@ -33,7 +36,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
     <textarea
       data-slot="textarea"
       className={cn(
-        "flex field-sizing-content min-h-16 w-full resize-none rounded-2xl border border-transparent bg-field px-2.5 py-2 text-base text-foreground transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive md:text-sm",
+        "flex field-sizing-content min-h-16 w-full resize-none rounded-2xl border border-field-border bg-field px-2.5 py-2 text-base text-foreground transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive md:text-sm",
         className
       )}
       {...props}

@@ -26,6 +26,12 @@ import { Separator } from "@workspace/ui/components/separator"
  *   descrição (`muted-foreground`). Como `muted` e `accent` são a mesma cor, o
  *   hover (`bg-muted`) de um link `muted` não muda o fundo: o foco é que o
  *   distingue.
+ * - Links na descrição: sublinhados em `muted-foreground`; o hover usa
+ *   `text-link-hover` (na Brainz Group, Primária 800 no claro, 9,3:1, e 200
+ *   no escuro, 13,3:1) no lugar do `text-primary` do registro (no escuro a
+ *   Primária 600 dá 3,8:1 no fundo e ~2,9:1 no `muted`), como Field e Empty.
+ * - O foco dos links na descrição usa o mesmo anel do projeto (`rounded-sm`), no
+ *   lugar do outline do navegador.
  * - Anel de foco sólido, 3px, no `ring`, afastado 2px pela cor do fundo, como no
  *   Button. Não há anel translúcido.
  * - O ItemGroup tem `role="list"`: cada filho direto precisa de
@@ -176,7 +182,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="item-description"
       className={cn(
-        "line-clamp-2 text-start text-sm font-normal text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "line-clamp-2 text-start text-sm font-normal text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-link-hover [&>a]:rounded-sm [&>a]:outline-none [&>a]:focus-visible:ring-3 [&>a]:focus-visible:ring-ring [&>a]:focus-visible:ring-offset-2 [&>a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}

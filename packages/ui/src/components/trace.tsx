@@ -33,6 +33,9 @@ import { ChevronRightIcon } from "lucide-react"
  *   conteúdo. O título deve dizer o estado também ("Executando", "Falhou ao
  *   executar"); o texto oculto cobre a linha pendente, cujo título é só a
  *   ação.
+ * - O `TraceTitle` é `relative`: um texto `sr-only` dentro dele (o "(abre em
+ *   uma nova aba)" da MDX) fica preso no corte do `truncate` e não empurra a
+ *   página para os lados a 320px.
  * - Cores com opacidade do registro trocadas: a linha `pending` usava
  *   `opacity-60`, que derrubava o texto para ~3:1 (abaixo dos 4,5:1), e a
  *   descrição usava `text-muted-foreground/70`. Agora a linha pendente fica
@@ -122,7 +125,10 @@ function TraceTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="trace-title"
-      className={cn("min-w-0 truncate motion-reduce:shimmer-none", className)}
+      className={cn(
+        "relative min-w-0 truncate motion-reduce:shimmer-none",
+        className
+      )}
       {...props}
     />
   )

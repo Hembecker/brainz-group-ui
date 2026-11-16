@@ -16,7 +16,7 @@ npm.cmd install
 npm.cmd run storybook
 ```
 
-O Storybook abre em http://localhost:6007. Na barra de ferramentas, o seletor **Modo** alterna entre claro e escuro, e o seletor **Direção** alterna entre LTR e RTL.
+O Storybook abre em http://localhost:6007. Na barra de ferramentas, o seletor **Marca** alterna entre Brainz Group e SESI (ilustrativo), o seletor **Modo** alterna entre claro e escuro, e o seletor **Direção** alterna entre LTR e RTL.
 
 Na raiz, os scripts rodam pelo Turbo em todos os workspaces:
 
@@ -27,7 +27,10 @@ Na raiz, os scripts rodam pelo Turbo em todos os workspaces:
 | `build` | Build de `apps/web` e o Storybook estático (`apps/storybook/storybook-static/`) |
 | `typecheck` | `tsc --noEmit` em cada workspace |
 | `lint` | ESLint em cada workspace |
+| `format` | Prettier com a ordenação de classes do Tailwind em cada workspace; escreve nos arquivos |
 | `test` | Roda cada story como teste no Chromium (Vitest e Playwright), com o axe, três vezes: claro, escuro e RTL. Qualquer violação de acessibilidade reprova o teste. |
+
+A marca SESI tem uma bateria à parte, fora do Turbo: `npm.cmd run test:sesi -w @workspace/storybook` roda as mesmas stories com o axe, com a marca SESI no claro e no escuro.
 
 Na primeira vez, o Playwright precisa do Chromium. Se ele faltar, rode `npx.cmd playwright install chromium` (ou `npx` fora do PowerShell).
 
@@ -38,11 +41,16 @@ brand/                         material da marca (paleta primária, logo)
 packages/ui/                   @workspace/ui: componentes e tokens
   src/styles/globals.css       paleta --bb-*, papéis semânticos (claro e escuro) e Tailwind
   src/components/<nome>.tsx    componentes (estrutura plana, a do CLI do shadcn)
+  src/blocks/                  templates Dashboard, Login e Cadastro, só com props
+  src/brand/                   registro de marcas, logos e use-brand (useBrand, setBrand)
+  src/hooks/                   hooks dos componentes (use-mobile, use-highlighted-code)
   src/lib/utils.ts             cn(): junta classes, e a última classe do Tailwind vence
 apps/storybook/                @workspace/storybook: Storybook 10
-  .storybook/                  configuração (modo, direção, "Show code", axe)
+  .storybook/                  configuração (marca, modo, direção, "Show code", axe)
   src/<nome>/                  stories (.stories.tsx) e página Docs (.mdx) de cada componente
-apps/web/                      app de exemplo do template
+  src/docs/                    páginas gerais (Introdução, Instalação, Temas, Tipografia…)
+  src/blocks/                  páginas dos Blocks (visão geral, Dashboard, Login, Cadastro)
+apps/web/                      demo dos blocos, com rotas por hash (#/, #/login, #/cadastro)
 ```
 
 ## Pilha
@@ -58,8 +66,8 @@ React 19.3.1, Vite 8, Tailwind 4, TypeScript 6, Turbo, `@base-ui/react`, class-v
 
 Ficam em `packages/ui/src/styles/globals.css`:
 
-1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…). É o que os componentes usam. Os neutros têm os valores `oklch` do tema mist do shadcn; as cores de marca (primária, secundária, anel, link, gráficos) referenciam a paleta da marca. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground`, o `link` e o `field` (fundo dos campos).
-2. **Paleta da marca** (`--bb-primary-*` de 50 a 950, `--bb-ink`, `--bb-gradient`): os valores brutos. A ação primária usa a 600, e não a base 500, porque texto branco na 500 dá 3,5:1.
+1. **Papéis semânticos** (`--primary`, `--foreground`, `--border`…). É o que os componentes usam. Os neutros têm os valores `oklch` do tema mist do shadcn; as cores de marca (primária, secundária, anel, link, gráficos) referenciam a paleta da marca. No Tailwind, eles viram classes como `bg-primary` e `text-foreground`. Todos os papéis do shadcn existem, e a Big Brain acrescenta os estados (`primary-hover`, `primary-pressed`, `secondary-hover`, `destructive-hover`), o `destructive-foreground`, o `link`, o `link-hover`, o `field` (fundo dos campos) e o `field-border` (borda dos campos, transparente na Brainz Group).
+2. **Paleta da marca** (`--bb-primary-*` de 100 a 900, `--bb-ink`, `--bb-gradient`): os valores brutos. A ação primária usa a 600, e não a base 500, porque texto branco na 500 dá 3,5:1.
 
 O modo escuro é ativado pela classe `.dark` num ancestral.
 
@@ -108,7 +116,7 @@ A biblioteca tem os 63 componentes do registro do shadcn (estilo `base-rhea`), i
 Pontos que valem para todos:
 
 - **Escala:** controles com 32px (`h-8`) e cantos `rounded-2xl` (~13px), a escala do estilo rhea; o Button tem `xs` (24px), `sm` (28px), `default` (32px) e `lg` (36px).
-- **Campos:** preenchidos e sem borda, com o papel `field`.
+- **Campos:** preenchidos, com o papel `field`; sem borda na Brainz Group, e com borda quando a marca define `--field-border` (o SESI define).
 - **Ícones:** um ícone ao lado do rótulo leva `data-icon="inline-start"` ou `"inline-end"`; ícones decorativos levam `aria-hidden="true"`.
 - **Links:** use `buttonVariants()` num `<a>` para um link com cara de botão.
 - **Atributos:** cada parte expõe `data-slot`; os componentes com variantes expõem também `data-variant` e `data-size`.

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as BreadcrumbStories from "./breadcrumb.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={BreadcrumbStories} />
 
@@ -113,7 +114,7 @@ Passe um componente como `children` do `BreadcrumbSeparator` para trocar o separ
 
 ## Dropdown
 
-Combine o `BreadcrumbItem` com um `DropdownMenu` para listar as páginas de um nível. O gatilho aqui é um `<button>` com o texto do nível, então leva as classes do anel de foco.
+Combine o `BreadcrumbItem` com um `DropdownMenu` para listar as páginas de um nível. O gatilho aqui é um `<button>` com o texto do nível, então leva as classes do anel de foco. Os itens do menu são páginas, então cada `DropdownMenuItem` recebe um `<a href>` pela prop `render` (navegação é `<a>`, nunca `<button>`): o item continua `menuitem` para o leitor de tela e abre com o botão do meio ou numa nova aba.
 
 O menu abre num portal. O teste dessa story abre o menu antes de o axe rodar, porque um menu fechado não aparece para ele.
 
@@ -157,15 +158,17 @@ Num app em RTL, coloque `dir="rtl"` e o `lang` no `<html>`. O exemplo usa um `di
 
 O `<nav>` raiz. Aceita as props de um `<nav>`.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Trilha de navegação"'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Referência da API do Breadcrumb">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td><code>{'"Trilha de navegação"'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### BreadcrumbList
 
@@ -179,15 +182,17 @@ Envolve cada nível (`<li>`). Aceita a `className`.
 
 O link de um nível. Aceita as props de um `<a>` e `render`, para trocar o elemento (por exemplo, pelo link do roteador).
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td><code>{'<a />'}</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Breadcrumb: BreadcrumbLink">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td><code>{'<a />'}</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### BreadcrumbPage
 
@@ -197,31 +202,35 @@ A página atual (`<span>`, com `aria-current="page"`, `role="link"` e `aria-disa
 
 O separador entre os níveis (`<li>`, decorativo). Aceita a `className` e `children`, que trocam a seta padrão.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>seta (<code>ChevronRightIcon</code>, com <code>rtl:rotate-180</code>)</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Breadcrumb: BreadcrumbSeparator">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>seta (<code>ChevronRightIcon</code>, com <code>rtl:rotate-180</code>)</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### BreadcrumbEllipsis
 
 As reticências de uma trilha recolhida (`<span>`, com o texto `sr-only` "Mais itens"). Aceita as props de um `<span>`; dentro de um botão com nome, passe `aria-hidden="true"`.
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Breadcrumb</code></td><td><code>{'<nav>'}</code></td><td><code>breadcrumb</code></td></tr>
-    <tr><td><code>BreadcrumbList</code></td><td><code>{'<ol>'}</code></td><td><code>breadcrumb-list</code></td></tr>
-    <tr><td><code>BreadcrumbItem</code></td><td><code>{'<li>'}</code></td><td><code>breadcrumb-item</code></td></tr>
-    <tr><td><code>BreadcrumbLink</code></td><td><code>{'<a>'}</code></td><td><code>breadcrumb-link</code></td></tr>
-    <tr><td><code>BreadcrumbPage</code></td><td><code>{'<span>'}</code></td><td><code>breadcrumb-page</code></td></tr>
-    <tr><td><code>BreadcrumbSeparator</code></td><td><code>{'<li>'}</code></td><td><code>breadcrumb-separator</code></td></tr>
-    <tr><td><code>BreadcrumbEllipsis</code></td><td><code>{'<span>'}</code></td><td><code>breadcrumb-ellipsis</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Breadcrumb: BreadcrumbEllipsis">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Breadcrumb</code></td><td><code>{'<nav>'}</code></td><td><code>breadcrumb</code></td></tr>
+      <tr><td><code>BreadcrumbList</code></td><td><code>{'<ol>'}</code></td><td><code>breadcrumb-list</code></td></tr>
+      <tr><td><code>BreadcrumbItem</code></td><td><code>{'<li>'}</code></td><td><code>breadcrumb-item</code></td></tr>
+      <tr><td><code>BreadcrumbLink</code></td><td><code>{'<a>'}</code></td><td><code>breadcrumb-link</code></td></tr>
+      <tr><td><code>BreadcrumbPage</code></td><td><code>{'<span>'}</code></td><td><code>breadcrumb-page</code></td></tr>
+      <tr><td><code>BreadcrumbSeparator</code></td><td><code>{'<li>'}</code></td><td><code>breadcrumb-separator</code></td></tr>
+      <tr><td><code>BreadcrumbEllipsis</code></td><td><code>{'<span>'}</code></td><td><code>breadcrumb-ellipsis</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>

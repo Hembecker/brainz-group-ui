@@ -41,10 +41,13 @@ import { PanelLeftIcon } from "lucide-react"
  *   tela lê), porque a cor sozinha não basta. Use `isActive` só no link da
  *   página atual. Um `aria-current` passado por você prevalece (o `mergeProps`
  *   dá a vez às props do usuário).
- * - Textos fixos em português, como o "Fechar" do Sheet: o gatilho e a
+ * - Textos em português, como o "Fechar" do Sheet: o gatilho e a
  *   `SidebarRail` se chamam "Alternar barra lateral"; no celular o painel é um
- *   Sheet chamado "Barra lateral". O `SidebarTrigger` expõe `aria-expanded`
- *   (`open` no desktop, `openMobile` no celular). O ícone dele é `aria-hidden`.
+ *   Sheet chamado "Barra lateral". Para outro idioma, o `SidebarTrigger`
+ *   aceita `label`, a `Sidebar` aceita `mobileTitle` e `mobileDescription` (o
+ *   título e a descrição do Sheet) e a `SidebarRail`, `aria-label` e `title`. O
+ *   `SidebarTrigger` expõe `aria-expanded` (`open` no desktop, `openMobile`
+ *   no celular). O ícone dele é `aria-hidden`.
  * - Atalho: Ctrl+B (⌘+B no Mac) alterna a barra, no desktop e no celular. A
  *   tecla é `SIDEBAR_KEYBOARD_SHORTCUT`, aqui no arquivo.
  * - Celular (< 768px, `useIsMobile`): a `Sidebar` vira um Sheet (modal, foco
@@ -78,12 +81,29 @@ import { PanelLeftIcon } from "lucide-react"
  *   `SidebarRail` (`left`/`right`, sem inversão em RTL) e para a margem do
  *   `SidebarInset` na variante `inset` (`ml`/`mr` pelo `data-side` da barra).
  * - Anel de foco: `ring-sidebar-ring` sólido com `focus-visible:ring-3`
- *   (3,4:1 na sidebar no claro e 6,7:1 no escuro), sem afastamento: a barra
- *   tem fundo próprio. Não troque pelo padrão `ring-ring`.
- * - Limite conhecido: o vão da barra (`sidebar-gap`) fica no fluxo, no início
- *   da linha, e a barra é `fixed` no lado físico. Com `side` contrário à
- *   direção (por exemplo `side="left"` em RTL) os dois ficam em bordas
- *   opostas: deixe `side` de fora para seguir a direção.
+ *   (5,0:1 na sidebar no claro e 6,7:1 no escuro), sem afastamento: a barra
+ *   tem fundo próprio. Não troque pelo padrão `ring-ring`. O anel fica por
+ *   fora do botão e o `SidebarContent` rola (`overflow-auto`): o `scroll-py-2`
+ *   dele deixa 8px entre o item focado e a borda da área quando o navegador
+ *   rola até o foco, para o anel não ser cortado.
+ * - Vão da barra: o `sidebar-gap` fica no fluxo e a barra é `fixed` no lado
+ *   físico. Para o vão ficar sempre do mesmo lado da barra, em qualquer
+ *   direção e em qualquer ordem no DOM, o elemento da barra recebe `order` do
+ *   flex pelo lado físico e pela direção do DOM (`:dir()`): `order-first`, ou
+ *   `order-last` quando o lado físico é o fim da linha (`right` em LTR, `left`
+ *   em RTL). Assim o `SidebarInset` nunca fica embaixo da barra, nem com
+ *   `side` contrário à direção. O seletor é `[&:dir(…)]` e não `ltr:`/`rtl:`,
+ *   porque o `ltr:` do Tailwind também casa dentro de um `dir="rtl"` sob um
+ *   `<html dir="ltr">`. Ponha a `Sidebar` antes do `SidebarInset` no DOM: as
+ *   margens da variante `inset` dependem do `peer`.
+ * - Alvos de toque (WCAG 2.2, 2.5.8): o `SidebarMenuAction` e o
+ *   `SidebarGroupAction` têm 20px na tela, como no registro, e a área de clique
+ *   é um `after:` absoluto: 36px (`-inset-2`) abaixo de `md` e 24px
+ *   (`-inset-0.5`) a partir de `md`, no lugar do `md:after:hidden` do registro,
+ *   que deixava o alvo com 20px. Os 24px cabem dentro da linha do item, sem
+ *   tomar o clique dos vizinhos.
+ * - O `SidebarMenuButton` expõe `data-variant` e `data-size`, além de
+ *   `data-active`.
  */
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -230,11 +250,17 @@ function Sidebar({
   className,
   children,
   dir,
+  mobileTitle = "Barra lateral",
+  mobileDescription = "Exibe a barra lateral no celular.",
   ...props
 }: React.ComponentProps<"div"> & {
   side?: SidebarSide
   variant?: "sidebar" | "floating" | "inset"
   collapsible?: "offcanvas" | "icon" | "none"
+  /** Nome do Sheet no celular (o título `sr-only`). */
+  mobileTitle?: string
+  /** Descrição `sr-only` do Sheet no celular. */
+  mobileDescription?: string
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
   const direction = useDirection()
@@ -274,8 +300,8 @@ function Sidebar({
           side={side}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Barra lateral</SheetTitle>
-            <SheetDescription>Exibe a barra lateral no celular.</SheetDescription>
+            <SheetTitle>{mobileTitle}</SheetTitle>
+            <SheetDescription>{mobileDescription}</SheetDescription>
           </SheetHeader>
           <SidebarSideContext.Provider value={side}>
             <div className="flex h-full w-full flex-col">{children}</div>
@@ -287,7 +313,7 @@ function Sidebar({
 
   return (
     <div
-      className="group peer hidden text-sidebar-foreground md:block"
+      className="group peer order-first hidden text-sidebar-foreground md:block [&:dir(ltr)]:data-[side=right]:order-last [&:dir(rtl)]:data-[side=left]:order-last"
       data-state={state}
       data-collapsible={state === "collapsed" ? collapsible : ""}
       data-variant={variant}
@@ -336,8 +362,12 @@ function Sidebar({
 function SidebarTrigger({
   className,
   onClick,
+  label = "Alternar barra lateral",
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: React.ComponentProps<typeof Button> & {
+  /** Nome do botão (o texto `sr-only`). */
+  label?: string
+}) {
   const { toggleSidebar, isMobile, open, openMobile } = useSidebar()
 
   return (
@@ -355,7 +385,7 @@ function SidebarTrigger({
       {...props}
     >
       <PanelLeftIcon aria-hidden="true" className="rtl:rotate-180" />
-      <span className="sr-only">Alternar barra lateral</span>
+      <span className="sr-only">{label}</span>
     </Button>
   )
 }
@@ -457,7 +487,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        "no-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-auto [--radius:var(--radius-xl)] group-data-[collapsible=icon]:overflow-hidden",
+        "no-scrollbar flex min-h-0 flex-1 scroll-py-2 flex-col gap-2 overflow-auto [--radius:var(--radius-xl)] group-data-[collapsible=icon]:overflow-hidden",
         className
       )}
       {...props}
@@ -510,7 +540,7 @@ function SidebarGroupAction({
     props: mergeProps<"button">(
       {
         className: cn(
-          "absolute top-3.5 end-3 flex aspect-square w-5 items-center justify-center rounded-xl p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+          "absolute top-3.5 end-3 flex aspect-square w-5 items-center justify-center rounded-xl p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 md:after:-inset-0.5 [&>svg]:size-4 [&>svg]:shrink-0",
           className
         ),
       },
@@ -614,6 +644,7 @@ function SidebarMenuButton({
     state: {
       slot: "sidebar-menu-button",
       sidebar: "menu-button",
+      variant,
       size,
       active: isActive,
     },
@@ -656,7 +687,7 @@ function SidebarMenuAction({
     props: mergeProps<"button">(
       {
         className: cn(
-          "absolute top-1.5 end-1 flex aspect-square w-5 items-center justify-center rounded-xl p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+          "absolute top-1.5 end-1 flex aspect-square w-5 items-center justify-center rounded-xl p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 md:after:-inset-0.5 [&>svg]:size-4 [&>svg]:shrink-0",
           showOnHover &&
             "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-sidebar-accent-foreground aria-expanded:opacity-100 md:opacity-0",
           className

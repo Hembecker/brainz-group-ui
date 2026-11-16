@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as NavigationMenuStories from "./navigation-menu.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={NavigationMenuStories} />
 
@@ -54,16 +55,18 @@ Monte um `NavigationMenu` com esta composição:
   language="text"
   dark
   code={`NavigationMenu
-├── NavigationMenuList
-│   ├── NavigationMenuItem
-│   │   ├── NavigationMenuTrigger
-│   │   └── NavigationMenuContent
-│   │       ├── NavigationMenuLink
-│   │       └── NavigationMenuLink
-│   └── NavigationMenuItem
-│       └── NavigationMenuLink
-└── NavigationMenuIndicator`}
+└── NavigationMenuList
+    ├── NavigationMenuItem
+    │   ├── NavigationMenuTrigger
+    │   ├── NavigationMenuIndicator
+    │   └── NavigationMenuContent
+    │       ├── NavigationMenuLink
+    │       └── NavigationMenuLink
+    └── NavigationMenuItem
+        └── NavigationMenuLink`}
 />
+
+Diferença da página do shadcn: lá o `NavigationMenuIndicator` aparece como filho da raiz, ao lado da lista. Aqui ele é o `NavigationMenu.Icon` do Base UI, que lê o estado do item e lança um erro fora de um `NavigationMenuItem`: coloque-o dentro do item, ao lado do gatilho ou dentro dele. Ele é decorativo (`aria-hidden`) e aparece só no item cujo painel está aberto (`data-popup-open`).
 
 ## Acessibilidade
 
@@ -89,7 +92,7 @@ Monte um `NavigationMenu` com esta composição:
 
 ## Componente de link
 
-Use a prop `render` para compor o seu componente de link, como o `Link` do Next.js ou do React Router. Para que um link da barra tenha a aparência de um gatilho, use `navigationMenuTriggerStyle()`.
+Use a prop `render` para compor o seu componente de link, como o `Link` do Next.js ou do React Router. Para que um link da barra tenha a aparência de um gatilho, use `navigationMenuTriggerStyle()`. No exemplo, "Documentação" é a página atual (`active`): o teste da story confere o `aria-current="page"` e o fundo `muted` cheio, sem foco nem mouse.
 
 <Canvas of={NavigationMenuStories.ComponenteDeLink} />
 
@@ -136,43 +139,51 @@ O `NavigationMenu` é construído sobre o [NavigationMenu do Base UI](https://ba
 
 A raiz (`<nav>`), que já monta o portal e o posicionador do painel.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Navigation Menu: NavigationMenu">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>align</code></td><td><code>{'"start" | "center" | "end"'}</code></td><td><code>{'"start"'}</code></td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
 ### NavigationMenuLink
 
 O link (`<a>`). Aceita `render` para trocar o elemento.
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>render</code></td><td><code>ReactElement</code></td><td><code>{'<a>'}</code></td></tr>
-    <tr><td><code>active</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Navigation Menu: NavigationMenuLink">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>render</code></td><td><code>ReactElement</code></td><td><code>{'<a>'}</code></td></tr>
+      <tr><td><code>active</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-<table>
-  <thead>
-    <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>NavigationMenu</code></td><td><code>{'<nav>'}</code></td><td><code>navigation-menu</code></td></tr>
-    <tr><td><code>NavigationMenuList</code></td><td><code>{'<ul>'}</code></td><td><code>navigation-menu-list</code></td></tr>
-    <tr><td><code>NavigationMenuItem</code></td><td><code>{'<li>'}</code></td><td><code>navigation-menu-item</code></td></tr>
-    <tr><td><code>NavigationMenuTrigger</code></td><td><code>{'<button>'}</code></td><td><code>navigation-menu-trigger</code></td></tr>
-    <tr><td><code>NavigationMenuContent</code></td><td><code>{'<div>'}</code></td><td><code>navigation-menu-content</code></td></tr>
-    <tr><td><code>NavigationMenuLink</code></td><td><code>{'<a>'}</code></td><td><code>navigation-menu-link</code></td></tr>
-    <tr><td><code>NavigationMenuIndicator</code></td><td><code>{'<span>'}</code></td><td><code>navigation-menu-indicator</code></td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Navigation Menu: Referência da API, NavigationMenuLink">
+  <table>
+    <thead>
+      <tr><th>Parte</th><th>Elemento</th><th>data-slot</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>NavigationMenu</code></td><td><code>{'<nav>'}</code></td><td><code>navigation-menu</code></td></tr>
+      <tr><td><code>NavigationMenuList</code></td><td><code>{'<ul>'}</code></td><td><code>navigation-menu-list</code></td></tr>
+      <tr><td><code>NavigationMenuItem</code></td><td><code>{'<li>'}</code></td><td><code>navigation-menu-item</code></td></tr>
+      <tr><td><code>NavigationMenuTrigger</code></td><td><code>{'<button>'}</code></td><td><code>navigation-menu-trigger</code></td></tr>
+      <tr><td><code>NavigationMenuContent</code></td><td><code>{'<div>'}</code></td><td><code>navigation-menu-content</code></td></tr>
+      <tr><td><code>NavigationMenuLink</code></td><td><code>{'<a>'}</code></td><td><code>navigation-menu-link</code></td></tr>
+      <tr><td><code>NavigationMenuIndicator</code></td><td><code>{'<span>'}</code></td><td><code>navigation-menu-indicator</code></td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
+
+O `NavigationMenuIndicator` é decorativo (`aria-hidden`), marca o item aberto com `data-popup-open` e precisa ficar dentro de um `NavigationMenuItem`.

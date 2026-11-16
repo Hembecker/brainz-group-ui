@@ -20,17 +20,29 @@ import { Button } from "@workspace/ui/components/button"
  *   - borda do erro: `border-destructive/30` -> `border-destructive`;
  *   - mídia do erro: `bg-destructive/10 text-destructive` -> `bg-muted
  *     text-destructive-hover` (o ícone vermelho sobre `muted` precisa do
- *     `destructive-hover`, 5,9:1 no claro);
+ *     `destructive-hover`, 5,8:1 no claro);
  *   - descrição do erro: `text-destructive/80` -> `text-destructive-hover`
  *     (6,4:1 no card claro; mais de 9:1 no escuro).
  *   Ficou o `opacity-60` da imagem enviando (é a opacidade do elemento, não
  *   de uma cor de texto) e o `opacity` volta a 100% em `done` e `idle`.
+ * - Exceção anotada (escolha do usuário em 2026-11-16): o brilho `shimmer`
+ *   do título, nos estados `processing` e `uploading`, vem do
+ *   `shadcn/tailwind.css` e passa uma faixa com cor a 20% de opacidade sobre o
+ *   texto (~1,5:1 na faixa). É decorativo e momentâneo: o texto do título fica
+ *   com o contraste dele fora da faixa, e os exemplos dizem o estado em texto
+ *   na AttachmentDescription ("Enviando · 64%").
  * - O estado de erro não depende da cor: a razão da falha vai na
  *   AttachmentDescription (veja a página Docs).
  * - Foco: o card inteiro ganha o anel do projeto quando qualquer parte
  *   recebe foco (`focus-within`, com afastamento de 2px pela cor do fundo);
  *   o AttachmentTrigger tira o outline e usa esse anel. Os botões de ação têm
  *   o próprio anel do Button.
+ * - AttachmentGroup tem 6px de folga em todos os lados (`p-1.5`, com o
+ *   `scroll-px-1.5` igual para o encaixe): o anel do card (3px mais o
+ *   afastamento de 2px) não é cortado pela rolagem. Nos navegadores sem
+ *   `animation-timeline: scroll()`, o fallback do `scroll-fade-x` esmaece as
+ *   duas pontas sempre, e o anel de um card na ponta fica esmaecido ali (a
+ *   mesma troca aceita nas barras).
  * - AttachmentTrigger fica atrás das ações (`z-10` contra `z-20`): as duas
  *   coisas continuam focáveis e clicáveis. Um <button> nativo por padrão, ou o
  *   elemento de `render` (um <a>, ou um DialogTrigger).
@@ -218,7 +230,7 @@ function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="attachment-group"
       className={cn(
-        "flex min-w-0 scroll-fade-x snap-x snap-mandatory scroll-px-1 scrollbar-none gap-3 overflow-x-auto overscroll-x-contain py-1 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start",
+        "flex min-w-0 scroll-fade-x snap-x snap-mandatory scroll-px-1.5 scrollbar-none gap-3 overflow-x-auto overscroll-x-contain p-1.5 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start",
         className
       )}
       {...props}

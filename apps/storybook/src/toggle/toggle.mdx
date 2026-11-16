@@ -1,6 +1,7 @@
 import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 
 import * as ToggleStories from "./toggle.stories";
+import { ScrollTable } from "../docs/_components/token-table";
 
 <Meta of={ToggleStories} />
 
@@ -83,24 +84,26 @@ Os recuos são lógicos, então o toggle segue a direção de um ancestral com `
 
 O `Toggle` envolve o `Toggle` do Base UI e repassa todas as props dele. Veja a [referência do Base UI Toggle](https://base-ui.com/react/components/toggle#api-reference) para a lista completa. As principais:
 
-<table>
-  <thead>
-    <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
-    <tr><td><code>pressed</code></td><td><code>boolean</code>: estado controlado</td><td>—</td></tr>
-    <tr><td><code>defaultPressed</code></td><td><code>boolean</code>: estado inicial, sem controle</td><td><code>false</code></td></tr>
-    <tr><td><code>onPressedChange</code></td><td><code>{'(pressed: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
-    <tr><td><code>value</code></td><td><code>string</code>: identifica o toggle dentro de um ToggleGroup</td><td>—</td></tr>
-    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
-    <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há texto visível</td><td>—</td></tr>
-    <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
-    <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
-  </tbody>
-</table>
+<ScrollTable label="Toggle: Referência da API">
+  <table>
+    <thead>
+      <tr><th>Prop</th><th>Tipo</th><th>Padrão</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>variant</code></td><td><code>{'"default" | "outline"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>size</code></td><td><code>{'"default" | "sm" | "lg"'}</code></td><td><code>{'"default"'}</code></td></tr>
+      <tr><td><code>pressed</code></td><td><code>boolean</code>: estado controlado</td><td>—</td></tr>
+      <tr><td><code>defaultPressed</code></td><td><code>boolean</code>: estado inicial, sem controle</td><td><code>false</code></td></tr>
+      <tr><td><code>onPressedChange</code></td><td><code>{'(pressed: boolean, eventDetails) => void'}</code></td><td>—</td></tr>
+      <tr><td><code>value</code></td><td><code>string</code>: identifica o toggle dentro de um ToggleGroup</td><td>—</td></tr>
+      <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+      <tr><td><code>aria-label</code></td><td><code>string</code>: só quando não há texto visível</td><td>—</td></tr>
+      <tr><td><code>render</code></td><td><code>{'ReactElement | (props, state) => ReactElement'}</code></td><td>—</td></tr>
+      <tr><td><code>className</code></td><td><code>string</code></td><td>—</td></tr>
+    </tbody>
+  </table>
+</ScrollTable>
 
-O elemento recebe `data-slot="toggle"`. O estado fica em `aria-pressed` e em `data-pressed`, e `data-disabled` quando desabilitado.
+O elemento recebe `data-slot="toggle"`, `data-variant` e `data-size` com os valores resolvidos. O estado fica em `aria-pressed` e em `data-pressed`, e `data-disabled` quando desabilitado.
 
 <Canvas of={ToggleStories.Playground} />

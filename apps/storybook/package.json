@@ -12,10 +12,12 @@
     "test": "npm run test:light && npm run test:dark && npm run test:rtl",
     "test:light": "vitest --project=storybook --run",
     "test:dark": "vitest --project=storybook --run --mode dark",
-    "test:rtl": "vitest --project=storybook --run --mode rtl"
+    "test:rtl": "vitest --project=storybook --run --mode rtl",
+    "test:sesi": "vitest --project=storybook --run --mode sesi && vitest --project=storybook --run --mode sesi-dark"
   },
   "dependencies": {
     "@workspace/ui": "*",
+    "embla-carousel-autoplay": "8.6.0",
     "input-otp": "1.5.0",
     "lucide-react": "1.72.0",
     "react": "19.3.1",
@@ -24,6 +26,7 @@
     "recharts": "3.8.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "5.6.0",
     "@eslint/js": "10.0.1",
     "@storybook/addon-a11y": "10.6.7",
     "@storybook/addon-docs": "10.6.7",

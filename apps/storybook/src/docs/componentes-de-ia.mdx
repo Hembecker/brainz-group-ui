@@ -1,0 +1,62 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+
+import * as MessageStories from "../message/message.stories";
+import * as MarkerStories from "../marker/marker.stories";
+
+<Meta title="Componentes de IA" />
+
+# Componentes de IA
+
+Atalhos para os componentes de conversa e de agentes, organizados pelo padrão de interface em que cada um entra.
+
+Os componentes desta página são os mesmos do [catálogo](?path=/docs/componentes-visão-geral--docs), agrupados pelo uso numa interface de IA: a conversa, a mensagem e os anexos, o código, o raciocínio do agente e os estados de carregamento. No fim, a seção **Planejado** lista o que ainda não existe.
+
+Os exemplos não usam um provedor de IA. O AI SDK (`@ai-sdk/react`) não é uma dependência deste projeto: onde a página do shadcn usa o `useChat`, as stories simulam a conversa e o streaming com estado local.
+
+<Canvas of={MessageStories.Demo} />
+
+## Conversa
+
+- [Message Scroller](?path=/docs/componentes-message-scroller--docs): o contêiner de rolagem do chat. Ancora os turnos, acompanha a resposta em streaming só enquanto a pessoa está no fim, carrega o histórico sem pular e leva a qualquer mensagem. A página explica o que faz um bom chat com streaming.
+- [Message](?path=/docs/componentes-message--docs): a linha de uma mensagem, com avatar, cabeçalho, rodapé, ações e alinhamento (`align="end"` leva a mensagem para o fim da linha).
+- [Marker](?path=/docs/componentes-marker--docs): notas do sistema, status em linha ("está digitando…") e separadores com rótulo entre os turnos.
+
+## Mensagem e anexos
+
+- [Bubble](?path=/docs/componentes-bubble--docs): o balão da mensagem, com variantes, agrupamento, reações, conteúdo recolhível ("Mostrar mais"), tooltip e popover. Cuida só da superfície; avatar, nome e ações ficam no Message.
+- [Attachment](?path=/docs/componentes-attachment--docs): um arquivo ou uma imagem anexada, com nome, metadados, estado do envio e ações. Serve no compositor, na conversa e em listas de envio.
+- [Input Group](?path=/docs/componentes-input-group--docs): a base do compositor. A story [Textarea](?path=/story/componentes-input-group--area-de-texto) mostra um campo de várias linhas com uma barra embaixo.
+- [Textarea](?path=/docs/componentes-textarea--docs): o campo de várias linhas, com rótulo, estado inválido e um exemplo com o botão "Enviar mensagem".
+- [Questionnaire](?path=/docs/componentes-questionnaire--docs): um questionário em etapas, com escolha única, escolha múltipla, resposta livre e perguntas que podem ser puladas. Útil quando o assistente precisa de respostas estruturadas, inclusive dentro de um Card ou de um Dialog.
+
+## Código
+
+- [Code Block](?path=/docs/componentes-code-block--docs): código, saída de terminal, logs e diffs, com cabeçalho, números de linha, botão de copiar e realce de sintaxe opcional (Shiki). Tem um tamanho pequeno para a saída de ferramentas dentro de um Trace, uma seção de streaming que realça só as linhas novas e um exemplo dentro de uma mensagem.
+
+## Raciocínio e rastreamento
+
+- [Trace](?path=/docs/componentes-trace--docs): a lista de passos de um agente. Cada linha tem ícone, título, descrição e estado, e pode expandir, apontar para uma página ou abrir um Dialog ou Sheet. A página tem os padrões **Raciocínio**, **Ferramentas**, **Fontes**, **Cadeia de pensamento**, **Commit** e **Turno completo**.
+
+Use o Trace para os passos do agente, o Message para a resposta dele e o Marker para as notas entre os turnos.
+
+## Estados de carregamento
+
+- [Marker](?path=/docs/componentes-marker--docs): o [status](?path=/story/componentes-marker--status), com `role="status"` e um Spinner para anunciar o andamento, e o [shimmer](?path=/story/componentes-marker--shimmer) para um texto que ainda está sendo gerado.
+- [Spinner](?path=/docs/componentes-spinner--docs): o indicador de carregamento, num botão, num badge, num grupo de entrada ou num estado vazio.
+- [Skeleton](?path=/docs/componentes-skeleton--docs): o espaço reservado enquanto o conteúdo carrega.
+- [Input Group](?path=/docs/componentes-input-group--docs): a story [Spinner](?path=/story/componentes-input-group--carregando) mostra o campo com um indicador de carregamento.
+- [Toast](?path=/docs/componentes-toast--docs): uma mensagem curta e temporária. A seção **Promise** acompanha uma tarefa assíncrona: o aviso mostra o carregamento e depois o resultado.
+
+Um texto que aparece na tela nem sempre é anunciado ao leitor de tela. Para avisar o andamento de uma resposta, mantenha uma região `aria-live="polite"` (como o `role="status"` do Marker) sempre montada e troque só o texto dela:
+
+<Canvas of={MarkerStories.Status} />
+
+## Planejado (ainda não implementado)
+
+Estes itens **não existem** no projeto. Eles estão listados para orientar o que falta numa interface de IA completa, e não têm página, componente nem exemplo:
+
+- **Bloco de chat completo:** um modelo de tela com o histórico de conversas, o Message Scroller, as mensagens e o compositor, no formato dos blocos de Dashboard, Login e Cadastro.
+- **Bloco de compositor de prompt:** um compositor pronto, com anexos, seleção de modelo, atalhos de teclado e envio. Hoje ele é montado à mão com Input Group, Textarea, Attachment e Button.
+- **Helper de texto em streaming:** um utilitário para receber e mostrar a resposta aos pedaços. As stories do Message Scroller e do Code Block simulam o streaming com estado local, mas não há um helper reutilizável.
+- **Integração com um provedor de IA:** nenhum SDK (como o AI SDK) está instalado; a ligação com o modelo fica a cargo de cada projeto.
+- **Renderização de Markdown:** o Code Block documenta como receber código do Streamdown, mas o Streamdown não está instalado e não há um componente de Markdown.

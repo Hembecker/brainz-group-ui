@@ -39,8 +39,8 @@ import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 
 /*
  * One story per section of drawer.mdx, in the order of the shadcn/ui page
- * (Composition, Custom Sizes and Styling have no preview: they are text and
- * tables in the MDX; the "Migrating from Vaul" section is not covered).
+ * (Composition, Custom Sizes, Styling and "Migrating from Vaul" have no
+ * preview: they are text, tables and diffs in the MDX).
  *
  * A closed drawer is invisible to axe, so every story has a `play` that opens
  * it first (the test runs axe after `play`). `abrirGaveta` finds the popup by
@@ -148,45 +148,31 @@ export const Demo: Story = {
                     Entrega padrão
                     <Badge variant="secondary">Mais rápida</Badge>
                   </FieldTitle>
-                  <FieldDescription id="demo-agora-texto">
+                  <FieldDescription>
                     25 a 35 min · Entregador já escolhido
                   </FieldDescription>
                 </FieldContent>
-                <RadioGroupItem
-                  value="agora"
-                  id="demo-agora"
-                  aria-describedby="demo-agora-texto"
-                />
+                <RadioGroupItem value="agora" id="demo-agora" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="demo-17h">
               <Field orientation="horizontal">
                 <FieldContent>
                   <FieldTitle>17h00 às 17h15</FieldTitle>
-                  <FieldDescription id="demo-17h-texto">
-                    O preparo começa às 16h45
-                  </FieldDescription>
+                  <FieldDescription>O preparo começa às 16h45</FieldDescription>
                 </FieldContent>
-                <RadioGroupItem
-                  value="17h"
-                  id="demo-17h"
-                  aria-describedby="demo-17h-texto"
-                />
+                <RadioGroupItem value="17h" id="demo-17h" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="demo-18h">
               <Field orientation="horizontal">
                 <FieldContent>
                   <FieldTitle>18h00 às 18h15</FieldTitle>
-                  <FieldDescription id="demo-18h-texto">
+                  <FieldDescription>
                     O mais escolhido · Muita procura
                   </FieldDescription>
                 </FieldContent>
-                <RadioGroupItem
-                  value="18h"
-                  id="demo-18h"
-                  aria-describedby="demo-18h-texto"
-                />
+                <RadioGroupItem value="18h" id="demo-18h" />
               </Field>
             </FieldLabel>
           </RadioGroup>

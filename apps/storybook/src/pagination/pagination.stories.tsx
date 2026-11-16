@@ -186,7 +186,7 @@ export const Rtl: Story = {
               <PaginationPrevious
                 href="#pagina-1"
                 text="السابق"
-                aria-label="الصفحة السابقة"
+                aria-label="السابق، الانتقال إلى الصفحة السابقة"
               />
             </PaginationItem>
             <PaginationItem>
@@ -215,7 +215,7 @@ export const Rtl: Story = {
               <PaginationNext
                 href="#pagina-3"
                 text="التالي"
-                aria-label="الصفحة التالية"
+                aria-label="التالي، الانتقال إلى الصفحة التالية"
               />
             </PaginationItem>
           </PaginationContent>
