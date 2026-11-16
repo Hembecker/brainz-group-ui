@@ -65,6 +65,9 @@ import {
  *   por CSS (`rtl:rotate-180` no ícone e as regras na raiz): o `Nav` padrão do
  *   DayPicker sempre manda "left" e "right".
  * - Cantos e posições lógicos (`rounded-s/e`, `after:end-0`).
+ * - Solto na página, o fundo é `bg-page` (o fundo da página da marca), no
+ *   lugar do `bg-background` do registro; dentro de um Card ou de um Popover
+ *   continua transparente.
  */
 
 function Calendar({
@@ -88,7 +91,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "group/calendar bg-background p-3 [--cell-radius:var(--radius-2xl)] [--cell-size:--spacing(8)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+        "group/calendar bg-page p-3 [--cell-radius:var(--radius-2xl)] [--cell-size:--spacing(8)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className

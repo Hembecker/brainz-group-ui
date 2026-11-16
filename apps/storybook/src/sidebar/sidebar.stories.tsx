@@ -1102,6 +1102,8 @@ function EstadoDaBarra() {
     <div className="flex flex-col items-start gap-3 p-4">
       <Button
         variant="outline"
+        // A barra aberta é o estado normal: o fundo ignora aria-expanded.
+        className="aria-expanded:bg-background aria-expanded:text-foreground aria-expanded:hover:bg-accent aria-expanded:hover:text-accent-foreground dark:aria-expanded:bg-input/30 dark:aria-expanded:hover:bg-accent"
         aria-expanded={isMobile ? openMobile : open}
         onClick={toggleSidebar}
       >
@@ -1128,6 +1130,8 @@ function EstadoDaBarra() {
     <div>
       <Button
         variant="outline"
+        // A barra aberta é o estado normal: o fundo ignora aria-expanded.
+        className="aria-expanded:bg-background aria-expanded:text-foreground aria-expanded:hover:bg-accent aria-expanded:hover:text-accent-foreground dark:aria-expanded:bg-input/30 dark:aria-expanded:hover:bg-accent"
         aria-expanded={isMobile ? openMobile : open}
         onClick={toggleSidebar}
       >

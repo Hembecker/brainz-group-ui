@@ -41,7 +41,7 @@ Os tokens ficam em `packages/ui/src/styles/globals.css`, em duas camadas.
 - `--bb-font-sans`: a pilha de fontes da marca;
 - `--bb-ink`: a tinta do logo oficial. Hoje nenhum papel a usa: o logo da Brainz Group pinta a tinta com `currentColor`, para continuar legível no modo escuro.
 
-**2. Papéis semânticos.** O que cada cor **faz**: `--primary`, `--secondary`, `--ring`, `--link`, `--chart-1` a `--chart-5`, `--sidebar-primary`, os estados (`--primary-hover`, `--primary-pressed`…) e os neutros (`--background`, `--foreground`, `--muted`, `--border`…). Os papéis de marca apontam para um passo das escalas; os neutros e o vermelho têm o `oklch` do tema mist do shadcn escrito direto.
+**2. Papéis semânticos.** O que cada cor **faz**: `--primary`, `--secondary`, `--ring`, `--link`, `--chart-1` a `--chart-5`, `--sidebar-primary`, os estados (`--primary-hover`, `--primary-pressed`…) e os neutros (`--background`, `--foreground`, `--muted`, `--border`…). Dois tokens da Big Brain separam o que a marca pode tingir sem mexer nos componentes: `--page`, o fundo da página (na Brainz Group é o próprio `--background`; no SESI, o `#F9FFF9`), e `--field`/`--field-border`, o fundo e a borda dos campos. Os controles e os cards usam `--background` e `--card`, então continuam brancos dentro de um card ou de um diálogo, seja qual for o fundo da página. Os papéis de marca apontam para um passo das escalas; os neutros e o vermelho têm o `oklch` do tema mist do shadcn escrito direto.
 
 Os componentes e os blocos usam **só os papéis**, pelas classes do Tailwind (`bg-primary`, `text-muted-foreground`, `ring-ring`, `bg-sidebar`…), expostas no `@theme inline`. Nunca usam `--bb-*` nem hex. Por isso trocar a camada de marca troca o visual de tudo de uma vez.
 
@@ -82,10 +82,10 @@ Uma marca pode trocar o **visual** por papéis, nunca a estrutura: cores (inclus
 
 ## Marcas instaladas
 
-Cada marca é um bloco `:root[data-brand="<id>"]` no `globals.css` mais uma entrada no registro `packages/ui/src/brand/brands.tsx` (nome, logo, símbolo e se a marca é ilustrativa, isto é, com cores, fonte ou logo fora do material oficial: nenhuma das instaladas hoje).
+Cada marca é um bloco `:root[data-brand="<id>"]` no `globals.css` mais uma entrada no registro `packages/ui/src/brand/brands.tsx` (nome, logo, símbolo, como ela aparece no cabeçalho dos blocos e se a marca é ilustrativa, isto é, com cores, fonte ou logo fora do material oficial: nenhuma das instaladas hoje).
 
 - **Brainz Group** (`brainz`, padrão): a Primária vem da paleta oficial (`brand/paleta-primaria.png`, base 500 = `#4787F0`). Uma cor só: não há Secundária (o `#305BA3` aparece apenas como fim do gradiente do logo). Fonte: Inter Variable (**PROVISÓRIA**).
-- **SESI** (`sesi`): as cores, os neutros, o vermelho de erro, a fonte (Inter) e o raio vêm do **SI Design System**, a biblioteca do Sistema Indústria (coleções Colors e Biblioteca do Figma, conferidas com o zeroheight, em 2026-11-16). O SESI tem **uma cor só na interface, o verde**: não tem tema secundário nem azul (o azul é de outra marca do Sistema Indústria). O azul `#164194` aparece só dentro do logo oficial, como o `#305BA3` no logo da Brainz Group, e nenhum token o usa. A escala vai de 100 a 900 com os hex oficiais, e o verde da marca, `#52AE32` (Pure), é a 500. Ela não cumpre o contrato por passo (branco na 600 dá 3,96:1; a 500 tem 2,82:1 no branco), então o SESI **sobrescreve os papéis** (tabela acima): a ação primária fica na 700, porque o branco na Pure do SI DS dá 2,8:1. Por escolha do usuário (2026-11-16), o resto segue o SI DS onde dá: o anel é rosa, como o foco do SI DS, num tom que passa (Highlights/600, `#CA588A`; o `#F673AD` oficial tem 2,6:1); a borda do campo é a oficial `#DFDFDF` (1,33:1, aceita como o limite do campo da Brainz); e o raio é de 4px nos campos e nos botões. O logo e o símbolo também são os oficiais (veja Logos e imagens).
+- **SESI** (`sesi`): as cores, os neutros, o vermelho de erro, a fonte (Inter) e o raio vêm do **SI Design System**, a biblioteca do Sistema Indústria (coleções Colors e Biblioteca do Figma, conferidas com o zeroheight, em 2026-11-16). O SESI tem **uma cor só na interface, o verde**: não tem tema secundário nem azul (o azul é de outra marca do Sistema Indústria). O azul `#164194` aparece só dentro do logo oficial, como o `#305BA3` no logo da Brainz Group, e nenhum token o usa. A escala vai de 100 a 900 com os hex oficiais, e o verde da marca, `#52AE32` (Pure), é a 500. Ela não cumpre o contrato por passo (branco na 600 dá 3,96:1; a 500 tem 2,82:1 no branco), então o SESI **sobrescreve os papéis** (tabela acima): a ação primária fica na 700, porque o branco na Pure do SI DS dá 2,8:1. Por escolha do usuário (2026-11-16), o resto segue o SI DS onde dá: o anel é rosa, como o foco do SI DS, num tom que passa (Highlights/600, `#CA588A`; o `#F673AD` oficial tem 2,6:1); a borda do campo é a oficial `#DFDFDF` (1,33:1, aceita como o limite do campo da Brainz); o fundo da página é o `#F9FFF9` do SI DS, no token `--page` (os cards, os diálogos e os controles continuam brancos); e o raio é de 4px nos campos e nos botões. O logo e o símbolo também são os oficiais (veja Logos e imagens).
 
 As escalas de todas as marcas, lado a lado. Estes hex foram copiados do `globals.css`: uma marca inativa não pode ser lida do CSS, porque os papéis resolvem no `:root`.
 
@@ -193,7 +193,8 @@ No `globals.css`, depois do bloco da Brainz Group, um bloco `:root[data-brand="<
 /* Papéis que a escala oficial não cumpre, e o campo contornado do SI DS. */
 :root[data-brand="sesi"]:not(.dark) {
   --primary: var(--bb-primary-700); /* 6,17:1 com branco */
-  --ring: #ca588a; /* rosa Highlights/600: 3,98:1 no fundo */
+  --ring: #ca588a; /* rosa Highlights/600: 3,92:1 na página */
+  --page: #f9fff9; /* Background/SESI/500, só a página */
   --field: #ffffff;
   --field-border: #dfdfdf; /* a oficial: 1,33:1, escolha do usuário */
   /* … os demais no globals.css */
@@ -235,7 +236,7 @@ Os papéis apontam para passos fixos da escala Primária, então a escala de cad
         <td>Primária 500 no branco ≥ 3:1</td>
         <td>Primeira série de gráfico no claro. O anel do claro é a 600 desde 2026-11-16 (5,2:1 no branco, 4,2:1 no campo).</td>
         <td>3,5:1</td>
-        <td>2,82:1, não cumpre: os gráficos começam na 600 (o anel do SESI é rosa, 3,98:1)</td>
+        <td>2,82:1, não cumpre: os gráficos começam na 600 (o anel do SESI é rosa, 3,92:1 na página)</td>
       </tr>
       <tr>
         <td>Primária 400 na mist 950 e na mist 900 ≥ 3:1</td>
@@ -304,6 +305,8 @@ export const brands: Record<BrandId, BrandDefinition> = {
     illustrative: false,
     Logo: SesiLogo,
     Mark: SesiMark,
+    // "mark": símbolo + nome em texto; "logo": o logo completo
+    headerLogo: "logo",
   },
 }`}
 />
@@ -342,7 +345,7 @@ O logo não é uma cor, então o CSS não o troca: ele sai do registro de marcas
 - **Brainz Group** (`BrainzLogo` e `BrainzMark`, em `packages/ui/src/brand/brainz-logo.tsx`): gerados do SVG oficial. A tinta ("BRAINZ") usa `currentColor` e segue a cor do texto em volta, por isso continua legível no escuro; "GROUP" usa a Primária 500 e o símbolo, um gradiente SVG da Primária 500 a `#305BA3`, como no arquivo oficial (as mesmas cores do `--bb-gradient`).
 - **SESI** (`SesiLogo` e `SesiMark`, em `packages/ui/src/brand/sesi-logo.tsx`): gerados dos componentes oficiais do SI Design System (página Marca do Figma; os arquivos estão em `brand/sesi-logo.svg` e `brand/sesi-simbolo.svg`). No claro, o logo tem as cores do arquivo: "SESI" em `#164194`, o ponto do "I" na Pure `#52AE32` e a assinatura "Serviço Social da Indústria" em `#575756`. No escuro, vira a versão oficial Branco, tudo em `currentColor`, porque o azul sumiria no fundo escuro. O SI DS só tem três versões (colorida, Negativo e Branco), por isso não há uma mistura com o ponto verde e as letras claras. O símbolo é o favicon oficial, o "SI" num quadrado branco de cantos arredondados, e mantém as cores nos dois modos. As cores do logo são hex fixos, não tokens: o logo fica certo mesmo dentro de outra marca.
 
-Os blocos de aplicação (Dashboard, Login e Cadastro) usam o mesmo caminho: sem a prop `brand`, mostram o símbolo e o nome da marca ativa pelo `useBrand()`; com ela, usam o nome e o logo que você passar. Imagens, como a capa do layout de autenticação, entram por props (`src` e `alt`, com `alt=""` quando a imagem é só decorativa), nunca embutidas no bloco. A seção Blocks documenta as props de cada um.
+Os blocos de aplicação (Dashboard, Login e Cadastro) usam o mesmo caminho: sem a prop `brand`, mostram a marca ativa pelo `useBrand()`, do jeito que o registro pede em `headerLogo`: `"mark"` é o símbolo com o nome em texto (Brainz Group) e `"logo"` é o logo completo, que já traz o nome (SESI; o nome continua para o leitor de tela em `sr-only`, e a barra recolhida do Dashboard volta ao símbolo); com ela, usam o nome e o logo que você passar. Imagens, como a capa do layout de autenticação, entram por props (`src` e `alt`, com `alt=""` quando a imagem é só decorativa), nunca embutidas no bloco. A seção Blocks documenta as props de cada um.
 
 ## Modo claro e escuro
 

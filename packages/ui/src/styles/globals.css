@@ -42,6 +42,7 @@
   --font-sans: var(--bb-font-sans);
 
   --color-background: var(--background);
+  --color-page: var(--page);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -166,8 +167,8 @@
  *   Pure, 2,8:1). Decisões do usuário em 2026-11-16: anel rosa, como o foco do
  *   SI DS, no tom 600 da escala Highlights (o #F673AD oficial tem 2,6:1);
  *   borda do campo #DFDFDF, a oficial (1,33:1, aceita como a do campo da
- *   Brainz); fundo da página branco, como na Brainz (o Background/SESI/500
- *   #F9FFF9 do SI DS foi testado e removido a pedido do usuário).
+ *   Brainz); fundo da página Background/SESI/500 (#F9FFF9) no token --page,
+ *   para os controles continuarem brancos dentro de cards e diálogos.
  * - Fonte: Inter, a do SI DS. Raio: 4px nos campos e nos botões (decisão do
  *   usuário): 0.1389rem dá 4px no rounded-2xl dos controles (× 1,8); como o
  *   raio é um só, o Card fica com ~5,8px (× 2,6) e os popups acompanham. A
@@ -234,6 +235,13 @@
      borda); uma marca de campo contornado troca só este valor (veja SESI).
      O foco (ring) e o inválido (destructive) continuam por cima. */
   --field-border: transparent;
+  /* Fundo da página (body, área principal do Dashboard, páginas do
+     AuthLayout). Na Brainz Group é o próprio --background; uma marca com o
+     fundo tingido (SESI) troca só este valor. Os controles que usam
+     bg-background (Button outline, Switch, Tabs…) continuam no
+     --background, então não pegam a cor da página dentro de um card ou de um
+     diálogo. Redeclarado no .dark, porque var() resolve onde é declarado. */
+  --page: var(--background);
   /* Anel na 600 (decisão do usuário em 2026-11-16): a 500 tinha só 2,81:1 no
      fundo do campo (mist 200). 5,2:1 no branco, 4,2:1 no campo, 4,7:1 na
      muted. É a mesma cor da ação primária: o Button afasta o anel 2px pela
@@ -296,6 +304,7 @@
      usuário). Placeholder 6,1:1; texto 14,3:1. */
   --field: oklch(0.275 0.011 216.9); /* mist 800 */
   --field-border: transparent;
+  --page: var(--background);
   /* 7,6:1 no fundo, 6,7:1 no card. Contra a primária 600 dá 2,0:1, por isso o
      Button afasta o anel 2px pela cor do fundo. */
   --ring: var(--bb-primary-400);
@@ -337,23 +346,26 @@
  *
  * Claro (`:not(.dark)`, para não vazar para o escuro, que tem especificidade
  * menor): neutros e vermelho do SI DS (Neutral e Feedback/Error) e campo
- * branco contornado com a borda oficial #DFDFDF. O fundo da página continua
- * o branco do :root.
- * A11Y: a borda tem 1,33:1 no branco, abaixo dos 3:1 de um limite de campo:
- * escolha do usuário em 2026-11-16, como o limite do campo da Brainz
- * (1,25:1). Os números abaixo são medidos no fundo branco.
+ * branco contornado com a borda oficial #DFDFDF. O fundo da página é o
+ * esverdeado do SI DS, só no --page: o --background (cards, controles,
+ * afastamento do anel) continua branco.
+ * A11Y: a borda tem 1,33:1 no branco e 1,31:1 na página, abaixo dos 3:1 de um
+ * limite de campo: escolha do usuário em 2026-11-16, como o limite do campo
+ * da Brainz (1,25:1). Os números abaixo valem na página (#F9FFF9) e no
+ * branco.
  */
 :root[data-brand="sesi"]:not(.dark) {
-  --foreground: #262626; /* Neutral/900: 15,1:1 no fundo e no card */
+  --page: #f9fff9; /* Background/SESI/500 */
+  --foreground: #262626; /* Neutral/900: 14,9:1 na página; 15,1:1 no branco */
   --card-foreground: #262626;
   --popover-foreground: #262626;
   --muted: #f2f2f2; /* Neutral/200 */
-  --muted-foreground: #646464; /* Neutral/600: 5,9:1 no fundo; 5,3:1 na muted */
+  --muted-foreground: #646464; /* Neutral/600: 5,8:1 na página; 5,9:1 no branco; 5,3:1 na muted */
   --accent: #f2f2f2;
   --accent-foreground: #262626; /* 13,5:1 */
   --border: #dfdfdf; /* Neutral/300: 1,33:1, decorativa (a borda do SI DS) */
-  /* Borda de controle (Button outline, Toggle, InputOTP): Neutral/600, 5,9:1
-     no fundo. Fica mais escura que a borda do campo. */
+  /* Borda de controle (Button outline, Toggle, InputOTP): Neutral/600, 5,8:1
+     na página. Fica mais escura que a borda do campo. */
   --input: #646464;
   --field: #ffffff; /* o campo do SI DS não tem preenchimento */
   --field-border: #dfdfdf; /* Neutral/300, a oficial: 1,33:1 (escolha do usuário) */
@@ -362,8 +374,8 @@
   --primary: var(--bb-primary-700); /* 6,17:1 com branco */
   --primary-hover: var(--bb-primary-800); /* 8,46:1 */
   --primary-pressed: var(--bb-primary-900); /* 10,52:1 */
-  /* Anel rosa (Highlights/600), como o foco do SI DS: 3,98:1 no fundo, no
-     card e no campo, todos brancos. */
+  /* Anel rosa (Highlights/600), como o foco do SI DS: 3,92:1 na página e
+     3,98:1 no fundo, no card e no campo brancos. */
   --ring: #ca588a;
   --link: var(--bb-primary-700); /* 6,17:1 */
   --link-hover: var(--bb-primary-900); /* 10,52:1 */
@@ -382,7 +394,7 @@
   --sidebar-ring: #ca588a; /* 3,8:1 na sidebar */
 
   /* Feedback/Error 700 e 800: a Dark (600) do SI DS, #FC4242, dá 3,5:1. */
-  --destructive: #d63838; /* 4,69:1 com branco */
+  --destructive: #d63838; /* 4,69:1 com branco; texto de erro 4,62:1 na página */
   --destructive-hover: #b02e2e; /* 6,41:1 */
 }
 
@@ -417,7 +429,7 @@
     @apply border-border outline-ring;
   }
   body {
-    @apply bg-background font-sans text-foreground antialiased;
+    @apply bg-page font-sans text-foreground antialiased;
   }
   /* Cursor (shadcn init --pointer): o Tailwind 4 trocou o cursor dos botões para `default`. */
   button:not(:disabled),

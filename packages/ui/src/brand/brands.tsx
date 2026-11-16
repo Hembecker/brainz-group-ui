@@ -31,6 +31,13 @@ export interface BrandDefinition {
   Logo: LogoComponent
   /** Símbolo, para espaços pequenos. */
   Mark: LogoComponent
+  /**
+   * Como a marca aparece no cabeçalho dos blocos (Dashboard, Login e
+   * Cadastro): "mark" é o símbolo com o nome em texto; "logo" é o logo
+   * completo, que já traz o nome (o nome continua para o leitor de tela, em
+   * texto `sr-only`). Com a barra do Dashboard recolhida, vale o símbolo.
+   */
+  headerLogo: "mark" | "logo"
 }
 
 export const defaultBrandId: BrandId = "brainz"
@@ -44,15 +51,19 @@ export const brands: Record<BrandId, BrandDefinition> = {
     illustrative: false,
     Logo: BrainzLogo,
     Mark: BrainzMark,
+    headerLogo: "mark",
   },
   sesi: {
     id: "sesi",
     name: "SESI",
     description:
-      "Tokens oficiais do SI Design System (Sistema Indústria): uma cor só, o verde (Pure #52AE32), neutros, vermelho de erro, Inter e raio de 4px. O logo e o símbolo são os oficiais do SI DS (brand/sesi-logo.svg e brand/sesi-simbolo.svg).",
+      "Tokens oficiais do SI Design System (Sistema Indústria): uma cor só, o verde (Pure #52AE32), neutros, vermelho de erro, Inter, raio de 4px e o fundo da página #F9FFF9. O logo e o símbolo são os oficiais do SI DS (brand/sesi-logo.svg e brand/sesi-simbolo.svg).",
     illustrative: false,
     Logo: SesiLogo,
     Mark: SesiMark,
+    // O SESI aparece com o logo colorido completo nos cabeçalhos (pedido do
+    // usuário em 2026-11-16); o favicon fica para a barra recolhida.
+    headerLogo: "logo",
   },
 }
 

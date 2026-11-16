@@ -190,7 +190,7 @@ export const sesiRoleOverrides: RoleMapping[] = [
     light: "rosa Highlights/600 (#CA588A)",
     dark: "rosa Highlights/300 (#FCC0DA)",
     usage:
-      "Rosa, como o foco do SI DS (o #F673AD oficial tem 2,63:1). No claro, 3,98:1 no fundo e no card; no escuro, 12,9:1 no fundo e 11,3:1 no card.",
+      "Rosa, como o foco do SI DS (o #F673AD oficial tem 2,63:1). No claro, 3,92:1 na página e 3,98:1 no card; no escuro, 12,9:1 no fundo e 11,3:1 no card.",
   },
   {
     token: "--link / --link-hover",
@@ -210,7 +210,8 @@ export const sesiRoleOverrides: RoleMapping[] = [
       "--foreground, --card-foreground, --popover-foreground, --accent-foreground, --sidebar-foreground, --sidebar-accent-foreground",
     light: "Neutral 900 (#262626)",
     dark: "—",
-    usage: "Texto principal: 15,1:1 no fundo e no card; 13,5:1 na Neutral 200.",
+    usage:
+      "Texto principal: 14,9:1 na página; 15,1:1 no branco; 13,5:1 na Neutral 200.",
   },
   {
     token: "--muted, --accent, --sidebar-accent",
@@ -222,13 +223,21 @@ export const sesiRoleOverrides: RoleMapping[] = [
     token: "--muted-foreground",
     light: "Neutral 600 (#646464)",
     dark: "—",
-    usage: "Texto de apoio e placeholder: 5,9:1 no fundo; 5,3:1 na muted.",
+    usage:
+      "Texto de apoio e placeholder: 5,8:1 na página; 5,9:1 no branco; 5,3:1 na muted.",
   },
   {
     token: "--border, --sidebar-border",
     light: "Neutral 300 (#DFDFDF)",
     dark: "—",
     usage: "Bordas decorativas (1,33:1), como no SI DS.",
+  },
+  {
+    token: "--page",
+    light: "Background/SESI/500 (#F9FFF9)",
+    dark: "—",
+    usage:
+      "Só o fundo da página (body, área principal do Dashboard, páginas do Login e do Cadastro). O --background, os cards, os diálogos e os controles continuam brancos.",
   },
   {
     token: "--field / --field-border",
@@ -242,7 +251,7 @@ export const sesiRoleOverrides: RoleMapping[] = [
     light: "Neutral 600 (#646464)",
     dark: "—",
     usage:
-      "Borda de controle (Button outline, Toggle, InputOTP): 5,9:1 no fundo.",
+      "Borda de controle (Button outline, Toggle, InputOTP): 5,8:1 na página.",
   },
   {
     token: "--destructive / --destructive-hover",
@@ -272,6 +281,13 @@ export const neutralRoleMap: RoleMapping[] = [
     light: "mist 950",
     dark: "mist 50",
     usage: "Texto principal.",
+  },
+  {
+    token: "--page",
+    light: "= --background",
+    dark: "= --background",
+    usage:
+      "Fundo da página (body, área principal do Dashboard, Login e Cadastro). Na Brainz Group é o próprio fundo; uma marca de fundo tingido troca só este valor, e os controles e os cards continuam no --background.",
   },
   {
     token: "--card / --popover",
@@ -356,6 +372,13 @@ export const contrastPairs: ContrastPair[] = [
     notes: "19,7:1 / 19,0:1",
   },
   {
+    token: "--foreground",
+    against: "--page",
+    label: "texto na página",
+    min: 4.5,
+    notes: "igual ao fundo (19,7:1 / 19,0:1)",
+  },
+  {
     token: "--muted-foreground",
     against: "--background",
     label: "texto de apoio no fundo",
@@ -417,6 +440,13 @@ export const contrastPairs: ContrastPair[] = [
     label: "anel de foco no fundo",
     min: 3,
     notes: "5,2:1 / 7,6:1",
+  },
+  {
+    token: "--ring",
+    against: "--page",
+    label: "anel de foco na página",
+    min: 3,
+    notes: "igual ao fundo (5,2:1 / 7,6:1)",
   },
   {
     token: "--ring",
@@ -507,6 +537,6 @@ export const contrastPairs: ContrastPair[] = [
     label: "borda do campo (o limite quando o campo não tem preenchimento)",
     status: "escolha do usuário (A11Y)",
     notes:
-      "transparente nos dois modos (SESI claro: 1,33:1, escolha do usuário)",
+      "transparente nos dois modos (SESI claro: 1,33:1 no branco, 1,31:1 na página, escolha do usuário)",
   },
 ]

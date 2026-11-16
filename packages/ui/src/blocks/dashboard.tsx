@@ -76,8 +76,10 @@ import {
  *   tooltip nos itens. No celular (< 768px) a barra vira o Sheet da Sidebar.
  *   Ctrl/⌘+B alterna (atalho do SidebarProvider).
  * - Marca: sem a prop `brand`, o cabeçalho mostra a marca ativa
- *   (`useBrand()`, o `data-brand` do <html>): o símbolo (`Mark`) e o nome; se
- *   a marca é ilustrativa, o subtítulo diz isso. O símbolo já tem as cores da
+ *   (`useBrand()`, o `data-brand` do <html>): o símbolo (`Mark`) e o nome,
+ *   ou o logo completo quando o registro da marca pede (`headerLogo: "logo"`,
+ *   o SESI), com o nome em `sr-only` e o símbolo de volta com a barra
+ *   recolhida; se a marca é ilustrativa, o subtítulo diz isso. O símbolo já tem as cores da
  *   marca, então fica sem o quadrado `bg-sidebar-primary` do registro (o
  *   gradiente sumiria nele). Cada campo de `brand` substitui só o seu.
  * - Links: `renderLink` devolve o elemento de link (`({ href }) => <Link
@@ -325,8 +327,35 @@ export function DashboardBrandHeader({ brand }: DashboardBrandHeaderProps) {
   const logo = brand?.logo ?? (
     <active.Mark aria-hidden="true" className="size-7" />
   )
+  // Logo completo só com a marca ativa inteira: um `name` ou `logo` próprio
+  // volta ao símbolo com o nome.
+  const fullLogo = !brand?.logo && !brand?.name && active.headerLogo === "logo"
 
-  const content = (
+  const content = fullLogo ? (
+    <>
+      <span
+        data-slot="dashboard-brand-logo"
+        aria-hidden="true"
+        className="hidden aspect-square size-8 shrink-0 items-center justify-center group-data-[collapsible=icon]:flex [&>svg]:max-h-8 [&>svg]:max-w-8"
+      >
+        {logo}
+      </span>
+      <span className="grid min-w-0 flex-1 justify-items-start gap-0.5 group-data-[collapsible=icon]:hidden">
+        {/* h-8! vence o [&_svg]:size-4 do SidebarMenuButton. */}
+        <active.Logo
+          aria-hidden="true"
+          data-slot="dashboard-brand-wordmark"
+          className="h-8! w-auto! max-w-full"
+        />
+        {subtitle ? (
+          <span className="truncate text-xs text-muted-foreground">
+            {subtitle}
+          </span>
+        ) : null}
+      </span>
+      <span className="sr-only">{name}</span>
+    </>
+  ) : (
     <>
       <span
         data-slot="dashboard-brand-logo"

@@ -420,14 +420,14 @@ Sem o `ThemeProvider`, basta pôr e tirar a classe: `document.documentElement.cl
 
 ## Marca
 
-A marca ativa é o atributo `data-brand` no `<html>`: `brainz` (a Brainz Group, padrão também sem o atributo) ou `sesi` (tokens oficiais do SI Design System, logo de exemplo). As cores e a fonte trocam pelo CSS; os blocos leem o logo pelo `useBrand()`.
+A marca ativa é o atributo `data-brand` no `<html>`: `brainz` (a Brainz Group, padrão também sem o atributo) ou `sesi` (tokens e logo oficiais do SI Design System). As cores e a fonte trocam pelo CSS; os blocos leem o logo pelo `useBrand()`.
 
 <Source
   language="tsx"
   dark
   code={`import { setBrand, useBrand } from "@workspace/ui/brand/use-brand"
 
-const brand = useBrand() // { id, name, description, illustrative, Logo, Mark }
+const brand = useBrand() // { id, name, description, illustrative, Logo, Mark, headerLogo }
 setBrand("sesi")         // grava data-brand="sesi" no <html>
 
 <brand.Logo className="h-8 w-auto" title={brand.name} />`}

@@ -34,6 +34,9 @@ import { PanelLeftIcon } from "lucide-react"
  *   SidebarInset, mais o SidebarTrigger. Todas as partes expõem `data-slot`.
  *   Os gatilhos e botões recebem o elemento pela prop `render` (um `<a>` para
  *   navegar, o `CollapsibleTrigger`, o `DropdownMenuTrigger`), sem `div`.
+ * - `SidebarInset` (a área principal) usa `bg-page`, o fundo da página da
+ *   marca, no lugar do `bg-background` do registro: no SESI ela fica no
+ *   verde da página e os controles dentro dela continuam brancos.
  * - Nenhuma parte é um ponto de referência: a `Sidebar` é um `div`. Ponha um
  *   `<nav aria-label="…">` (um nome diferente por `<nav>`) em volta de cada
  *   `SidebarMenu` de navegação. A página atual leva `isActive`: o componente
@@ -47,7 +50,10 @@ import { PanelLeftIcon } from "lucide-react"
  *   aceita `label`, a `Sidebar` aceita `mobileTitle` e `mobileDescription` (o
  *   título e a descrição do Sheet) e a `SidebarRail`, `aria-label` e `title`. O
  *   `SidebarTrigger` expõe `aria-expanded` (`open` no desktop, `openMobile`
- *   no celular). O ícone dele é `aria-hidden`.
+ *   no celular), que não vem do registro; como o Button ghost pinta
+ *   `aria-expanded:bg-accent` (para menus abertos), o gatilho anula esse
+ *   fundo, senão ficaria sempre destacado com a barra aberta. O ícone dele é
+ *   `aria-hidden`.
  * - Atalho: Ctrl+B (⌘+B no Mac) alterna a barra, no desktop e no celular. A
  *   tecla é `SIDEBAR_KEYBOARD_SHORTCUT`, aqui no arquivo.
  * - Celular (< 768px, `useIsMobile`): a `Sidebar` vira um Sheet (modal, foco
@@ -376,7 +382,13 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon-sm"
-      className={cn(className)}
+      // O ghost pinta `aria-expanded` (pensado para o gatilho de um menu
+      // aberto); aqui "expandido" é o estado normal da barra, então o fundo
+      // ignora o atributo e só o hover destaca.
+      className={cn(
+        "aria-expanded:bg-transparent aria-expanded:text-foreground aria-expanded:hover:bg-accent aria-expanded:hover:text-accent-foreground",
+        className
+      )}
       aria-expanded={isMobile ? openMobile : open}
       onClick={(event) => {
         onClick?.(event)
@@ -420,7 +432,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[side=left]:ml-0 md:peer-data-[variant=inset]:peer-data-[side=right]:mr-0 md:peer-data-[variant=inset]:peer-data-[side=left]:peer-data-[state=collapsed]:ml-2 md:peer-data-[variant=inset]:peer-data-[side=right]:peer-data-[state=collapsed]:mr-2",
+        "relative flex w-full flex-1 flex-col bg-page md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[side=left]:ml-0 md:peer-data-[variant=inset]:peer-data-[side=right]:mr-0 md:peer-data-[variant=inset]:peer-data-[side=left]:peer-data-[state=collapsed]:ml-2 md:peer-data-[variant=inset]:peer-data-[side=right]:peer-data-[state=collapsed]:mr-2",
         className
       )}
       {...props}

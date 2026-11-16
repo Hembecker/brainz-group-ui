@@ -55,6 +55,9 @@
  * - Link dentro do FieldDescription: no hover vai para `link-hover`, e não
  *   para `primary` como no registro. A primária 600 tem só 3,8:1 contra o
  *   fundo escuro; `link-hover` tem 9,3:1 no claro e 13,3:1 no escuro.
+ * - O texto do `FieldSeparator` recorta a linha com `bg-page` (o fundo da
+ *   página da marca), e com `bg-card` dentro de um Card. O registro usava
+ *   `bg-background`, que no SESI deixava um retângulo branco na página verde.
  */
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -216,7 +219,7 @@ function FieldSeparator({
       <Separator className="absolute inset-0 top-1/2" />
       {children && (
         <span
-          className="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
+          className="relative mx-auto block w-fit bg-page px-2 text-muted-foreground in-data-[slot=card]:bg-card"
           data-slot="field-separator-content"
         >
           {children}

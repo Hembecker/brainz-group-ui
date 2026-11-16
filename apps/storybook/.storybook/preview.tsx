@@ -57,7 +57,7 @@ function Surface({
       dir={direction}
       className={mode === "dark" ? "dark" : undefined}
       style={{
-        background: "var(--background)",
+        background: "var(--page)",
         color: "var(--foreground)",
         fontFamily: "var(--font-sans)",
         // Fullscreen stories (Sidebar, Blocks) fill the frame: no inset, so a

@@ -13,7 +13,9 @@
  *   lateral, no fim. Abaixo de `lg` a coluna lateral some e o formulário
  *   ocupa a tela toda, como no bloco.
  * - Marca no topo: por padrão, o símbolo (`Mark`) e o nome da marca ativa
- *   (`useBrand()`, que segue o `data-brand` do <html>). O símbolo é
+ *   (`useBrand()`, que segue o `data-brand` do <html>), ou o logo completo
+ *   quando o registro da marca pede (`headerLogo: "logo"`, o SESI), com o
+ *   nome em `sr-only`. O símbolo é
  *   decorativo (`aria-hidden`), e o nome em texto é o que nomeia. Sem
  *   `brand.href` a marca é só texto: o bloco não inventa um `href="#"`.
  * - Coluna lateral (`aside`), em ordem de prioridade: `aside={false}` remove a
@@ -27,6 +29,9 @@
  *   só ~3,5:1. O painel é decorativo (`aria-hidden`): o nome da marca já está
  *   no topo. Não há papel semântico de gradiente; o bloco não usa a paleta
  *   `--bb-*` direto.
+ * - Fundo: `bg-page` (o fundo da página da marca), não `bg-background`:
+ *   numa marca de fundo tingido (SESI) a página fica na cor dela e os
+ *   controles continuam no `background`.
  * - Imagem: `alt` obrigatório (vazio quando decorativa). `dimInDark` repete o
  *   escurecimento do login-02 no modo escuro (`brightness-[0.2] grayscale`),
  *   opcional porque apaga imagens com conteúdo.
@@ -104,7 +109,19 @@ function AuthBrandLink({ brand }: { brand?: AuthBrand }) {
     ) : brand ? null : (
       <active.Mark className="size-6 shrink-0" />
     )
-  const content = (
+  // Sem a prop `brand`, uma marca com `headerLogo: "logo"` (o SESI) mostra o
+  // logo completo, que já traz o nome; o nome fica para o leitor de tela.
+  const fullLogo = !brand && active.headerLogo === "logo"
+  const content = fullLogo ? (
+    <>
+      <active.Logo
+        aria-hidden="true"
+        data-slot="auth-layout-brand-logo"
+        className="h-7 w-auto"
+      />
+      <span className="sr-only">{name}</span>
+    </>
+  ) : (
     <>
       {logo}
       <span>{name}</span>
@@ -188,7 +205,7 @@ function AuthLayout({
       data-slot="auth-layout"
       data-aside={hasAside ? "" : undefined}
       className={cn(
-        "grid min-h-svh bg-background text-foreground",
+        "grid min-h-svh bg-page text-foreground",
         hasAside && "lg:grid-cols-2",
         className
       )}
