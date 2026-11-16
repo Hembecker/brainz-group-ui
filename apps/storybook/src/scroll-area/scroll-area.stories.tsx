@@ -199,7 +199,9 @@ export const Playground: Story = {
         <p className="mb-2">v1.2.0 corrige o foco do menu lateral.</p>
         <p className="mb-2">v1.1.0 adiciona o modo escuro.</p>
         <p className="mb-2">v1.0.0 é a primeira versão pública.</p>
-        <p className="mb-2">v0.9.0 reúne as últimas correções antes do lançamento.</p>
+        <p className="mb-2">
+          v0.9.0 reúne as últimas correções antes do lançamento.
+        </p>
       </div>
     ),
   },

@@ -18,5 +18,11 @@
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     }
   },
-  "include": ["src", ".storybook/*.ts", ".storybook/*.tsx", "vite.config.ts", "vitest.shims.d.ts"]
+  "include": [
+    "src",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
+    "vite.config.ts",
+    "vitest.shims.d.ts"
+  ]
 }

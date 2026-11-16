@@ -303,8 +303,8 @@ export const Rtl: Story = {
           <AlertDialogHeader>
             <AlertDialogTitle>هل أنت متأكد تمامًا؟</AlertDialogTitle>
             <AlertDialogDescription>
-              لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف حسابك نهائيًا
-              من خوادمنا.
+              لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف حسابك نهائيًا من
+              خوادمنا.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

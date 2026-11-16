@@ -119,24 +119,16 @@ export const CartaoDeEscolha: Story = {
               Para pessoas e equipes pequenas.
             </FieldDescription>
           </FieldContent>
-          <RadioGroupItem
-            value="plus"
-            id="cartao-plus"
-          />
+          <RadioGroupItem value="plus" id="cartao-plus" />
         </Field>
       </FieldLabel>
       <FieldLabel htmlFor="cartao-pro">
         <Field orientation="horizontal">
           <FieldContent>
             <FieldTitle>Pro</FieldTitle>
-            <FieldDescription>
-              Para empresas em crescimento.
-            </FieldDescription>
+            <FieldDescription>Para empresas em crescimento.</FieldDescription>
           </FieldContent>
-          <RadioGroupItem
-            value="pro"
-            id="cartao-pro"
-          />
+          <RadioGroupItem value="pro" id="cartao-pro" />
         </Field>
       </FieldLabel>
       <FieldLabel htmlFor="cartao-enterprise">
@@ -147,10 +139,7 @@ export const CartaoDeEscolha: Story = {
               Para grandes equipes e corporações.
             </FieldDescription>
           </FieldContent>
-          <RadioGroupItem
-            value="enterprise"
-            id="cartao-enterprise"
-          />
+          <RadioGroupItem value="enterprise" id="cartao-enterprise" />
         </Field>
       </FieldLabel>
     </RadioGroup>

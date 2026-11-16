@@ -65,9 +65,7 @@ async function mostrarAviso(
 async function pausarComF6() {
   await userEvent.keyboard("{F6}")
   await waitFor(() =>
-    expect(
-      screen.getByRole("region", { name: "Notificações" })
-    ).toHaveFocus()
+    expect(screen.getByRole("region", { name: "Notificações" })).toHaveFocus()
   )
   await esperarAnimacoes()
 }
@@ -141,7 +139,9 @@ export const Tipos: Story = {
     // No F6 here: hovering a toast pauses the timers and keeps the error
     // toast aria-hidden, which is its real state before it gets focus.
     await userEvent.hover(
-      screen.getAllByText("Não foi possível criar")[0].closest("[data-slot=toast]")!
+      screen
+        .getAllByText("Não foi possível criar")[0]
+        .closest("[data-slot=toast]")!
     )
   },
   render: () => (
@@ -214,7 +214,11 @@ export const Promessa: Story = {
   name: "Promise",
   play: async ({ canvasElement }) => {
     await mostrarAviso(canvasElement, "Criar evento", "Criando evento…")
-    await screen.findByRole("dialog", { name: "Evento criado." }, { timeout: 5000 })
+    await screen.findByRole(
+      "dialog",
+      { name: "Evento criado." },
+      { timeout: 5000 }
+    )
     await esperarAnimacoes()
     await pausarComF6()
   },

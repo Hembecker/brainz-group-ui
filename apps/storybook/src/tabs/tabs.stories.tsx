@@ -158,8 +158,8 @@ export const Demo: Story = {
               <h3>Relatórios</h3>
             </CardTitle>
             <CardDescription>
-              Gere e baixe seus relatórios detalhados. Exporte os dados em vários
-              formatos para analisar.
+              Gere e baixe seus relatórios detalhados. Exporte os dados em
+              vários formatos para analisar.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">

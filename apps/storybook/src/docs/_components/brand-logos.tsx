@@ -15,7 +15,10 @@ export function BrandLogos() {
       <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
         <div className="grid gap-2">
           <p className="text-sm font-medium">Logo (Logo)</p>
-          <Logo title={brand.name} className="h-8 w-auto max-w-full text-foreground" />
+          <Logo
+            title={brand.name}
+            className="h-8 w-auto max-w-full text-foreground"
+          />
         </div>
         <div className="grid gap-2">
           <p className="text-sm font-medium">Símbolo (Mark)</p>

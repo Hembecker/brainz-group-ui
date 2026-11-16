@@ -62,7 +62,11 @@ function ButtonGroup({ className, orientation, ...props }: ButtonGroupProps) {
 type ButtonGroupTextProps = useRender.ComponentProps<"div">
 
 /** Texto dentro do grupo. Use `render` para trocar o elemento, por exemplo por um <label>. */
-function ButtonGroupText({ className, render, ...props }: ButtonGroupTextProps) {
+function ButtonGroupText({
+  className,
+  render,
+  ...props
+}: ButtonGroupTextProps) {
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(

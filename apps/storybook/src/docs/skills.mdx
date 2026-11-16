@@ -172,7 +172,8 @@ Os scripts abaixo estão nos `package.json` do monorepo. Rode-os da raiz, com `n
       <tr><td><code>npm.cmd run test:sesi -w @workspace/storybook</code></td><td>A mesma bateria com a marca SESI, no claro e no escuro, para conferir que todo componente mantém o contraste com outra marca.</td></tr>
       <tr><td><code>npm.cmd run typecheck</code></td><td>TypeScript em todos os pacotes: <code>packages/ui</code>, <code>apps/storybook</code> e <code>apps/web</code> (este pelo <code>tsconfig.app.json</code>, porque o <code>tsconfig.json</code> dele só tem referências).</td></tr>
       <tr><td><code>npm.cmd run lint</code></td><td>ESLint em todos os pacotes.</td></tr>
-      <tr><td><code>npm.cmd run format</code></td><td>Prettier, com a ordenação das classes do Tailwind. Escreve nos arquivos.</td></tr>
+      <tr><td><code>npm.cmd run format</code></td><td>Prettier em todo o repositório (menos o MDX), com a ordenação das classes do Tailwind. Escreve nos arquivos.</td></tr>
+      <tr><td><code>npm.cmd run format:check</code></td><td>A mesma checagem sem escrever; o CI roda esta.</td></tr>
       <tr><td><code>npm.cmd run build</code></td><td>Gera o app de exemplo (<code>apps/web</code>) e o Storybook estático (<code>apps/storybook/storybook-static</code>).</td></tr>
     </tbody>
   </table>

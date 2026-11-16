@@ -59,10 +59,7 @@ export function BrainzLogo({ title, ...props }: LogoProps) {
         fill="currentColor"
         d="M214.5,0h6.2l42.25,100h-7.61l-13.94-32.96h-47.75l-13.94,32.96h-7.75L214.5,0ZM239.43,61.13l-21.83-52.39-22.25,52.39h44.08Z"
       />
-      <path
-        fill="currentColor"
-        d="M278.16,100V0h7.18v100h-7.18Z"
-      />
+      <path fill="currentColor" d="M278.16,100V0h7.18v100h-7.18Z" />
       <path
         fill="currentColor"
         d="M318.73,13.52v86.48h-7.18V0h5.49l70.14,88.03V0h7.18v100h-6.62L318.73,13.52Z"

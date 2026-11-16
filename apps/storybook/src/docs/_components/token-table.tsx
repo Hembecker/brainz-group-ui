@@ -62,7 +62,8 @@ export function ScrollTable({
   )
 }
 
-const th = "border-b border-border px-3 py-2 text-start font-medium whitespace-nowrap"
+const th =
+  "border-b border-border px-3 py-2 text-start font-medium whitespace-nowrap"
 const td = "border-b border-border px-3 py-2 align-top"
 
 /** Papel → passo da escala no claro e no escuro. */
@@ -76,7 +77,10 @@ export function RoleMapTable({
   return (
     <DocsSurface className="p-0 sm:p-0">
       <ScrollTable label={caption}>
-        <table className="w-full border-collapse text-sm" style={{ display: "table" }}>
+        <table
+          className="w-full border-collapse text-sm"
+          style={{ display: "table" }}
+        >
           <caption className="px-3 pt-3 text-start text-sm text-muted-foreground">
             {caption}
           </caption>
@@ -100,11 +104,15 @@ export function RoleMapTable({
             {rows.map((row) => (
               <tr key={row.token}>
                 <th scope="row" className={cn(td, "text-start font-normal")}>
-                  <code className="font-mono text-xs whitespace-nowrap">{row.token}</code>
+                  <code className="font-mono text-xs whitespace-nowrap">
+                    {row.token}
+                  </code>
                 </th>
                 <td className={cn(td, "whitespace-nowrap")}>{row.light}</td>
                 <td className={cn(td, "whitespace-nowrap")}>{row.dark}</td>
-                <td className={cn(td, "min-w-56 text-muted-foreground")}>{row.usage}</td>
+                <td className={cn(td, "min-w-56 text-muted-foreground")}>
+                  {row.usage}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -131,11 +139,14 @@ export function LiveTokenTable() {
   return (
     <DocsSurface className="p-0 sm:p-0">
       <ScrollTable label="Papéis semânticos com valor e contraste atuais">
-        <table className="w-full border-collapse text-sm" style={{ display: "table" }}>
+        <table
+          className="w-full border-collapse text-sm"
+          style={{ display: "table" }}
+        >
           <caption className="px-3 pt-3 text-start text-sm text-muted-foreground">
-            Medido agora em {brandName}, modo {mode === "dark" ? "escuro" : "claro"}.
-            “Anotado” são os números do globals.css para a Brainz Group (claro /
-            escuro).
+            Medido agora em {brandName}, modo{" "}
+            {mode === "dark" ? "escuro" : "claro"}. “Anotado” são os números do
+            globals.css para a Brainz Group (claro / escuro).
           </caption>
           <thead>
             <tr>
@@ -170,7 +181,8 @@ export function LiveTokenTable() {
                 token?.rgba && against?.rgba && !transparent
                   ? contrast(token.rgba, against.rgba, background)
                   : null
-              const passes = ratio !== null && pair.min !== undefined && ratio >= pair.min
+              const passes =
+                ratio !== null && pair.min !== undefined && ratio >= pair.min
               return (
                 <tr key={`${pair.token}-${pair.against}`}>
                   <th scope="row" className={cn(td, "text-start font-normal")}>
@@ -205,7 +217,11 @@ export function LiveTokenTable() {
                   </td>
                   <td className={cn(td, "whitespace-nowrap")}>
                     <span className="font-medium tabular-nums">
-                      {transparent ? "—" : ratio === null ? "…" : formatRatio(ratio)}
+                      {transparent
+                        ? "—"
+                        : ratio === null
+                          ? "…"
+                          : formatRatio(ratio)}
                     </span>
                     <span className="block text-xs text-muted-foreground">
                       {transparent

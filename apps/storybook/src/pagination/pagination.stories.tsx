@@ -51,9 +51,9 @@ export const Demo: Story = {
       canvas.getByRole("navigation", { name: "Paginação" })
     ).toBeVisible()
     await expect(canvas.getAllByRole("link")).toHaveLength(5)
-    await expect(canvas.getByRole("link", { current: "page" })).toHaveTextContent(
-      "2"
-    )
+    await expect(
+      canvas.getByRole("link", { current: "page" })
+    ).toHaveTextContent("2")
     await expect(
       canvas.getByRole("link", { name: "Ir para a página anterior" })
     ).toBeVisible()
@@ -138,7 +138,9 @@ export const ApenasIcones: Story = {
   render: () => (
     <div className="flex items-center justify-between gap-4">
       <Field orientation="horizontal" className="w-fit">
-        <FieldLabel htmlFor="apenas-icones-linhas">Linhas por página</FieldLabel>
+        <FieldLabel htmlFor="apenas-icones-linhas">
+          Linhas por página
+        </FieldLabel>
         <Select
           defaultValue="25"
           items={[
@@ -195,11 +197,7 @@ export const Rtl: Story = {
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink
-                href="#pagina-2"
-                isActive
-                aria-label="الصفحة ٢"
-              >
+              <PaginationLink href="#pagina-2" isActive aria-label="الصفحة ٢">
                 ٢
               </PaginationLink>
             </PaginationItem>

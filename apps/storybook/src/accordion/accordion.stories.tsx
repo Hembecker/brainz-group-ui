@@ -106,8 +106,8 @@ export const Demo: Story = {
       <AccordionItem value="devolucao">
         <AccordionTrigger>Qual é a política de devolução?</AccordionTrigger>
         <AccordionContent>
-          Devoluções aceitas em até 30 dias. Os itens precisam estar sem uso e na
-          embalagem original. O reembolso sai em até 7 dias úteis.
+          Devoluções aceitas em até 30 dias. Os itens precisam estar sem uso e
+          na embalagem original. O reembolso sai em até 7 dias úteis.
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="suporte">
@@ -141,7 +141,9 @@ export const Basico: Story = {
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-3">
-        <AccordionTrigger>Quais formas de pagamento vocês aceitam?</AccordionTrigger>
+        <AccordionTrigger>
+          Quais formas de pagamento vocês aceitam?
+        </AccordionTrigger>
         <AccordionContent>
           Aceitamos os principais cartões de crédito, Pix e boleto. Todos os
           pagamentos passam por parceiros de pagamento seguros.
@@ -189,8 +191,8 @@ export const Multiplo: Story = {
         <AccordionContent>
           Controle a privacidade e a segurança da conta. Ative a verificação em
           duas etapas, gerencie os dispositivos conectados, revise as sessões
-          ativas e defina o compartilhamento de dados. Também dá para baixar seus
-          dados ou excluir a conta.
+          ativas e defina o compartilhamento de dados. Também dá para baixar
+          seus dados ou excluir a conta.
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="cobranca">
@@ -230,7 +232,9 @@ export const Desabilitado: Story = {
   render: () => (
     <Accordion defaultValue={["item-1"]} className="w-full max-w-lg">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Posso ver o histórico da minha conta?</AccordionTrigger>
+        <AccordionTrigger>
+          Posso ver o histórico da minha conta?
+        </AccordionTrigger>
         <AccordionContent>
           Sim, você vê o histórico completo, com transações, mudanças de plano e
           chamados de suporte, na seção Histórico da conta do painel.
@@ -239,8 +243,8 @@ export const Desabilitado: Story = {
       <AccordionItem value="item-2" disabled>
         <AccordionTrigger>Informações sobre recursos premium</AccordionTrigger>
         <AccordionContent>
-          Esta seção traz as informações sobre os recursos premium. Mude de plano
-          para acessar o conteúdo.
+          Esta seção traz as informações sobre os recursos premium. Mude de
+          plano para acessar o conteúdo.
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-3">
@@ -256,7 +260,10 @@ export const Desabilitado: Story = {
 
 export const Bordas: Story = {
   render: () => (
-    <Accordion className="max-w-lg rounded-none border-0" defaultValue={["cobranca"]}>
+    <Accordion
+      className="max-w-lg rounded-none border-0"
+      defaultValue={["cobranca"]}
+    >
       <AccordionItem value="cobranca">
         <AccordionTrigger>Como funciona a cobrança?</AccordionTrigger>
         <AccordionContent>
@@ -268,8 +275,8 @@ export const Bordas: Story = {
       <AccordionItem value="seguranca">
         <AccordionTrigger>Meus dados estão seguros?</AccordionTrigger>
         <AccordionContent>
-          Sim. Usamos criptografia de ponta a ponta, conformidade SOC 2 Tipo II e
-          auditorias periódicas de terceiros. Os dados ficam criptografados em
+          Sim. Usamos criptografia de ponta a ponta, conformidade SOC 2 Tipo II
+          e auditorias periódicas de terceiros. Os dados ficam criptografados em
           repouso e em trânsito.
         </AccordionContent>
       </AccordionItem>
@@ -300,11 +307,13 @@ export const CardStory: Story = {
       <CardContent>
         <Accordion defaultValue={["planos"]}>
           <AccordionItem value="planos">
-            <AccordionTrigger>Quais planos de assinatura vocês têm?</AccordionTrigger>
+            <AccordionTrigger>
+              Quais planos de assinatura vocês têm?
+            </AccordionTrigger>
             <AccordionContent>
-              Temos três planos: Inicial (R$ 49/mês), Profissional (R$ 149/mês) e
-              Empresarial (R$ 499/mês). Cada um traz mais armazenamento, acesso à
-              API, suporte prioritário e recursos de colaboração.
+              Temos três planos: Inicial (R$ 49/mês), Profissional (R$ 149/mês)
+              e Empresarial (R$ 499/mês). Cada um traz mais armazenamento,
+              acesso à API, suporte prioritário e recursos de colaboração.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="cobranca">
@@ -318,8 +327,8 @@ export const CardStory: Story = {
           <AccordionItem value="cancelar">
             <AccordionTrigger>Como cancelo minha assinatura?</AccordionTrigger>
             <AccordionContent>
-              Você cancela quando quiser, nas configurações da conta, sem multa. O
-              acesso continua até o fim do período já pago.
+              Você cancela quando quiser, nas configurações da conta, sem multa.
+              O acesso continua até o fim do período já pago.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -359,15 +368,19 @@ export const Rtl: Story = {
       <div dir="rtl" lang="ar">
         <Accordion defaultValue={["item-1"]} className="max-w-md">
           <AccordionItem value="item-1">
-            <AccordionTrigger>كيف يمكنني إعادة تعيين كلمة المرور؟</AccordionTrigger>
+            <AccordionTrigger>
+              كيف يمكنني إعادة تعيين كلمة المرور؟
+            </AccordionTrigger>
             <AccordionContent>
               انقر على 'نسيت كلمة المرور' في صفحة تسجيل الدخول، أدخل عنوان بريدك
-              الإلكتروني، وسنرسل لك رابطًا لإعادة تعيين كلمة المرور. سينتهي صلاحية
-              الرابط خلال 24 ساعة.
+              الإلكتروني، وسنرسل لك رابطًا لإعادة تعيين كلمة المرور. سينتهي
+              صلاحية الرابط خلال 24 ساعة.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger>هل يمكنني تغيير خطة الاشتراك الخاصة بي؟</AccordionTrigger>
+            <AccordionTrigger>
+              هل يمكنني تغيير خطة الاشتراك الخاصة بي؟
+            </AccordionTrigger>
             <AccordionContent>
               نعم، يمكنك ترقية أو تخفيض خطتك في أي وقت من إعدادات حسابك. ستظهر
               التغييرات في دورة الفوترة التالية.
@@ -376,8 +389,8 @@ export const Rtl: Story = {
           <AccordionItem value="item-3">
             <AccordionTrigger>ما هي طرق الدفع التي تقبلونها؟</AccordionTrigger>
             <AccordionContent>
-              نقبل جميع بطاقات الائتمان الرئيسية و PayPal والتحويلات المصرفية. تتم
-              معالجة جميع المدفوعات بأمان من خلال شركاء الدفع لدينا.
+              نقبل جميع بطاقات الائتمان الرئيسية و PayPal والتحويلات المصرفية.
+              تتم معالجة جميع المدفوعات بأمان من خلال شركاء الدفع لدينا.
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -173,7 +173,9 @@ export const Demo: Story = {
     )
     await userEvent.keyboard(fechaSubmenu)
     await waitFor(() =>
-      expect(screen.queryByRole("menu", { name: "Convidar usuários" })).toBeNull()
+      expect(
+        screen.queryByRole("menu", { name: "Convidar usuários" })
+      ).toBeNull()
     )
     await waitFor(() => expect(convidar).toHaveFocus())
 
@@ -907,7 +909,9 @@ export const Rtl: Story = {
                 <DropdownMenuRadioItem value="bottom">
                   أسفل
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="right">يمين</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="right">
+                  يمين
+                </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="left">يسار</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuGroup>

@@ -103,7 +103,11 @@ function PaginationPrevious({
       className={cn("ps-1.5!", className)}
       {...props}
     >
-      <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" className="rtl:rotate-180" />
+      <ChevronLeftIcon
+        aria-hidden="true"
+        data-icon="inline-start"
+        className="rtl:rotate-180"
+      />
       <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   )
@@ -122,7 +126,11 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
-      <ChevronRightIcon aria-hidden="true" data-icon="inline-end" className="rtl:rotate-180" />
+      <ChevronRightIcon
+        aria-hidden="true"
+        data-icon="inline-end"
+        className="rtl:rotate-180"
+      />
     </PaginationLink>
   )
 }

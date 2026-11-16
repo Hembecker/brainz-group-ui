@@ -80,8 +80,8 @@ export const CartaoDeEscolha: Story = {
           <FieldContent>
             <FieldTitle>Compartilhar entre dispositivos</FieldTitle>
             <FieldDescription>
-              O foco é compartilhado entre os dispositivos e é desativado
-              quando você sai do aplicativo.
+              O foco é compartilhado entre os dispositivos e é desativado quando
+              você sai do aplicativo.
             </FieldDescription>
           </FieldContent>
           <Switch id="cartao-compartilhar" />
@@ -92,8 +92,7 @@ export const CartaoDeEscolha: Story = {
           <FieldContent>
             <FieldTitle>Ativar notificações</FieldTitle>
             <FieldDescription>
-              Receba notificações quando o modo foco for ativado ou
-              desativado.
+              Receba notificações quando o modo foco for ativado ou desativado.
             </FieldDescription>
           </FieldContent>
           <Switch id="cartao-notificacoes" defaultChecked />

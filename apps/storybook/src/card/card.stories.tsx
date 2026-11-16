@@ -446,10 +446,7 @@ export const Rtl: Story = {
           أدخل بريدك الإلكتروني أدناه لتسجيل الدخول إلى حسابك
         </CardDescription>
         <CardAction>
-          <a
-            href="#إنشاء-حساب"
-            className={buttonVariants({ variant: "link" })}
-          >
+          <a href="#إنشاء-حساب" className={buttonVariants({ variant: "link" })}>
             إنشاء حساب
           </a>
         </CardAction>

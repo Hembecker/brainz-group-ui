@@ -173,7 +173,12 @@ export const Rtl: Story = {
   render: () => (
     <DirectionProvider direction="rtl">
       <div dir="rtl" lang="ar">
-        <Progress value={56} locale="ar-EG" className="w-full max-w-sm" dir="rtl">
+        <Progress
+          value={56}
+          locale="ar-EG"
+          className="w-full max-w-sm"
+          dir="rtl"
+        >
           <ProgressLabel>تقدم الرفع</ProgressLabel>
           <ProgressValue />
         </Progress>

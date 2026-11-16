@@ -277,7 +277,9 @@ export const Validacao: Story = {
     await userEvent.tab()
     await expect(entrar).toHaveFocus()
     await userEvent.tab()
-    await expect(canvas.getByRole("link", { name: "Cadastre-se" })).toHaveFocus()
+    await expect(
+      canvas.getByRole("link", { name: "Cadastre-se" })
+    ).toHaveFocus()
 
     // Empty submit: the focus goes to the first invalid field.
     await userEvent.click(entrar)
@@ -360,10 +362,9 @@ export const ErroRepetido: Story = {
     await expect(senha).not.toHaveAttribute("aria-invalid")
     await expect(senha).not.toHaveAttribute("aria-errormessage")
     // ...and the response brings it back when it repeats the error.
-    await waitFor(
-      () => expect(senha).toHaveAttribute("aria-invalid", "true"),
-      { timeout: 5000 }
-    )
+    await waitFor(() => expect(senha).toHaveAttribute("aria-invalid", "true"), {
+      timeout: 5000,
+    })
     await expect(senha).toHaveAccessibleErrorMessage(
       "A senha não confere com este e-mail."
     )

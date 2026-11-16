@@ -52,6 +52,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Formatação do .prettierrc em todo o repositório (menos o MDX, ver
+      # .prettierignore).
+      - name: Formatação (Prettier)
+        run: npm run format:check
+
       # A primeira rodada com o cache do Vite frio pode falhar com "Vite
       # unexpectedly reloaded" (otimização de dependências). Só ela é repetida,
       # uma vez: uma falha de verdade reprova duas vezes e o passo falha.

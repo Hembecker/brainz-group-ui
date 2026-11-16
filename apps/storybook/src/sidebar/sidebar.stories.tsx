@@ -842,9 +842,9 @@ export const Offcanvas: Story = {
     )
     await esperarAnimacoes()
     if (rtl) {
-      await expect(container.getBoundingClientRect().left).toBeGreaterThanOrEqual(
-        caixa.getBoundingClientRect().right - 2
-      )
+      await expect(
+        container.getBoundingClientRect().left
+      ).toBeGreaterThanOrEqual(caixa.getBoundingClientRect().right - 2)
     } else {
       await expect(container.getBoundingClientRect().right).toBeLessThanOrEqual(
         caixa.getBoundingClientRect().left + 2
@@ -1804,11 +1804,7 @@ export const Rtl: Story = {
                       render={<SidebarMenuItem />}
                     >
                       <CollapsibleTrigger
-                        render={
-                          <SidebarMenuButton
-                            tooltip="ملعب"
-                          />
-                        }
+                        render={<SidebarMenuButton tooltip="ملعب" />}
                       >
                         <SquareTerminalIcon aria-hidden="true" />
                         <span>ملعب</span>
@@ -1837,11 +1833,7 @@ export const Rtl: Story = {
                       render={<SidebarMenuItem />}
                     >
                       <CollapsibleTrigger
-                        render={
-                          <SidebarMenuButton
-                            tooltip="النماذج"
-                          />
-                        }
+                        render={<SidebarMenuButton tooltip="النماذج" />}
                       >
                         <BotIcon aria-hidden="true" />
                         <span>النماذج</span>

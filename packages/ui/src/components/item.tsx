@@ -67,7 +67,11 @@ function ItemSeparator({
   ...props
 }: React.ComponentProps<typeof Separator>) {
   return (
-    <div role="none" data-slot="item-separator" className={cn("my-2", className)}>
+    <div
+      role="none"
+      data-slot="item-separator"
+      className={cn("my-2", className)}
+    >
       <Separator aria-hidden="true" orientation="horizontal" {...props} />
     </div>
   )
@@ -182,7 +186,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="item-description"
       className={cn(
-        "line-clamp-2 text-start text-sm font-normal text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-link-hover [&>a]:rounded-sm [&>a]:outline-none [&>a]:focus-visible:ring-3 [&>a]:focus-visible:ring-ring [&>a]:focus-visible:ring-offset-2 [&>a]:focus-visible:ring-offset-background",
+        "line-clamp-2 text-start text-sm font-normal text-muted-foreground [&>a]:rounded-sm [&>a]:underline [&>a]:underline-offset-4 [&>a]:outline-none [&>a]:focus-visible:ring-3 [&>a]:focus-visible:ring-ring [&>a]:focus-visible:ring-offset-2 [&>a]:focus-visible:ring-offset-background [&>a:hover]:text-link-hover",
         className
       )}
       {...props}

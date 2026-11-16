@@ -79,8 +79,10 @@ export interface AuthImage {
   dimInDark?: boolean
 }
 
-export interface AuthLayoutProps
-  extends Omit<React.ComponentProps<"div">, "children"> {
+export interface AuthLayoutProps extends Omit<
+  React.ComponentProps<"div">,
+  "children"
+> {
   /** Marca do topo. Padrão: símbolo e nome da marca ativa. */
   brand?: AuthBrand
   /** O formulário (LoginForm, SignupForm ou outro). */
@@ -295,8 +297,10 @@ export function useAuthFieldErrors<TField extends string>(
   return { errorFor, clear, setClientErrors: setClient, markSubmitted }
 }
 
-export interface AuthFieldProps
-  extends Omit<React.ComponentProps<typeof Input>, "id" | "name"> {
+export interface AuthFieldProps extends Omit<
+  React.ComponentProps<typeof Input>,
+  "id" | "name"
+> {
   id: string
   name: string
   label: React.ReactNode

@@ -210,10 +210,14 @@
   --primary-foreground: oklch(1 0 0); /* branco: 5,2:1 na primary */
   /* Secundário: tom claro da própria Primária (cada marca tem uma cor só). */
   --secondary: var(--bb-primary-100);
-  --secondary-foreground: var(--bb-primary-800); /* 7,7:1 na 100; 6,3:1 na 200 */
+  --secondary-foreground: var(
+    --bb-primary-800
+  ); /* 7,7:1 na 100; 6,3:1 na 200 */
   --muted: oklch(0.963 0.002 197.1); /* mist 100 */
   /* A11Y: mist 600 no lugar da mist 500 do tema (que dava 4,1:1 sobre muted). */
-  --muted-foreground: oklch(0.45 0.017 213.2); /* 7,4:1 no branco; 6,6:1 na muted */
+  --muted-foreground: oklch(
+    0.45 0.017 213.2
+  ); /* 7,4:1 no branco; 6,6:1 na muted */
   --accent: oklch(0.963 0.002 197.1); /* mist 100 */
   --accent-foreground: oklch(0.218 0.008 223.9); /* mist 900: 15,6:1 */
   --destructive: oklch(0.577 0.245 27.325); /* red 600: 4,8:1 com branco */
@@ -254,7 +258,9 @@
   --primary-hover: var(--bb-primary-700); /* 7,2:1 com branco */
   --primary-pressed: var(--bb-primary-800); /* 9,3:1 */
   --secondary-hover: var(--bb-primary-200);
-  --destructive-hover: oklch(0.505 0.213 27.518); /* red 700: 6,4:1 com branco */
+  --destructive-hover: oklch(
+    0.505 0.213 27.518
+  ); /* red 700: 6,4:1 com branco */
   --destructive-foreground: oklch(1 0 0); /* branco: 4,8:1 no red 600 */
   --link: var(--bb-primary-600); /* 5,2:1 no branco */
   --link-hover: var(--bb-primary-800); /* 9,3:1 */
@@ -272,9 +278,13 @@
   --primary: var(--bb-primary-600);
   --primary-foreground: oklch(1 0 0); /* 5,2:1 na primary */
   --secondary: var(--bb-primary-900);
-  --secondary-foreground: var(--bb-primary-100); /* 9,0:1 na 900; 7,7:1 na 800 */
+  --secondary-foreground: var(
+    --bb-primary-100
+  ); /* 9,0:1 na 900; 7,7:1 na 800 */
   --muted: oklch(0.275 0.011 216.9); /* mist 800 */
-  --muted-foreground: oklch(0.723 0.014 214.4); /* mist 400: 8,1:1 no fundo; 6,1:1 na muted */
+  --muted-foreground: oklch(
+    0.723 0.014 214.4
+  ); /* mist 400: 8,1:1 no fundo; 6,1:1 na muted */
   --accent: oklch(0.275 0.011 216.9);
   --accent-foreground: oklch(0.987 0.002 197.1); /* 14,2:1 */
   --destructive: oklch(0.704 0.191 22.216); /* red 400: 6,8:1 contra o fundo */
@@ -310,7 +320,9 @@
   --primary-hover: var(--bb-primary-700); /* 7,2:1 com branco */
   --primary-pressed: var(--bb-primary-800); /* 9,3:1 */
   --secondary-hover: var(--bb-primary-800);
-  --destructive-hover: oklch(0.808 0.114 19.571); /* red 300: 10,3:1 com mist 950 */
+  --destructive-hover: oklch(
+    0.808 0.114 19.571
+  ); /* red 300: 10,3:1 com mist 950 */
   /* Texto escuro: branco no red 400 daria 2,9:1. */
   --destructive-foreground: oklch(0.148 0.004 228.8); /* mist 950: 6,8:1 */
   --link: var(--bb-primary-300); /* 10,2:1 no fundo */

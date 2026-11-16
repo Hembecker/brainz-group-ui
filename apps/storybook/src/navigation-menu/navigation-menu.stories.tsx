@@ -255,7 +255,9 @@ export const Demo: Story = {
             <ul className="grid w-[200px]">
               <li>
                 <NavigationMenuLink
-                  render={<a href="#" className="flex-row items-center gap-2" />}
+                  render={
+                    <a href="#" className="flex-row items-center gap-2" />
+                  }
                 >
                   <CircleAlertIcon aria-hidden="true" />
                   Backlog
@@ -263,15 +265,18 @@ export const Demo: Story = {
               </li>
               <li>
                 <NavigationMenuLink
-                  render={<a href="#" className="flex-row items-center gap-2" />}
+                  render={
+                    <a href="#" className="flex-row items-center gap-2" />
+                  }
                 >
-                  <CircleDashedIcon aria-hidden="true" />
-                  A fazer
+                  <CircleDashedIcon aria-hidden="true" />A fazer
                 </NavigationMenuLink>
               </li>
               <li>
                 <NavigationMenuLink
-                  render={<a href="#" className="flex-row items-center gap-2" />}
+                  render={
+                    <a href="#" className="flex-row items-center gap-2" />
+                  }
                 >
                   <CircleCheckIcon aria-hidden="true" />
                   Concluído
@@ -397,7 +402,9 @@ export const Rtl: Story = {
                 <li>
                   <NavigationMenuLink render={<a href="#" />}>
                     <div className="flex flex-col gap-1 text-sm">
-                      <div className="leading-none font-medium">حوار التنبيه</div>
+                      <div className="leading-none font-medium">
+                        حوار التنبيه
+                      </div>
                       <div className="line-clamp-2 text-muted-foreground">
                         حوار نافذة يقطع المستخدم بمحتوى مهم ويتوقع استجابة.
                       </div>
@@ -407,7 +414,9 @@ export const Rtl: Story = {
                 <li>
                   <NavigationMenuLink render={<a href="#" />}>
                     <div className="flex flex-col gap-1 text-sm">
-                      <div className="leading-none font-medium">بطاقة التحويم</div>
+                      <div className="leading-none font-medium">
+                        بطاقة التحويم
+                      </div>
                       <div className="line-clamp-2 text-muted-foreground">
                         للمستخدمين المبصرين لمعاينة المحتوى المتاح خلف الرابط.
                       </div>
@@ -419,7 +428,8 @@ export const Rtl: Story = {
                     <div className="flex flex-col gap-1 text-sm">
                       <div className="leading-none font-medium">التقدم</div>
                       <div className="line-clamp-2 text-muted-foreground">
-                        يعرض مؤشرًا يوضح تقدم إتمام المهمة، عادةً يتم عرضه كشريط تقدم.
+                        يعرض مؤشرًا يوضح تقدم إتمام المهمة، عادةً يتم عرضه كشريط
+                        تقدم.
                       </div>
                     </div>
                   </NavigationMenuLink>
@@ -427,7 +437,9 @@ export const Rtl: Story = {
                 <li>
                   <NavigationMenuLink render={<a href="#" />}>
                     <div className="flex flex-col gap-1 text-sm">
-                      <div className="leading-none font-medium">منطقة التمرير</div>
+                      <div className="leading-none font-medium">
+                        منطقة التمرير
+                      </div>
                       <div className="line-clamp-2 text-muted-foreground">
                         يفصل المحتوى بصريًا أو دلاليًا.
                       </div>
@@ -439,7 +451,8 @@ export const Rtl: Story = {
                     <div className="flex flex-col gap-1 text-sm">
                       <div className="leading-none font-medium">التبويبات</div>
                       <div className="line-clamp-2 text-muted-foreground">
-                        مجموعة من أقسام المحتوى المتعددة الطبقات—المعروفة بألواح التبويب—التي يتم عرضها واحدة في كل مرة.
+                        مجموعة من أقسام المحتوى المتعددة الطبقات—المعروفة بألواح
+                        التبويب—التي يتم عرضها واحدة في كل مرة.
                       </div>
                     </div>
                   </NavigationMenuLink>
@@ -449,7 +462,9 @@ export const Rtl: Story = {
                     <div className="flex flex-col gap-1 text-sm">
                       <div className="leading-none font-medium">تلميح</div>
                       <div className="line-clamp-2 text-muted-foreground">
-                        نافذة منبثقة تعرض معلومات متعلقة بعنصر عندما يتلقى العنصر التركيز على لوحة المفاتيح أو عند تحويم الماوس فوقه.
+                        نافذة منبثقة تعرض معلومات متعلقة بعنصر عندما يتلقى
+                        العنصر التركيز على لوحة المفاتيح أو عند تحويم الماوس
+                        فوقه.
                       </div>
                     </div>
                   </NavigationMenuLink>

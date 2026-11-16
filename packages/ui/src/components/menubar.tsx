@@ -91,7 +91,7 @@ function Menubar({ className, onFocus, ...props }: MenubarPrimitive.Props) {
     <MenubarPrimitive
       data-slot="menubar"
       className={cn(
-        "flex h-8 items-center rounded-2xl border p-[3px] max-w-full overflow-x-auto overflow-y-hidden no-scrollbar scroll-px-10 scroll-fade-x",
+        "no-scrollbar flex h-8 max-w-full scroll-fade-x scroll-px-10 items-center overflow-x-auto overflow-y-hidden rounded-2xl border p-[3px]",
         className
       )}
       onFocus={(event) => {

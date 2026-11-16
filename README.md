@@ -20,15 +20,15 @@ O Storybook abre em http://localhost:6007. Na barra de ferramentas, o seletor **
 
 Na raiz, os scripts rodam pelo Turbo em todos os workspaces:
 
-| Script | O que faz |
-| --- | --- |
-| `storybook` | Storybook em modo de desenvolvimento, na porta 6007 |
-| `dev` | `apps/web` e o Storybook juntos |
-| `build` | Build de `apps/web` e o Storybook estático (`apps/storybook/storybook-static/`) |
-| `typecheck` | `tsc --noEmit` em cada workspace |
-| `lint` | ESLint em cada workspace |
-| `format` | Prettier com a ordenação de classes do Tailwind em cada workspace; escreve nos arquivos |
-| `test` | Roda cada story como teste no Chromium (Vitest e Playwright), com o axe, três vezes: claro, escuro e RTL. Qualquer violação de acessibilidade reprova o teste. |
+| Script      | O que faz                                                                                                                                                      |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `storybook` | Storybook em modo de desenvolvimento, na porta 6007                                                                                                            |
+| `dev`       | `apps/web` e o Storybook juntos                                                                                                                                |
+| `build`     | Build de `apps/web` e o Storybook estático (`apps/storybook/storybook-static/`)                                                                                |
+| `typecheck` | `tsc --noEmit` em cada workspace                                                                                                                               |
+| `lint`      | ESLint em cada workspace                                                                                                                                       |
+| `format`    | Prettier em todo o repositório (menos o MDX), com a ordenação de classes do Tailwind; escreve nos arquivos                                                     |
+| `test`      | Roda cada story como teste no Chromium (Vitest e Playwright), com o axe, três vezes: claro, escuro e RTL. Qualquer violação de acessibilidade reprova o teste. |
 
 A marca SESI tem uma bateria à parte, fora do Turbo: `npm.cmd run test:sesi -w @workspace/storybook` roda as mesmas stories com o axe, com a marca SESI no claro e no escuro.
 

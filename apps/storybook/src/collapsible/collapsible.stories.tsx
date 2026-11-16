@@ -261,7 +261,10 @@ export const Configuracoes: Story = {
         <Collapsible className="flex items-start gap-2">
           <FieldGroup className="grid w-full grid-cols-2 gap-2">
             <Field>
-              <FieldLabel htmlFor="configuracoes-raio-x-superior" className="sr-only">
+              <FieldLabel
+                htmlFor="configuracoes-raio-x-superior"
+                className="sr-only"
+              >
                 Raio X, canto superior
               </FieldLabel>
               <Input
@@ -272,7 +275,10 @@ export const Configuracoes: Story = {
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="configuracoes-raio-y-superior" className="sr-only">
+              <FieldLabel
+                htmlFor="configuracoes-raio-y-superior"
+                className="sr-only"
+              >
                 Raio Y, canto superior
               </FieldLabel>
               <Input
@@ -284,7 +290,10 @@ export const Configuracoes: Story = {
             </Field>
             <CollapsibleContent className="col-span-full grid grid-cols-subgrid gap-2">
               <Field>
-                <FieldLabel htmlFor="configuracoes-raio-x-inferior" className="sr-only">
+                <FieldLabel
+                  htmlFor="configuracoes-raio-x-inferior"
+                  className="sr-only"
+                >
                   Raio X, canto inferior
                 </FieldLabel>
                 <Input
@@ -295,7 +304,10 @@ export const Configuracoes: Story = {
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="configuracoes-raio-y-inferior" className="sr-only">
+                <FieldLabel
+                  htmlFor="configuracoes-raio-y-inferior"
+                  className="sr-only"
+                >
                   Raio Y, canto inferior
                 </FieldLabel>
                 <Input
@@ -369,7 +381,7 @@ export const ArvoreDeArquivos: Story = {
               <FolderIcon aria-hidden="true" />
               components
             </CollapsibleTrigger>
-            <CollapsibleContent className="mt-1 ms-5">
+            <CollapsibleContent className="ms-5 mt-1">
               <div className="flex flex-col gap-1">
                 <Collapsible>
                   <CollapsibleTrigger
@@ -388,7 +400,7 @@ export const ArvoreDeArquivos: Story = {
                     <FolderIcon aria-hidden="true" />
                     ui
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-1 ms-5">
+                  <CollapsibleContent className="ms-5 mt-1">
                     <div className="flex flex-col gap-1">
                       <Button
                         variant="link"
@@ -445,7 +457,7 @@ export const ArvoreDeArquivos: Story = {
               <FolderIcon aria-hidden="true" />
               lib
             </CollapsibleTrigger>
-            <CollapsibleContent className="mt-1 ms-5">
+            <CollapsibleContent className="ms-5 mt-1">
               <div className="flex flex-col gap-1">
                 <Button
                   variant="link"
@@ -522,7 +534,9 @@ export const Rtl: Story = {
           <CollapsibleContent className="flex flex-col gap-2">
             <div className="rounded-2xl border px-4 py-2 text-sm">
               <p className="font-medium">عنوان الشحن</p>
-              <p className="text-muted-foreground">100 Market St, San Francisco</p>
+              <p className="text-muted-foreground">
+                100 Market St, San Francisco
+              </p>
             </div>
             <div className="rounded-2xl border px-4 py-2 text-sm">
               <p className="font-medium">العناصر</p>

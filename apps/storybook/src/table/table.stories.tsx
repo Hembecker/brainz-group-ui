@@ -199,7 +199,9 @@ export const Acoes: Story = {
                 <DropdownMenuItem>Editar</DropdownMenuItem>
                 <DropdownMenuItem>Duplicar</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">Excluir</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">
+                  Excluir
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </TableCell>
@@ -219,7 +221,9 @@ export const Acoes: Story = {
                 <DropdownMenuItem>Editar</DropdownMenuItem>
                 <DropdownMenuItem>Duplicar</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">Excluir</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">
+                  Excluir
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </TableCell>
@@ -239,7 +243,9 @@ export const Acoes: Story = {
                 <DropdownMenuItem>Editar</DropdownMenuItem>
                 <DropdownMenuItem>Duplicar</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">Excluir</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">
+                  Excluir
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </TableCell>

@@ -64,7 +64,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="alert-title"
       className={cn(
-        "font-medium group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background",
+        "font-medium group-has-[>svg]/alert:col-start-2 [&_a]:rounded-sm [&_a]:underline [&_a]:underline-offset-3 [&_a]:outline-none [&_a]:hover:text-foreground [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background",
         className
       )}
       {...props}
@@ -80,7 +80,7 @@ function AlertDescription({
     <div
       data-slot="alert-description"
       className={cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background [&_p:not(:last-child)]:mb-4",
+        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:rounded-sm [&_a]:underline [&_a]:underline-offset-3 [&_a]:outline-none [&_a]:hover:text-foreground [&_a]:focus-visible:ring-3 [&_a]:focus-visible:ring-ring [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background [&_p:not(:last-child)]:mb-4",
         className
       )}
       {...props}
@@ -92,7 +92,7 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-action"
-      className={cn("absolute top-2.5 end-3", className)}
+      className={cn("absolute end-3 top-2.5", className)}
       {...props}
     />
   )

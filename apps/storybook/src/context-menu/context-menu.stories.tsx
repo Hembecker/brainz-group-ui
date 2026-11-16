@@ -163,7 +163,9 @@ export const Demo: Story = {
     )
     await userEvent.keyboard("{ArrowDown}")
     await waitFor(() =>
-      expect(screen.getByRole("menuitem", { name: /^Recarregar/ })).toHaveFocus()
+      expect(
+        screen.getByRole("menuitem", { name: /^Recarregar/ })
+      ).toHaveFocus()
     )
     await userEvent.keyboard("{ArrowUp}{ArrowUp}")
     await waitFor(() =>
@@ -195,7 +197,9 @@ export const Demo: Story = {
     await conferirLadoDoSubmenu(menu, submenu, dir)
     await userEvent.keyboard(fechaSubmenu)
     await waitFor(() =>
-      expect(screen.queryByRole("menu", { name: "Mais ferramentas" })).toBeNull()
+      expect(
+        screen.queryByRole("menu", { name: "Mais ferramentas" })
+      ).toBeNull()
     )
     await waitFor(() => expect(ferramentas).toHaveFocus())
 
@@ -264,13 +268,17 @@ export const Demo: Story = {
           <ContextMenuCheckboxItem defaultChecked>
             Mostrar favoritos
           </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem>Mostrar URLs completas</ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem>
+            Mostrar URLs completas
+          </ContextMenuCheckboxItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuGroup>
           <ContextMenuLabel>Pessoas</ContextMenuLabel>
           <ContextMenuRadioGroup defaultValue="pedro">
-            <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+            <ContextMenuRadioItem value="pedro">
+              Pedro Duarte
+            </ContextMenuRadioItem>
             <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
           </ContextMenuRadioGroup>
         </ContextMenuGroup>
@@ -579,7 +587,9 @@ export const CaixasDeSelecao: Story = {
           <ContextMenuCheckboxItem defaultChecked>
             Mostrar barra de favoritos
           </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem>Mostrar URLs completas</ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem>
+            Mostrar URLs completas
+          </ContextMenuCheckboxItem>
           <ContextMenuCheckboxItem defaultChecked>
             Mostrar ferramentas do desenvolvedor
           </ContextMenuCheckboxItem>
@@ -622,7 +632,9 @@ export const Radio: Story = {
         <ContextMenuGroup>
           <ContextMenuLabel>Pessoas</ContextMenuLabel>
           <ContextMenuRadioGroup defaultValue="pedro">
-            <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+            <ContextMenuRadioItem value="pedro">
+              Pedro Duarte
+            </ContextMenuRadioItem>
             <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
           </ContextMenuRadioGroup>
         </ContextMenuGroup>
@@ -816,7 +828,10 @@ export const Rtl: Story = {
     await userEvent.pointer({
       keys: "[MouseRight]",
       target: gatilho,
-      coords: { clientX: caixa.right - 8, clientY: caixa.top + caixa.height / 2 },
+      coords: {
+        clientX: caixa.right - 8,
+        clientY: caixa.top + caixa.height / 2,
+      },
     })
     const menu = await screen.findByRole("menu", { name: "إجراءات" })
     await esperarAnimacoes()
@@ -918,7 +933,9 @@ export const Rtl: Story = {
                 <ContextMenuRadioItem value="pedro">
                   Pedro Duarte
                 </ContextMenuRadioItem>
-                <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+                <ContextMenuRadioItem value="colm">
+                  Colm Tuite
+                </ContextMenuRadioItem>
               </ContextMenuRadioGroup>
             </ContextMenuGroup>
           </ContextMenuContent>

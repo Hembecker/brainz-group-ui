@@ -6,17 +6,10 @@ import { arSA, ptBR } from "react-day-picker/locale"
 import { expect, userEvent, waitFor, within } from "storybook/test"
 
 import { Button } from "@workspace/ui/components/button"
-import {
-  Calendar,
-  CalendarDayButton,
-} from "@workspace/ui/components/calendar"
+import { Calendar, CalendarDayButton } from "@workspace/ui/components/calendar"
 import { Card, CardContent, CardFooter } from "@workspace/ui/components/card"
 import { DirectionProvider } from "@workspace/ui/components/direction"
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@workspace/ui/components/field"
+import { Field, FieldGroup, FieldLabel } from "@workspace/ui/components/field"
 import {
   InputGroup,
   InputGroupAddon,
@@ -480,9 +473,7 @@ export const DataEHora: Story = {
 }
 
 function CalendarioReservado() {
-  const [data, setData] = React.useState<Date | undefined>(
-    new Date(2025, 0, 6)
-  )
+  const [data, setData] = React.useState<Date | undefined>(new Date(2025, 0, 6))
   const reservadas = Array.from(
     { length: 15 },
     (_, i) => new Date(2025, 0, 12 + i)

@@ -175,9 +175,7 @@ export const Lados: Story = {
           className="data-[side=bottom]:max-h-[50vh] data-[side=top]:max-h-[50vh]"
         >
           <SheetHeader>
-            <SheetTitle id="lados-topo-titulo">
-              Editar perfil (topo)
-            </SheetTitle>
+            <SheetTitle id="lados-topo-titulo">Editar perfil (topo)</SheetTitle>
             <SheetDescription>
               Faça as alterações no seu perfil aqui. Clique em salvar quando
               terminar.
@@ -233,9 +231,7 @@ export const Lados: Story = {
           className="data-[side=bottom]:max-h-[50vh] data-[side=top]:max-h-[50vh]"
         >
           <SheetHeader>
-            <SheetTitle id="lados-base-titulo">
-              Editar perfil (base)
-            </SheetTitle>
+            <SheetTitle id="lados-base-titulo">Editar perfil (base)</SheetTitle>
             <SheetDescription>
               Faça as alterações no seu perfil aqui. Clique em salvar quando
               terminar.
@@ -318,11 +314,7 @@ export const SemBotaoDeFechar: Story = {
 export const Rtl: Story = {
   name: "RTL",
   play: async ({ canvasElement }) => {
-    const sheet = await abrirSheet(
-      canvasElement,
-      "فتح",
-      "تعديل الملف الشخصي"
-    )
+    const sheet = await abrirSheet(canvasElement, "فتح", "تعديل الملف الشخصي")
     await conferirLado(sheet, "left")
   },
   render: () => (

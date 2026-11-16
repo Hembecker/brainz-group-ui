@@ -32,7 +32,11 @@ function getSnapshot() {
 
 /** Chave primitiva "<marca>|<modo>", que muda a cada troca no <html>. */
 export function useThemeKey(): string {
-  return React.useSyncExternalStore(subscribe, getSnapshot, () => "brainz|light")
+  return React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    () => "brainz|light"
+  )
 }
 
 export function parseThemeKey(key: string) {
@@ -45,7 +49,8 @@ export type Rgba = [number, number, number, number]
 let canvasContext: CanvasRenderingContext2D | null | undefined
 
 const SLASH_ALPHA = /\s*\/\s*([\d.]+)(%?)\s*\)\s*$/
-const LEGACY_RGBA = /^rgba?\(\s*([^,()]+,[^,()]+,[^,()]+),\s*([\d.]+)(%?)\s*\)$/i
+const LEGACY_RGBA =
+  /^rgba?\(\s*([^,()]+,[^,()]+,[^,()]+),\s*([\d.]+)(%?)\s*\)$/i
 
 /*
  * Alfa escrito na própria cor ("oklch(1 0 0 / 0.1)", "… / 10%)" ou o 4º
@@ -65,7 +70,9 @@ function splitAlpha(color: string): { opaque: string; alpha: number } | null {
   const legacy = color.match(LEGACY_RGBA)
   if (legacy) {
     const alpha = Number(legacy[2]) / (legacy[3] ? 100 : 1)
-    return Number.isFinite(alpha) ? { opaque: `rgb(${legacy[1]})`, alpha } : null
+    return Number.isFinite(alpha)
+      ? { opaque: `rgb(${legacy[1]})`, alpha }
+      : null
   }
   return null
 }
@@ -125,7 +132,9 @@ function luminance([r, g, b]: Rgba) {
  */
 export function contrast(foreground: Rgba, background: Rgba, base?: Rgba) {
   const opaqueBackground =
-    background[3] < 1 ? flatten(background, base ?? [255, 255, 255, 1]) : background
+    background[3] < 1
+      ? flatten(background, base ?? [255, 255, 255, 1])
+      : background
   const opaqueForeground =
     foreground[3] < 1 ? flatten(foreground, opaqueBackground) : foreground
   const l1 = luminance(opaqueForeground)

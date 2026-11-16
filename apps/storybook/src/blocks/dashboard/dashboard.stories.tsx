@@ -609,7 +609,9 @@ export const ComConteudo: Story = {
             className="overflow-x-auto rounded-xl outline-hidden focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card **:data-[slot=table-container]:overflow-visible"
           >
             <Table>
-              <TableCaption id="pedidos-recentes">Pedidos recentes</TableCaption>
+              <TableCaption id="pedidos-recentes">
+                Pedidos recentes
+              </TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Pedido</TableHead>

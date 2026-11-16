@@ -11,6 +11,7 @@ Criado com `npx shadcn@latest init --preset b1auh2PSq --template vite --monorepo
 Presets anteriores, só registrados: `b1auh2PQm` (zinc, raio `default`) e `b1auhtCr2` (zinc, tema `blue`, raio `small`).
 
 **Não rode `shadcn apply`.** Testado em 2026-11-13 com o `b1auh2PQm` (e desfeito):
+
 - ele sobrescreve todos os componentes com o estilo do preset (anel `ring/30`, destrutivo `bg-destructive/10`, alturas e raios do preset, rótulo "Loading");
 - recria o `separator.tsx`;
 - troca o modo escuro pelas cores zinc e despeja as cores do claro numa linha do `globals.css`;
@@ -22,6 +23,7 @@ Para trocar de preset, só registre o código aqui e mude à mão o que valer a 
 O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi apagado a pedido do usuário em 2026-11-15: o conteúdo foi para a Lixeira do Windows. O histórico dele continua na branch `legacy/design-system`.
 
 ## Fontes da verdade
+
 - **Estrutura e lógica dos componentes: shadcn/ui, versão Base UI.**
   - Cada componente segue a página dele em `https://ui.shadcn.com/docs/components/base/<nome>`: a mesma API, a mesma composição e as mesmas seções de documentação.
   - Daqui saem a estrutura e o comportamento. As cores, o contraste e os tamanhos vêm dos tokens da Big Brain.
@@ -62,6 +64,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
   - cores de gráfico (`--chart-*`).
 
 ## Ritmo e escopo
+
 - **Biblioteca completa** (pedido do usuário em 2026-11-13): `shadcn add --all` instalou todos os componentes do registro (63 no total, estilo `base-rhea`), commit `0436c87`. Não adicione estrutura fora disso sem pedido.
 - **Revisão:** os 63 componentes foram revisados e documentados em quatro ondas (2026-11-13) e estão em "Componentes/<Nome>". Um componente novo fica em "Em revisão/<Nome>" até ganhar as stories de todas as seções e a MDX completa. O briefing usado nas ondas (fontes, modelos, regras de story e de revisão) fica na nota compartilhada `brief-docs-componentes.md`.
 - **Fontes de cada página:** `npx.cmd shadcn docs <nome>` confirma a página; a MDX da página está em `https://raw.githubusercontent.com/shadcn-ui/ui/refs/heads/main/apps/v4/content/docs/components/base/<nome>.mdx` e cada exemplo em `…/apps/v4/examples/base/<exemplo>.tsx`.
@@ -74,6 +77,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
   - cores com opacidade do registro: revisadas componente a componente, na revisão de cada um.
 
 ## Estrutura
+
 - `packages/ui` (`@workspace/ui`): os componentes e os tokens. O CLI e o `exports` do `package.json` mandam nesta pasta, então os componentes ficam **planos**, em `src/components/<nome>.tsx`, sem stories ao lado.
 - `apps/storybook` (`@workspace/storybook`): o Storybook 10, com as stories e as páginas MDX de cada componente em `src/<nome>/`.
 - `packages/ui/src/brand/` (`@workspace/ui/brand/*`): o registro de marcas (`brands.tsx`: nome, logo, símbolo, `illustrative`), o `BrainzLogo`/`BrainzMark` em SVG com `currentColor` e os passos da marca, um logo genérico de exemplo e o `use-brand.tsx` (`useBrandId`, `useBrand`, `setBrand`, observando o `data-brand` do `<html>`).
@@ -83,6 +87,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
 - `brand/`: o material da marca. O Storybook serve esta pasta na raiz (`staticDirs`), então os exemplos usam `src="brainz-group-logo.svg"`.
 
 ## Convenção de cada componente
+
 - `packages/ui/src/components/<nome>.tsx`: o componente.
   - Começa com um comentário com o link da página do shadcn e as decisões tomadas.
   - Função comum: no React 19 o `ref` chega como prop, sem `forwardRef`.
@@ -106,6 +111,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
 - Depois de um `shadcn add` que sobrescreva um componente, reaplique as decisões do comentário do topo.
 
 ## Pilha
+
 - **Base:** React 19.3.1, Vite 8, Tailwind 4, TypeScript 6, Turbo e npm workspaces.
 - **Componentes:** `@base-ui/react` 1.9.0, cva, lucide-react e `cn` (pacote do shadcn que substitui clsx + tailwind-merge).
 - **Storybook 10:** `@storybook/react-vite`, addon-docs (MDX), addon-a11y e addon-vitest, com a telemetria desligada.
@@ -117,9 +123,10 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
     - `.storybook/a11y-reporter.ts`, ligado em `parameters.a11y.config.reporter`: relatório `v1` do axe com violações e "incomplete" inteiros, passes só com id, nome e link, e inaplicáveis vazios (eram 34 KB por story, quase tudo descrição de regra; ficaram ~7 KB). As regras e o resultado não mudam: uma `<img>` sem `alt` injetada continua dando `image-alt`;
     - `maxWorkers: 4` no projeto `storybook` do `vite.config.ts` (o padrão abria 11 páginas ao mesmo tempo);
     - não use o reporter `no-passes` do axe: ele tira o `incomplete` e a aba Accessibility quebra sem `passes`.
-    Conferido: duas rodadas seguidas pelo painel, 544 passam, acessibilidade passa, cobertura 95%, servidor no máximo ~2 GB.
+      Conferido: duas rodadas seguidas pelo painel, 544 passam, acessibilidade passa, cobertura 95%, servidor no máximo ~2 GB.
   - **CI** (2026-11-15, ainda não enviado): `.github/workflows/testes.yml` roda no GitHub Actions a cada push na `master` e a cada pull request: `npm ci`, o Chromium headless do Playwright, `typecheck`, `lint`, `test` (claro, escuro, RTL), `test:sesi` e `build`, no Node 26. As actions ficam fixas pelo SHA (checkout v7.0.1, setup-node v7.1.0). Não bloqueia o deploy do Vercel. Só passa a valer depois de um push; nunca rodou no GitHub.
   - **Desempenho do Storybook (2026-11-16):** uma investigação só de leitura (8 agentes, com verificação adversarial) mediu as trocas de story: Button ~0,6–0,8 s, Calendar ~1,9–2,2 s, Dashboard ~3,3–3,9 s. A causa principal é o manager: cada escrita na store re-renderiza o manager inteiro (~40–50 ms, porque o `ThemeProvider` recebe um tema novo a cada render), e o painel Interactions escreve 12–44 vezes por troca. Aplicado o único ganho sem custo: `server.warmup` das stories e MDX pelo `viteFinal` do `main.ts` (só no `storybook dev`, fora do Vitest), que tira ~0,6 s da primeira visita a cada arquivo. As trocas com custo (desligar o painel Interactions, axe manual na interface, plays pesados só nos testes, `delay: null` no userEvent) esperam o usuário (nota `decisoes-pendentes.md`);
+  - **Formatação (2026-11-16, escolha do usuário):** `npm.cmd run format` e `format:check` rodam o Prettier em todo o repositório, menos o MDX (`.prettierignore`: o parser de MDX do Prettier é o do MDX 1 e pode quebrar as páginas MDX 3). O CI roda o `format:check` depois do lint. O `.gitattributes` (`* text=auto eol=lf`) deixa tudo em LF, como pede o `.prettierrc`, apesar do `core.autocrlf=true` do Windows. A formatação ficou num commit só dela, depois do commit das mudanças;
   - **Chromatic:** `@chromatic-com/storybook` 5.6.0 instalado com versão fixa e registrado no `main.ts` (painel "Visual tests"), sem `storybook add`. Ele só envia capturas ao chromatic.com depois de entrar com uma conta pelo painel; nenhuma conta foi configurada.
   - O item "Automatically document your components" do checklist do Storybook (tag `autodocs`) fica de fora de propósito: cada componente tem a própria MDX. Use "Skip".
   - `npm.cmd run test:sesi -w @workspace/storybook` roda a mesma bateria com a marca SESI no claro e no escuro (`--mode sesi` e `sesi-dark`). A barra do Storybook tem o seletor Marca, além de Modo e Direção.
@@ -127,6 +134,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
 - O CLI do shadcn é o local (`packages/ui`, versão fixa). Depois de um `shadcn add`, confira se ele não voltou a escrever `^` no `package.json`.
 
 ## Tokens
+
 - Ficam em `packages/ui/src/styles/globals.css`:
   - a camada de marca: as primitivas `--bb-primary-100` a `--bb-primary-900` (nove passos; sem 50 nem 950, decisão de 2026-11-16), `--bb-ink`, `--bb-gradient` e `--bb-font-sans` em `:root, :root[data-brand="brainz"]` e em um bloco `:root[data-brand="<id>"]` por marca. O `data-brand` fica no `<html>`, porque os papéis resolvem no `:root`;
   - **contrato de uma escala de marca** (o comentário do topo do `globals.css` lista todos): 600 com branco ≥4,5:1, 500 no branco ≥3:1, 400 na mist 950 e na 900 ≥3:1, 700 com branco ≥4,5:1, 300 na mist 950 ≥4,5:1, gráficos 500–900 no branco e 200–600 na mist 950 ≥3:1, e 800/100, 800/200, 100/900 e 100/800 ≥4,5:1 (o papel `secondary`); no escuro, a primária no card (mist 900) ≥3:1 com o texto dela ≥4,5:1. Marca nova só entra cumprindo o contrato; os componentes não mudam. Se a escala for oficial e não cumprir (o SESI), os passos ficam como a marca define e o bloco da marca sobrescreve os papéis que falham, apontando para passos que cumprem;
@@ -158,15 +166,18 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
 - **Raio:** `--radius: 0.45rem` (7,2px), o raio `small` do preset. Os controles usam `rounded-2xl` (× 1,8, ~13px), como o estilo rhea; o Card usa `min(--radius-4xl, 24px)` (× 2,6, ~19px).
 
 ## Windows
+
 - No PowerShell, use `npm.cmd` e `npx.cmd`, porque a política de execução bloqueia os `.ps1`.
 - Não rode instaladores interativos, como `npm create storybook` ou `storybook add`.
 - O npm 11 não roda o `postinstall` do esbuild (aviso `allow-scripts`). O esbuild funciona assim mesmo.
 - O cache global do npm desta máquina está corrompido (`ENOENT … Invalid response body`). Nas instalações, use um cache privado com `$env:npm_config_cache = '<pasta temporária>'` antes do `npm.cmd`. Não rode `npm cache clean --force` sem perguntar ao usuário.
 
 ## Storybook pelo app
+
 - `.claude/launch.json` tem a configuração `big-brain-ui-storybook`, na porta **6007**, a única do Storybook. A 6006 não é mais usada (era a do projeto antigo).
 
 ## Estado (2026-11-13)
+
 - **Commits na `master`:** `beb27a0` (template do shadcn), `421bc9e` (migração), `6710f95` (`vercel.json`), `c5d313c` (`.gitignore`), `f351923` (tema mist + blue), `a04e1bf` (estado) e `13351d7` (ajustes de acessibilidade), publicados. **Sem push** (o usuário escolheu só commitar): `bf3da8a` (tema da Brainz Group), `0436c87` (`add --all`), `477f6e0` (escala rhea, `field`, foco), `4a3c1d1` (modelos Input e Dialog), `ba6a149`, `ac66a3f`, `01a0331` e `95bf988` (as quatro ondas de revisão) e o commit de fechamento.
 - **Remoto:** `origin` = https://github.com/Hembecker/big-brain-ui (privado). A branch `legacy/design-system` não foi enviada.
 - **Vercel:** projeto `big-brain-ui` no time `hembecker-6729s-projects`, ligado ao GitHub. A branch de produção é a `master`. Publica o Storybook (`vercel.json`: `npm ci`, `turbo build --filter=@workspace/storybook`, saída `apps/storybook/storybook-static`) em https://big-brain-ui.vercel.app. O repositório é privado, mas o site é público. A pasta `.vercel` fica fora do git.
@@ -207,7 +218,7 @@ O projeto antigo `C:\dev\Big Brain\design-system` (React 18, sem monorepo) foi a
   - previews de Login e Cadastro em linha, seguindo Marca e Modo;
   - `typecheck` do `apps/web` com `-p tsconfig.app.json`;
   - o hover do link na `FieldDescription` passou para `text-link-hover` (a primária tinha 3,8:1 no escuro).
-  Verificado: `typecheck`, `lint` e `build` limpos; 544 stories passam com axe no claro, no escuro, em RTL, no SESI e no SESI escuro; 178 links das MDX resolvem no `index.json`; barra lateral na ordem pedida.
+    Verificado: `typecheck`, `lint` e `build` limpos; 544 stories passam com axe no claro, no escuro, em RTL, no SESI e no SESI escuro; 178 links das MDX resolvem no `index.json`; barra lateral na ordem pedida.
 - **Lacunas da fundação:**
   - SESI: cores, neutros, fonte e raio oficiais (SI DS); o logo ainda é genérico e o modo escuro é derivado. CNI, SENAI, IEL e Corporativo têm as escalas no mesmo Figma, mas não foram instalados (SENAI cumpre o contrato por passo; CNI, IEL e Corporativo precisariam sobrescrever papéis);
   - a story "Com imagem" do Login usa a `paleta-primaria.png` no lugar de uma imagem real;

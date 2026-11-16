@@ -1467,10 +1467,11 @@ export const CarregarHistorico: Story = {
       )
     )
     // The row the reader was looking at stays where it was (±2px).
-    await waitFor(() =>
-      expect(
-        Math.abs(linha.getBoundingClientRect().top - antes)
-      ).toBeLessThanOrEqual(2),
+    await waitFor(
+      () =>
+        expect(
+          Math.abs(linha.getBoundingClientRect().top - antes)
+        ).toBeLessThanOrEqual(2),
       // The anchor settles a few frames later on a busy machine.
       { timeout: 4000 }
     )

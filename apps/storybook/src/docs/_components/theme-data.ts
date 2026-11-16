@@ -182,7 +182,8 @@ export const sesiRoleOverrides: RoleMapping[] = [
     token: "--primary-foreground / --sidebar-primary-foreground",
     light: "—",
     dark: "mist 950",
-    usage: "Texto escuro sobre a Pure, como o --destructive-foreground do escuro.",
+    usage:
+      "Texto escuro sobre a Pure, como o --destructive-foreground do escuro.",
   },
   {
     token: "--ring / --sidebar-ring",
@@ -201,14 +202,16 @@ export const sesiRoleOverrides: RoleMapping[] = [
     token: "--chart-1 a --chart-5",
     light: "Primária 600 a 900 e Neutral/600",
     dark: "—",
-    usage: "Só 600 a 900 passam de 3:1 no branco; a quinta série é o cinza #646464.",
+    usage:
+      "Só 600 a 900 passam de 3:1 no branco; a quinta série é o cinza #646464.",
   },
   {
     token:
       "--foreground, --card-foreground, --popover-foreground, --accent-foreground, --sidebar-foreground, --sidebar-accent-foreground",
     light: "Neutral 900 (#262626)",
     dark: "—",
-    usage: "Texto principal: 14,9:1 no fundo; 15,1:1 no card; 13,5:1 na Neutral 200.",
+    usage:
+      "Texto principal: 14,9:1 no fundo; 15,1:1 no card; 13,5:1 na Neutral 200.",
   },
   {
     token: "--muted, --accent, --sidebar-accent",
@@ -245,13 +248,15 @@ export const sesiRoleOverrides: RoleMapping[] = [
     token: "--input",
     light: "Neutral 600 (#646464)",
     dark: "—",
-    usage: "Borda de controle (Button outline, Toggle, InputOTP): 5,8:1 no fundo.",
+    usage:
+      "Borda de controle (Button outline, Toggle, InputOTP): 5,8:1 no fundo.",
   },
   {
     token: "--destructive / --destructive-hover",
     light: "Error 700 / 800",
     dark: "—",
-    usage: "A Error/Dark do SI DS (#FC4242) dá 3,5:1 com branco; a 700, 4,69:1.",
+    usage:
+      "A Error/Dark do SI DS (#FC4242) dá 3,5:1 com branco; a 700, 4,69:1.",
   },
   {
     token: "--radius",
@@ -508,6 +513,7 @@ export const contrastPairs: ContrastPair[] = [
     against: "--background",
     label: "borda do campo (o limite quando o campo não tem preenchimento)",
     status: "escolha do usuário (A11Y)",
-    notes: "transparente nos dois modos (SESI claro: 1,31:1, escolha do usuário)",
+    notes:
+      "transparente nos dois modos (SESI claro: 1,31:1, escolha do usuário)",
   },
 ]

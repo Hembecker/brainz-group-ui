@@ -38,7 +38,9 @@ export const Demo: Story = {
     await expect(alca).toHaveFocus()
     const antes = alca.getAttribute("aria-valuenow")
     await userEvent.keyboard("{ArrowRight}")
-    await waitFor(() => expect(alca.getAttribute("aria-valuenow")).not.toBe(antes))
+    await waitFor(() =>
+      expect(alca.getAttribute("aria-valuenow")).not.toBe(antes)
+    )
 
     // The focus ring is drawn on the 1px line: a solid ring plus the 2px gap
     // in the background color (two shadows), over the neighbor panels.
@@ -95,7 +97,9 @@ export const Vertical: Story = {
     await expect(alca).toHaveFocus()
     const antes = alca.getAttribute("aria-valuenow")
     await userEvent.keyboard("{ArrowDown}")
-    await waitFor(() => expect(alca.getAttribute("aria-valuenow")).not.toBe(antes))
+    await waitFor(() =>
+      expect(alca.getAttribute("aria-valuenow")).not.toBe(antes)
+    )
   },
   render: () => (
     <ResizablePanelGroup

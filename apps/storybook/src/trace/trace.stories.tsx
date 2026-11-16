@@ -210,11 +210,7 @@ export const Demo: Story = {
             </CodeBlock>
           </TraceCollapsibleContent>
         </TraceCollapsible>
-        <a
-          href="https://pnpm.io/cli/install"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href="https://pnpm.io/cli/install" target="_blank" rel="noreferrer">
           <TraceLine>
             <TraceIcon>
               <GlobeIcon />
@@ -235,11 +231,7 @@ export const Demo: Story = {
 
 export const Linha: Story = {
   render: () => (
-    <Trace
-      role="group"
-      aria-label="Etapa concluída"
-      className="max-w-sm"
-    >
+    <Trace role="group" aria-label="Etapa concluída" className="max-w-sm">
       <TraceLine>
         <TraceIcon>
           <GitBranchIcon />
@@ -252,11 +244,7 @@ export const Linha: Story = {
 
 export const Status: Story = {
   render: () => (
-    <Trace
-      role="group"
-      aria-label="Estados das etapas"
-      className="max-w-sm"
-    >
+    <Trace role="group" aria-label="Estados das etapas" className="max-w-sm">
       <TraceLine>
         <TraceIcon>
           <CircleCheckIcon />
@@ -288,11 +276,7 @@ export const Status: Story = {
 export const Descricao: Story = {
   name: "Descrição",
   render: () => (
-    <Trace
-      role="group"
-      aria-label="Etapas com detalhes"
-      className="max-w-sm"
-    >
+    <Trace role="group" aria-label="Etapas com detalhes" className="max-w-sm">
       <TraceLine>
         <TraceIcon>
           <FilePenIcon />
@@ -820,7 +804,9 @@ export const CadeiaDePensamento: Story = {
                   <TraceIcon>
                     <SearchIcon />
                   </TraceIcon>
-                  <TraceTitle>Pesquisou pelo log de build do checkout</TraceTitle>
+                  <TraceTitle>
+                    Pesquisou pelo log de build do checkout
+                  </TraceTitle>
                 </TraceLine>
               </TraceCollapsibleTrigger>
               <TraceCollapsibleContent className="flex flex-wrap gap-1.5">
@@ -896,7 +882,9 @@ export const Commit: Story = {
             <TraceIcon>
               <GitCommitHorizontalIcon />
             </TraceIcon>
-            <TraceTitle>Fez o commit a1b2c3: Corrige o redirecionamento do login</TraceTitle>
+            <TraceTitle>
+              Fez o commit a1b2c3: Corrige o redirecionamento do login
+            </TraceTitle>
           </TraceLine>
         </TraceCollapsibleTrigger>
         <TraceCollapsibleContent>
@@ -926,9 +914,13 @@ export const Commit: Story = {
                 <CodeBlock className="mx-6 mb-6 w-auto">
                   <CodeBlockContent>
                     <CodeBlockLine className="text-muted-foreground">
-                      {"@@ -14,7 +14,7 @@ export default async function LoginPage({"}
+                      {
+                        "@@ -14,7 +14,7 @@ export default async function LoginPage({"
+                      }
                     </CodeBlockLine>
-                    <CodeBlockLine>{"  const { next } = await searchParams"}</CodeBlockLine>
+                    <CodeBlockLine>
+                      {"  const { next } = await searchParams"}
+                    </CodeBlockLine>
                     <CodeBlockLine variant="removed">
                       {"  const redirectTo ="}
                     </CodeBlockLine>
@@ -971,17 +963,23 @@ export const Commit: Story = {
                 <CodeBlock className="mx-6 mb-6 w-auto">
                   <CodeBlockContent>
                     <CodeBlockLine variant="added">
-                      {"export function safeRedirect(next: string | undefined) {"}
+                      {
+                        "export function safeRedirect(next: string | undefined) {"
+                      }
                     </CodeBlockLine>
                     <CodeBlockLine variant="added">
-                      {'  if (!next || !next.startsWith("/") || next.startsWith("//")) {'}
+                      {
+                        '  if (!next || !next.startsWith("/") || next.startsWith("//")) {'
+                      }
                     </CodeBlockLine>
                     <CodeBlockLine variant="added">
                       {'    return "/"'}
                     </CodeBlockLine>
                     <CodeBlockLine variant="added">{"  }"}</CodeBlockLine>
                     <CodeBlockLine variant="added">{""}</CodeBlockLine>
-                    <CodeBlockLine variant="added">{"  return next"}</CodeBlockLine>
+                    <CodeBlockLine variant="added">
+                      {"  return next"}
+                    </CodeBlockLine>
                     <CodeBlockLine variant="added">{"}"}</CodeBlockLine>
                   </CodeBlockContent>
                 </CodeBlock>
@@ -1044,7 +1042,9 @@ export const TurnoCompleto: Story = {
                         <TraceIcon>
                           <TerminalIcon />
                         </TraceIcon>
-                        <TraceTitle>Falhou ao executar pnpm --version</TraceTitle>
+                        <TraceTitle>
+                          Falhou ao executar pnpm --version
+                        </TraceTitle>
                       </TraceLine>
                     </TraceCollapsibleTrigger>
                     <TraceCollapsibleContent>

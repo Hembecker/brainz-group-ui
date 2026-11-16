@@ -99,10 +99,7 @@ export const Demo: Story = {
     const progresso = canvas.getByRole("progressbar", {
       name: "Progresso do questionário",
     })
-    await expect(progresso).toHaveAttribute(
-      "aria-valuetext",
-      "Pergunta 1 de 3"
-    )
+    await expect(progresso).toHaveAttribute("aria-valuetext", "Pergunta 1 de 3")
     await expect(progresso).toHaveTextContent("Pergunta 1 de 3")
 
     // Next without an answer: the item turns invalid, the error is text and
@@ -114,7 +111,9 @@ export const Demo: Story = {
       canvas.getByRole("group", { name: "O que devemos construir a seguir?" })
     ).toHaveAttribute("aria-invalid", "true")
     await waitFor(() =>
-      expect(canvas.getByRole("radio", { name: /Linha do tempo/ })).toHaveFocus()
+      expect(
+        canvas.getByRole("radio", { name: /Linha do tempo/ })
+      ).toHaveFocus()
     )
 
     // The shortcut selects the choice (letters, outside the text field).
@@ -138,7 +137,9 @@ export const Demo: Story = {
     // Step 2 is optional: Skip goes on to step 3.
     await userEvent.click(canvas.getByRole("button", { name: "Pular" }))
     await expect(
-      await canvas.findByRole("group", { name: "Quando o trabalho deve começar?" })
+      await canvas.findByRole("group", {
+        name: "Quando o trabalho deve começar?",
+      })
     ).toBeVisible()
 
     // Step 3 is the last one: Submit replaces Next. Stays on a checked
@@ -146,7 +147,9 @@ export const Demo: Story = {
     await expect(canvas.queryByRole("button", { name: "Próxima" })).toBeNull()
     await userEvent.click(canvas.getByRole("radio", { name: /Agora/ }))
     await expect(canvas.getByRole("radio", { name: /Agora/ })).toBeChecked()
-    await expect(canvas.getByRole("button", { name: "Salvar plano" })).toBeVisible()
+    await expect(
+      canvas.getByRole("button", { name: "Salvar plano" })
+    ).toBeVisible()
     await esperarAnimacoes()
   },
   render: () => (
@@ -187,7 +190,9 @@ export const Demo: Story = {
     >
       <QuestionnaireProgress />
       <QuestionnaireItem name="direcao" required>
-        <QuestionnaireTitle>O que devemos construir a seguir?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          O que devemos construir a seguir?
+        </QuestionnaireTitle>
         <QuestionnaireDescription>
           Escolha uma direção ou descreva outra ideia.
         </QuestionnaireDescription>
@@ -404,7 +409,9 @@ export const PularExplicitamente: Story = {
     // Step 1 is required: there is no Skip button.
     await canvas.findByRole("group", { name: "Que tipo de mudança é esta?" })
     await expect(canvas.queryByRole("button", { name: "Pular" })).toBeNull()
-    await userEvent.click(canvas.getByRole("radio", { name: "Correção de bug" }))
+    await userEvent.click(
+      canvas.getByRole("radio", { name: "Correção de bug" })
+    )
     await userEvent.click(canvas.getByRole("button", { name: "Próxima" }))
 
     // Step 2 is optional: Skip shows up and moves on without an answer.
@@ -491,7 +498,9 @@ export const PularExplicitamente: Story = {
         </QuestionnaireChoices>
       </QuestionnaireItem>
       <QuestionnaireItem name="revisao" required>
-        <QuestionnaireTitle>Como o trabalho deve ser revisado?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          Como o trabalho deve ser revisado?
+        </QuestionnaireTitle>
         <QuestionnaireDescription>
           Escolha as verificações antes da entrega.
         </QuestionnaireDescription>
@@ -558,7 +567,9 @@ export const Atalhos: Story = {
       onSubmit={(event) => event.preventDefault()}
     >
       <QuestionnaireItem name="acao" required>
-        <QuestionnaireTitle>O que o assistente deve fazer agora?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          O que o assistente deve fazer agora?
+        </QuestionnaireTitle>
         <QuestionnaireDescription>
           Use o atalho mostrado ao lado de cada opção ou navegue pelo teclado.
         </QuestionnaireDescription>
@@ -639,10 +650,7 @@ function ValidacaoPersonalizadaExemplo() {
           </CardHeader>
           <CardContent>
             <QuestionnaireChoices>
-              <QuestionnaireChoice
-                value="resumo"
-                onChange={() => setErros({})}
-              >
+              <QuestionnaireChoice value="resumo" onChange={() => setErros({})}>
                 Resumo curto
               </QuestionnaireChoice>
               <QuestionnaireChoice
@@ -676,7 +684,9 @@ function ValidacaoPersonalizadaExemplo() {
           </CardHeader>
           <CardContent>
             <QuestionnaireChoices>
-              <QuestionnaireChoice value="equipe">Minha equipe</QuestionnaireChoice>
+              <QuestionnaireChoice value="equipe">
+                Minha equipe
+              </QuestionnaireChoice>
               <QuestionnaireChoice value="publico">
                 Público externo
               </QuestionnaireChoice>
@@ -843,12 +853,13 @@ export function Exemplo() {
     await expect(await canvas.findByRole("alert")).toHaveTextContent(
       "Respostas públicas precisam de contexto suficiente."
     )
-    await expect(canvas.getByRole("radio", { name: "Resumo curto" })).toBeChecked()
+    await expect(
+      canvas.getByRole("radio", { name: "Resumo curto" })
+    ).toBeChecked()
     await waitFor(() =>
-      expect(canvas.getByRole("radio", { name: "Resumo curto" })).toHaveAttribute(
-        "aria-invalid",
-        "true"
-      )
+      expect(
+        canvas.getByRole("radio", { name: "Resumo curto" })
+      ).toHaveAttribute("aria-invalid", "true")
     )
     await esperarAnimacoes()
   },
@@ -877,7 +888,9 @@ function ControladoExemplo() {
       >
         <QuestionnaireProgress />
         <QuestionnaireItem name="escopo" required>
-          <QuestionnaireTitle>O que o assistente pode alterar?</QuestionnaireTitle>
+          <QuestionnaireTitle>
+            O que o assistente pode alterar?
+          </QuestionnaireTitle>
           <QuestionnaireDescription>
             O host guarda o ponto ativo enquanto o Questionnaire navega.
           </QuestionnaireDescription>
@@ -912,9 +925,13 @@ function ControladoExemplo() {
           <QuestionnaireError />
         </QuestionnaireItem>
         <QuestionnaireItem name="entrega" required>
-          <QuestionnaireTitle>O que deve voltar ao terminar?</QuestionnaireTitle>
+          <QuestionnaireTitle>
+            O que deve voltar ao terminar?
+          </QuestionnaireTitle>
           <QuestionnaireChoices>
-            <QuestionnaireChoice value="resumo">Resumo curto</QuestionnaireChoice>
+            <QuestionnaireChoice value="resumo">
+              Resumo curto
+            </QuestionnaireChoice>
             <QuestionnaireChoice value="arquivos">
               Resumo com os arquivos alterados
             </QuestionnaireChoice>
@@ -1096,7 +1113,9 @@ export const Retomar: Story = {
         <QuestionnaireError />
       </QuestionnaireItem>
       <QuestionnaireItem name="verificacao" multiple required>
-        <QuestionnaireTitle>Como a migração deve ser verificada?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          Como a migração deve ser verificada?
+        </QuestionnaireTitle>
         <QuestionnaireDescription>
           Estas verificações foram marcadas na sessão anterior.
         </QuestionnaireDescription>
@@ -1182,15 +1201,13 @@ function ItensCondicionaisExemplo() {
         </QuestionnaireChoices>
         <QuestionnaireError />
       </QuestionnaireItem>
-      <QuestionnaireItem
-        disabled={ambiente !== "nuvem"}
-        name="nuvem"
-        required
-      >
+      <QuestionnaireItem disabled={ambiente !== "nuvem"} name="nuvem" required>
         <QuestionnaireTitle>Qual ambiente de nuvem usar?</QuestionnaireTitle>
         <QuestionnaireChoices>
           <QuestionnaireChoice value="preview">Preview</QuestionnaireChoice>
-          <QuestionnaireChoice value="homologacao">Homologação</QuestionnaireChoice>
+          <QuestionnaireChoice value="homologacao">
+            Homologação
+          </QuestionnaireChoice>
           <QuestionnaireChoice value="isolado">
             Sandbox isolado
           </QuestionnaireChoice>
@@ -1322,7 +1339,10 @@ export function Exemplo() {
 
     // Local: the cloud question does not apply, so there are 2 questions.
     await canvas.findByRole("group", { name: "Onde o assistente deve rodar?" })
-    await expect(progresso()).toHaveAttribute("aria-valuetext", "Pergunta 1 de 2")
+    await expect(progresso()).toHaveAttribute(
+      "aria-valuetext",
+      "Pergunta 1 de 2"
+    )
 
     // Cloud: the question is enabled and the count changes to 3.
     await userEvent.click(
@@ -1342,7 +1362,8 @@ function EstadoDeNavegacaoExemplo() {
     permissao: "unanswered",
     verificacao: "unanswered",
   })
-  const semResposta = status[item as "permissao" | "verificacao"] === "unanswered"
+  const semResposta =
+    status[item as "permissao" | "verificacao"] === "unanswered"
 
   return (
     <Questionnaire
@@ -1363,7 +1384,9 @@ function EstadoDeNavegacaoExemplo() {
           setStatus((atual) => ({ ...atual, permissao: valor }))
         }
       >
-        <QuestionnaireTitle>O que o assistente pode modificar?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          O que o assistente pode modificar?
+        </QuestionnaireTitle>
         <QuestionnaireDescription>
           O botão Próxima fica desabilitado até uma resposta ser escolhida.
         </QuestionnaireDescription>
@@ -1387,10 +1410,14 @@ function EstadoDeNavegacaoExemplo() {
           setStatus((atual) => ({ ...atual, verificacao: valor }))
         }
       >
-        <QuestionnaireTitle>O que deve passar antes de concluir?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          O que deve passar antes de concluir?
+        </QuestionnaireTitle>
         <QuestionnaireChoices>
           <QuestionnaireChoice value="testes">Testes</QuestionnaireChoice>
-          <QuestionnaireChoice value="tipos">Testes e tipos</QuestionnaireChoice>
+          <QuestionnaireChoice value="tipos">
+            Testes e tipos
+          </QuestionnaireChoice>
           <QuestionnaireChoice value="tudo">
             Testes, tipos e revisão visual
           </QuestionnaireChoice>
@@ -1561,7 +1588,9 @@ export const ProgressoPersonalizado: Story = {
       <QuestionnaireItem name="tamanho" required>
         <QuestionnaireTitle>Qual o tamanho da mudança?</QuestionnaireTitle>
         <QuestionnaireChoices>
-          <QuestionnaireChoice value="pequeno">Pequeno ajuste</QuestionnaireChoice>
+          <QuestionnaireChoice value="pequeno">
+            Pequeno ajuste
+          </QuestionnaireChoice>
           <QuestionnaireChoice value="medio">
             Mudança do tamanho de uma funcionalidade
           </QuestionnaireChoice>
@@ -1574,8 +1603,12 @@ export const ProgressoPersonalizado: Story = {
       <QuestionnaireItem name="commits" required>
         <QuestionnaireTitle>Como organizar os commits?</QuestionnaireTitle>
         <QuestionnaireChoices>
-          <QuestionnaireChoice value="unico">Um único commit</QuestionnaireChoice>
-          <QuestionnaireChoice value="logicos">Commits lógicos</QuestionnaireChoice>
+          <QuestionnaireChoice value="unico">
+            Um único commit
+          </QuestionnaireChoice>
+          <QuestionnaireChoice value="logicos">
+            Commits lógicos
+          </QuestionnaireChoice>
           <QuestionnaireChoice value="squash">
             Squash antes da revisão
           </QuestionnaireChoice>
@@ -1588,7 +1621,9 @@ export const ProgressoPersonalizado: Story = {
           <QuestionnaireChoice value="direcionados">
             Testes direcionados
           </QuestionnaireChoice>
-          <QuestionnaireChoice value="pacote">Suíte do pacote</QuestionnaireChoice>
+          <QuestionnaireChoice value="pacote">
+            Suíte do pacote
+          </QuestionnaireChoice>
           <QuestionnaireChoice value="workspace">
             Workspace completo
           </QuestionnaireChoice>
@@ -1599,9 +1634,7 @@ export const ProgressoPersonalizado: Story = {
         <QuestionnaireTitle>Como entregar o trabalho?</QuestionnaireTitle>
         <QuestionnaireChoices>
           <QuestionnaireChoice value="patch">Só o patch</QuestionnaireChoice>
-          <QuestionnaireChoice value="commit">
-            Commit local
-          </QuestionnaireChoice>
+          <QuestionnaireChoice value="commit">Commit local</QuestionnaireChoice>
           <QuestionnaireChoice value="branch">
             Enviar uma branch para revisão
           </QuestionnaireChoice>
@@ -1677,7 +1710,9 @@ export const ItensAnimados: Story = {
         name="revisao"
         required
       >
-        <QuestionnaireTitle>Como o trabalho deve ser revisado?</QuestionnaireTitle>
+        <QuestionnaireTitle>
+          Como o trabalho deve ser revisado?
+        </QuestionnaireTitle>
         <QuestionnaireDescription>
           Escolha a profundidade da verificação.
         </QuestionnaireDescription>
@@ -1821,7 +1856,9 @@ export const CardComQuestionnaire: Story = {
           </CardHeader>
           <CardContent>
             <QuestionnaireChoices>
-              <QuestionnaireChoice value="resumo">Só o resumo</QuestionnaireChoice>
+              <QuestionnaireChoice value="resumo">
+                Só o resumo
+              </QuestionnaireChoice>
               <QuestionnaireChoice value="arquivos">
                 Resumo e arquivos alterados
               </QuestionnaireChoice>
@@ -1872,7 +1909,9 @@ function DialogoExemplo() {
         >
           <QuestionnaireProgress />
           <QuestionnaireItem name="escopo" required>
-            <QuestionnaireTitle>Quais arquivos entram no escopo?</QuestionnaireTitle>
+            <QuestionnaireTitle>
+              Quais arquivos entram no escopo?
+            </QuestionnaireTitle>
             <QuestionnaireDescription>
               Escolha o quanto o assistente pode atualizar no workspace.
             </QuestionnaireDescription>
@@ -1890,7 +1929,9 @@ function DialogoExemplo() {
             <QuestionnaireError />
           </QuestionnaireItem>
           <QuestionnaireItem name="testes" required>
-            <QuestionnaireTitle>Quanta verificação é necessária?</QuestionnaireTitle>
+            <QuestionnaireTitle>
+              Quanta verificação é necessária?
+            </QuestionnaireTitle>
             <QuestionnaireDescription>
               Escolha as verificações que o assistente roda antes da entrega.
             </QuestionnaireDescription>
@@ -2043,9 +2084,7 @@ export function Exemplo() {
         name: "Quanta verificação é necessária?",
       })
     ).toBeVisible()
-    await expect(dialogo).toHaveAccessibleName(
-      "Esclarecimento sobre a tarefa"
-    )
+    await expect(dialogo).toHaveAccessibleName("Esclarecimento sobre a tarefa")
 
     // Esc closes it and gives the focus back to the trigger.
     await userEvent.keyboard("{Escape}")

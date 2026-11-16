@@ -102,11 +102,10 @@ export const loginFormLabels: LoginFormLabels = {
   passwordRequired: "Informe a senha.",
 }
 
-export interface LoginFormProps
-  extends Omit<
-    React.ComponentProps<"form">,
-    "onSubmit" | "title" | "defaultValue" | "children"
-  > {
+export interface LoginFormProps extends Omit<
+  React.ComponentProps<"form">,
+  "onSubmit" | "title" | "defaultValue" | "children"
+> {
   title?: React.ReactNode
   description?: React.ReactNode
   /** Recebe os valores já validados. O bloco chama `preventDefault` antes. */

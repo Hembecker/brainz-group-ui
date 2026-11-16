@@ -29,11 +29,17 @@ export function FontFamilyCard() {
     // the samples, so the card fits a 320px viewport and the text wraps.
     <DocsSurface className="grid grid-cols-[minmax(0,1fr)] gap-3">
       <p className="text-sm text-muted-foreground" aria-live="polite">
-        Marca ativa: <strong className="font-medium text-foreground">{definition.name}</strong>
+        Marca ativa:{" "}
+        <strong className="font-medium text-foreground">
+          {definition.name}
+        </strong>
       </p>
-      <p className="text-3xl leading-tight font-semibold tracking-tight">{PANGRAM}</p>
+      <p className="text-3xl leading-tight font-semibold tracking-tight">
+        {PANGRAM}
+      </p>
       <p className="text-base wrap-anywhere">
-        ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 áéíóú ãõ ç
+        ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 áéíóú
+        ãõ ç
       </p>
       <dl className="grid gap-1 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
         <dt className="font-medium">--bb-font-sans</dt>
@@ -96,7 +102,8 @@ export function WeightSpecimen() {
             <span className="grid gap-1">
               <span className={`text-xl ${weight.className}`}>{PANGRAM}</span>
               <span className="text-xs text-muted-foreground">
-                <code className="font-mono">{weight.sample}</code>: {weight.usage}
+                <code className="font-mono">{weight.sample}</code>:{" "}
+                {weight.usage}
               </span>
             </span>
           </li>
@@ -117,7 +124,8 @@ const sizes = [
     className: "text-sm",
     size: "14px (0,875rem)",
     lineHeight: "20px (1,25rem)",
-    usage: "Usado: o padrão dos componentes (Button, Label, Card, Input a partir de md).",
+    usage:
+      "Usado: o padrão dos componentes (Button, Label, Card, Input a partir de md).",
   },
   {
     className: "text-base",
@@ -158,14 +166,18 @@ const sizes = [
   },
 ] as const
 
-const th = "border-b border-border px-3 py-2 text-start font-medium whitespace-nowrap"
+const th =
+  "border-b border-border px-3 py-2 text-start font-medium whitespace-nowrap"
 const td = "border-b border-border px-3 py-2 align-middle"
 
 export function TypeScaleTable() {
   return (
     <DocsSurface className="p-0 sm:p-0">
       <ScrollTable label="Escala de tamanhos do Tailwind">
-        <table className="w-full border-collapse text-sm" style={{ display: "table" }}>
+        <table
+          className="w-full border-collapse text-sm"
+          style={{ display: "table" }}
+        >
           <caption className="px-3 pt-3 text-start text-sm text-muted-foreground">
             Tamanhos e alturas de linha padrão do Tailwind 4 (theme.css).
           </caption>
@@ -199,7 +211,9 @@ export function TypeScaleTable() {
                 <td className={`${td} min-w-64`}>
                   <span className={row.className}>Relatório mensal</span>
                 </td>
-                <td className={`${td} min-w-56 text-muted-foreground`}>{row.usage}</td>
+                <td className={`${td} min-w-56 text-muted-foreground`}>
+                  {row.usage}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -212,12 +226,14 @@ export function TypeScaleTable() {
 const headings = [
   {
     tag: "h1",
-    className: "scroll-m-20 text-4xl font-extrabold tracking-tight text-balance",
+    className:
+      "scroll-m-20 text-4xl font-extrabold tracking-tight text-balance",
     text: "Painel de indicadores",
   },
   {
     tag: "h2",
-    className: "scroll-m-20 border-b border-border pb-2 text-3xl font-semibold tracking-tight",
+    className:
+      "scroll-m-20 border-b border-border pb-2 text-3xl font-semibold tracking-tight",
     text: "Resumo do trimestre",
   },
   {
@@ -285,8 +301,8 @@ export function TextRolesSpecimen() {
           Usamos este e-mail só para avisos da conta.
         </FieldDescription>
         <code className="font-mono text-xs text-muted-foreground">
-          Rótulo (Label): text-sm leading-none font-medium · Apoio (FieldDescription):
-          text-sm leading-normal text-muted-foreground
+          Rótulo (Label): text-sm leading-none font-medium · Apoio
+          (FieldDescription): text-sm leading-normal text-muted-foreground
         </code>
       </div>
       <div className="grid gap-1">
@@ -294,8 +310,8 @@ export function TextRolesSpecimen() {
           Atualizado há 5 minutos · 128 registros
         </p>
         <code className="font-mono text-xs text-muted-foreground">
-          Texto de apoio: text-sm text-muted-foreground (claro: 7,4:1 na Brainz Group,
-          5,9:1 no SESI; escuro: 8,1:1)
+          Texto de apoio: text-sm text-muted-foreground (claro: 7,4:1 na Brainz
+          Group, 5,9:1 no SESI; escuro: 8,1:1)
         </code>
       </div>
       <div className="grid gap-1">

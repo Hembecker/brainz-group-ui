@@ -466,7 +466,11 @@ export const Link: Story = {
       <Item
         variant="outline"
         render={
-          <a href="#recurso-externo" target="_blank" rel="noopener noreferrer" />
+          <a
+            href="#recurso-externo"
+            target="_blank"
+            rel="noopener noreferrer"
+          />
         }
       >
         <ItemContent>

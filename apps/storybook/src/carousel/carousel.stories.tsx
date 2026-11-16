@@ -474,7 +474,9 @@ function CarrosselAutomatico() {
         ) : (
           <PauseIcon aria-hidden="true" />
         )}
-        {pausado ? "Retomar a rotação automática" : "Pausar a rotação automática"}
+        {pausado
+          ? "Retomar a rotação automática"
+          : "Pausar a rotação automática"}
       </Button>
       <Carousel
         aria-label="Destaques da semana"
@@ -523,8 +525,7 @@ export const Plugins: Story = {
 
     // The control comes before the slides in the reading order.
     await expect(
-      botao().compareDocumentPosition(regiao) &
-        Node.DOCUMENT_POSITION_FOLLOWING
+      botao().compareDocumentPosition(regiao) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy()
 
     // Make sure it is rotating first (reduced motion starts paused).
@@ -579,10 +580,7 @@ export const Rtl: Story = {
         >
           <CarouselContent>
             {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem
-                key={index}
-                aria-label={`${"١٢٣٤٥"[index]} من ٥`}
-              >
+              <CarouselItem key={index} aria-label={`${"١٢٣٤٥"[index]} من ٥`}>
                 <div className="p-1">
                   <Card>
                     <CardContent className="flex aspect-square items-center justify-center p-6">

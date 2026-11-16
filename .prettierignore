@@ -2,5 +2,10 @@ dist/
 node_modules/
 .turbo/
 coverage/
-pnpm-lock.yaml
-.pnpm-store/
+storybook-static/
+package-lock.json
+
+# MDX fica de fora: o parser de MDX do Prettier é o do MDX 1, e as páginas
+# daqui são MDX 3 (JSX, <table> e <Source> com template strings). Formatar
+# pode quebrar a página.
+*.mdx

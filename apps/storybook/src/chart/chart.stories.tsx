@@ -111,7 +111,11 @@ function GraficoInterativo() {
           Mostrando os visitantes de {config[ativo].label.toLowerCase()} nos
           primeiros 12 dias de outubro.
         </CardDescription>
-        <div className="flex gap-2 pt-2" role="group" aria-label="Série exibida">
+        <div
+          className="flex gap-2 pt-2"
+          role="group"
+          aria-label="Série exibida"
+        >
           {(["desktop", "celular"] as const).map((chave) => (
             <Button
               key={chave}
@@ -173,7 +177,9 @@ function GraficoInterativo() {
             Ver os dados em tabela
           </summary>
           <Table className="mt-2">
-            <TableCaption>Visitantes por dia, de 1 a 12 de outubro</TableCaption>
+            <TableCaption>
+              Visitantes por dia, de 1 a 12 de outubro
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Dia</TableHead>
@@ -662,7 +668,9 @@ export const Indicador: Story = {
     // `defaultIndex` keeps one tooltip open in each chart, so the three
     // indicators (and their text) are on screen for axe.
     const canvas = within(canvasElement)
-    await waitFor(() => expect(canvas.getAllByText("Fevereiro")).toHaveLength(3))
+    await waitFor(() =>
+      expect(canvas.getAllByText("Fevereiro")).toHaveLength(3)
+    )
     await new Promise((resolve) => setTimeout(resolve, 400))
   },
   render: () => (
@@ -741,7 +749,10 @@ export const Indicador: Story = {
           </BarChart>
         </ChartContainer>
       </figure>
-      <figure aria-labelledby="indicador-tracejado-titulo" className="grid gap-2">
+      <figure
+        aria-labelledby="indicador-tracejado-titulo"
+        className="grid gap-2"
+      >
         <figcaption>
           <h3 id="indicador-tracejado-titulo" className="text-sm font-medium">
             indicator=&quot;dashed&quot;

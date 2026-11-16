@@ -16,7 +16,10 @@ import {
   FieldTitle,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
-import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group"
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@workspace/ui/components/radio-group"
 import {
   Select,
   SelectContent,
@@ -187,7 +190,10 @@ export const Demo: Story = {
             <FieldGroup>
               <Field orientation="horizontal">
                 <Checkbox id="demo-mesmo-endereco" defaultChecked />
-                <FieldLabel htmlFor="demo-mesmo-endereco" className="font-normal">
+                <FieldLabel
+                  htmlFor="demo-mesmo-endereco"
+                  className="font-normal"
+                >
                   Mesmo endereço de entrega
                 </FieldLabel>
               </Field>
@@ -399,7 +405,10 @@ export const CaixaDeSelecao: Story = {
         <FieldGroup className="gap-3">
           <Field orientation="horizontal">
             <Checkbox id="checkbox-discos-rigidos" defaultChecked />
-            <FieldLabel htmlFor="checkbox-discos-rigidos" className="font-normal">
+            <FieldLabel
+              htmlFor="checkbox-discos-rigidos"
+              className="font-normal"
+            >
               Discos rígidos
             </FieldLabel>
           </Field>
@@ -708,7 +717,10 @@ export const Rtl: Story = {
             <FieldGroup>
               <Field orientation="horizontal">
                 <Checkbox id="rtl-mesmo-endereco" defaultChecked />
-                <FieldLabel htmlFor="rtl-mesmo-endereco" className="font-normal">
+                <FieldLabel
+                  htmlFor="rtl-mesmo-endereco"
+                  className="font-normal"
+                >
                   نفس عنوان الشحن
                 </FieldLabel>
               </Field>
@@ -799,7 +811,9 @@ export const ValidacaoEErros: Story = {
 
     // The red is only on the label and on the message: the Field itself
     // (and what inherits its color) stays in `foreground`.
-    const campo = canvasElement.querySelector("[data-slot=field][data-invalid]")!
+    const campo = canvasElement.querySelector(
+      "[data-slot=field][data-invalid]"
+    )!
     const rotulo = canvasElement.querySelector(
       "[data-slot=field][data-invalid] [data-slot=field-label]"
     )!

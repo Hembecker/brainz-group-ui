@@ -13,10 +13,7 @@ import { brandList, brands, type BrandId } from "@workspace/ui/brand/brands"
 import { useBrand } from "@workspace/ui/brand/use-brand"
 import { cn } from "@workspace/ui/lib/utils"
 
-import {
-  brandPrimitives,
-  scaleSteps,
-} from "./theme-data"
+import { brandPrimitives, scaleSteps } from "./theme-data"
 import {
   contrast,
   formatRatio,
@@ -51,7 +48,10 @@ export function ActiveTheme() {
   return (
     <DocsSurface className="flex flex-wrap items-center gap-4">
       <Logo className="h-6 w-auto text-foreground" />
-      <p className="flex flex-wrap items-center gap-2 text-sm" aria-live="polite">
+      <p
+        className="flex flex-wrap items-center gap-2 text-sm"
+        aria-live="polite"
+      >
         <span>
           Marca ativa: <strong className="font-semibold">{brand.name}</strong>
         </span>
@@ -62,8 +62,9 @@ export function ActiveTheme() {
         ) : null}
       </p>
       <p className="w-full text-sm text-muted-foreground">
-        Troque a marca em <strong className="font-medium text-foreground">Marca</strong>{" "}
-        e o modo em <strong className="font-medium text-foreground">Modo</strong>, na
+        Troque a marca em{" "}
+        <strong className="font-medium text-foreground">Marca</strong> e o modo
+        em <strong className="font-medium text-foreground">Modo</strong>, na
         barra de ferramentas do Storybook: tudo nesta página acompanha.
       </p>
     </DocsSurface>
@@ -153,8 +154,9 @@ export function GradientSwatch() {
       <p className="text-sm text-muted-foreground">
         <code className="font-mono">--bb-gradient</code>, de cima para baixo: na
         Brainz Group, o gradiente do logo (Primária 500 → #305BA3, o fim do
-        gradiente no SVG oficial); no SESI, Primária 500 (Pure) → 700. Decorativo (não
-        carrega texto); disponível para fundos, sem uso nos componentes.
+        gradiente no SVG oficial); no SESI, Primária 500 (Pure) → 700.
+        Decorativo (não carrega texto); disponível para fundos, sem uso nos
+        componentes.
       </p>
     </DocsSurface>
   )
@@ -177,7 +179,9 @@ function PrimaryRow({ id }: { id: BrandId }) {
               {step}
               {step === base ? " (base)" : ""}
             </span>
-            <code className="font-mono text-muted-foreground">{values[step]}</code>
+            <code className="font-mono text-muted-foreground">
+              {values[step]}
+            </code>
           </li>
         ))}
       </ul>
@@ -204,7 +208,10 @@ export function BrandScales() {
           >
             <div className="grid gap-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 id={`marca-${brand.id}`} className="text-base font-semibold">
+                <h3
+                  id={`marca-${brand.id}`}
+                  className="text-base font-semibold"
+                >
                   {brand.name}
                 </h3>
                 <code className="font-mono text-xs text-muted-foreground">
@@ -216,7 +223,9 @@ export function BrandScales() {
                   <Badge variant="secondary">Padrão</Badge>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{brand.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {brand.description}
+              </p>
             </div>
             <PrimaryRow id={brand.id} />
             <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
@@ -227,7 +236,9 @@ export function BrandScales() {
                   className="size-3 rounded-sm border border-border"
                   style={{ background: primitives.ink }}
                 />
-                <code className="font-mono text-muted-foreground">{primitives.ink}</code>
+                <code className="font-mono text-muted-foreground">
+                  {primitives.ink}
+                </code>
               </dd>
               <dt className="font-medium">--bb-font-sans</dt>
               <dd>

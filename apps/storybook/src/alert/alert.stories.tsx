@@ -101,8 +101,8 @@ export const CoresPersonalizadas: Story = {
       <AlertTriangleIcon aria-hidden="true" />
       <AlertTitle>Sua assinatura expira em 3 dias.</AlertTitle>
       <AlertDescription>
-        Renove agora para não interromper o serviço, ou migre para um plano
-        pago para continuar usando.
+        Renove agora para não interromper o serviço, ou migre para um plano pago
+        para continuar usando.
       </AlertDescription>
     </Alert>
   ),

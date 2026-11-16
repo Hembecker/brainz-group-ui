@@ -530,9 +530,7 @@ export const Desabilitado: Story = {
         <FieldLabel htmlFor="desabilitado-todo">
           Framework desabilitado
         </FieldLabel>
-        <Combobox
-          items={["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"]}
-        >
+        <Combobox items={["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"]}>
           <ComboboxInput
             id="desabilitado-todo"
             placeholder="Selecione um framework"
@@ -554,9 +552,7 @@ export const Desabilitado: Story = {
         <FieldLabel htmlFor="desabilitado-opcao">
           Framework com uma opção desabilitada
         </FieldLabel>
-        <Combobox
-          items={["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"]}
-        >
+        <Combobox items={["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"]}>
           <ComboboxInput
             id="desabilitado-opcao"
             placeholder="Selecione um framework"

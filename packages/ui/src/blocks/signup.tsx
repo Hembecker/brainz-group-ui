@@ -124,11 +124,10 @@ export function signupFormLabels(minPasswordLength = 8): SignupFormLabels {
   }
 }
 
-export interface SignupFormProps
-  extends Omit<
-    React.ComponentProps<"form">,
-    "onSubmit" | "title" | "defaultValue" | "children"
-  > {
+export interface SignupFormProps extends Omit<
+  React.ComponentProps<"form">,
+  "onSubmit" | "title" | "defaultValue" | "children"
+> {
   title?: React.ReactNode
   description?: React.ReactNode
   /** Recebe os valores já validados. O bloco chama `preventDefault` antes. */

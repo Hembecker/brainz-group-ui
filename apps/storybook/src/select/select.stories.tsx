@@ -266,7 +266,9 @@ export const Rolagem: Story = {
           </SelectGroup>
           <SelectGroup>
             <SelectLabel>Europa e África</SelectLabel>
-            <SelectItem value="gmt">Horário do Meridiano de Greenwich</SelectItem>
+            <SelectItem value="gmt">
+              Horário do Meridiano de Greenwich
+            </SelectItem>
             <SelectItem value="cet">Horário da Europa Central</SelectItem>
             <SelectItem value="eet">Horário da Europa Oriental</SelectItem>
             <SelectItem value="west">
@@ -297,7 +299,9 @@ export const Rolagem: Story = {
             <SelectItem value="aest">
               Horário Padrão da Austrália Oriental
             </SelectItem>
-            <SelectItem value="nzst">Horário Padrão da Nova Zelândia</SelectItem>
+            <SelectItem value="nzst">
+              Horário Padrão da Nova Zelândia
+            </SelectItem>
             <SelectItem value="fjt">Horário de Fiji</SelectItem>
           </SelectGroup>
           <SelectGroup>
